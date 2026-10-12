@@ -103,30 +103,20 @@ aside.collapsed .nav-item {
     padding-right: 0 !important;
 }
 
+/* Kaydırma çubuğunu görsel olarak gizleyen CSS */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* 📱 MOBİL UYUM */
 @media (max-width: 768px) {
     body {
         height: 100dvh;
-        overflow: hidden;
-    }
-
-    main {
-        padding-bottom: 4.5rem !important;
-    }
-
-    #topCapturedPieces img, #bottomCapturedPieces img {
-        width: 11px !important;
-        height: 11px !important;
-    }
-
-    #topPlayerCard, #bottomPlayerCard {
-        padding: 0.5rem !important;
-    }
-}
-/* 📱 SADECE MOBİL İÇİN DÜZENLEMELER */
-@media (max-width: 768px) {
-    html, body {
-        height: 100dvh;
-        overflow: hidden !important; /* Sayfa kaydırmasını tamamen kapatır */
+        overflow: hidden !important;
     }
 
     main {
@@ -135,18 +125,17 @@ aside.collapsed .nav-item {
         justify-content: flex-start !important;
     }
 
-    /* Tahtanın dikeyde ekrana tam sığması için yükseklik sınırı */
     #board-wrapper {
         width: min(88vw, 42vh) !important;
         height: min(88vw, 42vh) !important;
     }
 
-    #topPlayerCard, #bottomPlayerCard {
-        padding: 0.4rem 0.6rem !important;
-    }
-
     #topCapturedPieces img, #bottomCapturedPieces img {
         width: 11px !important;
         height: 11px !important;
+    }
+
+    #topPlayerCard, #bottomPlayerCard {
+        padding: 0.4rem 0.6rem !important;
     }
 }
