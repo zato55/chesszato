@@ -29,14 +29,8 @@ const pieceSVG = {
 
 const pieceValues = { p: 1, n: 3, b: 3, r: 5, q: 9, k: 0 };
 
-// Temel Açılış Kütüphanesi
+// Genişletilmiş ve Öncelik Sıralı Açılış Kütüphanesi
 const openingDatabase = [
-    { moves: ['e4', 'd5'], name: 'İskandinav Savunması' },
-    { moves: ['e4', 'c5'], name: 'Sicilya Savunması' },
-    { moves: ['e4', 'e6'], name: 'Fransız Savunması' },
-    { moves: ['e4', 'c6'], name: 'Caro-Kann Savunması' },
-    { moves: ['e4', 'g6'], name: 'Modern Savunma' },
-    { moves: ['e4', 'Nf6'], name: 'Alekhine Savunması' },
     { moves: ['e4', 'e5', 'Nf3', 'Nc6', 'Bb5'], name: 'Ruy Lopez (İspanyol)' },
     { moves: ['e4', 'e5', 'Nf3', 'Nc6', 'Bc4'], name: 'İtalyan Açılışı' },
     { moves: ['e4', 'e5', 'Nf3', 'Nf6'], name: 'Petrov Savunması' },
@@ -44,11 +38,20 @@ const openingDatabase = [
     { moves: ['d4', 'd5', 'c4'], name: 'Vezir Gambiti' },
     { moves: ['d4', 'Nf6', 'c4', 'g6'], name: 'Şah-Hint Savunması' },
     { moves: ['d4', 'Nf6', 'c4', 'e6'], name: 'Nimzo / Bogo-Hint' },
+    { moves: ['d4', 'Nf6'], name: 'Hint Savunması' },
     { moves: ['d4', 'f5'], name: 'Hollanda Savunması' },
+    { moves: ['e4', 'd5'], name: 'İskandinav Savunması' },
+    { moves: ['e4', 'c5'], name: 'Sicilya Savunması' },
+    { moves: ['e4', 'e6'], name: 'Fransız Savunması' },
+    { moves: ['e4', 'c6'], name: 'Caro-Kann Savunması' },
+    { moves: ['e4', 'g6'], name: 'Modern Savunma' },
+    { moves: ['e4', 'Nf6'], name: 'Alekhine Savunması' },
     { moves: ['c4'], name: 'İngiliz Açılışı' },
     { moves: ['Nf3'], name: 'Réti Açılışı' },
     { moves: ['e4', 'e5'], name: 'Açık Oyun' },
-    { moves: ['d4', 'd5'], name: 'Kapalı Oyun' }
+    { moves: ['d4', 'd5'], name: 'Kapalı Oyun' },
+    { moves: ['e4'], name: 'Şah Piyonu Açılışı' },
+    { moves: ['d4'], name: 'Vezir Piyonu Açılışı' }
 ];
 
 $('#logoToggleBtn').on('click', function() {
@@ -124,7 +127,8 @@ function detectOpening() {
     const historySAN = game.history();
     if (historySAN.length === 0) return '📖 Açılış Bekleniyor';
 
-    let currentMatch = '📖 Tanımsız Açılış';
+    let bestMatch = '📖 Tanımsız Açılış';
+    let maxMatchedMoves = 0;
 
     for (const opening of openingDatabase) {
         if (opening.moves.length <= historySAN.length) {
@@ -135,12 +139,13 @@ function detectOpening() {
                     break;
                 }
             }
-            if (match) {
-                currentMatch = '📖 ' + opening.name;
+            if (match && opening.moves.length > maxMatchedMoves) {
+                maxMatchedMoves = opening.moves.length;
+                bestMatch = '📖 ' + opening.name;
             }
         }
     }
-    return currentMatch;
+    return bestMatch;
 }
 
 function updatePlayerCards() {
