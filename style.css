@@ -103,7 +103,7 @@ aside.collapsed .nav-item {
     padding-right: 0 !important;
 }
 
-/* Kaydırma çubuğunu görsel olarak gizleyen CSS */
+/* Kaydırma çubuğunu gizleme */
 .no-scrollbar::-webkit-scrollbar {
     display: none;
 }
@@ -112,7 +112,7 @@ aside.collapsed .nav-item {
     scrollbar-width: none;
 }
 
-/* 📱 SADECE MOBİL İÇİN DÜZENLEMELER */
+/* 📱 MOBİL DÜZENLEMELERİ (Zero-Scroll & Temiz UI) */
 @media (max-width: 768px) {
     body {
         height: 100dvh;
@@ -120,7 +120,7 @@ aside.collapsed .nav-item {
     }
 
     main {
-        padding-top: 0.5rem !important;
+        padding-top: 0.4rem !important;
         padding-bottom: 4.5rem !important;
         justify-content: flex-start !important;
     }
@@ -139,8 +139,8 @@ aside.collapsed .nav-item {
         padding: 0.4rem 0.6rem !important;
     }
 
-    /* Mobilde kartlarda saat durduğu için alt paneldeki saat kutusunu gizliyoruz */
-    #timerWrapper {
+    /* Mobilde gereksiz dikey sağ paneli ve yinelenen alanları gizliyoruz */
+    #desktopPanel {
         display: none !important;
     }
 }

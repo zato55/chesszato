@@ -411,7 +411,11 @@ function updateStatus() {
     }
 
     const activeHistory = game.history({ verbose: true });
+    
+    // 1. Masaüstü Dikey PGN
     let pgnHtml = '';
+    // 2. Mobil Yatay PGN Şeridi (Chess.com tarzı)
+    let mobilePgnHtml = '';
 
     for (let i = 0; i < activeHistory.length; i += 2) {
         const round = Math.floor(i / 2) + 1;
@@ -424,11 +428,19 @@ function updateStatus() {
                 <span class="text-zinc-300 font-medium">${whiteMove}</span>
                 <span class="text-blue-400 font-medium">${blackMove}</span>
             </div>`;
+
+        mobilePgnHtml += `<span class="bg-zinc-900 px-2 py-1 rounded border border-zinc-800 text-zinc-300"><span class="text-zinc-500 font-bold mr-1">${round}.</span>${whiteMove} ${blackMove}</span>`;
     }
 
     $('#pgn').html(pgnHtml);
+    $('#mobilePgnList').html(mobilePgnHtml || '<span class="text-zinc-600 italic">Henüz hamle yapılmadı</span>');
+
     const pgnDiv = document.getElementById('pgn');
     if (pgnDiv) pgnDiv.scrollTop = pgnDiv.scrollHeight;
+
+    // Mobil şeridi otomatik en son yapılan hamleye kaydırma
+    const mobileStrip = document.getElementById('mobileMoveStrip');
+    if (mobileStrip) mobileStrip.scrollLeft = mobileStrip.scrollWidth;
 }
 
 // OYUN MODU DEĞİŞTİRME

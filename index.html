@@ -14,7 +14,7 @@
 <body class="bg-[#09090b] text-white min-h-screen flex flex-col md:flex-row overflow-x-hidden font-sans relative">
 
     <!-- MOBİL ÜST BAR -->
-    <header class="md:hidden bg-[#121215] border-b border-zinc-800/80 px-3 py-2.5 flex items-center justify-between z-30 flex-shrink-0">
+    <header class="md:hidden bg-[#121215] border-b border-zinc-800/80 px-3 py-2 flex items-center justify-between z-30 flex-shrink-0">
         <div class="flex items-center gap-2">
             <img src="icon-512.png" alt="ZATOI" class="w-7 h-7 object-contain rounded-lg border border-red-900/50" onerror="this.style.display='none'; $('#mobileLogoFallback').removeClass('hidden');">
             <div id="mobileLogoFallback" class="hidden w-7 h-7 bg-red-700 rounded-lg flex items-center justify-center font-black text-sm text-white">Z</div>
@@ -62,6 +62,13 @@
         <!-- TAHTA VE OYUNCU KARTLARI -->
         <div class="flex items-center justify-center gap-2 sm:gap-3 flex-shrink-0 w-full max-w-[680px]">
             <div class="flex flex-col gap-1.5 sm:gap-2 w-full items-center">
+                
+                <!-- MOBİL YATAY HAMLE ŞERİDİ (Chess.com Stili) -->
+                <div id="mobileMoveStrip" class="md:hidden w-full bg-[#121215] border border-zinc-800/90 rounded-xl px-3 py-1.5 overflow-x-auto flex items-center gap-2 text-xs font-mono no-scrollbar whitespace-nowrap shadow-sm">
+                    <span class="text-zinc-500 font-sans font-bold text-[10px] uppercase tracking-wider flex-shrink-0">Hamleler:</span>
+                    <div id="mobilePgnList" class="flex items-center gap-2"></div>
+                </div>
+
                 <!-- ÜST OYUNCU KARTI -->
                 <div id="topPlayerCard" class="w-full bg-[#121215] border border-zinc-800/90 rounded-xl p-2 sm:p-2.5 flex items-center justify-between text-xs gap-2">
                     <div class="flex items-center gap-2 min-w-0 flex-1">
@@ -128,8 +135,8 @@
             </div>
         </div>
 
-        <!-- SAĞ PANEL -->
-        <section class="w-full lg:w-80 min-h-[380px] lg:h-[min(78vw,75vh)] max-h-[680px] bg-[#121215] p-4 sm:p-5 lg:p-6 rounded-2xl border border-zinc-800/80 shadow-2xl flex flex-col justify-between flex-shrink-0">
+        <!-- SAĞ PANEL (Masaüstünde Görünür, Mobilde Hamle Geçmişi ve Butonlar Gizli) -->
+        <section id="desktopPanel" class="w-full lg:w-80 min-h-[380px] lg:h-[min(78vw,75vh)] max-h-[680px] bg-[#121215] p-4 sm:p-5 lg:p-6 rounded-2xl border border-zinc-800/80 shadow-2xl flex flex-col justify-between flex-shrink-0">
             <div class="space-y-3">
                 <div class="flex items-center justify-between border-b border-zinc-800 pb-3 gap-2">
                     <h2 id="panelTitle" class="text-base font-bold text-zinc-200">Canlı Karşılaşma</h2>
@@ -168,11 +175,11 @@
                     </div>
                 </div>
 
-                <h3 class="text-xs uppercase tracking-wider text-zinc-500 font-bold pt-1">Hamle Geçmişi</h3>
-                <div id="pgn" class="h-24 lg:h-32 overflow-y-auto bg-[#09090b] p-3 rounded-xl border border-zinc-800/60 text-xs font-mono text-zinc-400 leading-relaxed"></div>
+                <h3 class="text-xs uppercase tracking-wider text-zinc-500 font-bold pt-1 hidden md:block">Hamle Geçmişi</h3>
+                <div id="pgn" class="h-24 lg:h-32 overflow-y-auto bg-[#09090b] p-3 rounded-xl border border-zinc-800/60 text-xs font-mono text-zinc-400 leading-relaxed hidden md:block"></div>
             </div>
 
-            <div id="normalControls" class="space-y-2 pt-3 border-t border-zinc-800">
+            <div id="normalControls" class="space-y-2 pt-3 border-t border-zinc-800 hidden md:block">
                 <div class="flex gap-2">
                     <button id="flipBtn" class="flex-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-bold py-2 px-3 rounded-xl text-xs transition">🔄 Tahtayı Çevir</button>
                     <button id="undoBtn" class="flex-1 bg-blue-700 hover:bg-blue-600 text-white font-bold py-2 px-3 rounded-xl text-xs transition">↩️ Geri Al</button>
@@ -182,7 +189,7 @@
         </section>
     </main>
 
-    <!-- MOBİL KAYDIRILABİLİR ALT BAR (Aksiyon Odaklı) -->
+    <!-- MOBİL KAYDIRILABİLİR ALT BAR -->
     <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-[#121215] border-t border-zinc-800 overflow-x-auto flex items-center py-2 px-5 gap-7 z-30 no-scrollbar whitespace-nowrap">
         <button id="mobileResetBtn" class="flex flex-col items-center gap-1 text-red-500 font-bold text-[11px] flex-shrink-0 active:scale-95 transition-transform">
             <span class="text-lg">➕</span>
