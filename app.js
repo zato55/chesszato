@@ -35,11 +35,7 @@ $('#logoToggleBtn').on('click', function() {
 
 function initStockfish() {
     try {
-        const blob = new Blob([
-            "importScripts('https://cdnjs.cloudflare.com/ajax/libs/stockfish.js/10.0.2/stockfish.js');"
-        ], { type: 'application/javascript' });
-        
-        stockfishWorker = new Worker(URL.createObjectURL(blob));
+        stockfishWorker = new Worker('https://cdnjs.cloudflare.com/ajax/libs/stockfish.js/10.0.2/stockfish.js');
 
         stockfishWorker.onmessage = function (event) {
             const message = event.data;
