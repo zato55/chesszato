@@ -412,9 +412,7 @@ function updateStatus() {
 
     const activeHistory = game.history({ verbose: true });
     
-    // 1. Masaüstü Dikey PGN
     let pgnHtml = '';
-    // 2. Mobil Yatay PGN Şeridi (Chess.com tarzı)
     let mobilePgnHtml = '';
 
     for (let i = 0; i < activeHistory.length; i += 2) {
@@ -438,7 +436,6 @@ function updateStatus() {
     const pgnDiv = document.getElementById('pgn');
     if (pgnDiv) pgnDiv.scrollTop = pgnDiv.scrollHeight;
 
-    // Mobil şeridi otomatik en son yapılan hamleye kaydırma
     const mobileStrip = document.getElementById('mobileMoveStrip');
     if (mobileStrip) mobileStrip.scrollLeft = mobileStrip.scrollWidth;
 }
@@ -463,7 +460,7 @@ $('#modeBot').on('click', function() {
     }
 });
 
-// MOBİL BUTON DİNLEYİCİLERİ
+// HIZLI VE SABİT BUTON DİNLEYİCİLERİ
 $('#mobileToggleModeBtn').on('click', function() {
     if (vsBot) {
         $('#modePvP').click();
@@ -472,14 +469,14 @@ $('#mobileToggleModeBtn').on('click', function() {
     }
 });
 
-$('#mobileFlipBtn, #flipBtn').on('click', function (e) {
+$('#quickFlipBtn, #flipBtn').on('click', function (e) {
     e.preventDefault();
     isFlipped = !isFlipped;
     renderBoard();
     updateTimerDisplay();
 });
 
-$('#mobileUndoBtn, #undoBtn').on('click', function () {
+$('#quickUndoBtn, #undoBtn').on('click', function () {
     if (isGameOver) return;
     game.undo();
     if (vsBot) game.undo();
@@ -508,7 +505,7 @@ function resetGame() {
     updateStatus();
 }
 
-$('#resetBtn, #modalResetBtn, #mobileResetBtn').on('click', function(e) {
+$('#resetBtn, #modalResetBtn, #quickResetBtn').on('click', function(e) {
     e.preventDefault();
     resetGame();
 });

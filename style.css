@@ -112,7 +112,7 @@ aside.collapsed .nav-item {
     scrollbar-width: none;
 }
 
-/* 📱 MOBİL DÜZENLEMELERİ (Zero-Scroll & Temiz UI) */
+/* 📱 MOBİL DÜZENLEMELERİ (Zero-Scroll & Tam Oturan Tahta) */
 @media (max-width: 768px) {
     body {
         height: 100dvh;
@@ -120,14 +120,14 @@ aside.collapsed .nav-item {
     }
 
     main {
-        padding-top: 0.4rem !important;
-        padding-bottom: 4.5rem !important;
+        padding-top: 0.25rem !important;
+        padding-bottom: 4rem !important;
         justify-content: flex-start !important;
     }
 
     #board-wrapper {
-        width: min(88vw, 42vh) !important;
-        height: min(88vw, 42vh) !important;
+        width: min(92vw, 45vh) !important;
+        height: min(92vw, 45vh) !important;
     }
 
     #topCapturedPieces img, #bottomCapturedPieces img {
@@ -136,10 +136,9 @@ aside.collapsed .nav-item {
     }
 
     #topPlayerCard, #bottomPlayerCard {
-        padding: 0.4rem 0.6rem !important;
+        padding: 0.35rem 0.5rem !important;
     }
 
-    /* Mobilde gereksiz dikey sağ paneli ve yinelenen alanları gizliyoruz */
     #desktopPanel {
         display: none !important;
     }
