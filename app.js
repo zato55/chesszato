@@ -29,13 +29,34 @@ const pieceSVG = {
 
 const pieceValues = { p: 1, n: 3, b: 3, r: 5, q: 9, k: 0 };
 
+// Temel Açılış Kütüphanesi
+const openingDatabase = [
+    { moves: ['e4', 'd5'], name: 'İskandinav Savunması' },
+    { moves: ['e4', 'c5'], name: 'Sicilya Savunması' },
+    { moves: ['e4', 'e6'], name: 'Fransız Savunması' },
+    { moves: ['e4', 'c6'], name: 'Caro-Kann Savunması' },
+    { moves: ['e4', 'g6'], name: 'Modern Savunma' },
+    { moves: ['e4', 'Nf6'], name: 'Alekhine Savunması' },
+    { moves: ['e4', 'e5', 'Nf3', 'Nc6', 'Bb5'], name: 'Ruy Lopez (İspanyol)' },
+    { moves: ['e4', 'e5', 'Nf3', 'Nc6', 'Bc4'], name: 'İtalyan Açılışı' },
+    { moves: ['e4', 'e5', 'Nf3', 'Nf6'], name: 'Petrov Savunması' },
+    { moves: ['e4', 'e5', 'f4'], name: 'Şah Gambiti' },
+    { moves: ['d4', 'd5', 'c4'], name: 'Vezir Gambiti' },
+    { moves: ['d4', 'Nf6', 'c4', 'g6'], name: 'Şah-Hint Savunması' },
+    { moves: ['d4', 'Nf6', 'c4', 'e6'], name: 'Nimzo / Bogo-Hint' },
+    { moves: ['d4', 'f5'], name: 'Hollanda Savunması' },
+    { moves: ['c4'], name: 'İngiliz Açılışı' },
+    { moves: ['Nf3'], name: 'Réti Açılışı' },
+    { moves: ['e4', 'e5'], name: 'Açık Oyun' },
+    { moves: ['d4', 'd5'], name: 'Kapalı Oyun' }
+];
+
 $('#logoToggleBtn').on('click', function() {
     $('#mainSidebar').toggleClass('collapsed');
 });
 
 function initStockfish() {
     try {
-        // CORS engelini aşmak için Worker'ı Blob içinde sarmalayarak başlatıyoruz
         const workerCode = "importScripts('https://cdnjs.cloudflare.com/ajax/libs/stockfish.js/10.0.2/stockfish.js');";
         const blob = new Blob([workerCode], { type: 'application/javascript' });
         stockfishWorker = new Worker(URL.createObjectURL(blob));
@@ -99,6 +120,29 @@ function playMoveSound(moveObj, isCapture) {
     } catch (e) {}
 }
 
+function detectOpening() {
+    const historySAN = game.history();
+    if (historySAN.length === 0) return '📖 Açılış Bekleniyor';
+
+    let currentMatch = '📖 Tanımsız Açılış';
+
+    for (const opening of openingDatabase) {
+        if (opening.moves.length <= historySAN.length) {
+            let match = true;
+            for (let i = 0; i < opening.moves.length; i++) {
+                if (historySAN[i] !== opening.moves[i]) {
+                    match = false;
+                    break;
+                }
+            }
+            if (match) {
+                currentMatch = '📖 ' + opening.name;
+            }
+        }
+    }
+    return currentMatch;
+}
+
 function updatePlayerCards() {
     const history = game.history({ verbose: true });
 
@@ -159,7 +203,7 @@ function updatePlayerCards() {
         $('#bottomCapturedPieces').html(drawIcons(blackCaptured, false));
 
         $('#topMaterialDiff').text(whiteScore > blackScore ? `+${whiteScore - blackScore}` : '');
-        $('#bottomMaterialDiff').text(blackScore > whiteScore ? `+${whiteScore - blackScore}` : '');
+        $('#bottomMaterialDiff').text(blackScore > whiteScore ? `+${blackScore - whiteScore}` : '');
     }
 }
 
@@ -390,6 +434,10 @@ function showGameOverModal(title, reason, icon = '🏆') {
 
 function updateStatus() {
     const moveColor = game.turn() === 'b' ? 'Siyah' : 'Beyaz';
+
+    // Açılış metnini güncelle
+    const openingText = detectOpening();
+    $('#topOpeningText, #bottomOpeningText').text(openingText);
 
     if (game.in_checkmate()) {
         isGameOver = true;
