@@ -2,7 +2,7 @@ const game = new Chess();
 let selectedSquare = null;
 let pendingMove = null;
 let isFlipped = false;
-let vsBot = true; // Sayfa açılışta ilk seçenek Stockfish Bot
+let vsBot = true;
 let timerInterval = null;
 let selectedTimeInSeconds = 300;
 let whiteTime = 300, blackTime = 300;
@@ -431,7 +431,7 @@ function updateStatus() {
     if (pgnDiv) pgnDiv.scrollTop = pgnDiv.scrollHeight;
 }
 
-// OYUN MODU DEĞİŞTİRME (Stockfish / 2 Kişilik)
+// OYUN MODU DEĞİŞTİRME
 $('#modePvP').on('click', function() {
     vsBot = false;
     $('#botEloWrapper').addClass('hidden');
@@ -451,7 +451,7 @@ $('#modeBot').on('click', function() {
     }
 });
 
-// MOBİL ALT BAR BUTON AKSİYONLARI
+// MOBİL BUTON DİNLEYİCİLERİ
 $('#mobileToggleModeBtn').on('click', function() {
     if (vsBot) {
         $('#modePvP').click();
@@ -496,7 +496,11 @@ function resetGame() {
     updateStatus();
 }
 
-$('#resetBtn, #modalResetBtn').on('click', resetGame);
+$('#resetBtn, #modalResetBtn, #mobileResetBtn').on('click', function(e) {
+    e.preventDefault();
+    resetGame();
+});
+
 $('#closeModalBtn').on('click', () => $('#gameOverModal').addClass('hidden'));
 
 initStockfish();

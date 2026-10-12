@@ -13,7 +13,7 @@
 
 <body class="bg-[#09090b] text-white min-h-screen flex flex-col md:flex-row overflow-x-hidden font-sans relative">
 
-    <!-- MOBİL ÜST BAR (Hamburger Butonu Yok) -->
+    <!-- MOBİL ÜST BAR -->
     <header class="md:hidden bg-[#121215] border-b border-zinc-800/80 px-4 py-2.5 flex items-center justify-between z-30 flex-shrink-0">
         <div class="flex items-center gap-2.5">
             <img src="icon-512.png" alt="ZATOI" class="w-8 h-8 object-contain rounded-lg border border-red-900/50" onerror="this.style.display='none'; $('#mobileLogoFallback').removeClass('hidden');">
@@ -21,7 +21,7 @@
             <span class="font-extrabold text-base text-red-600 tracking-wider">ZATO<span class="text-white">CHESS</span></span>
         </div>
         <div class="flex items-center gap-2">
-            <button id="mobileQuickLogin" class="text-xs bg-blue-600 hover:bg-blue-500 font-bold px-3 py-1.5 rounded-lg text-white transition">Giriş Yap</button>
+            <button id="mobileQuickLogin" class="text-xs bg-blue-600 hover:bg-blue-500 font-bold px-3.5 py-1.5 rounded-lg text-white transition active:scale-95">Giriş Yap</button>
         </div>
     </header>
 
@@ -181,29 +181,21 @@
         </section>
     </main>
 
-    <!-- MOBİL SAĞA-SOLA KAYDIRILABİLİR ALT BAR (Horizontal Scrollable Bottom Bar) -->
-    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-[#121215] border-t border-zinc-800 overflow-x-auto flex items-center py-2 px-4 gap-6 z-30 no-scrollbar whitespace-nowrap">
-        <a href="#" class="flex flex-col items-center gap-1 text-blue-500 font-bold text-[11px] flex-shrink-0">
-            <span class="text-lg">♟</span>
-            <span>Oyna</span>
-        </a>
-        <a href="#" id="mobileLoginBtn" class="flex flex-col items-center gap-1 text-zinc-300 font-semibold text-[11px] flex-shrink-0">
-            <span class="text-lg">🔑</span>
-            <span>Giriş Yap</span>
-        </a>
-        <a href="#" id="mobileRegisterBtn" class="flex flex-col items-center gap-1 text-zinc-300 font-semibold text-[11px] flex-shrink-0">
-            <span class="text-lg">✨</span>
-            <span>Kayıt Ol</span>
-        </a>
-        <button id="mobileFlipBtn" class="flex flex-col items-center gap-1 text-zinc-400 font-medium text-[11px] flex-shrink-0">
-            <span class="text-lg">🔄</span>
-            <span>Çevir</span>
+    <!-- MOBİL KAYDIRILABİLİR ALT BAR (Aksiyon Odaklı) -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-[#121215] border-t border-zinc-800 overflow-x-auto flex items-center py-2 px-5 gap-7 z-30 no-scrollbar whitespace-nowrap">
+        <button id="mobileResetBtn" class="flex flex-col items-center gap-1 text-red-500 font-bold text-[11px] flex-shrink-0 active:scale-95 transition-transform">
+            <span class="text-lg">➕</span>
+            <span>Yeni Oyun</span>
         </button>
-        <button id="mobileUndoBtn" class="flex flex-col items-center gap-1 text-zinc-400 font-medium text-[11px] flex-shrink-0">
+        <button id="mobileUndoBtn" class="flex flex-col items-center gap-1 text-zinc-300 font-medium text-[11px] flex-shrink-0 active:scale-95 transition-transform">
             <span class="text-lg">↩️</span>
             <span>Geri Al</span>
         </button>
-        <button id="mobileToggleModeBtn" class="flex flex-col items-center gap-1 text-zinc-400 font-medium text-[11px] flex-shrink-0">
+        <button id="mobileFlipBtn" class="flex flex-col items-center gap-1 text-zinc-300 font-medium text-[11px] flex-shrink-0 active:scale-95 transition-transform">
+            <span class="text-lg">🔄</span>
+            <span>Çevir</span>
+        </button>
+        <button id="mobileToggleModeBtn" class="flex flex-col items-center gap-1 text-zinc-300 font-medium text-[11px] flex-shrink-0 active:scale-95 transition-transform">
             <span class="text-lg">🤖</span>
             <span id="mobileModeText">Stockfish</span>
         </button>

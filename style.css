@@ -112,7 +112,7 @@ aside.collapsed .nav-item {
     scrollbar-width: none;
 }
 
-/* 📱 MOBİL UYUM */
+/* 📱 SADECE MOBİL İÇİN DÜZENLEMELER */
 @media (max-width: 768px) {
     body {
         height: 100dvh;
@@ -137,5 +137,10 @@ aside.collapsed .nav-item {
 
     #topPlayerCard, #bottomPlayerCard {
         padding: 0.4rem 0.6rem !important;
+    }
+
+    /* Mobilde kartlarda saat durduğu için alt paneldeki saat kutusunu gizliyoruz */
+    #timerWrapper {
+        display: none !important;
     }
 }
