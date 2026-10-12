@@ -35,7 +35,10 @@ $('#logoToggleBtn').on('click', function() {
 
 function initStockfish() {
     try {
-        stockfishWorker = new Worker('https://cdnjs.cloudflare.com/ajax/libs/stockfish.js/10.0.2/stockfish.js');
+        // CORS engelini aşmak için Worker'ı Blob içinde sarmalayarak başlatıyoruz
+        const workerCode = "importScripts('https://cdnjs.cloudflare.com/ajax/libs/stockfish.js/10.0.2/stockfish.js');";
+        const blob = new Blob([workerCode], { type: 'application/javascript' });
+        stockfishWorker = new Worker(URL.createObjectURL(blob));
 
         stockfishWorker.onmessage = function (event) {
             const message = event.data;
@@ -56,6 +59,11 @@ function initStockfish() {
                     }
                 }
             }
+        };
+
+        stockfishWorker.onerror = function (err) {
+            console.error("Stockfish Worker Hatası:", err);
+            isEngineThinking = false;
         };
     } catch (e) {
         console.error("Stockfish başlatılamadı:", e);
@@ -151,7 +159,7 @@ function updatePlayerCards() {
         $('#bottomCapturedPieces').html(drawIcons(blackCaptured, false));
 
         $('#topMaterialDiff').text(whiteScore > blackScore ? `+${whiteScore - blackScore}` : '');
-        $('#bottomMaterialDiff').text(blackScore > whiteScore ? `+${blackScore - whiteScore}` : '');
+        $('#bottomMaterialDiff').text(blackScore > whiteScore ? `+${whiteScore - blackScore}` : '');
     }
 }
 
