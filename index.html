@@ -14,14 +14,15 @@
 <body class="bg-[#09090b] text-white min-h-screen flex flex-col md:flex-row overflow-x-hidden font-sans relative">
 
     <!-- MOBİL ÜST BAR -->
-    <header class="md:hidden bg-[#121215] border-b border-zinc-800/80 px-4 py-2.5 flex items-center justify-between z-30 flex-shrink-0">
-        <div class="flex items-center gap-2.5">
-            <img src="icon-512.png" alt="ZATOI" class="w-8 h-8 object-contain rounded-lg border border-red-900/50" onerror="this.style.display='none'; $('#mobileLogoFallback').removeClass('hidden');">
-            <div id="mobileLogoFallback" class="hidden w-8 h-8 bg-red-700 rounded-lg flex items-center justify-center font-black text-base text-white">Z</div>
-            <span class="font-extrabold text-base text-red-600 tracking-wider">ZATO<span class="text-white">CHESS</span></span>
-        </div>
+    <header class="md:hidden bg-[#121215] border-b border-zinc-800/80 px-3 py-2.5 flex items-center justify-between z-30 flex-shrink-0">
         <div class="flex items-center gap-2">
-            <button id="mobileQuickLogin" class="text-xs bg-blue-600 hover:bg-blue-500 font-bold px-3.5 py-1.5 rounded-lg text-white transition active:scale-95">Giriş Yap</button>
+            <img src="icon-512.png" alt="ZATOI" class="w-7 h-7 object-contain rounded-lg border border-red-900/50" onerror="this.style.display='none'; $('#mobileLogoFallback').removeClass('hidden');">
+            <div id="mobileLogoFallback" class="hidden w-7 h-7 bg-red-700 rounded-lg flex items-center justify-center font-black text-sm text-white">Z</div>
+            <span class="font-extrabold text-sm text-red-600 tracking-wider">ZATO<span class="text-white">CHESS</span></span>
+        </div>
+        <div class="flex items-center gap-1.5">
+            <button id="mobileQuickLogin" class="text-xs bg-blue-600 hover:bg-blue-500 font-bold px-2.5 py-1.5 rounded-lg text-white transition active:scale-95 shadow-sm">Giriş Yap</button>
+            <button id="mobileQuickRegister" class="text-xs bg-red-700 hover:bg-red-600 font-bold px-2.5 py-1.5 rounded-lg text-white transition active:scale-95 shadow-sm">Kayıt Ol</button>
         </div>
     </header>
 
