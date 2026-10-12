@@ -56,7 +56,7 @@
             background-color: rgba(37, 99, 235, 0.12) !important;
         }
 
-        /* YENİ: Sadece 4 Köşeyi Vurgulayan Minimalist Belirteç */
+        /* 4 Köşeyi Vurgulayan Minimalist Son Hamle Belirteci */
         #board > div.last-move-highlight::before {
             content: '';
             position: absolute;
@@ -101,8 +101,9 @@
     <aside class="w-16 md:w-60 bg-[#121215] border-r border-zinc-800/80 flex flex-col justify-between p-3.5 select-none flex-shrink-0 z-10">
         <div class="space-y-6">
             <div class="flex items-center gap-3 px-2 py-1">
-                <div class="w-9 h-9 bg-red-700 rounded-lg flex items-center justify-center font-black text-xl text-white shadow-lg">Z</div>
-                <span class="hidden md:inline font-extrabold text-lg tracking-wider text-blue-500">ZATO<span class="text-white">CHESS</span></span>
+                <img id="zatoiLogo" src="icon-512.png" alt="ZATOI" class="w-10 h-10 object-contain rounded-lg shadow-lg border border-red-900/50" onerror="this.style.display='none'; $('#logoFallback').removeClass('hidden');">
+                <div id="logoFallback" class="hidden w-10 h-10 bg-red-700 rounded-lg flex items-center justify-center font-black text-xl text-white shadow-lg">Z</div>
+                <span class="hidden md:inline font-extrabold text-lg tracking-wider text-red-600">ZATO<span class="text-white">CHESS</span></span>
             </div>
 
             <nav class="space-y-1">
@@ -201,7 +202,7 @@
                     <span id="status" class="text-xs font-semibold px-3 py-1 rounded-full bg-blue-950 text-blue-400 border border-blue-800/50 whitespace-nowrap">Sıra: Beyaz</span>
                 </div>
 
-                <!-- OTOMATİK AÇILIŞ OKUYUCU ROZETİ -->
+                <!-- AÇILIŞ ROZETİ -->
                 <div id="openingCard" class="bg-[#09090b] px-3 py-2 rounded-xl border border-blue-900/40 text-xs flex items-center justify-between">
                     <span class="text-zinc-400 font-medium text-[11px]">📖 Açılış:</span>
                     <span id="openingName" class="text-blue-400 font-bold text-[11px] truncate max-w-[170px]">Açılış Hamleleri Bekleniyor</span>
@@ -222,9 +223,22 @@
                     </select>
                 </div>
 
-                <div id="timerWrapper" class="flex justify-between items-center bg-[#09090b] px-3 py-2 rounded-xl border border-zinc-800/60 text-xs">
-                    <div class="text-zinc-400">⏱️ Beyaz: <span id="whiteTimer" class="font-mono text-white font-bold">--:--</span></div>
-                    <div class="text-zinc-400">Siyah: <span id="blackTimer" class="font-mono text-white font-bold">--:--</span></div>
+                <!-- ZAMAN TEMPOSU VE SÜRELER -->
+                <div id="timeControlWrapper" class="space-y-1.5">
+                    <div class="flex justify-between items-center bg-[#09090b] px-3 py-1.5 rounded-xl border border-zinc-800/60 text-xs">
+                        <span class="text-zinc-400 font-medium">Zaman Temposu:</span>
+                        <select id="timeSelect" class="bg-[#121215] text-emerald-400 font-bold px-2 py-1 rounded border border-zinc-700 outline-none cursor-pointer">
+                            <option value="60">⚡ 1 Dakika (Bullet)</option>
+                            <option value="180">⚡ 3 Dakika (Blitz)</option>
+                            <option value="300" selected>⏱️ 5 Dakika (Blitz)</option>
+                            <option value="600">⏳ 10 Dakika (Rapid)</option>
+                        </select>
+                    </div>
+
+                    <div id="timerWrapper" class="flex justify-between items-center bg-[#09090b] px-3 py-2 rounded-xl border border-zinc-800/60 text-xs">
+                        <div class="text-zinc-400">⏱️ Beyaz: <span id="whiteTimer" class="font-mono text-white font-bold">05:00</span></div>
+                        <div class="text-zinc-400">Siyah: <span id="blackTimer" class="font-mono text-white font-bold">05:00</span></div>
+                    </div>
                 </div>
 
                 <div id="liveReviewBanner" class="hidden bg-amber-950/60 border border-amber-800/60 text-amber-300 p-2 rounded-xl text-xs flex justify-between items-center">
@@ -244,7 +258,7 @@
                 </div>
 
                 <h3 class="text-xs uppercase tracking-wider text-zinc-500 font-bold pt-1">Hamle Geçmişi</h3>
-                <div id="pgn" class="h-28 lg:h-32 overflow-y-auto bg-[#09090b] p-3 rounded-xl border border-zinc-800/60 text-xs font-mono text-zinc-400 leading-relaxed"></div>
+                <div id="pgn" class="h-24 lg:h-28 overflow-y-auto bg-[#09090b] p-3 rounded-xl border border-zinc-800/60 text-xs font-mono text-zinc-400 leading-relaxed"></div>
             </div>
 
             <div id="analysisNav" class="hidden space-y-2 pt-3 border-t border-zinc-800">
@@ -322,14 +336,21 @@
         let isFlipped = false;
         let vsBot = true;
         let timerInterval = null;
+        let selectedTimeInSeconds = 300;
         let whiteTime = 300, blackTime = 300;
         let stockfishWorker = null;
+
+        // CRITICAL RACE CONDITION & STATE LOCK FLAGS
+        let currentSessionId = 0; // Her yeni oyunda artar, eski Stockfish isteklerini engeller
+        let isEngineThinking = false;
+        let isGameOver = false;
 
         let liveReviewIdx = -1;
         let isAnalysisMode = false;
         let moveHistoryList = [];
         let currentAnalysisIdx = -1;
         let currentBestMove = null;
+        let detectedOpeningName = "Açılış Hamleleri Bekleniyor";
 
         const pieceSVG = {
             K: 'https://images.chesscomfiles.com/chess-themes/pieces/neo/300/wk.png',
@@ -349,41 +370,54 @@
 
         const pieceValues = { p: 1, n: 3, b: 3, r: 5, q: 9, k: 0 };
 
-        // TEMEL POPÜLER AÇILIŞ DİZİNİ (ECO LITE)
-        const openingBook = {
+        const localOpeningBook = {
+            'e4': 'Kral Piyonu Açılışı',
+            'd4': 'Vezir Piyonu Açılışı',
+            'c4': 'İngiliz Açılışı',
+            'Nf3': 'Réti Açılışı',
             'e4 e5': 'Açık Oyun',
             'e4 e5 Nf3 Nc6 Bc4': 'İtalyan Açılışı',
             'e4 e5 Nf3 Nc6 Bb5': 'İspanyol Açılışı (Ruy Lopez)',
             'e4 c5': 'Sicilya Savunması',
             'e4 e6': 'Fransız Savunması',
             'e4 c6': 'Caro-Kann Savunması',
-            'e4 d6': 'Pirc Savunması',
             'd4 d5': 'Kapalı Oyun',
             'd4 d5 c4': 'Vezir Gambiti',
-            'd4 Nf6 c4 g6': 'Kral Hint Savunması',
-            'd4 Nf6 c4 e6': 'Nimzo-Hint / Bogo-Hint Savunması',
-            'c4': 'İngiliz Açılışı',
-            'Nf3': 'Reti Açılışı'
+            'd4 Nf6 c4 g6': 'Kral Hint Savunması'
         };
 
-        function detectOpening() {
+        function fetchOpeningName() {
             const activeEngine = isAnalysisMode ? analysisGame : (liveReviewIdx !== -1 ? reviewGame : game);
             const history = activeEngine.history();
             if (history.length === 0) {
-                $('#openingName').text('Açılış Bekleniyor');
+                detectedOpeningName = "Açılış Hamleleri Bekleniyor";
+                $('#openingName').text(detectedOpeningName);
                 return;
             }
 
-            let pgnStr = history.slice(0, 6).join(' ');
-            let detected = 'Genel Oyun';
-
-            for (let key in openingBook) {
+            const pgnStr = history.slice(0, 6).join(' ');
+            for (let key in localOpeningBook) {
                 if (pgnStr.startsWith(key)) {
-                    detected = openingBook[key];
+                    detectedOpeningName = localOpeningBook[key];
                 }
             }
+            $('#openingName').text(detectedOpeningName);
 
-            $('#openingName').text(detected);
+            // Sadece ilk 12 hamlede Lichess API çağrısı yap (Gereksiz API spam önleme)
+            if (history.length <= 12) {
+                const fen = encodeURIComponent(activeEngine.fen());
+                $.ajax({
+                    url: `https://explorer.lichess.ovh/masters?fen=${fen}`,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data && data.opening) {
+                            detectedOpeningName = `${data.opening.eco} — ${data.opening.name}`;
+                            $('#openingName').text(detectedOpeningName);
+                        }
+                    }
+                });
+            }
         }
 
         function initStockfish() {
@@ -398,12 +432,14 @@
                     const message = event.data;
                     if (typeof message === 'string') {
                         if (message.startsWith('bestmove')) {
+                            isEngineThinking = false;
                             const moveStr = message.split(' ')[1];
+                            
                             if (isAnalysisMode && moveStr && moveStr !== '(none)') {
                                 currentBestMove = moveStr;
                                 $('#bestMoveText').text(`En İyi Hamle: ${moveStr.substring(0,2)} → ${moveStr.substring(2,4)}`);
                                 drawBestMoveArrow(moveStr.substring(0,2), moveStr.substring(2,4));
-                            } else if (!isAnalysisMode && moveStr && vsBot && game.turn() === 'b' && !game.game_over()) {
+                            } else if (!isAnalysisMode && !isGameOver && moveStr && vsBot && game.turn() === 'b' && !game.game_over()) {
                                 const from = moveStr.substring(0, 2);
                                 const to = moveStr.substring(2, 4);
                                 const promotion = moveStr.length > 4 ? moveStr.substring(4, 5) : 'q';
@@ -413,18 +449,26 @@
                                 playMoveSound(moveObj, targetPiece !== null);
                                 renderBoard();
                                 updateStatus();
-                                updatePlayerCards();
-                                detectOpening();
                             }
                         }
 
-                        if (message.includes('score cp') && isAnalysisMode) {
-                            const parts = message.split(' ');
-                            const cpIdx = parts.indexOf('cp');
-                            if (cpIdx !== -1 && parts[cpIdx + 1]) {
-                                let score = parseInt(parts[cpIdx + 1]);
-                                if (analysisGame.turn() === 'b') score = -score;
-                                updateEvalBar(score);
+                        if (isAnalysisMode) {
+                            if (message.includes('score cp')) {
+                                const parts = message.split(' ');
+                                const cpIdx = parts.indexOf('cp');
+                                if (cpIdx !== -1 && parts[cpIdx + 1]) {
+                                    let score = parseInt(parts[cpIdx + 1]);
+                                    if (analysisGame.turn() === 'b') score = -score;
+                                    updateEvalBar(score, false);
+                                }
+                            } else if (message.includes('score mate')) {
+                                const parts = message.split(' ');
+                                const mateIdx = parts.indexOf('mate');
+                                if (mateIdx !== -1 && parts[mateIdx + 1]) {
+                                    let mateIn = parseInt(parts[mateIdx + 1]);
+                                    if (analysisGame.turn() === 'b') mateIn = -mateIn;
+                                    updateEvalBar(mateIn, true);
+                                }
                             }
                         }
                     }
@@ -434,14 +478,20 @@
             }
         }
 
-        function updateEvalBar(scoreCp) {
-            let evalVal = (scoreCp / 100).toFixed(1);
-            if (evalVal > 0) evalVal = '+' + evalVal;
-            $('#evalScoreText').text(evalVal);
+        function updateEvalBar(score, isMate) {
+            if (isMate) {
+                const text = score > 0 ? `#M${score}` : `-M${Math.abs(score)}`;
+                $('#evalScoreText').text(text);
+                $('#evalBarWhite').css('height', score > 0 ? '98%' : '2%');
+            } else {
+                let evalVal = (score / 100).toFixed(1);
+                if (evalVal > 0) evalVal = '+' + evalVal;
+                $('#evalScoreText').text(evalVal);
 
-            let percentage = 50 + (scoreCp / 15);
-            percentage = Math.max(5, Math.min(95, percentage));
-            $('#evalBarWhite').css('height', percentage + '%');
+                let percentage = 50 + (score / 15);
+                percentage = Math.max(5, Math.min(95, percentage));
+                $('#evalBarWhite').css('height', percentage + '%');
+            }
         }
 
         function drawBestMoveArrow(fromSquare, toSquare) {
@@ -480,12 +530,9 @@
             if (oldLine) oldLine.remove();
         }
 
-        // GERÇEKÇİ KUZEY AHŞAP SATRANÇ SES SENTETİZÖRÜ
         function playMoveSound(moveObj, isCapture) {
             try {
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                
-                // Beyaz gürültü + düşük geçiren filtre ile ahşap tık hissiyatı
                 const bufferSize = ctx.sampleRate * 0.03;
                 const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
                 const data = buffer.getChannelData(0);
@@ -512,12 +559,13 @@
             } catch (e) {}
         }
 
+        // YENEN TAŞLAR & MATERYAL FARKI - DOĞRU OYUNCU EŞLEŞTİRMESİ
         function updatePlayerCards() {
             const activeEngine = isAnalysisMode ? analysisGame : (liveReviewIdx !== -1 ? reviewGame : game);
             const history = activeEngine.history({ verbose: true });
 
-            let whiteCaptured = [];
-            let blackCaptured = [];
+            let whiteCaptured = []; // Beyazın yediği siyah taşlar
+            let blackCaptured = []; // Siyahın yediği beyaz taşlar
             let whiteScore = 0;
             let blackScore = 0;
 
@@ -555,18 +603,21 @@
 
             const drawIcons = (capturedArr, isWhiteCaptures) => {
                 return capturedArr.map(p => {
-                    const key = isWhiteCaptures ? p : p.toUpperCase();
+                    const key = isWhiteCaptures ? p.toLowerCase() : p.toUpperCase();
                     return `<img src="${pieceSVG[key]}" class="w-3.5 h-3.5 object-contain opacity-80 inline-block">`;
                 }).join('');
             };
 
-            if (isFlipped) {
+            // Üst kısımdaki oyuncu siyah ise, yediği beyaz taşlar siyahın kartında gösterilmeli
+            if (!isFlipped) {
+                // Üst: Siyah, Alt: Beyaz
                 $('#topCapturedPieces').html(drawIcons(blackCaptured, false));
                 $('#bottomCapturedPieces').html(drawIcons(whiteCaptured, true));
 
                 $('#topMaterialDiff').text(blackScore > whiteScore ? `+${blackScore - whiteScore}` : '');
                 $('#bottomMaterialDiff').text(whiteScore > blackScore ? `+${whiteScore - blackScore}` : '');
             } else {
+                // Üst: Beyaz, Alt: Siyah
                 $('#topCapturedPieces').html(drawIcons(whiteCaptured, true));
                 $('#bottomCapturedPieces').html(drawIcons(blackCaptured, false));
 
@@ -641,11 +692,15 @@
             }
 
             updatePlayerCards();
-            detectOpening();
+            fetchOpeningName();
         }
 
         function handleMove(from, to) {
-            if (isAnalysisMode) return;
+            if (isAnalysisMode || isGameOver) return;
+            
+            // Bot düşünürken veya Botun sırasında oyuncunun hamle yapmasını kesin olarak engelle
+            if (vsBot && (game.turn() === 'b' || isEngineThinking)) return;
+
             if (liveReviewIdx !== -1) returnToLive();
 
             const movingPiece = game.get(from);
@@ -710,8 +765,9 @@
         });
 
         function triggerStockfishMove() {
-            if (!stockfishWorker) return;
+            if (!stockfishWorker || isGameOver) return;
 
+            isEngineThinking = true;
             const elo = parseInt($('#botElo').val()) || 1400;
             const fen = game.fen();
 
@@ -720,12 +776,15 @@
             if (elo >= 1600) depth = 8;
             if (elo >= 1800) depth = 12;
 
+            stockfishWorker.postMessage('stop'); // Varolan aramayı durdur
             stockfishWorker.postMessage('position fen ' + fen);
             stockfishWorker.postMessage('go depth ' + depth);
         }
 
         $('#board').on('click', 'div[data-square]', function () {
-            if (isAnalysisMode) return;
+            if (isAnalysisMode || isGameOver) return;
+            if (vsBot && (game.turn() === 'b' || isEngineThinking)) return;
+
             const square = $(this).attr('data-square');
 
             if (!selectedSquare) {
@@ -751,9 +810,11 @@
         function startAnalysisMode() {
             isAnalysisMode = true;
             liveReviewIdx = -1;
+            if (stockfishWorker) stockfishWorker.postMessage('stop');
+            
             $('#liveReviewBanner').addClass('hidden');
             $('#gameOverModal').addClass('hidden');
-            $('#modeWrapper, #botEloWrapper, #timerWrapper, #normalControls').addClass('hidden');
+            $('#modeWrapper, #botEloWrapper, #timeControlWrapper, #normalControls').addClass('hidden');
             $('#analysisNav, #evalBarWrapper, #bestMoveCard').removeClass('hidden');
             $('#panelTitle').text('🔍 Maç Analizi');
             $('#status').text('Analiz Modu');
@@ -767,8 +828,10 @@
         function exitAnalysisMode() {
             isAnalysisMode = false;
             clearArrow();
+            if (stockfishWorker) stockfishWorker.postMessage('stop');
+
             $('#analysisNav, #evalBarWrapper, #bestMoveCard').addClass('hidden');
-            $('#modeWrapper, #timerWrapper, #normalControls').removeClass('hidden');
+            $('#modeWrapper, #timeControlWrapper, #normalControls').removeClass('hidden');
             if (vsBot) $('#botEloWrapper').removeClass('hidden');
             $('#panelTitle').text('Canlı Karşılaşma');
             
@@ -789,6 +852,7 @@
             renderAnalysisPGN();
 
             if (stockfishWorker) {
+                stockfishWorker.postMessage('stop');
                 stockfishWorker.postMessage('position fen ' + analysisGame.fen());
                 stockfishWorker.postMessage('go depth 12');
             }
@@ -836,18 +900,21 @@
             }
         };
 
+        // ANALİZ HAMLESİNİ GEÇMİŞE ENTEGRE ETME
         $('#playBestMoveBtn').on('click', function() {
             if (currentBestMove && isAnalysisMode) {
                 const from = currentBestMove.substring(0, 2);
                 const to = currentBestMove.substring(2, 4);
-                const move = analysisGame.move({ from: from, to: to, promotion: 'q' });
-                if (move) {
-                    playMoveSound(move, true);
-                    renderBoard();
-                    if (stockfishWorker) {
-                        stockfishWorker.postMessage('position fen ' + analysisGame.fen());
-                        stockfishWorker.postMessage('go depth 12');
-                    }
+                const moveObj = analysisGame.move({ from: from, to: to, promotion: 'q' });
+                if (moveObj) {
+                    playMoveSound(moveObj, true);
+                    
+                    // Geçmiş listesini güncelle ve mevcut adımı ilerlet
+                    moveHistoryList = moveHistoryList.slice(0, currentAnalysisIdx + 1);
+                    moveHistoryList.push(moveObj);
+                    currentAnalysisIdx++;
+
+                    updateAnalysisBoard();
                 }
             }
         });
@@ -891,14 +958,20 @@
         $('#navEnd').on('click', () => { currentAnalysisIdx = moveHistoryList.length - 1; updateAnalysisBoard(); });
         $('#exitAnalysisBtn').on('click', exitAnalysisMode);
 
+        $('#timeSelect').on('change', function() {
+            selectedTimeInSeconds = parseInt($(this).val()) || 300;
+            resetGame();
+        });
+
         function startTimer() {
             if (timerInterval) clearInterval(timerInterval);
             timerInterval = setInterval(() => {
-                if (game.game_over() || isAnalysisMode) { clearInterval(timerInterval); return; }
+                if (game.game_over() || isAnalysisMode || isGameOver) { clearInterval(timerInterval); return; }
                 if (game.turn() === 'w') {
                     if (whiteTime > 0) {
                         whiteTime--;
                     } else {
+                        isGameOver = true;
                         showGameOverModal('Siyah Kazandı!', 'Beyaz oyuncunun süresi bitti.', '⏳');
                         clearInterval(timerInterval);
                     }
@@ -906,6 +979,7 @@
                     if (blackTime > 0) {
                         blackTime--;
                     } else {
+                        isGameOver = true;
                         showGameOverModal('Beyaz Kazandı!', 'Siyah oyuncunun süresi bitti.', '⏳');
                         clearInterval(timerInterval);
                     }
@@ -921,6 +995,7 @@
         }
 
         function showGameOverModal(title, reason, icon = '🏆') {
+            isGameOver = true;
             $('#modalTitle').text(title);
             $('#modalReason').text(reason);
             $('#modalIcon').text(icon);
@@ -931,6 +1006,7 @@
             const moveColor = game.turn() === 'b' ? 'Siyah' : 'Beyaz';
 
             if (game.in_checkmate()) {
+                isGameOver = true;
                 $('#status').text('Şah Mat!');
                 if (vsBot) {
                     if (game.turn() === 'b') {
@@ -943,6 +1019,7 @@
                     showGameOverModal(`${winner} Kazandı!`, 'Şah mat ile oyun sona erdi.', '🏆');
                 }
             } else if (game.in_draw()) {
+                isGameOver = true;
                 $('#status').text('Berabere');
                 showGameOverModal('Berabere!', 'Oyun beraberlik ile sonuçlandı.', '🤝');
             } else {
@@ -1007,14 +1084,23 @@
         });
 
         function resetGame() {
+            currentSessionId++;
+            if (stockfishWorker) stockfishWorker.postMessage('stop');
+
             game.reset();
             reviewGame.reset();
             liveReviewIdx = -1;
             pendingMove = null;
+            isEngineThinking = false;
+            isGameOver = false;
+
+            detectedOpeningName = "Açılış Hamleleri Bekleniyor";
+            $('#openingName').text(detectedOpeningName);
             $('#liveReviewBanner').addClass('hidden');
             $('#promotionModal').addClass('hidden');
             selectedSquare = null;
-            whiteTime = 300; blackTime = 300;
+            whiteTime = selectedTimeInSeconds;
+            blackTime = selectedTimeInSeconds;
             if (timerInterval) clearInterval(timerInterval);
             $('#gameOverModal').addClass('hidden');
             if (isAnalysisMode) exitAnalysisMode();
@@ -1028,6 +1114,7 @@
         $('#closeModalBtn').on('click', () => $('#gameOverModal').addClass('hidden'));
 
         $('#undoBtn').on('click', function () {
+            if (isGameOver) return;
             if (liveReviewIdx !== -1) returnToLive();
             game.undo();
             if (vsBot) game.undo();
