@@ -17,7 +17,6 @@
             width: 88%;
             height: 88%;
             object-fit: contain;
-            /* Akıcı Taş Kayma Animasyonu */
             transition: transform 0.15s ease-in-out, opacity 0.12s ease;
         }
 
@@ -26,10 +25,10 @@
 
         #board-wrapper {
             position: relative;
-            width: min(78vw, 80vh);
-            height: min(78vw, 80vh);
-            max-width: 720px;
-            max-height: 720px;
+            width: min(78vw, 75vh);
+            height: min(78vw, 75vh);
+            max-width: 680px;
+            max-height: 680px;
         }
 
         #board {
@@ -52,19 +51,23 @@
             min-height: 0;
         }
 
-        /* Seçili Taş Karesi - Şeffaf Zarif Mavi */
         #board > div.selected {
             box-shadow: inset 0 0 0 3px #2563eb !important;
-            background-color: rgba(37, 99, 235, 0.2) !important;
+            background-color: rgba(37, 99, 235, 0.12) !important;
         }
 
-        /* Son Hamle Vurgusu - Çok Şeffaf, Temaya Uyumlu Yumuşak Dokunuş */
-        #board > div.last-move-highlight {
-            background-color: rgba(37, 99, 235, 0.22) !important;
-            box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.35) !important;
+        /* YENİ: Sadece 4 Köşeyi Vurgulayan Minimalist Belirteç */
+        #board > div.last-move-highlight::before {
+            content: '';
+            position: absolute;
+            inset: 2px;
+            border: 2.5px solid #2563eb;
+            opacity: 0.85;
+            pointer-events: none;
+            border-radius: 4px;
         }
 
-        #board > div:hover { filter: brightness(1.05); }
+        #board > div:hover { filter: brightness(1.04); }
 
         .active-move {
             background-color: #2563eb !important;
@@ -73,7 +76,6 @@
             border-radius: 6px;
         }
 
-        /* SVG Ok Katmanı */
         #arrowOverlay {
             position: absolute;
             top: 0;
@@ -86,8 +88,8 @@
 
         @media (max-width: 640px) {
             #board-wrapper {
-                width: min(94vw, 58vh);
-                height: min(94vw, 58vh);
+                width: min(94vw, 54vh);
+                height: min(94vw, 54vh);
             }
         }
     </style>
@@ -139,42 +141,78 @@
     <!-- ANA İÇERİK -->
     <main class="flex-1 flex flex-col lg:flex-row items-center justify-center p-3 lg:p-8 gap-5 lg:gap-8 overflow-y-auto">
         
-        <!-- EVAL BAR + BOARD WRAPPER -->
+        <!-- TAHTA VE OYUNCU KARTLARI -->
         <div class="flex items-center justify-center gap-3 flex-shrink-0">
             <!-- Stockfish Eval Bar -->
-            <div id="evalBarWrapper" class="hidden w-4 h-[min(78vw,80vh)] max-h-[720px] bg-zinc-800 rounded-full overflow-hidden flex flex-col justify-end border border-zinc-700 shadow-lg">
+            <div id="evalBarWrapper" class="hidden w-4 h-[min(78vw,75vh)] max-h-[680px] bg-zinc-800 rounded-full overflow-hidden flex flex-col justify-end border border-zinc-700 shadow-lg">
                 <div id="evalBarWhite" class="w-full bg-white transition-all duration-300" style="height: 50%;"></div>
             </div>
 
-            <!-- Satranç Tahtası ve Ok Katmanı -->
-            <div id="board-wrapper" class="rounded-xl overflow-hidden">
-                <div id="board"></div>
-                <svg id="arrowOverlay">
-                    <defs>
-                        <marker id="arrowhead" markerWidth="6" markerHeight="6" refX="4" refY="3" orient="auto">
-                            <polygon points="0 0, 6 3, 0 6" fill="#22c55e" />
-                        </marker>
-                    </defs>
-                </svg>
+            <div class="flex flex-col gap-2">
+                <!-- ÜST OYUNCU KARTI (Siyah / Rakip) -->
+                <div id="topPlayerCard" class="w-full bg-[#121215] border border-zinc-800/90 rounded-xl p-2.5 flex items-center justify-between text-xs">
+                    <div class="flex items-center gap-2">
+                        <div class="w-7 h-7 bg-zinc-800 border border-zinc-700 rounded-lg flex items-center justify-center font-bold text-zinc-300 text-xs">♟</div>
+                        <div>
+                            <div class="font-bold text-zinc-200 flex items-center gap-1.5">
+                                <span id="topPlayerName">Stockfish Bot</span>
+                                <span id="topPlayerElo" class="text-[10px] text-blue-400 font-semibold bg-blue-950/60 px-1.5 py-0.5 rounded border border-blue-900/50">(1400)</span>
+                            </div>
+                            <div id="topCapturedPieces" class="flex items-center gap-0.5 min-h-[16px] mt-0.5"></div>
+                        </div>
+                    </div>
+                    <div id="topMaterialDiff" class="font-mono font-bold text-emerald-400 text-xs"></div>
+                </div>
+
+                <!-- SATRANÇ TAHTASI -->
+                <div id="board-wrapper" class="rounded-xl overflow-hidden">
+                    <div id="board"></div>
+                    <svg id="arrowOverlay">
+                        <defs>
+                            <marker id="arrowhead" markerWidth="6" markerHeight="6" refX="4" refY="3" orient="auto">
+                                <polygon points="0 0, 6 3, 0 6" fill="#22c55e" />
+                            </marker>
+                        </defs>
+                    </svg>
+                </div>
+
+                <!-- ALT OYUNCU KARTI (Beyaz / Siz) -->
+                <div id="bottomPlayerCard" class="w-full bg-[#121215] border border-zinc-800/90 rounded-xl p-2.5 flex items-center justify-between text-xs">
+                    <div class="flex items-center gap-2">
+                        <div class="w-7 h-7 bg-zinc-100 border border-zinc-300 rounded-lg flex items-center justify-center font-bold text-zinc-900 text-xs">♙</div>
+                        <div>
+                            <div class="font-bold text-zinc-200 flex items-center gap-1.5">
+                                <span id="bottomPlayerName">Siz</span>
+                                <span id="bottomPlayerElo" class="text-[10px] text-zinc-400 font-semibold bg-zinc-900 px-1.5 py-0.5 rounded border border-zinc-800">(1500)</span>
+                            </div>
+                            <div id="bottomCapturedPieces" class="flex items-center gap-0.5 min-h-[16px] mt-0.5"></div>
+                        </div>
+                    </div>
+                    <div id="bottomMaterialDiff" class="font-mono font-bold text-emerald-400 text-xs"></div>
+                </div>
             </div>
         </div>
 
-        <section class="w-full lg:w-80 min-h-[480px] lg:h-[min(78vw,80vh)] max-h-[720px] bg-[#121215] p-5 lg:p-6 rounded-2xl border border-zinc-800/80 shadow-2xl flex flex-col justify-between flex-shrink-0">
+        <!-- SAĞ PANEL -->
+        <section class="w-full lg:w-80 min-h-[480px] lg:h-[min(78vw,75vh)] max-h-[680px] bg-[#121215] p-5 lg:p-6 rounded-2xl border border-zinc-800/80 shadow-2xl flex flex-col justify-between flex-shrink-0">
             <div class="space-y-3">
-                <!-- Üst Panel -->
                 <div class="flex items-center justify-between border-b border-zinc-800 pb-3 gap-2">
                     <h2 id="panelTitle" class="text-base font-bold text-zinc-200">Canlı Karşılaşma</h2>
                     <span id="status" class="text-xs font-semibold px-3 py-1 rounded-full bg-blue-950 text-blue-400 border border-blue-800/50 whitespace-nowrap">Sıra: Beyaz</span>
                 </div>
 
-                <!-- Mod Seçimi -->
-                <div id="modeWrapper" class="flex gap-2 bg-[#09090b] p-1 rounded-xl border border-zinc-800/60 text-xs">
-                    <button id="modePvP" class="flex-1 py-1.5 rounded-lg bg-blue-600 font-bold text-white transition">2 Kişilik</button>
-                    <button id="modeBot" class="flex-1 py-1.5 rounded-lg text-zinc-400 hover:text-white transition">Stockfish Bot</button>
+                <!-- OTOMATİK AÇILIŞ OKUYUCU ROZETİ -->
+                <div id="openingCard" class="bg-[#09090b] px-3 py-2 rounded-xl border border-blue-900/40 text-xs flex items-center justify-between">
+                    <span class="text-zinc-400 font-medium text-[11px]">📖 Açılış:</span>
+                    <span id="openingName" class="text-blue-400 font-bold text-[11px] truncate max-w-[170px]">Açılış Hamleleri Bekleniyor</span>
                 </div>
 
-                <!-- Bot Seviyesi -->
-                <div id="botEloWrapper" class="hidden flex justify-between items-center bg-[#09090b] px-3 py-1.5 rounded-xl border border-zinc-800/60 text-xs">
+                <div id="modeWrapper" class="flex gap-2 bg-[#09090b] p-1 rounded-xl border border-zinc-800/60 text-xs">
+                    <button id="modePvP" class="flex-1 py-1.5 rounded-lg text-zinc-400 hover:text-white transition">2 Kişilik</button>
+                    <button id="modeBot" class="flex-1 py-1.5 rounded-lg bg-blue-600 font-bold text-white transition">Stockfish Bot</button>
+                </div>
+
+                <div id="botEloWrapper" class="flex justify-between items-center bg-[#09090b] px-3 py-1.5 rounded-xl border border-zinc-800/60 text-xs">
                     <span class="text-zinc-400 font-medium">Bot Seviyesi:</span>
                     <select id="botElo" class="bg-[#121215] text-blue-400 font-bold px-2 py-1 rounded border border-zinc-700 outline-none cursor-pointer">
                         <option value="1200">1200 Elo (Acemi)</option>
@@ -184,19 +222,16 @@
                     </select>
                 </div>
 
-                <!-- Süre Göstergeleri -->
                 <div id="timerWrapper" class="flex justify-between items-center bg-[#09090b] px-3 py-2 rounded-xl border border-zinc-800/60 text-xs">
                     <div class="text-zinc-400">⏱️ Beyaz: <span id="whiteTimer" class="font-mono text-white font-bold">--:--</span></div>
                     <div class="text-zinc-400">Siyah: <span id="blackTimer" class="font-mono text-white font-bold">--:--</span></div>
                 </div>
 
-                <!-- CANLI GEÇMİŞ İNCELEME UYARISI -->
                 <div id="liveReviewBanner" class="hidden bg-amber-950/60 border border-amber-800/60 text-amber-300 p-2 rounded-xl text-xs flex justify-between items-center">
                     <span>🔍 Geçmiş Hamle Bakılıyor</span>
                     <button id="returnLiveBtn" class="bg-amber-600 hover:bg-amber-500 text-white font-bold px-2 py-1 rounded text-[10px]">Canlıya Dön</button>
                 </div>
 
-                <!-- STOCKFISH ANALİZ TAVSİYE KARTI -->
                 <div id="bestMoveCard" class="hidden bg-[#09090b] p-3 rounded-xl border border-emerald-900/60 text-xs space-y-1.5">
                     <div class="flex items-center justify-between">
                         <span class="text-emerald-400 font-bold flex items-center gap-1.5">💡 Stockfish Tavsiyesi</span>
@@ -208,12 +243,10 @@
                     </button>
                 </div>
 
-                <!-- Hamle Geçmişi -->
                 <h3 class="text-xs uppercase tracking-wider text-zinc-500 font-bold pt-1">Hamle Geçmişi</h3>
-                <div id="pgn" class="h-32 lg:h-36 overflow-y-auto bg-[#09090b] p-3 rounded-xl border border-zinc-800/60 text-xs font-mono text-zinc-400 leading-relaxed"></div>
+                <div id="pgn" class="h-28 lg:h-32 overflow-y-auto bg-[#09090b] p-3 rounded-xl border border-zinc-800/60 text-xs font-mono text-zinc-400 leading-relaxed"></div>
             </div>
 
-            <!-- ANALİZ NAVİGASYON BUTONLARI -->
             <div id="analysisNav" class="hidden space-y-2 pt-3 border-t border-zinc-800">
                 <div class="grid grid-cols-4 gap-1.5">
                     <button id="navStart" class="bg-zinc-800 hover:bg-zinc-700 text-white font-bold py-2 rounded-lg text-xs transition">⏮️</button>
@@ -226,7 +259,6 @@
                 </button>
             </div>
 
-            <!-- OYUN KONTROL BUTONLARI -->
             <div id="normalControls" class="space-y-2 pt-3 border-t border-zinc-800">
                 <div class="flex gap-2">
                     <button id="flipBtn" class="flex-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-bold py-2 px-3 rounded-xl text-xs transition">🔄 Tahtayı Çevir</button>
@@ -236,6 +268,27 @@
             </div>
         </section>
     </main>
+
+    <!-- PIYON TERFISI MODAL -->
+    <div id="promotionModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-[#121215] border-2 border-zinc-800 rounded-2xl p-5 max-w-xs w-full text-center shadow-2xl space-y-4">
+            <h3 class="text-base font-bold text-white">Terfi Edecek Taşı Seçin</h3>
+            <div class="grid grid-cols-4 gap-2 bg-[#09090b] p-2 rounded-xl border border-zinc-800">
+                <button class="promo-choice hover:bg-blue-600/30 p-2 rounded-lg transition border border-transparent hover:border-blue-500" data-piece="q">
+                    <img id="pImgQ" class="w-12 h-12 object-contain mx-auto" src="" alt="Vezir">
+                </button>
+                <button class="promo-choice hover:bg-blue-600/30 p-2 rounded-lg transition border border-transparent hover:border-blue-500" data-piece="r">
+                    <img id="pImgR" class="w-12 h-12 object-contain mx-auto" src="" alt="Kale">
+                </button>
+                <button class="promo-choice hover:bg-blue-600/30 p-2 rounded-lg transition border border-transparent hover:border-blue-500" data-piece="b">
+                    <img id="pImgB" class="w-12 h-12 object-contain mx-auto" src="" alt="Fil">
+                </button>
+                <button class="promo-choice hover:bg-blue-600/30 p-2 rounded-lg transition border border-transparent hover:border-blue-500" data-piece="n">
+                    <img id="pImgN" class="w-12 h-12 object-contain mx-auto" src="" alt="At">
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- OYUN SONU BİLDİRİM MODAL -->
     <div id="gameOverModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -265,16 +318,14 @@
         const analysisGame = new Chess();
         
         let selectedSquare = null;
+        let pendingMove = null;
         let isFlipped = false;
-        let vsBot = false;
+        let vsBot = true;
         let timerInterval = null;
         let whiteTime = 300, blackTime = 300;
         let stockfishWorker = null;
 
-        // Canlı Oyun İnceleme
         let liveReviewIdx = -1;
-
-        // Analiz Değişkenleri
         let isAnalysisMode = false;
         let moveHistoryList = [];
         let currentAnalysisIdx = -1;
@@ -296,6 +347,45 @@
             p: 'https://images.chesscomfiles.com/chess-themes/pieces/neo/300/bp.png'
         };
 
+        const pieceValues = { p: 1, n: 3, b: 3, r: 5, q: 9, k: 0 };
+
+        // TEMEL POPÜLER AÇILIŞ DİZİNİ (ECO LITE)
+        const openingBook = {
+            'e4 e5': 'Açık Oyun',
+            'e4 e5 Nf3 Nc6 Bc4': 'İtalyan Açılışı',
+            'e4 e5 Nf3 Nc6 Bb5': 'İspanyol Açılışı (Ruy Lopez)',
+            'e4 c5': 'Sicilya Savunması',
+            'e4 e6': 'Fransız Savunması',
+            'e4 c6': 'Caro-Kann Savunması',
+            'e4 d6': 'Pirc Savunması',
+            'd4 d5': 'Kapalı Oyun',
+            'd4 d5 c4': 'Vezir Gambiti',
+            'd4 Nf6 c4 g6': 'Kral Hint Savunması',
+            'd4 Nf6 c4 e6': 'Nimzo-Hint / Bogo-Hint Savunması',
+            'c4': 'İngiliz Açılışı',
+            'Nf3': 'Reti Açılışı'
+        };
+
+        function detectOpening() {
+            const activeEngine = isAnalysisMode ? analysisGame : (liveReviewIdx !== -1 ? reviewGame : game);
+            const history = activeEngine.history();
+            if (history.length === 0) {
+                $('#openingName').text('Açılış Bekleniyor');
+                return;
+            }
+
+            let pgnStr = history.slice(0, 6).join(' ');
+            let detected = 'Genel Oyun';
+
+            for (let key in openingBook) {
+                if (pgnStr.startsWith(key)) {
+                    detected = openingBook[key];
+                }
+            }
+
+            $('#openingName').text(detected);
+        }
+
         function initStockfish() {
             try {
                 const blob = new Blob([
@@ -307,7 +397,6 @@
                 stockfishWorker.onmessage = function (event) {
                     const message = event.data;
                     if (typeof message === 'string') {
-                        // Bot Oyun Hamlesi
                         if (message.startsWith('bestmove')) {
                             const moveStr = message.split(' ')[1];
                             if (isAnalysisMode && moveStr && moveStr !== '(none)') {
@@ -320,14 +409,15 @@
                                 const promotion = moveStr.length > 4 ? moveStr.substring(4, 5) : 'q';
 
                                 const targetPiece = game.get(to);
-                                game.move({ from: from, to: to, promotion: promotion });
-                                playSound(targetPiece !== null);
+                                const moveObj = game.move({ from: from, to: to, promotion: promotion });
+                                playMoveSound(moveObj, targetPiece !== null);
                                 renderBoard();
                                 updateStatus();
+                                updatePlayerCards();
+                                detectOpening();
                             }
                         }
 
-                        // Eval Bar & Skor Hesaplama
                         if (message.includes('score cp') && isAnalysisMode) {
                             const parts = message.split(' ');
                             const cpIdx = parts.indexOf('cp');
@@ -390,27 +480,99 @@
             if (oldLine) oldLine.remove();
         }
 
-        function playSound(isCapture = false) {
+        // GERÇEKÇİ KUZEY AHŞAP SATRANÇ SES SENTETİZÖRÜ
+        function playMoveSound(moveObj, isCapture) {
             try {
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-
-                if (isCapture) {
-                    osc.frequency.setValueAtTime(150, ctx.currentTime);
-                    osc.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.08);
-                    gain.gain.setValueAtTime(0.3, ctx.currentTime);
-                } else {
-                    osc.frequency.setValueAtTime(300, ctx.currentTime);
-                    osc.frequency.exponentialRampToValueAtTime(120, ctx.currentTime + 0.05);
-                    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                
+                // Beyaz gürültü + düşük geçiren filtre ile ahşap tık hissiyatı
+                const bufferSize = ctx.sampleRate * 0.03;
+                const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = Math.random() * 2 - 1;
                 }
 
-                osc.start();
-                osc.stop(ctx.currentTime + 0.08);
+                const noise = ctx.createBufferSource();
+                noise.buffer = buffer;
+
+                const filter = ctx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(isCapture ? 400 : 800, ctx.currentTime);
+
+                const gain = ctx.createGain();
+                gain.gain.setValueAtTime(isCapture ? 0.3 : 0.15, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.03);
+
+                noise.connect(filter);
+                filter.connect(gain);
+                gain.connect(ctx.destination);
+
+                noise.start();
             } catch (e) {}
+        }
+
+        function updatePlayerCards() {
+            const activeEngine = isAnalysisMode ? analysisGame : (liveReviewIdx !== -1 ? reviewGame : game);
+            const history = activeEngine.history({ verbose: true });
+
+            let whiteCaptured = [];
+            let blackCaptured = [];
+            let whiteScore = 0;
+            let blackScore = 0;
+
+            history.forEach(m => {
+                if (m.captured) {
+                    if (m.color === 'w') {
+                        whiteCaptured.push(m.captured);
+                        whiteScore += pieceValues[m.captured] || 0;
+                    } else {
+                        blackCaptured.push(m.captured);
+                        blackScore += pieceValues[m.captured] || 0;
+                    }
+                }
+            });
+
+            if (vsBot) {
+                const elo = $('#botElo').val();
+                if (isFlipped) {
+                    $('#bottomPlayerName').text('Stockfish Bot');
+                    $('#bottomPlayerElo').text(`(${elo})`);
+                    $('#topPlayerName').text('Siz');
+                    $('#topPlayerElo').text('(1500)');
+                } else {
+                    $('#topPlayerName').text('Stockfish Bot');
+                    $('#topPlayerElo').text(`(${elo})`);
+                    $('#bottomPlayerName').text('Siz');
+                    $('#bottomPlayerElo').text('(1500)');
+                }
+            } else {
+                $('#topPlayerName').text('Oyuncu 2 (Siyah)');
+                $('#topPlayerElo').text('(1500)');
+                $('#bottomPlayerName').text('Oyuncu 1 (Beyaz)');
+                $('#bottomPlayerElo').text('(1500)');
+            }
+
+            const drawIcons = (capturedArr, isWhiteCaptures) => {
+                return capturedArr.map(p => {
+                    const key = isWhiteCaptures ? p : p.toUpperCase();
+                    return `<img src="${pieceSVG[key]}" class="w-3.5 h-3.5 object-contain opacity-80 inline-block">`;
+                }).join('');
+            };
+
+            if (isFlipped) {
+                $('#topCapturedPieces').html(drawIcons(blackCaptured, false));
+                $('#bottomCapturedPieces').html(drawIcons(whiteCaptured, true));
+
+                $('#topMaterialDiff').text(blackScore > whiteScore ? `+${blackScore - whiteScore}` : '');
+                $('#bottomMaterialDiff').text(whiteScore > blackScore ? `+${whiteScore - blackScore}` : '');
+            } else {
+                $('#topCapturedPieces').html(drawIcons(whiteCaptured, true));
+                $('#bottomCapturedPieces').html(drawIcons(blackCaptured, false));
+
+                $('#topMaterialDiff').text(whiteScore > blackScore ? `+${whiteScore - blackScore}` : '');
+                $('#bottomMaterialDiff').text(blackScore > whiteScore ? `+${blackScore - whiteScore}` : '');
+            }
         }
 
         function renderBoard() {
@@ -464,7 +626,6 @@
                         $square.addClass('selected');
                     }
 
-                    // Dinamik ve Şeffaf Son Hamle Vurgulaması
                     if (lastMove && (squareName === lastMove.from || squareName === lastMove.to)) {
                         $square.addClass('last-move-highlight');
                     }
@@ -478,20 +639,35 @@
                     $board.append($square);
                 }
             }
+
+            updatePlayerCards();
+            detectOpening();
         }
 
         function handleMove(from, to) {
             if (isAnalysisMode) return;
+            if (liveReviewIdx !== -1) returnToLive();
 
-            if (liveReviewIdx !== -1) {
-                returnToLive();
+            const movingPiece = game.get(from);
+            const isWhite = game.turn() === 'w';
+
+            if (movingPiece && movingPiece.type === 'p') {
+                if ((isWhite && to.charAt(1) === '8') || (!isWhite && to.charAt(1) === '1')) {
+                    pendingMove = { from: from, to: to };
+                    openPromotionModal(isWhite ? 'w' : 'b');
+                    return;
+                }
             }
 
-            const targetPiece = game.get(to);
-            const move = game.move({ from: from, to: to, promotion: 'q' });
+            executeMove(from, to, 'q');
+        }
 
-            if (move !== null) {
-                playSound(targetPiece !== null);
+        function executeMove(from, to, promoPiece) {
+            const targetPiece = game.get(to);
+            const moveObj = game.move({ from: from, to: to, promotion: promoPiece });
+
+            if (moveObj !== null) {
+                playMoveSound(moveObj, targetPiece !== null);
                 selectedSquare = null;
                 renderBoard();
                 updateStatus();
@@ -510,6 +686,28 @@
                 renderBoard();
             }
         }
+
+        function openPromotionModal(color) {
+            const qKey = color === 'w' ? 'Q' : 'q';
+            const rKey = color === 'w' ? 'R' : 'r';
+            const bKey = color === 'w' ? 'B' : 'b';
+            const nKey = color === 'w' ? 'N' : 'n';
+
+            $('#pImgQ').attr('src', pieceSVG[qKey]);
+            $('#pImgR').attr('src', pieceSVG[rKey]);
+            $('#pImgB').attr('src', pieceSVG[bKey]);
+            $('#pImgN').attr('src', pieceSVG[nKey]);
+
+            $('#promotionModal').removeClass('hidden');
+        }
+
+        $('.promo-choice').on('click', function() {
+            const chosenPiece = $(this).attr('data-piece');$('#promotionModal').addClass('hidden');
+            if (pendingMove) {
+                executeMove(pendingMove.from, pendingMove.to, chosenPiece);
+                pendingMove = null;
+            }
+        });
 
         function triggerStockfishMove() {
             if (!stockfishWorker) return;
@@ -550,7 +748,6 @@
 
         $('#returnLiveBtn').on('click', returnToLive);
 
-        // ANALİZ MODU
         function startAnalysisMode() {
             isAnalysisMode = true;
             liveReviewIdx = -1;
@@ -645,7 +842,7 @@
                 const to = currentBestMove.substring(2, 4);
                 const move = analysisGame.move({ from: from, to: to, promotion: 'q' });
                 if (move) {
-                    playSound(true);
+                    playMoveSound(move, true);
                     renderBoard();
                     if (stockfishWorker) {
                         stockfishWorker.postMessage('position fen ' + analysisGame.fen());
@@ -784,16 +981,20 @@
             vsBot = false;
             $('#botEloWrapper').addClass('hidden');
             $(this).addClass('bg-blue-600 text-white').removeClass('text-zinc-400');$('#modeBot').removeClass('bg-blue-600 text-white').addClass('text-zinc-400');
+            updatePlayerCards();
         });
 
         $('#modeBot').on('click', function() {
             vsBot = true;
             $('#botEloWrapper').removeClass('hidden');
             $(this).addClass('bg-blue-600 text-white').removeClass('text-zinc-400');$('#modePvP').removeClass('bg-blue-600 text-white').addClass('text-zinc-400');
+            updatePlayerCards();
             if (game.turn() === 'b' && !game.game_over()) {
                 triggerStockfishMove();
             }
         });
+
+        $('#botElo').on('change', updatePlayerCards);
 
         $('#flipBtn').on('click', function () {
             isFlipped = !isFlipped;
@@ -809,7 +1010,9 @@
             game.reset();
             reviewGame.reset();
             liveReviewIdx = -1;
+            pendingMove = null;
             $('#liveReviewBanner').addClass('hidden');
+            $('#promotionModal').addClass('hidden');
             selectedSquare = null;
             whiteTime = 300; blackTime = 300;
             if (timerInterval) clearInterval(timerInterval);
