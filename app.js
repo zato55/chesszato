@@ -441,18 +441,21 @@ function updateStatus() {
 }
 
 // OYUN MODU DEĞİŞTİRME
-$('#modePvP').on('click', function() {
+$('#modePvP, #mModePvP').on('click', function() {
     vsBot = false;
-    $('#botEloWrapper').addClass('hidden');
-    $(this).addClass('bg-blue-600 text-white').removeClass('text-zinc-400');$('#modeBot').removeClass('bg-blue-600 text-white').addClass('text-zinc-400');
+    $('#botEloWrapper, #mBotLevelWrapper').addClass('hidden');
+    $('#modePvP, #mModePvP').addClass('bg-blue-600 text-white').removeClass('text-zinc-400');
+    $('#modeBot, #mModeBot').removeClass('bg-blue-600 text-white').addClass('text-zinc-400');
     $('#mobileModeText').text('2 Kişilik');
     updatePlayerCards();
+    $('#botModal').addClass('hidden');
 });
 
-$('#modeBot').on('click', function() {
+$('#modeBot, #mModeBot').on('click', function() {
     vsBot = true;
-    $('#botEloWrapper').removeClass('hidden');
-    $(this).addClass('bg-blue-600 text-white').removeClass('text-zinc-400');$('#modePvP').removeClass('bg-blue-600 text-white').addClass('text-zinc-400');
+    $('#botEloWrapper, #mBotLevelWrapper').removeClass('hidden');
+    $('#modeBot, #mModeBot').addClass('bg-blue-600 text-white').removeClass('text-zinc-400');
+    $('#modePvP, #mModePvP').removeClass('bg-blue-600 text-white').addClass('text-zinc-400');
     $('#mobileModeText').text('Stockfish');
     updatePlayerCards();
     if (game.turn() === 'b' && !game.game_over()) {
@@ -460,13 +463,38 @@ $('#modeBot').on('click', function() {
     }
 });
 
-// HIZLI VE SABİT BUTON DİNLEYİCİLERİ
-$('#mobileToggleModeBtn').on('click', function() {
-    if (vsBot) {
-        $('#modePvP').click();
-    } else {
-        $('#modeBot').click();
+// MOBİL POPUP MODAL AÇMA / KAPATMA İŞLEMLERİ
+$('#mobileTempoModalBtn').on('click', function(e) {
+    e.preventDefault();
+    $('#tempoModal').removeClass('hidden');
+});
+
+$('#mobileBotModalBtn').on('click', function(e) {
+    e.preventDefault();
+    $('#botModal').removeClass('hidden');
+});
+
+$('.close-modal-btn, #tempoModal, #botModal').on('click', function(e) {
+    if (e.target === this || $(e.target).hasClass('close-modal-btn')) {$('#tempoModal, #botModal').addClass('hidden');
     }
+});
+
+// MOBİL TEMPO SEÇİMİ
+$('.tempo-option-btn').on('click', function() {
+    const timeVal = parseInt($(this).attr('data-time'));
+    selectedTimeInSeconds = timeVal;
+    $('#timeSelect').val(timeVal);
+    $('.tempo-option-btn').removeClass('border-emerald-500 active-tempo').addClass('border-zinc-800');
+    $(this).addClass('border-emerald-500 active-tempo');$('#tempoModal').addClass('hidden');
+    resetGame();
+});
+
+// MOBİL BOT ZORLUK SEVİYESİ SEÇİMİ
+$('.bot-level-btn').on('click', function() {
+    const eloVal = $(this).attr('data-elo');$('#botElo').val(eloVal);
+    $('.bot-level-btn').removeClass('border-blue-600/80').addClass('border-zinc-800');$(this).addClass('border-blue-600/80');
+    updatePlayerCards();
+    $('#botModal').addClass('hidden');
 });
 
 $('#quickFlipBtn, #flipBtn').on('click', function (e) {

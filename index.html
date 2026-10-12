@@ -125,7 +125,7 @@
                     </div>
                 </div>
 
-                <!-- MOBİL HIZLI KONTROL ÇUBUĞU (Oyuncu Kartının Altındaki Boşluğu Dolduran Alan) -->
+                <!-- MOBİL HIZLI KONTROL ÇUBUĞU -->
                 <div class="md:hidden w-full bg-[#121215] border border-zinc-800/90 rounded-xl p-1.5 flex items-center justify-around gap-1 shadow-md text-xs">
                     <button id="quickResetBtn" class="flex-1 bg-red-950/40 hover:bg-red-900/60 border border-red-900/50 text-red-400 font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 active:scale-95 transition">
                         <span>➕</span> <span>Yeni</span>
@@ -147,7 +147,7 @@
             </div>
         </div>
 
-        <!-- SAĞ PANEL (Masaüstü İçin) -->
+        <!-- SAĞ PANEL (Masaüstü) -->
         <section id="desktopPanel" class="w-full lg:w-80 min-h-[380px] lg:h-[min(78vw,75vh)] max-h-[680px] bg-[#121215] p-4 sm:p-5 lg:p-6 rounded-2xl border border-zinc-800/80 shadow-2xl flex flex-col justify-between flex-shrink-0">
             <div class="space-y-3">
                 <div class="flex items-center justify-between border-b border-zinc-800 pb-3 gap-2">
@@ -201,25 +201,80 @@
         </section>
     </main>
 
-    <!-- SABİT ALT NAVİGASYON BAR (Ana Uygulama Menüsü) -->
+    <!-- SABİT ALT NAVİGASYON BAR -->
     <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-[#121215] border-t border-zinc-800 flex justify-around items-center py-2 px-3 z-30">
         <a href="#" class="flex flex-col items-center gap-1 text-blue-500 font-bold text-[10px]">
             <span class="text-base">♟</span>
             <span>Oyna</span>
         </a>
-        <button id="mobileToggleModeBtn" class="flex flex-col items-center gap-1 text-zinc-400 font-medium text-[10px]">
+        <button id="mobileBotModalBtn" class="flex flex-col items-center gap-1 text-zinc-400 font-medium text-[10px]">
             <span class="text-base">🤖</span>
             <span id="mobileModeText">Stockfish</span>
         </button>
-        <a href="#" onclick="$('#timeSelect').focus();" class="flex flex-col items-center gap-1 text-zinc-400 font-medium text-[10px]">
+        <button id="mobileTempoModalBtn" class="flex flex-col items-center gap-1 text-zinc-400 font-medium text-[10px]">
             <span class="text-base">⏱️</span>
             <span>Tempo</span>
-        </a>
+        </button>
         <a href="#" class="flex flex-col items-center gap-1 text-zinc-400 font-medium text-[10px]">
             <span class="text-base">⚙️</span>
             <span>Ayarlar</span>
         </a>
     </nav>
+
+    <!-- MOBİL TEMPO SEÇİM POPUP MODAL -->
+    <div id="tempoModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-end justify-center p-0 md:p-4">
+        <div class="bg-[#121215] border-t-2 md:border-2 border-zinc-800 rounded-t-3xl md:rounded-3xl p-6 w-full max-w-sm space-y-4 animate-in slide-in-from-bottom duration-200">
+            <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
+                <h3 class="text-base font-bold text-white flex items-center gap-2">⏱️ Zaman Temposu Seç</h3>
+                <button class="close-modal-btn text-zinc-400 hover:text-white text-lg font-bold p-1">✕</button>
+            </div>
+            <div class="space-y-2">
+                <button class="tempo-option-btn w-full bg-[#09090b] hover:bg-zinc-800 border border-zinc-800 hover:border-emerald-500 p-3 rounded-xl flex items-center justify-between text-sm transition" data-time="60">
+                    <span class="font-bold text-white">⚡ Bullet</span>
+                    <span class="text-emerald-400 font-mono font-bold">1 Dakika</span>
+                </button>
+                <button class="tempo-option-btn w-full bg-[#09090b] hover:bg-zinc-800 border border-zinc-800 hover:border-emerald-500 p-3 rounded-xl flex items-center justify-between text-sm transition" data-time="180">
+                    <span class="font-bold text-white">⚡ Blitz</span>
+                    <span class="text-emerald-400 font-mono font-bold">3 Dakika</span>
+                </button>
+                <button class="tempo-option-btn w-full bg-[#09090b] hover:bg-zinc-800 border border-zinc-800 hover:border-emerald-500 p-3 rounded-xl flex items-center justify-between text-sm transition active-tempo" data-time="300">
+                    <span class="font-bold text-white">⏱️ Blitz</span>
+                    <span class="text-emerald-400 font-mono font-bold">5 Dakika</span>
+                </button>
+                <button class="tempo-option-btn w-full bg-[#09090b] hover:bg-zinc-800 border border-zinc-800 hover:border-emerald-500 p-3 rounded-xl flex items-center justify-between text-sm transition" data-time="600">
+                    <span class="font-bold text-white">⏳ Rapid</span>
+                    <span class="text-emerald-400 font-mono font-bold">10 Dakika</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MOBİL BOT SEVİYESİ VE MOD SEÇİM POPUP MODAL -->
+    <div id="botModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-end justify-center p-0 md:p-4">
+        <div class="bg-[#121215] border-t-2 md:border-2 border-zinc-800 rounded-t-3xl md:rounded-3xl p-6 w-full max-w-sm space-y-4 animate-in slide-in-from-bottom duration-200">
+            <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
+                <h3 class="text-base font-bold text-white flex items-center gap-2">🤖 Oyun Modu ve Seviye</h3>
+                <button class="close-modal-btn text-zinc-400 hover:text-white text-lg font-bold p-1">✕</button>
+            </div>
+            
+            <div class="space-y-3">
+                <div class="grid grid-cols-2 gap-2 bg-[#09090b] p-1 rounded-xl border border-zinc-800">
+                    <button id="mModeBot" class="py-2 rounded-lg bg-blue-600 font-bold text-xs text-white transition">Stockfish Bot</button>
+                    <button id="mModePvP" class="py-2 rounded-lg text-zinc-400 hover:text-white text-xs font-semibold transition">2 Kişilik (Yerel)</button>
+                </div>
+
+                <div id="mBotLevelWrapper" class="space-y-1.5 pt-2">
+                    <label class="text-xs text-zinc-400 font-medium">Bot Zorluk Seviyesi:</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button class="bot-level-btn p-2.5 bg-[#09090b] hover:bg-zinc-800 border border-zinc-800 rounded-xl text-xs font-bold text-blue-400 text-center transition" data-elo="1200">1200 Elo (Acemi)</button>
+                        <button class="bot-level-btn p-2.5 bg-[#09090b] hover:bg-zinc-800 border border-blue-600/80 rounded-xl text-xs font-bold text-blue-400 text-center transition" data-elo="1400">1400 Elo (Orta)</button>
+                        <button class="bot-level-btn p-2.5 bg-[#09090b] hover:bg-zinc-800 border border-zinc-800 rounded-xl text-xs font-bold text-blue-400 text-center transition" data-elo="1600">1600 Elo (İleri)</button>
+                        <button class="bot-level-btn p-2.5 bg-[#09090b] hover:bg-zinc-800 border border-zinc-800 rounded-xl text-xs font-bold text-blue-400 text-center transition" data-elo="1800">1800 Elo (Usta)</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- PIYON TERFISI MODAL -->
     <div id="promotionModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
