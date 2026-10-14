@@ -60,7 +60,12 @@
     <main class="flex-1 flex flex-col lg:flex-row items-center justify-center p-2 sm:p-4 lg:p-8 gap-2 lg:gap-8 overflow-y-auto pb-20 md:pb-8">
         
         <!-- TAHTA VE OYUNCU KARTLARI -->
-        <div class="flex items-center justify-center gap-2 sm:gap-3 flex-shrink-0 w-full max-w-[680px]">
+        <div class="flex items-center justify-center gap-2 sm:gap-3 flex-shrink-0 w-full max-w-[720px]">
+            <!-- EVAL BAR -->
+            <div id="evalBarWrapper" class="hidden eval-bar-wrapper">
+                <div id="evalBarWhite" class="eval-bar-white" style="height: 50%;"></div>
+            </div>
+
             <div class="flex flex-col gap-1.5 sm:gap-2 w-full items-center">
                 
                 <!-- MOBİL YATAY HAMLE ŞERİDİ -->
@@ -125,8 +130,43 @@
                     </div>
                 </div>
 
+                <!-- ✅ MOBİL ANALİZ PANELİ (yeni) -->
+                <div id="mobileAnalysisPanel" class="hidden md:hidden w-full space-y-2 mt-1">
+                    <!-- Değerlendirme -->
+                    <div class="bg-[#09090b] px-3 py-2 rounded-xl border border-emerald-900/60 flex justify-between items-center gap-2 text-xs">
+                        <span class="text-emerald-400 font-bold shrink-0">📊 Değerlendirme</span>
+                        <div class="flex items-center gap-2 ml-auto min-w-0">
+                            <span id="mEvalDescription" class="text-zinc-400 text-[11px] truncate">Eşit konum</span>
+                            <span id="mEvalScoreText" class="font-mono font-bold text-white shrink-0">+0.0</span>
+                        </div>
+                    </div>
+
+                    <!-- En İyi Hamle -->
+                    <div class="bg-[#09090b] p-2.5 rounded-xl border border-emerald-900/60 text-xs space-y-1.5">
+                        <div class="flex items-center justify-between">
+                            <span class="text-emerald-400 font-bold">💡 Stockfish Tavsiyesi</span>
+                        </div>
+                        <div class="text-zinc-300 font-mono text-[11px]" id="mBestMoveText">En İyi Hamle: ...</div>
+                        <button id="mPlayBestMoveBtn" class="w-full bg-emerald-700 hover:bg-emerald-600 active:scale-95 text-white font-bold py-1.5 rounded-lg text-[11px] transition">
+                            ⚡ En İyi Hamleyi Oyna
+                        </button>
+                    </div>
+
+                    <!-- Gezinme -->
+                    <div class="grid grid-cols-4 gap-1.5">
+                        <button id="mNavStart" class="bg-zinc-800 hover:bg-zinc-700 text-white font-bold py-2 rounded-lg text-xs transition">⏮️</button>
+                        <button id="mNavPrev" class="bg-zinc-800 hover:bg-zinc-700 text-white font-bold py-2 rounded-lg text-xs transition">◀️</button>
+                        <button id="mNavNext" class="bg-zinc-800 hover:bg-zinc-700 text-white font-bold py-2 rounded-lg text-xs transition">▶️</button>
+                        <button id="mNavEnd" class="bg-zinc-800 hover:bg-zinc-700 text-white font-bold py-2 rounded-lg text-xs transition">⏭️</button>
+                    </div>
+
+                    <button id="mExitAnalysisBtn" class="w-full bg-blue-700 hover:bg-blue-600 text-white font-bold py-2.5 rounded-xl text-xs transition">
+                        🎮 Oynamaya Dön
+                    </button>
+                </div>
+
                 <!-- MOBİL HIZLI KONTROL ÇUBUĞU -->
-                <div class="md:hidden w-full bg-[#121215] border border-zinc-800/90 rounded-xl p-1.5 flex items-center justify-around gap-1 shadow-md text-xs">
+                <div id="mobileQuickControls" class="md:hidden w-full bg-[#121215] border border-zinc-800/90 rounded-xl p-1.5 flex items-center justify-around gap-1 shadow-md text-xs">
                     <button id="quickResetBtn" class="flex-1 bg-red-950/40 hover:bg-red-900/60 border border-red-900/50 text-red-400 font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 active:scale-95 transition">
                         <span>➕</span> <span>Yeni</span>
                     </button>
@@ -147,8 +187,8 @@
             </div>
         </div>
 
-        <!-- SAĞ PANEL (Masaüstü) -->
-        <section id="desktopPanel" class="w-full lg:w-80 min-h-[380px] lg:h-[min(78vw,75vh)] max-h-[680px] bg-[#121215] p-4 sm:p-5 lg:p-6 rounded-2xl border border-zinc-800/80 shadow-2xl flex flex-col justify-between flex-shrink-0">
+        <!-- SAĞ PANEL -->
+        <section id="desktopPanel" class="w-full lg:w-80 min-h-[380px] lg:h-[min(78vw,75vh)] max-h-[680px] bg-[#121215] p-4 sm:p-5 lg:p-6 rounded-2xl border border-zinc-800/80 shadow-2xl flex flex-col justify-between flex-shrink-0 overflow-y-auto">
             <div class="space-y-3">
                 <div class="flex items-center justify-between border-b border-zinc-800 pb-3 gap-2">
                     <h2 id="panelTitle" class="text-base font-bold text-zinc-200">Canlı Karşılaşma</h2>
@@ -158,6 +198,21 @@
                 <div id="modeWrapper" class="flex gap-2 bg-[#09090b] p-1 rounded-xl border border-zinc-800/60 text-xs">
                     <button id="modePvP" class="flex-1 py-1.5 rounded-lg text-zinc-400 hover:text-white transition">2 Kişilik (Yerel)</button>
                     <button id="modeBot" class="flex-1 py-1.5 rounded-lg bg-blue-600 font-bold text-white transition">Stockfish Bot</button>
+                </div>
+
+                <div id="sideSelectWrapper" class="space-y-1 bg-[#09090b] p-2 rounded-xl border border-zinc-800/60 text-xs">
+                    <span class="text-zinc-400 font-medium block mb-1">Tarafınız:</span>
+                    <div class="grid grid-cols-3 gap-1">
+                        <button class="side-choice-btn py-1.5 rounded-lg bg-blue-600 text-white font-bold transition flex items-center justify-center gap-1" data-color="w">
+                            <span>⚪</span> <span>Beyaz</span>
+                        </button>
+                        <button class="side-choice-btn py-1.5 rounded-lg text-zinc-400 hover:text-white transition flex items-center justify-center gap-1" data-color="r">
+                            <span>🎲</span> <span>Rastgele</span>
+                        </button>
+                        <button class="side-choice-btn py-1.5 rounded-lg text-zinc-400 hover:text-white transition flex items-center justify-center gap-1" data-color="b">
+                            <span>🖤</span> <span>Siyah</span>
+                        </button>
+                    </div>
                 </div>
 
                 <div id="botEloWrapper" class="flex justify-between items-center bg-[#09090b] px-3 py-1.5 rounded-xl border border-zinc-800/60 text-xs">
@@ -187,8 +242,49 @@
                     </div>
                 </div>
 
+                <div id="evalScoreWrapper" class="hidden flex justify-between items-center bg-[#09090b] px-3 py-2 rounded-xl border border-emerald-900/60 text-xs gap-2">
+                    <span class="text-emerald-400 font-bold shrink-0">📊 Değerlendirme</span>
+                    <div class="flex items-center gap-2 ml-auto min-w-0">
+                        <span id="evalDescription" class="text-zinc-400 text-[11px] truncate">Eşit konum</span>
+                        <span id="evalScoreText" class="font-mono font-bold text-white shrink-0">+0.0</span>
+                    </div>
+                </div>
+
+                <div id="bestMoveCard" class="hidden bg-[#09090b] p-3 rounded-xl border border-emerald-900/60 text-xs space-y-1.5">
+                    <div class="flex items-center justify-between">
+                        <span class="text-emerald-400 font-bold flex items-center gap-1.5">💡 Stockfish Tavsiyesi</span>
+                    </div>
+                    <div class="text-zinc-300 font-mono" id="bestMoveText">En İyi Hamle: --</div>
+                    <button id="playBestMoveBtn" class="w-full bg-emerald-700 hover:bg-emerald-600 active:scale-95 text-white font-bold py-1.5 rounded-lg text-xs transition mt-1">
+                        ⚡ En İyi Hamleyi Oyna
+                    </button>
+                </div>
+
+                <div class="space-y-2 bg-[#09090b] p-2.5 rounded-xl border border-zinc-800/60 text-xs">
+                    <label class="flex items-center justify-between cursor-pointer select-none">
+                        <span class="text-zinc-300 font-medium">🎯 Hamle İpuçlarını Göster</span>
+                        <input type="checkbox" id="toggleLegalMoves" class="w-4 h-4 accent-blue-600 rounded cursor-pointer" checked>
+                    </label>
+                    <label class="flex items-center justify-between cursor-pointer select-none">
+                        <span class="text-zinc-300 font-medium">🔄 PvP Otomatik Tahta Çevir</span>
+                        <input type="checkbox" id="toggleAutoFlip" class="w-4 h-4 accent-blue-600 rounded cursor-pointer">
+                    </label>
+                </div>
+
                 <h3 class="text-xs uppercase tracking-wider text-zinc-500 font-bold pt-1 hidden md:block">Hamle Geçmişi</h3>
-                <div id="pgn" class="h-24 lg:h-32 overflow-y-auto bg-[#09090b] p-3 rounded-xl border border-zinc-800/60 text-xs font-mono text-zinc-400 leading-relaxed hidden md:block"></div>
+                <div id="pgn" class="h-20 lg:h-28 overflow-y-auto bg-[#09090b] p-3 rounded-xl border border-zinc-800/60 text-xs font-mono text-zinc-400 leading-relaxed hidden md:block"></div>
+            </div>
+
+            <div id="analysisNav" class="hidden space-y-2 pt-3 border-t border-zinc-800">
+                <div class="grid grid-cols-4 gap-1.5">
+                    <button id="navStart" class="bg-zinc-800 hover:bg-zinc-700 text-white font-bold py-2 rounded-lg text-xs transition">⏮️</button>
+                    <button id="navPrev" class="bg-zinc-800 hover:bg-zinc-700 text-white font-bold py-2 rounded-lg text-xs transition">◀️</button>
+                    <button id="navNext" class="bg-zinc-800 hover:bg-zinc-700 text-white font-bold py-2 rounded-lg text-xs transition">▶️</button>
+                    <button id="navEnd" class="bg-zinc-800 hover:bg-zinc-700 text-white font-bold py-2 rounded-lg text-xs transition">⏭️</button>
+                </div>
+                <button id="exitAnalysisBtn" class="w-full bg-blue-700 hover:bg-blue-600 text-white font-bold py-2 rounded-xl text-xs transition">
+                    🎮 Oynamaya Dön
+                </button>
             </div>
 
             <div id="normalControls" class="space-y-2 pt-3 border-t border-zinc-800 hidden md:block">
@@ -221,9 +317,9 @@
         </a>
     </nav>
 
-    <!-- MOBİL TEMPO SEÇİM POPUP MODAL -->
+    <!-- MOBİL TEMPO MODAL -->
     <div id="tempoModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-end justify-center p-0 md:p-4">
-        <div class="bg-[#121215] border-t-2 md:border-2 border-zinc-800 rounded-t-3xl md:rounded-3xl p-6 w-full max-w-sm space-y-4 animate-in slide-in-from-bottom duration-200">
+        <div class="bg-[#121215] border-t-2 md:border-2 border-zinc-800 rounded-t-3xl md:rounded-3xl p-6 w-full max-w-sm space-y-4">
             <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
                 <h3 class="text-base font-bold text-white flex items-center gap-2">⏱️ Zaman Temposu Seç</h3>
                 <button class="close-modal-btn text-zinc-400 hover:text-white text-lg font-bold p-1">✕</button>
@@ -249,9 +345,9 @@
         </div>
     </div>
 
-    <!-- MOBİL BOT SEVİYESİ VE MOD SEÇİM POPUP MODAL -->
+    <!-- MOBİL BOT MODAL -->
     <div id="botModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-end justify-center p-0 md:p-4">
-        <div class="bg-[#121215] border-t-2 md:border-2 border-zinc-800 rounded-t-3xl md:rounded-3xl p-6 w-full max-w-sm space-y-4 animate-in slide-in-from-bottom duration-200">
+        <div class="bg-[#121215] border-t-2 md:border-2 border-zinc-800 rounded-t-3xl md:rounded-3xl p-6 w-full max-w-sm space-y-4">
             <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
                 <h3 class="text-base font-bold text-white flex items-center gap-2">🤖 Oyun Modu ve Seviye</h3>
                 <button class="close-modal-btn text-zinc-400 hover:text-white text-lg font-bold p-1">✕</button>
@@ -263,7 +359,16 @@
                     <button id="mModePvP" class="py-2 rounded-lg text-zinc-400 hover:text-white text-xs font-semibold transition">2 Kişilik (Yerel)</button>
                 </div>
 
-                <div id="mBotLevelWrapper" class="space-y-1.5 pt-2">
+                <div class="space-y-1 pt-1">
+                    <label class="text-xs text-zinc-400 font-medium">Tarafınız:</label>
+                    <div class="grid grid-cols-3 gap-1.5">
+                        <button class="side-choice-btn py-2 rounded-xl bg-blue-600 text-white font-bold text-xs transition flex items-center justify-center gap-1" data-color="w">⚪ Beyaz</button>
+                        <button class="side-choice-btn py-2 rounded-xl bg-[#09090b] text-zinc-400 border border-zinc-800 font-bold text-xs transition flex items-center justify-center gap-1" data-color="r">🎲 Rastgele</button>
+                        <button class="side-choice-btn py-2 rounded-xl bg-[#09090b] text-zinc-400 border border-zinc-800 font-bold text-xs transition flex items-center justify-center gap-1" data-color="b">🖤 Siyah</button>
+                    </div>
+                </div>
+
+                <div id="mBotLevelWrapper" class="space-y-1.5 pt-1">
                     <label class="text-xs text-zinc-400 font-medium">Bot Zorluk Seviyesi:</label>
                     <div class="grid grid-cols-2 gap-2">
                         <button class="bot-level-btn p-2.5 bg-[#09090b] hover:bg-zinc-800 border border-zinc-800 rounded-xl text-xs font-bold text-blue-400 text-center transition" data-elo="1200">1200 Elo (Acemi)</button>
@@ -297,18 +402,23 @@
         </div>
     </div>
 
-    <!-- OYUN SONU BİLDİRİM MODAL -->
+    <!-- OYUN SONU MODAL -->
     <div id="gameOverModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-[#121215] border-2 border-zinc-800 rounded-3xl p-6 lg:p-8 max-w-sm w-full text-center shadow-2xl space-y-5 relative animate-in fade-in zoom-in duration-200">
+        <div class="bg-[#121215] border-2 border-zinc-800 rounded-3xl p-6 lg:p-8 max-w-sm w-full text-center shadow-2xl space-y-5 relative">
             <button id="closeModalBtn" class="absolute top-4 right-4 text-zinc-400 hover:text-white text-xl font-bold p-1 transition">✕</button>
             <div id="modalIcon" class="text-6xl pt-2">🏆</div>
             <div>
                 <h3 id="modalTitle" class="text-2xl font-black text-white tracking-wide mb-1">Tebrikler!</h3>
                 <p id="modalReason" class="text-sm text-zinc-400 font-medium">Şah mat ile oyunu kazandınız.</p>
             </div>
-            <button id="modalResetBtn" class="w-full bg-blue-600 hover:bg-blue-500 active:scale-95 text-white font-extrabold py-3 px-6 rounded-xl text-sm transition shadow-lg shadow-blue-950/50">
-                Yeni Oyun Başlat
-            </button>
+            <div class="space-y-2">
+                <button id="modalResetBtn" class="w-full bg-blue-600 hover:bg-blue-500 active:scale-95 text-white font-extrabold py-3 px-6 rounded-xl text-sm transition">
+                    Yeni Oyun Başlat
+                </button>
+                <button id="reviewBoardBtn" class="w-full bg-emerald-700 hover:bg-emerald-600 text-white font-bold py-2.5 px-6 rounded-xl text-xs transition">
+                    🔍 Analiz Modu
+                </button>
+            </div>
         </div>
     </div>
 

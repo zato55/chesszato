@@ -61,13 +61,45 @@
     border-radius: 4px;
 }
 
+.legal-move-dot::after {
+    content: '';
+    position: absolute;
+    width: 28%;
+    height: 28%;
+    background-color: rgba(34, 197, 94, 0.7);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.legal-capture-ring::after {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    border: 3.5px solid rgba(239, 68, 68, 0.8);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 10;
+}
+
 #board > div:hover { filter: brightness(1.04); }
 
-.active-move {
+/* ✅ PGN hamleleri tıklanabilir */
+.pgn-move {
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 5px;
+    transition: background-color 0.15s ease, color 0.15s ease;
+    display: inline-block;
+}
+.pgn-move:hover {
+    background-color: rgba(59, 130, 246, 0.25);
+    color: #ffffff;
+}
+.pgn-move-active {
     background-color: #2563eb !important;
     color: #ffffff !important;
-    font-weight: bold;
-    border-radius: 6px;
+    font-weight: 700;
 }
 
 #arrowOverlay {
@@ -78,6 +110,46 @@
     height: 100%;
     pointer-events: none;
     z-index: 20;
+}
+
+/* ✅ EVAL BAR — tahta ile BİREBİR aynı yükseklik */
+.eval-bar-wrapper {
+    width: 18px;
+    height: min(88vw, 48vh);
+    max-height: 680px;
+    background-color: #18181b;
+    border: 1px solid #3f3f46;
+    border-radius: 9999px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    flex-shrink: 0;
+}
+
+.eval-bar-white {
+    width: 100%;
+    background-color: #ffffff;
+    transition: height 0.5s ease-out;
+}
+
+/* Masaüstü — tahta ile birebir aynı */
+@media (min-width: 768px) {
+    .eval-bar-wrapper {
+        width: 20px;
+        height: min(78vw, 75vh);
+        max-height: 680px;
+    }
+}
+
+/* Mobil — tahta ile birebir aynı */
+@media (max-width: 768px) {
+    .eval-bar-wrapper {
+        width: 12px;
+        height: min(92vw, 45vh);
+        max-height: none;
+    }
 }
 
 aside {
@@ -103,7 +175,6 @@ aside.collapsed .nav-item {
     padding-right: 0 !important;
 }
 
-/* Kaydırma çubuğunu gizleme */
 .no-scrollbar::-webkit-scrollbar {
     display: none;
 }
@@ -112,7 +183,6 @@ aside.collapsed .nav-item {
     scrollbar-width: none;
 }
 
-/* 📱 MOBİL DÜZENLEMELERİ (Zero-Scroll & Tam Oturan Tahta) */
 @media (max-width: 768px) {
     body {
         height: 100dvh;
