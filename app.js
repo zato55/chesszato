@@ -7,7 +7,6 @@ let isFlipped = false;
 let vsBot = true;
 let timerInterval = null;
 
-// Zaman ve Artış Yönetimi (Increment)
 let selectedTimeInSeconds = 300;
 let timeIncrementInSeconds = 0;
 let whiteTime = 300, blackTime = 300;
@@ -155,7 +154,6 @@ function initStockfish() {
                     const targetPiece = game.get(to);
                     const moveObj = game.move({ from: from, to: to, promotion: promotion });
                     
-                    // Bot hamle yaptığında ek hamle süresini (increment) ekle
                     if (timeIncrementInSeconds > 0) {
                         if (botTurnColor === 'w') whiteTime += timeIncrementInSeconds;
                         else blackTime += timeIncrementInSeconds;
@@ -360,7 +358,7 @@ function updatePlayerCards() {
             $('#topPlayerElo').text(`(${elo})`);
             $('#bottomPlayerName').text('Siz');
             $('#bottomPlayerElo').text('(1500)');
-            $('#topAvatar').text('♟').addClass('bg-[#18181b] text-zinc-300').removeClass('bg-zinc-100 text-zinc-900');
+            $('#topAvatar').text('♟').addClass('bg-zinc-800 text-zinc-300').removeClass('bg-zinc-100 text-zinc-900');
             $('#bottomAvatar').text('♙').addClass('bg-zinc-100 text-zinc-900').removeClass('bg-zinc-800 text-zinc-300');
         }
     } else {
@@ -392,7 +390,6 @@ function updatePlayerCards() {
     }
 }
 
-// ✅ SEÇİLİ BOT ELO BUTONUNU BELİRGİN MAVİ YAPMA FONKSİYONU
 function updateBotEloUI(selectedElo) {
     $('.bot-level-btn').each(function() {
         const btnElo = $(this).attr('data-elo');
@@ -560,7 +557,6 @@ function executeMove(from, to, promoPiece) {
     const moveObj = activeGame.move({ from: from, to: to, promotion: promoPiece });
 
     if (moveObj !== null) {
-        // Hamle başarıyla gerçekleştiğinde süreye artış (increment) ekle
         if (!isAnalysisMode && !isReviewing && timeIncrementInSeconds > 0) {
             if (movingColor === 'w') whiteTime += timeIncrementInSeconds;
             else blackTime += timeIncrementInSeconds;
@@ -639,7 +635,6 @@ function triggerStockfishMove() {
     const elo = parseInt($('#botElo').val()) || 1400;
     const fen = game.fen();
 
-    // Elo seviyesine göre motor derinliği (depth) ayarı
     let depth = 1;
     if (elo >= 400) depth = 2;
     if (elo >= 800) depth = 3;
@@ -1026,6 +1021,23 @@ $('#modeBot, #mModeBot').on('click', function() {
     }
 });
 
+// ✅ AYARLAR MODAL ETKİLEŞİMLERİ
+$('#openSettingsBtn, #mobileSettingsModalBtn').on('click', function(e) {
+    e.preventDefault();
+    $('#settingsModal').removeClass('hidden');
+});
+
+$('.theme-option-btn').on('click', function() {
+    const selectedTheme = $(this).attr('data-theme');
+    
+    // Tahtadaki eski tema sınıflarını temizleyip yenisini ekle
+    $('#board').removeClass('theme-red theme-green theme-wood theme-dark').addClass(selectedTheme);
+    
+    // Buton görsel vurgusunu güncelle
+    $('.theme-option-btn').removeClass('border-blue-500 bg-blue-950/40').addClass('border-zinc-800 bg-[#09090b]');
+    $(this).addClass('border-blue-500 bg-blue-950/40').removeClass('border-zinc-800 bg-[#09090b]');
+});
+
 $('#mobileTempoModalBtn').on('click', function(e) {
     e.preventDefault();
     $('#tempoModal').removeClass('hidden');
@@ -1036,8 +1048,8 @@ $('#mobileBotModalBtn').on('click', function(e) {
     $('#botModal').removeClass('hidden');
 });
 
-$('.close-modal-btn, #tempoModal, #botModal').on('click', function(e) {
-    if (e.target === this || $(e.target).hasClass('close-modal-btn')) {$('#tempoModal, #botModal').addClass('hidden');
+$('.close-modal-btn, #tempoModal, #botModal, #settingsModal').on('click', function(e) {
+    if (e.target === this || $(e.target).hasClass('close-modal-btn')) {$('#tempoModal, #botModal, #settingsModal').addClass('hidden');
     }
 });
 

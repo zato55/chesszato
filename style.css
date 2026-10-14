@@ -8,8 +8,22 @@
     transition: transform 0.15s ease-in-out, opacity 0.12s ease;
 }
 
-.square-light { background-color: #ffffff; }
-.square-dark { background-color: #a81c1c; }
+/* 🎨 TAHTA RENK TEMALARI */
+/* 1. Zato Bordo (Varsayılan) */
+#board.theme-red .square-light { background-color: #ffffff; }
+#board.theme-red .square-dark { background-color: #a81c1c; }
+
+/* 2. Turnuva Yeşil (Göz Dostu) */
+#board.theme-green .square-light { background-color: #eeeee2; }
+#board.theme-green .square-dark { background-color: #769656; }
+
+/* 3. Klasik Ahşap */
+#board.theme-wood .square-light { background-color: #f0d9b5; }
+#board.theme-wood .square-dark { background-color: #b58863; }
+
+/* 4. Gece Mavisi / Koyu */
+#board.theme-dark .square-light { background-color: #9ca3af; }
+#board.theme-dark .square-dark { background-color: #374151; }
 
 #board-wrapper {
     position: relative;
