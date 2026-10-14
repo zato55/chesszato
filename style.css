@@ -44,6 +44,7 @@
     cursor: pointer;
     min-width: 0;
     min-height: 0;
+    -webkit-tap-highlight-color: transparent; /* Mobil dokunma mavi gölgesini temizler */
 }
 
 #board > div.selected {
@@ -124,6 +125,7 @@
     justify-content: flex-end;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
     flex-shrink: 0;
+    transform: translateZ(0); /* Taşmaları engeller */
 }
 
 .eval-bar-white {
@@ -137,14 +139,6 @@
         width: 20px;
         height: min(78vw, 75vh);
         max-height: 680px;
-    }
-}
-
-@media (max-width: 768px) {
-    .eval-bar-wrapper {
-        width: 12px;
-        height: min(92vw, 45vh);
-        max-height: none;
     }
 }
 
@@ -198,6 +192,14 @@ aside.collapsed .nav-item {
         height: min(92vw, 45vh) !important;
     }
 
+    /* ✅ MOBİL EVAL BAR HİZALAMASI (Tahta yüksekliği ile birebir eşleniyor) */
+    .eval-bar-wrapper {
+        width: 10px !important;
+        height: min(92vw, 45vh) !important;
+        max-height: none !important;
+        border-radius: 6px !important;
+    }
+
     #topCapturedPieces img, #bottomCapturedPieces img {
         width: 11px !important;
         height: 11px !important;
@@ -211,7 +213,6 @@ aside.collapsed .nav-item {
         display: none !important;
     }
 
-    /* ✅ ANALİZ MODUNDA: Alt nav gizle + kompaktlaştır */
     body.analysis-mode nav.md\:hidden {
         display: none !important;
     }
