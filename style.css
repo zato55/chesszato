@@ -44,7 +44,7 @@
     cursor: pointer;
     min-width: 0;
     min-height: 0;
-    -webkit-tap-highlight-color: transparent; /* Mobil dokunma mavi gölgesini temizler */
+    -webkit-tap-highlight-color: transparent;
 }
 
 #board > div.selected {
@@ -60,6 +60,17 @@
     opacity: 0.85;
     pointer-events: none;
     border-radius: 4px;
+}
+
+/* 👑 Şah Çekildiğinde Kırmızı Parlama Efekti */
+#board > div.king-check-highlight {
+    background: radial-gradient(circle, rgba(239, 68, 68, 0.95) 0%, rgba(220, 38, 38, 0.65) 55%, transparent 100%) !important;
+    animation: pulseCheck 1.2s infinite ease-in-out;
+}
+
+@keyframes pulseCheck {
+    0%, 100% { filter: drop-shadow(0 0 6px rgba(239, 68, 68, 0.8)); }
+    50% { filter: drop-shadow(0 0 14px rgba(239, 68, 68, 1)); }
 }
 
 .legal-move-dot::after {
@@ -125,7 +136,7 @@
     justify-content: flex-end;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
     flex-shrink: 0;
-    transform: translateZ(0); /* Taşmaları engeller */
+    transform: translateZ(0);
 }
 
 .eval-bar-white {
@@ -192,12 +203,12 @@ aside.collapsed .nav-item {
         height: min(92vw, 45vh) !important;
     }
 
-    /* ✅ MOBİL EVAL BAR HİZALAMASI (Tahta yüksekliği ile birebir eşleniyor) */
     .eval-bar-wrapper {
         width: 10px !important;
         height: min(92vw, 45vh) !important;
         max-height: none !important;
         border-radius: 6px !important;
+        margin-right: 2px !important; /* Tahta ile eval bar arasında hafif sol nefes alma alanı */
     }
 
     #topCapturedPieces img, #bottomCapturedPieces img {
