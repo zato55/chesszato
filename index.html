@@ -129,25 +129,25 @@
                 </div>
             </div>
 
-            <!-- MOBİL ANALİZ PANELİ -->
-            <div id="mobileAnalysisPanel" class="hidden w-full space-y-1 mt-0.5">
-                <div class="bg-[#09090b] px-3 py-1 rounded-xl border border-emerald-900/60 flex justify-between items-center gap-2 text-xs">
+            <!-- MOBİL ANALİZ PANELİ (BÜYÜTÜLMÜŞ PARMAK DOSTU BUTONLAR) -->
+            <div id="mobileAnalysisPanel" class="hidden w-full space-y-2 mt-1">
+                <div class="bg-[#09090b] px-3 py-2 rounded-xl border border-emerald-900/60 flex justify-between items-center gap-2 text-xs">
                     <span class="text-emerald-400 font-bold shrink-0">📊 Değerlendirme</span>
                     <div class="flex items-center gap-2 ml-auto min-w-0">
-                        <span id="mEvalDescription" class="text-zinc-400 text-[10px] truncate">Eşit konum</span>
-                        <span id="mEvalScoreText" class="font-mono font-bold text-white shrink-0">+0.0</span>
+                        <span id="mEvalDescription" class="text-zinc-400 text-xs truncate">Eşit konum</span>
+                        <span id="mEvalScoreText" class="font-mono font-bold text-white text-sm shrink-0">+0.0</span>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-5 gap-1">
-                    <button id="mNavStart" class="bg-zinc-800 hover:bg-zinc-700 active:scale-95 text-white font-bold py-1.5 rounded-lg text-xs transition">⏮️</button>
-                    <button id="mNavPrev" class="bg-zinc-800 hover:bg-zinc-700 active:scale-95 text-white font-bold py-1.5 rounded-lg text-xs transition">◀️</button>
-                    <button id="mPlayBestMoveBtn" class="bg-emerald-700 hover:bg-emerald-600 active:scale-95 text-white font-bold py-1.5 rounded-lg text-xs transition">⚡</button>
-                    <button id="mNavNext" class="bg-zinc-800 hover:bg-zinc-700 active:scale-95 text-white font-bold py-1.5 rounded-lg text-xs transition">▶️</button>
-                    <button id="mNavEnd" class="bg-zinc-800 hover:bg-zinc-700 active:scale-95 text-white font-bold py-1.5 rounded-lg text-xs transition">⏭️</button>
+                <div class="grid grid-cols-5 gap-2">
+                    <button id="mNavStart" class="bg-zinc-800 hover:bg-zinc-700 active:scale-90 text-white font-black py-3 rounded-2xl text-base transition border border-zinc-700/60 shadow-md flex items-center justify-center">⏮️</button>
+                    <button id="mNavPrev" class="bg-zinc-800 hover:bg-zinc-700 active:scale-90 text-white font-black py-3 rounded-2xl text-base transition border border-zinc-700/60 shadow-md flex items-center justify-center">◀️</button>
+                    <button id="mPlayBestMoveBtn" class="bg-emerald-700 hover:bg-emerald-600 active:scale-90 text-white font-black py-3 rounded-2xl text-lg transition border border-emerald-500/60 shadow-lg flex items-center justify-center">⚡</button>
+                    <button id="mNavNext" class="bg-zinc-800 hover:bg-zinc-700 active:scale-90 text-white font-black py-3 rounded-2xl text-base transition border border-zinc-700/60 shadow-md flex items-center justify-center">▶️</button>
+                    <button id="mNavEnd" class="bg-zinc-800 hover:bg-zinc-700 active:scale-90 text-white font-black py-3 rounded-2xl text-base transition border border-zinc-700/60 shadow-md flex items-center justify-center">⏭️</button>
                 </div>
 
-                <button id="mExitAnalysisBtn" class="w-full bg-blue-700 hover:bg-blue-600 active:scale-95 text-white font-bold py-1 rounded-xl text-xs transition">
+                <button id="mExitAnalysisBtn" class="w-full bg-blue-700 hover:bg-blue-600 active:scale-95 text-white font-bold py-3 rounded-2xl text-sm transition shadow-md border border-blue-500/50">
                     🎮 Oynamaya Dön
                 </button>
             </div>
@@ -304,7 +304,7 @@
         </button>
     </nav>
 
-    <!-- MOBİL TIKLAMA HEDEFİ GÜÇLENDİRİLMİŞ AYARLAR MODALI -->
+    <!-- AYARLAR MODALI -->
     <div id="settingsModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-3">
         <div class="bg-[#121215] border-2 border-zinc-800 rounded-3xl p-4 sm:p-5 max-w-sm w-full space-y-4 shadow-2xl max-h-[88vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
@@ -336,7 +336,7 @@
                     </div>
                 </div>
 
-                <!-- 2. TAŞ STİLİ SEÇİMİ (MOBİL TIKLAMA HEDEFİ SAĞLAMLAŞTIRILDI) -->
+                <!-- 2. TAŞ STİLİ SEÇİMİ -->
                 <div>
                     <label class="text-xs text-zinc-400 font-medium block mb-2">♟️ Taş Stili (Piece Set):</label>
                     <div class="grid grid-cols-2 gap-2">

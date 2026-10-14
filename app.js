@@ -1025,7 +1025,6 @@ $('#modeBot, #mModeBot').on('click', function() {
     }
 });
 
-// ✅ AYARLAR ETKİLEŞİMLERİ VE DOKUNMA/TIKLAMA İYİLEŞTİRMELERİ
 $('#openSettingsBtn, #mobileSettingsModalBtn').on('click', function(e) {
     e.preventDefault();
     $('#settingsModal').removeClass('hidden');
@@ -1040,7 +1039,7 @@ $(document).on('click', '.theme-option-btn', function(e) {
     localStorage.setItem('zato_theme', selectedTheme);
 });
 
-// 2. Taş Stili Seçimi (Mobilde Event Delegation ve Closest Kullanıldı)
+// 2. Taş Stili Seçimi
 $(document).on('click', '.piece-style-btn', function(e) {
     e.preventDefault();
     const $btn =$(this).closest('.piece-style-btn');
@@ -1073,7 +1072,6 @@ $('#toggleKingCheckEffect').on('change', function() {
     renderBoard();
 });
 
-// 💾 KAYITLI TERCİHLERİ TARAYICIDAN OKUMA
 function loadSavedSettings() {
     const savedTheme = localStorage.getItem('zato_theme') || 'theme-green';
     $('#board').removeClass('theme-red theme-green theme-wood theme-dark').addClass(savedTheme);

@@ -223,7 +223,7 @@ aside.collapsed .nav-item {
     scrollbar-width: none;
 }
 
-/* ♟️ TAŞ STİLİ VE MODAL MOBİL TIKLAMA DÜZELTMELERİ */
+/* ♟️ MOBİL PARMAK DOSTU DOKUNMA YÜKSEKLİĞİ SIFIRLARI */
 .piece-style-btn {
     cursor: pointer !important;
     touch-action: manipulation;
@@ -235,10 +235,16 @@ aside.collapsed .nav-item {
     pointer-events: none !important;
 }
 
+#mobileAnalysisPanel button {
+    min-height: 48px !important; /* Global mobil dokunma standardı */
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
 #settingsModal .theme-option-btn,
 #settingsModal .piece-style-btn,
 #settingsModal .anim-speed-btn {
-    min-height: 42px;
+    min-height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
