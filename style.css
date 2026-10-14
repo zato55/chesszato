@@ -40,7 +40,7 @@
     max-height: 680px;
 }
 
-/* 💻 MASAÜSTÜ SIKIŞTIRMA & KAYDIRMA ENGELLEME */
+/* 💻 MASAÜSTÜ: BÜYÜTÜLMÜŞ TAHTA & SIFIR KAYDIRMA (100VH LAYOUT) */
 @media (min-width: 768px) {
     body {
         height: 100vh;
@@ -48,28 +48,29 @@
     }
 
     main {
-        height: calc(100vh - 0px);
-        padding: 1rem 1.5rem !important;
+        height: 100vh;
+        padding: 0.5rem 1rem !important;
         overflow: hidden !important;
     }
 
+    /* Tahtayı dikey alanın izin verdiği en büyük boyuta çekiyoruz */
     #board-wrapper {
-        width: min(65vw, 60vh) !important;
-        height: min(65vw, 60vh) !important;
-        max-width: 580px !important;
-        max-height: 580px !important;
+        width: min(72vw, 72vh) !important;
+        height: min(72vw, 72vh) !important;
+        max-width: 650px !important;
+        max-height: 650px !important;
     }
 
     #desktopPanel {
-        height: min(65vw, 60vh) !important;
-        max-height: 580px !important;
-        padding: 0.85rem !important;
+        height: min(72vw, 72vh) !important;
+        max-height: 650px !important;
+        padding: 0.75rem !important;
     }
 
     .eval-bar-wrapper {
         width: 16px !important;
-        height: min(65vw, 60vh) !important;
-        max-height: 580px !important;
+        height: min(72vw, 72vh) !important;
+        max-height: 650px !important;
     }
 }
 
@@ -80,7 +81,7 @@
     width: 100%;
     height: 100%;
     border: 3px solid #18181b;
-    box-shadow: 0 0 25px rgba(37, 99, 235, .2);
+    box-shadow: 0 0 30px rgba(37, 99, 235, .25);
 }
 
 #board > div {
