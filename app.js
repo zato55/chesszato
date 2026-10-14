@@ -129,10 +129,6 @@ function initStockfish() {
                     currentBestMove = moveStr;
                     const from = moveStr.substring(0, 2);
                     const to = moveStr.substring(2, 4);
-                    const promo = moveStr.length > 4 ? moveStr.substring(4, 5) : '';
-                    const bestText = `En İyi Hamle: ${from} → ${to}${promo ? '=' + promo.toUpperCase() : ''}`;
-                    $('#bestMoveText').text(bestText);
-                    $('#mBestMoveText').text(bestText);
                     drawBestMoveArrow(from, to);
                     return;
                 }
@@ -809,12 +805,11 @@ function startAnalysisMode() {
     isReviewing = true;
     if (stockfishWorker) stockfishWorker.postMessage('stop');
 
-    $('body').addClass('analysis-mode');   // ✅ YENİ
+    $('body').addClass('analysis-mode');
 
     $('#gameOverModal').addClass('hidden');
     $('#evalBarWrapper').removeClass('hidden');
     $('#evalScoreWrapper').removeClass('hidden');
-    $('#bestMoveCard').removeClass('hidden');
     $('#analysisNav').removeClass('hidden');
     $('#normalControls').addClass('hidden');
     $('#mobileAnalysisPanel').removeClass('hidden');
@@ -822,8 +817,6 @@ function startAnalysisMode() {
     $('#panelTitle').text('🔍 Analiz Modu');
 
     showEvalLoading();
-    $('#bestMoveText').text('En İyi Hamle: ...');
-    $('#mBestMoveText').text('En İyi Hamle: ...');
     currentBestMove = null;
     clearArrow();
 
@@ -838,7 +831,7 @@ function exitAnalysisMode() {
     isReviewing = false;
     if (stockfishWorker) stockfishWorker.postMessage('stop');
 
-    $('body').removeClass('analysis-mode');   // ✅ YENİ
+    $('body').removeClass('analysis-mode');
 
     $('#analysisNav').addClass('hidden');
     $('#normalControls').removeClass('hidden');
@@ -848,14 +841,11 @@ function exitAnalysisMode() {
 
     $('#evalBarWrapper').addClass('hidden');
     $('#evalScoreWrapper').addClass('hidden');
-    $('#bestMoveCard').addClass('hidden');
     $('#evalBarWhite').css('height', '50%');
     $('#evalScoreText').text('+0.0');
     $('#evalDescription').text('Eşit konum');
     $('#mEvalScoreText').text('+0.0');
     $('#mEvalDescription').text('Eşit konum');
-    $('#bestMoveText').text('En İyi Hamle: --');
-    $('#mBestMoveText').text('En İyi Hamle: --');
     pendingEvalScore = null;
     currentBestMove = null;
     clearArrow();
@@ -880,8 +870,6 @@ function updateAnalysisBoard() {
     currentBestMove = null;
 
     showEvalLoading();
-    $('#bestMoveText').text('En İyi Hamle: ...');
-    $('#mBestMoveText').text('En İyi Hamle: ...');
 
     renderBoard();
     updateStatus();
@@ -1019,7 +1007,7 @@ function resetGame() {
     game.reset();
     analysisGame.reset();
 
-    $('body').removeClass('analysis-mode');   // ✅ YENİ
+    $('body').removeClass('analysis-mode');
 
     analysisMoveHistory = [];
     analysisIdx = -1;
@@ -1055,14 +1043,11 @@ function resetGame() {
 
     $('#evalBarWrapper').addClass('hidden');
     $('#evalScoreWrapper').addClass('hidden');
-    $('#bestMoveCard').addClass('hidden');
     $('#evalBarWhite').css('height', '50%');
     $('#evalScoreText').text('+0.0');
     $('#evalDescription').text('Eşit konum');
     $('#mEvalScoreText').text('+0.0');
     $('#mEvalDescription').text('Eşit konum');
-    $('#bestMoveText').text('En İyi Hamle: --');
-    $('#mBestMoveText').text('En İyi Hamle: --');
 
     updateTimerDisplay();
     renderBoard();

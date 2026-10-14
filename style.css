@@ -111,7 +111,6 @@
     z-index: 20;
 }
 
-/* EVAL BAR */
 .eval-bar-wrapper {
     width: 18px;
     height: min(88vw, 48vh);
@@ -189,7 +188,7 @@ aside.collapsed .nav-item {
 
     main {
         padding-top: 0.25rem !important;
-        padding-bottom: 6rem !important; /* Alt nav için boşluk artırıldı */
+        padding-bottom: 6rem !important;
         justify-content: flex-start !important;
         overflow-y: auto !important;
     }
@@ -212,12 +211,39 @@ aside.collapsed .nav-item {
         display: none !important;
     }
 
-    /* ✅ ANALİZ MODUNDA: Alt nav gizlenir + daha fazla padding */
+    /* ✅ ANALİZ MODUNDA: Alt nav gizle + kompaktlaştır */
     body.analysis-mode nav.md\:hidden {
         display: none !important;
     }
 
     body.analysis-mode main {
-        padding-bottom: 12rem !important;
+        padding-bottom: 0.5rem !important;
+        overflow-y: hidden !important;
+    }
+
+    body.analysis-mode #mobileMoveStrip {
+        display: none !important;
+    }
+
+    body.analysis-mode .flex.flex-col.gap-1\.5 {
+        gap: 0.25rem !important;
+    }
+
+    body.analysis-mode #topPlayerCard,
+    body.analysis-mode #bottomPlayerCard {
+        padding: 0.25rem 0.5rem !important;
+    }
+
+    body.analysis-mode #topOpeningText,
+    body.analysis-mode #bottomOpeningText,
+    body.analysis-mode #topCapturedPieces,
+    body.analysis-mode #bottomCapturedPieces,
+    body.analysis-mode #topMaterialDiff,
+    body.analysis-mode #bottomMaterialDiff {
+        display: none !important;
+    }
+
+    body.analysis-mode #mobileAnalysisPanel {
+        margin-top: 0 !important;
     }
 }

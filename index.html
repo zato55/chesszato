@@ -60,43 +60,41 @@
     <main class="flex-1 flex flex-col lg:flex-row items-center justify-center p-2 sm:p-4 lg:p-8 gap-2 lg:gap-8 overflow-y-auto pb-20 md:pb-8">
         
         <!-- TAHTA VE OYUNCU KARTLARI -->
-        <div class="flex items-center justify-center gap-2 sm:gap-3 flex-shrink-0 w-full max-w-[720px]">
-            <!-- EVAL BAR -->
-            <div id="evalBarWrapper" class="hidden eval-bar-wrapper">
-                <div id="evalBarWhite" class="eval-bar-white" style="height: 50%;"></div>
+        <div class="flex flex-col gap-1.5 sm:gap-2 w-full max-w-[720px] items-center">
+            
+            <!-- MOBİL YATAY HAMLE ŞERİDİ -->
+            <div id="mobileMoveStrip" class="md:hidden w-full bg-[#121215] border border-zinc-800/90 rounded-xl px-3 py-1.5 overflow-x-auto flex items-center gap-2 text-xs font-mono no-scrollbar whitespace-nowrap shadow-sm">
+                <span class="text-zinc-500 font-sans font-bold text-[10px] uppercase tracking-wider flex-shrink-0">Hamleler:</span>
+                <div id="mobilePgnList" class="flex items-center gap-2"></div>
             </div>
 
-            <div class="flex flex-col gap-1.5 sm:gap-2 w-full items-center">
-                
-                <!-- MOBİL YATAY HAMLE ŞERİDİ -->
-                <div id="mobileMoveStrip" class="md:hidden w-full bg-[#121215] border border-zinc-800/90 rounded-xl px-3 py-1.5 overflow-x-auto flex items-center gap-2 text-xs font-mono no-scrollbar whitespace-nowrap shadow-sm">
-                    <span class="text-zinc-500 font-sans font-bold text-[10px] uppercase tracking-wider flex-shrink-0">Hamleler:</span>
-                    <div id="mobilePgnList" class="flex items-center gap-2"></div>
-                </div>
-
-                <!-- ÜST OYUNCU KARTI -->
-                <div id="topPlayerCard" class="w-full bg-[#121215] border border-zinc-800/90 rounded-xl p-2 sm:p-2.5 flex items-center justify-between text-xs gap-2">
-                    <div class="flex items-center gap-2 min-w-0 flex-1">
-                        <div id="topAvatar" class="w-7 h-7 sm:w-8 sm:h-8 bg-zinc-800 border border-zinc-700 rounded-lg flex items-center justify-center font-bold text-zinc-300 text-xs sm:text-sm flex-shrink-0">♟</div>
-                        <div class="min-w-0 flex-1">
-                            <div class="font-bold text-zinc-200 flex items-center gap-1 truncate">
-                                <span id="topPlayerName" class="truncate text-xs sm:text-sm">Stockfish Bot</span>
-                                <span id="topPlayerElo" class="text-[9px] sm:text-[10px] text-blue-400 font-semibold bg-blue-950/60 px-1 py-0.5 rounded border border-blue-900/50 flex-shrink-0">(1400)</span>
-                            </div>
-                            <div class="flex items-center gap-1 text-[10px] sm:text-[11px] text-zinc-400 mt-0.5 truncate">
-                                <span class="text-blue-400 font-medium truncate" id="topOpeningText">📖 Açılış Bekleniyor</span>
-                            </div>
+            <!-- ÜST OYUNCU KARTI -->
+            <div id="topPlayerCard" class="w-full bg-[#121215] border border-zinc-800/90 rounded-xl p-2 sm:p-2.5 flex items-center justify-between text-xs gap-2">
+                <div class="flex items-center gap-2 min-w-0 flex-1">
+                    <div id="topAvatar" class="w-7 h-7 sm:w-8 sm:h-8 bg-zinc-800 border border-zinc-700 rounded-lg flex items-center justify-center font-bold text-zinc-300 text-xs sm:text-sm flex-shrink-0">♟</div>
+                    <div class="min-w-0 flex-1">
+                        <div class="font-bold text-zinc-200 flex items-center gap-1 truncate">
+                            <span id="topPlayerName" class="truncate text-xs sm:text-sm">Stockfish Bot</span>
+                            <span id="topPlayerElo" class="text-[9px] sm:text-[10px] text-blue-400 font-semibold bg-blue-950/60 px-1 py-0.5 rounded border border-blue-900/50 flex-shrink-0">(1400)</span>
+                        </div>
+                        <div class="flex items-center gap-1 text-[10px] sm:text-[11px] text-zinc-400 mt-0.5 truncate">
+                            <span class="text-blue-400 font-medium truncate" id="topOpeningText">📖 Açılış Bekleniyor</span>
                         </div>
                     </div>
-
-                    <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-                        <div id="topTimerMobile" class="md:hidden font-mono text-xs font-bold bg-zinc-900 px-2 py-1 rounded border border-zinc-800 text-zinc-200">05:00</div>
-                        <div id="topCapturedPieces" class="flex items-center gap-0.5 min-h-[16px]"></div>
-                        <div id="topMaterialDiff" class="font-mono font-bold text-emerald-400 text-xs"></div>
-                    </div>
                 </div>
 
-                <!-- SATRANÇ TAHTASI -->
+                <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                    <div id="topTimerMobile" class="md:hidden font-mono text-xs font-bold bg-zinc-900 px-2 py-1 rounded border border-zinc-800 text-zinc-200">05:00</div>
+                    <div id="topCapturedPieces" class="flex items-center gap-0.5 min-h-[16px]"></div>
+                    <div id="topMaterialDiff" class="font-mono font-bold text-emerald-400 text-xs"></div>
+                </div>
+            </div>
+
+            <!-- TAHTA + EVAL BAR (aynı satır) -->
+            <div class="flex items-center justify-center gap-2 sm:gap-3 w-full">
+                <div id="evalBarWrapper" class="hidden eval-bar-wrapper">
+                    <div id="evalBarWhite" class="eval-bar-white" style="height: 50%;"></div>
+                </div>
                 <div id="board-wrapper" class="rounded-xl overflow-hidden shadow-2xl">
                     <div id="board"></div>
                     <svg id="arrowOverlay">
@@ -107,84 +105,74 @@
                         </defs>
                     </svg>
                 </div>
-
-                <!-- ALT OYUNCU KARTI -->
-                <div id="bottomPlayerCard" class="w-full bg-[#121215] border border-zinc-800/90 rounded-xl p-2 sm:p-2.5 flex items-center justify-between text-xs gap-2">
-                    <div class="flex items-center gap-2 min-w-0 flex-1">
-                        <div id="bottomAvatar" class="w-7 h-7 sm:w-8 sm:h-8 bg-zinc-100 border border-zinc-300 rounded-lg flex items-center justify-center font-bold text-zinc-900 text-xs sm:text-sm flex-shrink-0">♙</div>
-                        <div class="min-w-0 flex-1">
-                            <div class="font-bold text-zinc-200 flex items-center gap-1 truncate">
-                                <span id="bottomPlayerName" class="truncate text-xs sm:text-sm">Siz</span>
-                                <span id="bottomPlayerElo" class="text-[9px] sm:text-[10px] text-zinc-400 font-semibold bg-zinc-900 px-1 py-0.5 rounded border border-zinc-800 flex-shrink-0">(1500)</span>
-                            </div>
-                            <div class="flex items-center gap-1 text-[10px] sm:text-[11px] text-zinc-400 mt-0.5 truncate">
-                                <span class="text-blue-400 font-medium truncate" id="bottomOpeningText">📖 Açılış Bekleniyor</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-                        <div id="bottomTimerMobile" class="md:hidden font-mono text-xs font-bold bg-zinc-900 px-2 py-1 rounded border border-zinc-800 text-zinc-200">05:00</div>
-                        <div id="bottomCapturedPieces" class="flex items-center gap-0.5 min-h-[16px]"></div>
-                        <div id="bottomMaterialDiff" class="font-mono font-bold text-emerald-400 text-xs"></div>
-                    </div>
-                </div>
-
-                <!-- ✅ MOBİL ANALİZ PANELİ (yeni) -->
-                <div id="mobileAnalysisPanel" class="hidden md:hidden w-full space-y-2 mt-1">
-                    <!-- Değerlendirme -->
-                    <div class="bg-[#09090b] px-3 py-2 rounded-xl border border-emerald-900/60 flex justify-between items-center gap-2 text-xs">
-                        <span class="text-emerald-400 font-bold shrink-0">📊 Değerlendirme</span>
-                        <div class="flex items-center gap-2 ml-auto min-w-0">
-                            <span id="mEvalDescription" class="text-zinc-400 text-[11px] truncate">Eşit konum</span>
-                            <span id="mEvalScoreText" class="font-mono font-bold text-white shrink-0">+0.0</span>
-                        </div>
-                    </div>
-
-                    <!-- En İyi Hamle -->
-                    <div class="bg-[#09090b] p-2.5 rounded-xl border border-emerald-900/60 text-xs space-y-1.5">
-                        <div class="flex items-center justify-between">
-                            <span class="text-emerald-400 font-bold">💡 Stockfish Tavsiyesi</span>
-                        </div>
-                        <div class="text-zinc-300 font-mono text-[11px]" id="mBestMoveText">En İyi Hamle: ...</div>
-                        <button id="mPlayBestMoveBtn" class="w-full bg-emerald-700 hover:bg-emerald-600 active:scale-95 text-white font-bold py-1.5 rounded-lg text-[11px] transition">
-                            ⚡ En İyi Hamleyi Oyna
-                        </button>
-                    </div>
-
-                    <!-- Gezinme -->
-                    <div class="grid grid-cols-4 gap-1.5">
-                        <button id="mNavStart" class="bg-zinc-800 hover:bg-zinc-700 text-white font-bold py-2 rounded-lg text-xs transition">⏮️</button>
-                        <button id="mNavPrev" class="bg-zinc-800 hover:bg-zinc-700 text-white font-bold py-2 rounded-lg text-xs transition">◀️</button>
-                        <button id="mNavNext" class="bg-zinc-800 hover:bg-zinc-700 text-white font-bold py-2 rounded-lg text-xs transition">▶️</button>
-                        <button id="mNavEnd" class="bg-zinc-800 hover:bg-zinc-700 text-white font-bold py-2 rounded-lg text-xs transition">⏭️</button>
-                    </div>
-
-                    <button id="mExitAnalysisBtn" class="w-full bg-blue-700 hover:bg-blue-600 text-white font-bold py-2.5 rounded-xl text-xs transition">
-                        🎮 Oynamaya Dön
-                    </button>
-                </div>
-
-                <!-- MOBİL HIZLI KONTROL ÇUBUĞU -->
-                <div id="mobileQuickControls" class="md:hidden w-full bg-[#121215] border border-zinc-800/90 rounded-xl p-1.5 flex items-center justify-around gap-1 shadow-md text-xs">
-                    <button id="quickResetBtn" class="flex-1 bg-red-950/40 hover:bg-red-900/60 border border-red-900/50 text-red-400 font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 active:scale-95 transition">
-                        <span>➕</span> <span>Yeni</span>
-                    </button>
-                    <button id="quickUndoBtn" class="flex-1 bg-zinc-800/80 hover:bg-zinc-700 text-zinc-200 font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 active:scale-95 transition border border-zinc-700/60">
-                        <span>↩️</span> <span>Geri Al</span>
-                    </button>
-                    <button id="quickFlipBtn" class="flex-1 bg-zinc-800/80 hover:bg-zinc-700 text-zinc-200 font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 active:scale-95 transition border border-zinc-700/60">
-                        <span>🔄</span> <span>Çevir</span>
-                    </button>
-                    <button onclick="offerDraw('bottom')" class="flex-1 bg-zinc-800/80 hover:bg-zinc-700 text-zinc-300 font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 active:scale-95 transition border border-zinc-700/60">
-                        <span>🤝</span> <span>Berabere</span>
-                    </button>
-                    <button onclick="surrenderGame('bottom')" class="flex-1 bg-red-950/50 hover:bg-red-900/80 text-red-400 font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 active:scale-95 transition border border-red-900/50">
-                        <span>🏳️</span> <span>Terk Et</span>
-                    </button>
-                </div>
-
             </div>
+
+            <!-- ALT OYUNCU KARTI -->
+            <div id="bottomPlayerCard" class="w-full bg-[#121215] border border-zinc-800/90 rounded-xl p-2 sm:p-2.5 flex items-center justify-between text-xs gap-2">
+                <div class="flex items-center gap-2 min-w-0 flex-1">
+                    <div id="bottomAvatar" class="w-7 h-7 sm:w-8 sm:h-8 bg-zinc-100 border border-zinc-300 rounded-lg flex items-center justify-center font-bold text-zinc-900 text-xs sm:text-sm flex-shrink-0">♙</div>
+                    <div class="min-w-0 flex-1">
+                        <div class="font-bold text-zinc-200 flex items-center gap-1 truncate">
+                            <span id="bottomPlayerName" class="truncate text-xs sm:text-sm">Siz</span>
+                            <span id="bottomPlayerElo" class="text-[9px] sm:text-[10px] text-zinc-400 font-semibold bg-zinc-900 px-1 py-0.5 rounded border border-zinc-800 flex-shrink-0">(1500)</span>
+                        </div>
+                        <div class="flex items-center gap-1 text-[10px] sm:text-[11px] text-zinc-400 mt-0.5 truncate">
+                            <span class="text-blue-400 font-medium truncate" id="bottomOpeningText">📖 Açılış Bekleniyor</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                    <div id="bottomTimerMobile" class="md:hidden font-mono text-xs font-bold bg-zinc-900 px-2 py-1 rounded border border-zinc-800 text-zinc-200">05:00</div>
+                    <div id="bottomCapturedPieces" class="flex items-center gap-0.5 min-h-[16px]"></div>
+                    <div id="bottomMaterialDiff" class="font-mono font-bold text-emerald-400 text-xs"></div>
+                </div>
+            </div>
+
+            <!-- MOBİL ANALİZ PANELİ -->
+            <div id="mobileAnalysisPanel" class="hidden w-full space-y-2 mt-1">
+                <!-- Değerlendirme -->
+                <div class="bg-[#09090b] px-3 py-2 rounded-xl border border-emerald-900/60 flex justify-between items-center gap-2 text-xs">
+                    <span class="text-emerald-400 font-bold shrink-0">📊 Değerlendirme</span>
+                    <div class="flex items-center gap-2 ml-auto min-w-0">
+                        <span id="mEvalDescription" class="text-zinc-400 text-[11px] truncate">Eşit konum</span>
+                        <span id="mEvalScoreText" class="font-mono font-bold text-white shrink-0">+0.0</span>
+                    </div>
+                </div>
+
+                <!-- Gezinme + En İyi Hamle Oyna (5'li) -->
+                <div class="grid grid-cols-5 gap-1.5">
+                    <button id="mNavStart" class="bg-zinc-800 hover:bg-zinc-700 active:scale-95 text-white font-bold py-2.5 rounded-lg text-sm transition">⏮️</button>
+                    <button id="mNavPrev" class="bg-zinc-800 hover:bg-zinc-700 active:scale-95 text-white font-bold py-2.5 rounded-lg text-sm transition">◀️</button>
+                    <button id="mPlayBestMoveBtn" class="bg-emerald-700 hover:bg-emerald-600 active:scale-95 text-white font-bold py-2.5 rounded-lg text-base transition">⚡</button>
+                    <button id="mNavNext" class="bg-zinc-800 hover:bg-zinc-700 active:scale-95 text-white font-bold py-2.5 rounded-lg text-sm transition">▶️</button>
+                    <button id="mNavEnd" class="bg-zinc-800 hover:bg-zinc-700 active:scale-95 text-white font-bold py-2.5 rounded-lg text-sm transition">⏭️</button>
+                </div>
+
+                <button id="mExitAnalysisBtn" class="w-full bg-blue-700 hover:bg-blue-600 active:scale-95 text-white font-bold py-2 rounded-xl text-xs transition">
+                    🎮 Oynamaya Dön
+                </button>
+            </div>
+
+            <!-- MOBİL HIZLI KONTROL ÇUBUĞU -->
+            <div id="mobileQuickControls" class="md:hidden w-full bg-[#121215] border border-zinc-800/90 rounded-xl p-1.5 flex items-center justify-around gap-1 shadow-md text-xs">
+                <button id="quickResetBtn" class="flex-1 bg-red-950/40 hover:bg-red-900/60 border border-red-900/50 text-red-400 font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 active:scale-95 transition">
+                    <span>➕</span> <span>Yeni</span>
+                </button>
+                <button id="quickUndoBtn" class="flex-1 bg-zinc-800/80 hover:bg-zinc-700 text-zinc-200 font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 active:scale-95 transition border border-zinc-700/60">
+                    <span>↩️</span> <span>Geri Al</span>
+                </button>
+                <button id="quickFlipBtn" class="flex-1 bg-zinc-800/80 hover:bg-zinc-700 text-zinc-200 font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 active:scale-95 transition border border-zinc-700/60">
+                    <span>🔄</span> <span>Çevir</span>
+                </button>
+                <button onclick="offerDraw('bottom')" class="flex-1 bg-zinc-800/80 hover:bg-zinc-700 text-zinc-300 font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 active:scale-95 transition border border-zinc-700/60">
+                    <span>🤝</span> <span>Berabere</span>
+                </button>
+                <button onclick="surrenderGame('bottom')" class="flex-1 bg-red-950/50 hover:bg-red-900/80 text-red-400 font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 active:scale-95 transition border border-red-900/50">
+                    <span>🏳️</span> <span>Terk Et</span>
+                </button>
+            </div>
+
         </div>
 
         <!-- SAĞ PANEL -->
@@ -250,16 +238,6 @@
                     </div>
                 </div>
 
-                <div id="bestMoveCard" class="hidden bg-[#09090b] p-3 rounded-xl border border-emerald-900/60 text-xs space-y-1.5">
-                    <div class="flex items-center justify-between">
-                        <span class="text-emerald-400 font-bold flex items-center gap-1.5">💡 Stockfish Tavsiyesi</span>
-                    </div>
-                    <div class="text-zinc-300 font-mono" id="bestMoveText">En İyi Hamle: --</div>
-                    <button id="playBestMoveBtn" class="w-full bg-emerald-700 hover:bg-emerald-600 active:scale-95 text-white font-bold py-1.5 rounded-lg text-xs transition mt-1">
-                        ⚡ En İyi Hamleyi Oyna
-                    </button>
-                </div>
-
                 <div class="space-y-2 bg-[#09090b] p-2.5 rounded-xl border border-zinc-800/60 text-xs">
                     <label class="flex items-center justify-between cursor-pointer select-none">
                         <span class="text-zinc-300 font-medium">🎯 Hamle İpuçlarını Göster</span>
@@ -276,11 +254,12 @@
             </div>
 
             <div id="analysisNav" class="hidden space-y-2 pt-3 border-t border-zinc-800">
-                <div class="grid grid-cols-4 gap-1.5">
-                    <button id="navStart" class="bg-zinc-800 hover:bg-zinc-700 text-white font-bold py-2 rounded-lg text-xs transition">⏮️</button>
-                    <button id="navPrev" class="bg-zinc-800 hover:bg-zinc-700 text-white font-bold py-2 rounded-lg text-xs transition">◀️</button>
-                    <button id="navNext" class="bg-zinc-800 hover:bg-zinc-700 text-white font-bold py-2 rounded-lg text-xs transition">▶️</button>
-                    <button id="navEnd" class="bg-zinc-800 hover:bg-zinc-700 text-white font-bold py-2 rounded-lg text-xs transition">⏭️</button>
+                <div class="grid grid-cols-5 gap-1.5">
+                    <button id="navStart" class="bg-zinc-800 hover:bg-zinc-700 text-white font-bold py-2 rounded-lg text-sm transition">⏮️</button>
+                    <button id="navPrev" class="bg-zinc-800 hover:bg-zinc-700 text-white font-bold py-2 rounded-lg text-sm transition">◀️</button>
+                    <button id="playBestMoveBtn" class="bg-emerald-700 hover:bg-emerald-600 text-white font-bold py-2 rounded-lg text-base transition">⚡</button>
+                    <button id="navNext" class="bg-zinc-800 hover:bg-zinc-700 text-white font-bold py-2 rounded-lg text-sm transition">▶️</button>
+                    <button id="navEnd" class="bg-zinc-800 hover:bg-zinc-700 text-white font-bold py-2 rounded-lg text-sm transition">⏭️</button>
                 </div>
                 <button id="exitAnalysisBtn" class="w-full bg-blue-700 hover:bg-blue-600 text-white font-bold py-2 rounded-xl text-xs transition">
                     🎮 Oynamaya Dön
