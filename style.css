@@ -1,3 +1,4 @@
+/* ⚡ TAŞ SÜRÜKLEME VE DİNAMİK GEÇİŞLER */
 .piece {
     user-select: none;
     -webkit-user-drag: none;
@@ -8,12 +9,18 @@
     transition: transform 0.15s ease-in-out, opacity 0.12s ease;
 }
 
+/* ⚡ TAHTA ANİMASYON HIZI SINIFLARI */
+#board.anim-off .piece { transition: none !important; }
+#board.anim-slow .piece { transition: transform 0.3s ease-in-out, opacity 0.25s ease !important; }
+#board.anim-normal .piece { transition: transform 0.15s ease-in-out, opacity 0.12s ease !important; }
+#board.anim-fast .piece { transition: transform 0.08s ease-in-out, opacity 0.06s ease !important; }
+
 /* 🎨 TAHTA RENK TEMALARI */
-/* 1. Zato Bordo (Varsayılan) */
+/* 1. Zato Bordo */
 #board.theme-red .square-light { background-color: #ffffff; }
 #board.theme-red .square-dark { background-color: #a81c1c; }
 
-/* 2. Turnuva Yeşil (Göz Dostu) */
+/* 2. Turnuva Yeşil (Varsayılan - Göz Dostu) */
 #board.theme-green .square-light { background-color: #eeeee2; }
 #board.theme-green .square-dark { background-color: #769656; }
 
@@ -33,10 +40,36 @@
     max-height: 680px;
 }
 
+/* 💻 MASAÜSTÜ SIKIŞTIRMA & KAYDIRMA ENGELLEME */
 @media (min-width: 768px) {
+    body {
+        height: 100vh;
+        overflow: hidden !important;
+    }
+
+    main {
+        height: calc(100vh - 0px);
+        padding: 1rem 1.5rem !important;
+        overflow: hidden !important;
+    }
+
     #board-wrapper {
-        width: min(78vw, 75vh);
-        height: min(78vw, 75vh);
+        width: min(65vw, 60vh) !important;
+        height: min(65vw, 60vh) !important;
+        max-width: 580px !important;
+        max-height: 580px !important;
+    }
+
+    #desktopPanel {
+        height: min(65vw, 60vh) !important;
+        max-height: 580px !important;
+        padding: 0.85rem !important;
+    }
+
+    .eval-bar-wrapper {
+        width: 16px !important;
+        height: min(65vw, 60vh) !important;
+        max-height: 580px !important;
     }
 }
 
@@ -46,8 +79,8 @@
     grid-template-rows: repeat(8, minmax(0, 1fr));
     width: 100%;
     height: 100%;
-    border: 4px solid #18181b;
-    box-shadow: 0 0 35px rgba(37, 99, 235, .25);
+    border: 3px solid #18181b;
+    box-shadow: 0 0 25px rgba(37, 99, 235, .2);
 }
 
 #board > div {
@@ -112,8 +145,8 @@
 
 .pgn-move {
     cursor: pointer;
-    padding: 2px 6px;
-    border-radius: 5px;
+    padding: 1px 4px;
+    border-radius: 4px;
     transition: background-color 0.15s ease, color 0.15s ease;
     display: inline-block;
 }
@@ -138,7 +171,7 @@
 }
 
 .eval-bar-wrapper {
-    width: 18px;
+    width: 16px;
     height: min(88vw, 48vh);
     max-height: 680px;
     background-color: #18181b;
@@ -157,14 +190,6 @@
     width: 100%;
     background-color: #ffffff;
     transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@media (min-width: 768px) {
-    .eval-bar-wrapper {
-        width: 20px;
-        height: min(78vw, 75vh);
-        max-height: 680px;
-    }
 }
 
 aside {
