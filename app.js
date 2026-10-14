@@ -30,21 +30,23 @@ let actualPlayerColor = 'w';
 let showLegalMoves = true;
 let autoFlipPvP = false;
 
-const pieceSVG = {
-    K: 'https://images.chesscomfiles.com/chess-themes/pieces/neo/300/wk.png',
-    Q: 'https://images.chesscomfiles.com/chess-themes/pieces/neo/300/wq.png',
-    R: 'https://images.chesscomfiles.com/chess-themes/pieces/neo/300/wr.png',
-    B: 'https://images.chesscomfiles.com/chess-themes/pieces/neo/300/wb.png',
-    N: 'https://images.chesscomfiles.com/chess-themes/pieces/neo/300/wn.png',
-    P: 'https://images.chesscomfiles.com/chess-themes/pieces/neo/300/wp.png',
+// ⚙️ AYARLAR VE DİNAMİK TERCİHLER
+let playSoundsEnabled = true;
+let kingCheckEffectEnabled = true;
+let currentPieceSet = 'neo';
 
-    k: 'https://images.chesscomfiles.com/chess-themes/pieces/neo/300/bk.png',
-    q: 'https://images.chesscomfiles.com/chess-themes/pieces/neo/300/bq.png',
-    r: 'https://images.chesscomfiles.com/chess-themes/pieces/neo/300/br.png',
-    b: 'https://images.chesscomfiles.com/chess-themes/pieces/neo/300/bb.png',
-    n: 'https://images.chesscomfiles.com/chess-themes/pieces/neo/300/bn.png',
-    p: 'https://images.chesscomfiles.com/chess-themes/pieces/neo/300/bp.png'
+const pieceThemeURLs = {
+    neo: 'https://images.chesscomfiles.com/chess-themes/pieces/neo/300/',
+    alpha: 'https://images.chesscomfiles.com/chess-themes/pieces/alpha/300/'
 };
+
+function getPieceSVG(key) {
+    const baseUrl = pieceThemeURLs[currentPieceSet] || pieceThemeURLs.neo;
+    const isWhite = key === key.toUpperCase();
+    const prefix = isWhite ? 'w' : 'b';
+    const pieceChar = key.toLowerCase();
+    return `${baseUrl}${prefix}${pieceChar}.png`;
+}
 
 const pieceValues = { p: 1, n: 3, b: 3, r: 5, q: 9, k: 0 };
 
@@ -153,7 +155,7 @@ function initStockfish() {
 
                     const targetPiece = game.get(to);
                     const moveObj = game.move({ from: from, to: to, promotion: promotion });
-                    
+
                     if (timeIncrementInSeconds > 0) {
                         if (botTurnColor === 'w') whiteTime += timeIncrementInSeconds;
                         else blackTime += timeIncrementInSeconds;
@@ -263,7 +265,10 @@ function requestEngineAnalysis() {
     stockfishWorker.postMessage('go depth 8');
 }
 
+// 🔊 SES EFEKTİ KONTROLÜ (AYAR SEÇİMİNE BAĞLI)
 function playMoveSound(moveObj, isCapture) {
+    if (!playSoundsEnabled) return;
+
     try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
         const bufferSize = ctx.sampleRate * 0.03;
@@ -371,7 +376,7 @@ function updatePlayerCards() {
     const drawIcons = (capturedArr, isWhiteCaptures) => {
         return capturedArr.map(p => {
             const key = isWhiteCaptures ? p.toLowerCase() : p.toUpperCase();
-            return `<img src="${pieceSVG[key]}" class="w-3 h-3 sm:w-3.5 sm:h-3.5 object-contain opacity-80 inline-block">`;
+            return `<img src="${getPieceSVG(key)}" class="w-3 h-3 sm:w-3.5 sm:h-3.5 object-contain opacity-80 inline-block">`;
         }).join('');
     };
 
@@ -453,8 +458,9 @@ function renderBoard() {
 
     const boardState = activeGame.board();
 
+    // 👑 Kırmızı Parlama Şah Çekilme Efekti Ayara Bağlı Kontrol Ediliyor
     let inCheckSquare = null;
-    if (activeGame.in_check()) {
+    if (kingCheckEffectEnabled && activeGame.in_check()) {
         const turnColor = activeGame.turn();
         for (let r = 0; r < 8; r++) {
             for (let c = 0; c < 8; c++) {
@@ -515,7 +521,7 @@ function renderBoard() {
 
             if (piece) {
                 const key = piece.color === 'w' ? piece.type.toUpperCase() : piece.type;
-                const $img =$('<img>').attr('src', pieceSVG[key]).addClass('piece');
+                const $img =$('<img>').attr('src', getPieceSVG(key)).addClass('piece');
                 $square.append($img);
             }
 
@@ -612,10 +618,10 @@ function openPromotionModal(color) {
     const bKey = color === 'w' ? 'B' : 'b';
     const nKey = color === 'w' ? 'N' : 'n';
 
-    $('#pImgQ').attr('src', pieceSVG[qKey]);
-    $('#pImgR').attr('src', pieceSVG[rKey]);
-    $('#pImgB').attr('src', pieceSVG[bKey]);
-    $('#pImgN').attr('src', pieceSVG[nKey]);
+    $('#pImgQ').attr('src', getPieceSVG(qKey));
+    $('#pImgR').attr('src', getPieceSVG(rKey));
+    $('#pImgB').attr('src', getPieceSVG(bKey));
+    $('#pImgN').attr('src', getPieceSVG(nKey));
 
     $('#promotionModal').removeClass('hidden');
 }
@@ -1021,22 +1027,71 @@ $('#modeBot, #mModeBot').on('click', function() {
     }
 });
 
-// ✅ AYARLAR MODAL ETKİLEŞİMLERİ
+// ✅ AYARLAR ETKİLEŞİMLERİ VE HIZLI YÜKLEME
 $('#openSettingsBtn, #mobileSettingsModalBtn').on('click', function(e) {
     e.preventDefault();
     $('#settingsModal').removeClass('hidden');
 });
 
+// 1. Tahta Renk Teması
 $('.theme-option-btn').on('click', function() {
-    const selectedTheme = $(this).attr('data-theme');
-    
-    // Tahtadaki eski tema sınıflarını temizleyip yenisini ekle
-    $('#board').removeClass('theme-red theme-green theme-wood theme-dark').addClass(selectedTheme);
-    
-    // Buton görsel vurgusunu güncelle
+    const selectedTheme = $(this).attr('data-theme');$('#board').removeClass('theme-red theme-green theme-wood theme-dark').addClass(selectedTheme);
     $('.theme-option-btn').removeClass('border-blue-500 bg-blue-950/40').addClass('border-zinc-800 bg-[#09090b]');
     $(this).addClass('border-blue-500 bg-blue-950/40').removeClass('border-zinc-800 bg-[#09090b]');
+    localStorage.setItem('zato_theme', selectedTheme);
 });
+
+// 2. Taş Stili Seçimi
+$('.piece-style-btn').on('click', function() {
+    currentPieceSet = $(this).attr('data-style');$('.piece-style-btn').removeClass('border-blue-500 bg-blue-950/40').addClass('border-zinc-800 bg-[#09090b]');
+    $(this).addClass('border-blue-500 bg-blue-950/40').removeClass('border-zinc-800 bg-[#09090b]');
+    localStorage.setItem('zato_piece_style', currentPieceSet);
+    renderBoard();
+});
+
+// 3. Animasyon Hızı Seçimi
+$('.anim-speed-btn').on('click', function() {
+    const animClass = $(this).attr('data-anim');$('#board').removeClass('anim-off anim-slow anim-normal anim-fast').addClass(animClass);
+    $('.anim-speed-btn').removeClass('bg-blue-600 text-white font-bold').addClass('text-zinc-400 font-semibold');$(this).addClass('bg-blue-600 text-white font-bold').removeClass('text-zinc-400 font-semibold');
+    localStorage.setItem('zato_anim_speed', animClass);
+});
+
+// 4. Ses ve Efekt Toggles
+$('#toggleSoundEffects').on('change', function() {
+    playSoundsEnabled = $(this).is(':checked');
+    localStorage.setItem('zato_sound', playSoundsEnabled);
+});
+
+$('#toggleKingCheckEffect').on('change', function() {
+    kingCheckEffectEnabled = $(this).is(':checked');
+    localStorage.setItem('zato_king_check', kingCheckEffectEnabled);
+    renderBoard();
+});
+
+// 💾 KAYITLI TERCİHLERİ TARAYICIDAN OKUMA
+function loadSavedSettings() {
+    const savedTheme = localStorage.getItem('zato_theme') || 'theme-green';
+    $('#board').removeClass('theme-red theme-green theme-wood theme-dark').addClass(savedTheme);
+    $(`.theme-option-btn[data-theme="${savedTheme}"]`).addClass('border-blue-500 bg-blue-950/40').removeClass('border-zinc-800 bg-[#09090b]');
+
+    const savedStyle = localStorage.getItem('zato_piece_style') || 'neo';
+    currentPieceSet = savedStyle;
+    $(`.piece-style-btn[data-style="${savedStyle}"]`).addClass('border-blue-500 bg-blue-950/40').removeClass('border-zinc-800 bg-[#09090b]');
+
+    const savedAnim = localStorage.getItem('zato_anim_speed') || 'anim-normal';
+    $('#board').removeClass('anim-off anim-slow anim-normal anim-fast').addClass(savedAnim);
+    $(`.anim-speed-btn[data-anim="${savedAnim}"]`).addClass('bg-blue-600 text-white font-bold').removeClass('text-zinc-400 font-semibold');
+
+    if (localStorage.getItem('zato_sound') !== null) {
+        playSoundsEnabled = localStorage.getItem('zato_sound') === 'true';
+        $('#toggleSoundEffects').prop('checked', playSoundsEnabled);
+    }
+
+    if (localStorage.getItem('zato_king_check') !== null) {
+        kingCheckEffectEnabled = localStorage.getItem('zato_king_check') === 'true';
+        $('#toggleKingCheckEffect').prop('checked', kingCheckEffectEnabled);
+    }
+}
 
 $('#mobileTempoModalBtn').on('click', function(e) {
     e.preventDefault();
@@ -1166,6 +1221,7 @@ $('#reviewBoardBtn').on('click', function() {
 $('#closeModalBtn').on('click', () => $('#gameOverModal').addClass('hidden'));
 
 initStockfish();
+loadSavedSettings();
 updateTimerDisplay();
 renderBoard();
 updateStatus();
