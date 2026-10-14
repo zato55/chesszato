@@ -6,8 +6,12 @@ let pendingMove = null;
 let isFlipped = false;
 let vsBot = true;
 let timerInterval = null;
+
+// Zaman ve Artış Yönetimi (Increment)
 let selectedTimeInSeconds = 300;
+let timeIncrementInSeconds = 0;
 let whiteTime = 300, blackTime = 300;
+
 let stockfishWorker = null;
 
 let isEngineThinking = false;
@@ -85,7 +89,6 @@ function initStockfish() {
             const message = event.data;
             if (typeof message !== 'string') return;
 
-            // ✅ Derinlik bilgisini mesaj içerisinden ayıklıyoruz
             const depthMatch = message.match(/depth (\d+)/);
             const currentDepth = depthMatch ? parseInt(depthMatch[1]) : 0;
 
@@ -109,7 +112,6 @@ function initStockfish() {
                 }
             }
 
-            // ✅ TITREME DÜZELTMESİ: Sadece yeterli derinliğe ulaşıldığında (depth >= 5) barı güncelliyoruz.
             if ((isAnalysisMode || isReviewing) && pendingEvalScore && currentDepth >= 5) {
                 updateEvalBar(pendingEvalScore.score, pendingEvalScore.isMate);
             }
@@ -152,6 +154,14 @@ function initStockfish() {
 
                     const targetPiece = game.get(to);
                     const moveObj = game.move({ from: from, to: to, promotion: promotion });
+                    
+                    // Bot hamle yaptığında ek hamle süresini (increment) ekle
+                    if (timeIncrementInSeconds > 0) {
+                        if (botTurnColor === 'w') whiteTime += timeIncrementInSeconds;
+                        else blackTime += timeIncrementInSeconds;
+                        updateTimerDisplay();
+                    }
+
                     playMoveSound(moveObj, targetPiece !== null);
                     renderBoard();
                     updateStatus();
@@ -334,8 +344,10 @@ function updatePlayerCards() {
         }
     });
 
+    const elo = $('#botElo').val();
+    updateBotEloUI(elo);
+
     if (vsBot) {
-        const elo = $('#botElo').val();
         if (actualPlayerColor === 'b') {
             $('#topPlayerName').text('Siz');
             $('#topPlayerElo').text('(1500)');
@@ -348,7 +360,7 @@ function updatePlayerCards() {
             $('#topPlayerElo').text(`(${elo})`);
             $('#bottomPlayerName').text('Siz');
             $('#bottomPlayerElo').text('(1500)');
-            $('#topAvatar').text('♟').addClass('bg-zinc-800 text-zinc-300').removeClass('bg-zinc-100 text-zinc-900');
+            $('#topAvatar').text('♟').addClass('bg-[#18181b] text-zinc-300').removeClass('bg-zinc-100 text-zinc-900');
             $('#bottomAvatar').text('♙').addClass('bg-zinc-100 text-zinc-900').removeClass('bg-zinc-800 text-zinc-300');
         }
     } else {
@@ -378,6 +390,22 @@ function updatePlayerCards() {
         $('#topMaterialDiff').text(whiteScore > blackScore ? `+${whiteScore - blackScore}` : '');
         $('#bottomMaterialDiff').text(blackScore > whiteScore ? `+${blackScore - whiteScore}` : '');
     }
+}
+
+// ✅ SEÇİLİ BOT ELO BUTONUNU BELİRGİN MAVİ YAPMA FONKSİYONU
+function updateBotEloUI(selectedElo) {
+    $('.bot-level-btn').each(function() {
+        const btnElo = $(this).attr('data-elo');
+        if (btnElo === String(selectedElo)) {
+            $(this)
+                .addClass('bg-blue-600 text-white font-bold border-blue-500 shadow-lg scale-[1.02]')
+                .removeClass('bg-[#09090b] text-zinc-300 border-zinc-800');
+        } else {
+            $(this)
+                .addClass('bg-[#09090b] text-zinc-300 border-zinc-800')
+                .removeClass('bg-blue-600 text-white font-bold border-blue-500 shadow-lg scale-[1.02]');
+        }
+    });
 }
 
 window.surrenderGame = function(position) {
@@ -428,7 +456,6 @@ function renderBoard() {
 
     const boardState = activeGame.board();
 
-    // 👑 Şah Çekilme (Check) durumunda tehdit altındaki Şah karesini tespit et
     let inCheckSquare = null;
     if (activeGame.in_check()) {
         const turnColor = activeGame.turn();
@@ -477,7 +504,6 @@ function renderBoard() {
                 $square.addClass('last-move-highlight');
             }
 
-            // 👑 Şah Çekildiğinde Kırmızı Parlama Sınıfını Ekle
             if (inCheckSquare === squareName) {
                 $square.addClass('king-check-highlight');
             }
@@ -529,9 +555,18 @@ function handleMove(from, to) {
 function executeMove(from, to, promoPiece) {
     const activeGame = isAnalysisMode ? analysisGame : game;
     const targetPiece = activeGame.get(to);
+    const movingColor = activeGame.turn();
+
     const moveObj = activeGame.move({ from: from, to: to, promotion: promoPiece });
 
     if (moveObj !== null) {
+        // Hamle başarıyla gerçekleştiğinde süreye artış (increment) ekle
+        if (!isAnalysisMode && !isReviewing && timeIncrementInSeconds > 0) {
+            if (movingColor === 'w') whiteTime += timeIncrementInSeconds;
+            else blackTime += timeIncrementInSeconds;
+            updateTimerDisplay();
+        }
+
         playMoveSound(moveObj, targetPiece !== null);
         selectedSquare = null;
 
@@ -604,10 +639,16 @@ function triggerStockfishMove() {
     const elo = parseInt($('#botElo').val()) || 1400;
     const fen = game.fen();
 
-    let depth = 3;
-    if (elo >= 1400) depth = 5;
-    if (elo >= 1600) depth = 8;
+    // Elo seviyesine göre motor derinliği (depth) ayarı
+    let depth = 1;
+    if (elo >= 400) depth = 2;
+    if (elo >= 800) depth = 3;
+    if (elo >= 1200) depth = 4;
+    if (elo >= 1400) depth = 6;
+    if (elo >= 1600) depth = 9;
     if (elo >= 1800) depth = 12;
+    if (elo >= 2000) depth = 15;
+    if (elo >= 2200) depth = 18;
 
     stockfishWorker.postMessage('stop');
     stockfishWorker.postMessage('position fen ' + fen);
@@ -636,8 +677,19 @@ $('#board').on('click', 'div[data-square]', function () {
     }
 });
 
+function parseTimeControl(valStr) {
+    if (valStr.includes('-')) {
+        const parts = valStr.split('-');
+        selectedTimeInSeconds = parseInt(parts[0]);
+        timeIncrementInSeconds = parseInt(parts[1]);
+    } else {
+        selectedTimeInSeconds = parseInt(valStr);
+        timeIncrementInSeconds = 0;
+    }
+}
+
 $('#timeSelect').on('change', function() {
-    selectedTimeInSeconds = parseInt($(this).val()) || 300;
+    parseTimeControl($(this).val());
     resetGame();
 });
 
@@ -990,8 +1042,8 @@ $('.close-modal-btn, #tempoModal, #botModal').on('click', function(e) {
 });
 
 $('.tempo-option-btn').on('click', function() {
-    const timeVal = parseInt($(this).attr('data-time'));
-    selectedTimeInSeconds = timeVal;
+    const timeVal = $(this).attr('data-time');
+    parseTimeControl(timeVal);
     $('#timeSelect').val(timeVal);
     $('.tempo-option-btn').removeClass('border-emerald-500 active-tempo').addClass('border-zinc-800');
     $(this).addClass('border-emerald-500 active-tempo');$('#tempoModal').addClass('hidden');
@@ -1000,7 +1052,7 @@ $('.tempo-option-btn').on('click', function() {
 
 $('.bot-level-btn').on('click', function() {
     const eloVal = $(this).attr('data-elo');$('#botElo').val(eloVal);
-    $('.bot-level-btn').removeClass('border-blue-600/80').addClass('border-zinc-800');$(this).addClass('border-blue-600/80');
+    updateBotEloUI(eloVal);
     updatePlayerCards();
     $('#botModal').addClass('hidden');
 });
@@ -1029,7 +1081,10 @@ $('#quickUndoBtn, #undoBtn').on('click', function () {
     }
 });
 
-$('#botElo').on('change', updatePlayerCards);
+$('#botElo').on('change', function() {
+    updateBotEloUI($(this).val());
+    updatePlayerCards();
+});
 
 function resetGame() {
     if (stockfishWorker) stockfishWorker.postMessage('stop');

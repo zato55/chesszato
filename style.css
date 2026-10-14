@@ -142,7 +142,6 @@
 .eval-bar-white {
     width: 100%;
     background-color: #ffffff;
-    /* ✅ Akıcı ve pürüzsüz geçiş için transition süresi optimize edildi */
     transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
