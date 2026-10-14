@@ -265,7 +265,6 @@ function requestEngineAnalysis() {
     stockfishWorker.postMessage('go depth 8');
 }
 
-// 🔊 SES EFEKTİ KONTROLÜ (AYAR SEÇİMİNE BAĞLI)
 function playMoveSound(moveObj, isCapture) {
     if (!playSoundsEnabled) return;
 
@@ -458,7 +457,6 @@ function renderBoard() {
 
     const boardState = activeGame.board();
 
-    // 👑 Kırmızı Parlama Şah Çekilme Efekti Ayara Bağlı Kontrol Ediliyor
     let inCheckSquare = null;
     if (kingCheckEffectEnabled && activeGame.in_check()) {
         const turnColor = activeGame.turn();
@@ -1027,30 +1025,37 @@ $('#modeBot, #mModeBot').on('click', function() {
     }
 });
 
-// ✅ AYARLAR ETKİLEŞİMLERİ VE HIZLI YÜKLEME
+// ✅ AYARLAR ETKİLEŞİMLERİ VE DOKUNMA/TIKLAMA İYİLEŞTİRMELERİ
 $('#openSettingsBtn, #mobileSettingsModalBtn').on('click', function(e) {
     e.preventDefault();
     $('#settingsModal').removeClass('hidden');
 });
 
 // 1. Tahta Renk Teması
-$('.theme-option-btn').on('click', function() {
+$(document).on('click', '.theme-option-btn', function(e) {
+    e.preventDefault();
     const selectedTheme = $(this).attr('data-theme');$('#board').removeClass('theme-red theme-green theme-wood theme-dark').addClass(selectedTheme);
     $('.theme-option-btn').removeClass('border-blue-500 bg-blue-950/40').addClass('border-zinc-800 bg-[#09090b]');
     $(this).addClass('border-blue-500 bg-blue-950/40').removeClass('border-zinc-800 bg-[#09090b]');
     localStorage.setItem('zato_theme', selectedTheme);
 });
 
-// 2. Taş Stili Seçimi
-$('.piece-style-btn').on('click', function() {
-    currentPieceSet = $(this).attr('data-style');$('.piece-style-btn').removeClass('border-blue-500 bg-blue-950/40').addClass('border-zinc-800 bg-[#09090b]');
-    $(this).addClass('border-blue-500 bg-blue-950/40').removeClass('border-zinc-800 bg-[#09090b]');
+// 2. Taş Stili Seçimi (Mobilde Event Delegation ve Closest Kullanıldı)
+$(document).on('click', '.piece-style-btn', function(e) {
+    e.preventDefault();
+    const $btn =$(this).closest('.piece-style-btn');
+    currentPieceSet = $btn.attr('data-style');
+
+    $('.piece-style-btn').removeClass('border-blue-500 bg-blue-950/40').addClass('border-zinc-800 bg-[#09090b]');
+    $btn.addClass('border-blue-500 bg-blue-950/40').removeClass('border-zinc-800 bg-[#09090b]');
+
     localStorage.setItem('zato_piece_style', currentPieceSet);
     renderBoard();
 });
 
 // 3. Animasyon Hızı Seçimi
-$('.anim-speed-btn').on('click', function() {
+$(document).on('click', '.anim-speed-btn', function(e) {
+    e.preventDefault();
     const animClass = $(this).attr('data-anim');$('#board').removeClass('anim-off anim-slow anim-normal anim-fast').addClass(animClass);
     $('.anim-speed-btn').removeClass('bg-blue-600 text-white font-bold').addClass('text-zinc-400 font-semibold');$(this).addClass('bg-blue-600 text-white font-bold').removeClass('text-zinc-400 font-semibold');
     localStorage.setItem('zato_anim_speed', animClass);

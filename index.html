@@ -56,7 +56,7 @@
         </div>
     </aside>
 
-    <!-- ANA İÇERİK (GENİŞLETİLMİŞ VE DİKEYDE TAM SIĞAN TAHTA) -->
+    <!-- ANA İÇERİK -->
     <main class="flex-1 flex flex-col lg:flex-row items-center justify-center p-1 lg:p-2 gap-2 lg:gap-4 overflow-hidden">
         
         <!-- TAHTA VE OYUNCU KARTLARI -->
@@ -304,68 +304,72 @@
         </button>
     </nav>
 
-    <!-- OYUN AYARLARI MODALI -->
-    <div id="settingsModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-[#121215] border-2 border-zinc-800 rounded-3xl p-5 max-w-sm w-full space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto">
+    <!-- MOBİL TIKLAMA HEDEFİ GÜÇLENDİRİLMİŞ AYARLAR MODALI -->
+    <div id="settingsModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-3">
+        <div class="bg-[#121215] border-2 border-zinc-800 rounded-3xl p-4 sm:p-5 max-w-sm w-full space-y-4 shadow-2xl max-h-[88vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
                 <h3 class="text-base font-bold text-white flex items-center gap-2">⚙️ Oyun Ayarları</h3>
                 <button class="close-modal-btn text-zinc-400 hover:text-white text-lg font-bold p-1">✕</button>
             </div>
 
             <div class="space-y-4">
+                <!-- 1. TAHTA RENK TEMALARI -->
                 <div>
                     <label class="text-xs text-zinc-400 font-medium block mb-2">🎨 Tahta Renk Teması:</label>
                     <div class="grid grid-cols-2 gap-2">
-                        <button class="theme-option-btn p-2.5 rounded-xl border border-zinc-800 bg-[#09090b] flex items-center gap-2 text-xs transition" data-theme="theme-red">
-                            <span class="w-4 h-4 rounded-full bg-[#a81c1c] border border-white/20 inline-block"></span>
+                        <button type="button" class="theme-option-btn p-2.5 rounded-xl border border-zinc-800 bg-[#09090b] flex items-center gap-2 text-xs transition" data-theme="theme-red">
+                            <span class="w-4 h-4 rounded-full bg-[#a81c1c] border border-white/20 inline-block shrink-0"></span>
                             <span class="font-bold text-zinc-200">Zato Bordo</span>
                         </button>
-                        <button class="theme-option-btn p-2.5 rounded-xl border border-zinc-800 bg-[#09090b] flex items-center gap-2 text-xs transition active-theme" data-theme="theme-green">
-                            <span class="w-4 h-4 rounded-full bg-[#769656] border border-white/20 inline-block"></span>
+                        <button type="button" class="theme-option-btn p-2.5 rounded-xl border border-zinc-800 bg-[#09090b] flex items-center gap-2 text-xs transition active-theme" data-theme="theme-green">
+                            <span class="w-4 h-4 rounded-full bg-[#769656] border border-white/20 inline-block shrink-0"></span>
                             <span class="font-bold text-zinc-200">Turnuva Yeşil</span>
                         </button>
-                        <button class="theme-option-btn p-2.5 rounded-xl border border-zinc-800 bg-[#09090b] flex items-center gap-2 text-xs transition" data-theme="theme-wood">
-                            <span class="w-4 h-4 rounded-full bg-[#b58863] border border-white/20 inline-block"></span>
+                        <button type="button" class="theme-option-btn p-2.5 rounded-xl border border-zinc-800 bg-[#09090b] flex items-center gap-2 text-xs transition" data-theme="theme-wood">
+                            <span class="w-4 h-4 rounded-full bg-[#b58863] border border-white/20 inline-block shrink-0"></span>
                             <span class="font-bold text-zinc-200">Klasik Ahşap</span>
                         </button>
-                        <button class="theme-option-btn p-2.5 rounded-xl border border-zinc-800 bg-[#09090b] flex items-center gap-2 text-xs transition" data-theme="theme-dark">
-                            <span class="w-4 h-4 rounded-full bg-[#4b5563] border border-white/20 inline-block"></span>
+                        <button type="button" class="theme-option-btn p-2.5 rounded-xl border border-zinc-800 bg-[#09090b] flex items-center gap-2 text-xs transition" data-theme="theme-dark">
+                            <span class="w-4 h-4 rounded-full bg-[#4b5563] border border-white/20 inline-block shrink-0"></span>
                             <span class="font-bold text-zinc-200">Gece Mavisi</span>
                         </button>
                     </div>
                 </div>
 
+                <!-- 2. TAŞ STİLİ SEÇİMİ (MOBİL TIKLAMA HEDEFİ SAĞLAMLAŞTIRILDI) -->
                 <div>
                     <label class="text-xs text-zinc-400 font-medium block mb-2">♟️ Taş Stili (Piece Set):</label>
                     <div class="grid grid-cols-2 gap-2">
-                        <button class="piece-style-btn p-2 rounded-xl border border-zinc-800 bg-[#09090b] flex items-center gap-2 text-xs transition active-piece-style" data-style="neo">
-                            <img src="https://images.chesscomfiles.com/chess-themes/pieces/neo/300/wn.png" class="w-6 h-6 object-contain">
-                            <span class="font-bold text-zinc-200">Neo (Modern)</span>
+                        <button type="button" class="piece-style-btn p-2.5 rounded-xl border border-zinc-800 bg-[#09090b] flex items-center justify-center gap-2 text-xs transition active-piece-style cursor-pointer select-none" data-style="neo">
+                            <span class="text-base pointer-events-none">♘</span>
+                            <span class="font-bold text-zinc-200 pointer-events-none">Neo (Modern)</span>
                         </button>
-                        <button class="piece-style-btn p-2 rounded-xl border border-zinc-800 bg-[#09090b] flex items-center gap-2 text-xs transition" data-style="alpha">
-                            <img src="https://images.chesscomfiles.com/chess-themes/pieces/alpha/300/wn.png" class="w-6 h-6 object-contain">
-                            <span class="font-bold text-zinc-200">Alpha (Lichess)</span>
+                        <button type="button" class="piece-style-btn p-2.5 rounded-xl border border-zinc-800 bg-[#09090b] flex items-center justify-center gap-2 text-xs transition cursor-pointer select-none" data-style="alpha">
+                            <span class="text-base pointer-events-none">♞</span>
+                            <span class="font-bold text-zinc-200 pointer-events-none">Alpha (Lichess)</span>
                         </button>
                     </div>
                 </div>
 
+                <!-- 3. ANIMASYON HIZI -->
                 <div>
                     <label class="text-xs text-zinc-400 font-medium block mb-2">⚡ Tahta Animasyon Hızı:</label>
-                    <div class="grid grid-cols-4 gap-1.5 bg-[#09090b] p-1 rounded-xl border border-zinc-800 text-xs">
-                        <button class="anim-speed-btn py-1.5 rounded-lg text-zinc-400 font-semibold" data-anim="anim-off">Kapalı</button>
-                        <button class="anim-speed-btn py-1.5 rounded-lg text-zinc-400 font-semibold" data-anim="anim-slow">Yavaş</button>
-                        <button class="anim-speed-btn py-1.5 rounded-lg bg-blue-600 text-white font-bold" data-anim="anim-normal">Normal</button>
-                        <button class="anim-speed-btn py-1.5 rounded-lg text-zinc-400 font-semibold" data-anim="anim-fast">Hızlı</button>
+                    <div class="grid grid-cols-4 gap-1 bg-[#09090b] p-1 rounded-xl border border-zinc-800 text-xs">
+                        <button type="button" class="anim-speed-btn py-1.5 rounded-lg text-zinc-400 font-semibold" data-anim="anim-off">Kapalı</button>
+                        <button type="button" class="anim-speed-btn py-1.5 rounded-lg text-zinc-400 font-semibold" data-anim="anim-slow">Yavaş</button>
+                        <button type="button" class="anim-speed-btn py-1.5 rounded-lg bg-blue-600 text-white font-bold" data-anim="anim-normal">Normal</button>
+                        <button type="button" class="anim-speed-btn py-1.5 rounded-lg text-zinc-400 font-semibold" data-anim="anim-fast">Hızlı</button>
                     </div>
                 </div>
 
+                <!-- 4. SES VE EFEKT KONTROLLERİ -->
                 <div class="space-y-2.5 pt-2 border-t border-zinc-800/80 text-xs">
                     <label class="flex items-center justify-between cursor-pointer select-none">
-                        <span class="text-zinc-300 font-medium">🔊 Hamle & Taş Alma Sesleri</span>
+                        <span class="text-zinc-300 font-medium">🔊 Hamle & Taş Sesleri</span>
                         <input type="checkbox" id="toggleSoundEffects" class="w-4 h-4 accent-blue-600 rounded cursor-pointer" checked>
                     </label>
                     <label class="flex items-center justify-between cursor-pointer select-none">
-                        <span class="text-zinc-300 font-medium">👑 Şah Çekilince Kırmızı Parlama</span>
+                        <span class="text-zinc-300 font-medium">👑 Şah Çekilince Parlama</span>
                         <input type="checkbox" id="toggleKingCheckEffect" class="w-4 h-4 accent-blue-600 rounded cursor-pointer" checked>
                     </label>
                 </div>

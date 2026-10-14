@@ -53,7 +53,6 @@
         overflow: hidden !important;
     }
 
-    /* Tahtayı dikey alanın izin verdiği en büyük boyuta çekiyoruz */
     #board-wrapper {
         width: min(72vw, 72vh) !important;
         height: min(72vw, 72vh) !important;
@@ -222,6 +221,27 @@ aside.collapsed .nav-item {
 .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
+}
+
+/* ♟️ TAŞ STİLİ VE MODAL MOBİL TIKLAMA DÜZELTMELERİ */
+.piece-style-btn {
+    cursor: pointer !important;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.piece-style-btn * {
+    pointer-events: none !important;
+}
+
+#settingsModal .theme-option-btn,
+#settingsModal .piece-style-btn,
+#settingsModal .anim-speed-btn {
+    min-height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* ===== MOBİL ===== */
