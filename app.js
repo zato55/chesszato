@@ -401,7 +401,7 @@ window.offerDraw = function(position) {
 };
 
 function renderBoard() {
-    const $board = $('#board');
+    const $board =$('#board');
     $board.empty();
 
     const activeGame = isAnalysisMode ? analysisGame : game;
@@ -418,6 +418,23 @@ function renderBoard() {
     }
 
     const boardState = activeGame.board();
+
+    // 👑 Şah Çekilme (Check) durumunda tehdit altındaki Şah karesini tespit et
+    let inCheckSquare = null;
+    if (activeGame.in_check()) {
+        const turnColor = activeGame.turn();
+        for (let r = 0; r < 8; r++) {
+            for (let c = 0; c < 8; c++) {
+                const p = boardState[r][c];
+                if (p && p.type === 'k' && p.color === turnColor) {
+                    const f = String.fromCharCode(97 + c);
+                    const rankNum = 8 - r;
+                    inCheckSquare = f + rankNum;
+                    break;
+                }
+            }
+        }
+    }
 
     let legalSquares = {};
     if (selectedSquare && showLegalMoves && (!isGameOver || isReviewing || isAnalysisMode)) {
@@ -438,7 +455,7 @@ function renderBoard() {
             const piece = boardState[rowIdx][colIdx];
             const isLight = (rowIdx + colIdx) % 2 === 0;
 
-            const $square = $('<div></div>')
+            const $square =$('<div></div>')
                 .addClass('w-full h-full flex items-center justify-center select-none')
                 .addClass(isLight ? 'square-light' : 'square-dark')
                 .attr('data-square', squareName);
@@ -451,6 +468,11 @@ function renderBoard() {
                 $square.addClass('last-move-highlight');
             }
 
+            // 👑 Şah Çekildiğinde Kırmızı Parlama Sınıfını Ekle
+            if (inCheckSquare === squareName) {
+                $square.addClass('king-check-highlight');
+            }
+
             if (legalSquares[squareName]) {
                 if (legalSquares[squareName] === 'capture') {
                     $square.addClass('legal-capture-ring');
@@ -461,7 +483,7 @@ function renderBoard() {
 
             if (piece) {
                 const key = piece.color === 'w' ? piece.type.toUpperCase() : piece.type;
-                const $img = $('<img>').attr('src', pieceSVG[key]).addClass('piece');
+                const $img =$('<img>').attr('src', pieceSVG[key]).addClass('piece');
                 $square.append($img);
             }
 
@@ -954,8 +976,7 @@ $('#mobileBotModalBtn').on('click', function(e) {
 });
 
 $('.close-modal-btn, #tempoModal, #botModal').on('click', function(e) {
-    if (e.target === this || $(e.target).hasClass('close-modal-btn')) {
-        $('#tempoModal, #botModal').addClass('hidden');
+    if (e.target === this || $(e.target).hasClass('close-modal-btn')) {$('#tempoModal, #botModal').addClass('hidden');
     }
 });
 
@@ -964,8 +985,7 @@ $('.tempo-option-btn').on('click', function() {
     selectedTimeInSeconds = timeVal;
     $('#timeSelect').val(timeVal);
     $('.tempo-option-btn').removeClass('border-emerald-500 active-tempo').addClass('border-zinc-800');
-    $(this).addClass('border-emerald-500 active-tempo');
-    $('#tempoModal').addClass('hidden');
+    $(this).addClass('border-emerald-500 active-tempo');$('#tempoModal').addClass('hidden');
     resetGame();
 });
 
