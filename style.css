@@ -84,7 +84,6 @@
 
 #board > div:hover { filter: brightness(1.04); }
 
-/* ✅ PGN hamleleri tıklanabilir */
 .pgn-move {
     cursor: pointer;
     padding: 2px 6px;
@@ -112,7 +111,7 @@
     z-index: 20;
 }
 
-/* ✅ EVAL BAR — tahta ile BİREBİR aynı yükseklik */
+/* EVAL BAR */
 .eval-bar-wrapper {
     width: 18px;
     height: min(88vw, 48vh);
@@ -134,7 +133,6 @@
     transition: height 0.5s ease-out;
 }
 
-/* Masaüstü — tahta ile birebir aynı */
 @media (min-width: 768px) {
     .eval-bar-wrapper {
         width: 20px;
@@ -143,7 +141,6 @@
     }
 }
 
-/* Mobil — tahta ile birebir aynı */
 @media (max-width: 768px) {
     .eval-bar-wrapper {
         width: 12px;
@@ -183,6 +180,7 @@ aside.collapsed .nav-item {
     scrollbar-width: none;
 }
 
+/* ===== MOBİL ===== */
 @media (max-width: 768px) {
     body {
         height: 100dvh;
@@ -191,8 +189,9 @@ aside.collapsed .nav-item {
 
     main {
         padding-top: 0.25rem !important;
-        padding-bottom: 4rem !important;
+        padding-bottom: 6rem !important; /* Alt nav için boşluk artırıldı */
         justify-content: flex-start !important;
+        overflow-y: auto !important;
     }
 
     #board-wrapper {
@@ -211,5 +210,14 @@ aside.collapsed .nav-item {
 
     #desktopPanel {
         display: none !important;
+    }
+
+    /* ✅ ANALİZ MODUNDA: Alt nav gizlenir + daha fazla padding */
+    body.analysis-mode nav.md\:hidden {
+        display: none !important;
+    }
+
+    body.analysis-mode main {
+        padding-bottom: 12rem !important;
     }
 }

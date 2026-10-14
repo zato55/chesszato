@@ -179,7 +179,6 @@ function updateEvalBar(score, isMate) {
         percentage = Math.max(5, Math.min(95, percentage));
     }
 
-    // ✅ Hem desktop hem mobil
     $('#evalScoreText').text(scoreText);
     $('#evalDescription').text(descText);
     $('#mEvalScoreText').text(scoreText);
@@ -810,6 +809,8 @@ function startAnalysisMode() {
     isReviewing = true;
     if (stockfishWorker) stockfishWorker.postMessage('stop');
 
+    $('body').addClass('analysis-mode');   // ✅ YENİ
+
     $('#gameOverModal').addClass('hidden');
     $('#evalBarWrapper').removeClass('hidden');
     $('#evalScoreWrapper').removeClass('hidden');
@@ -836,6 +837,8 @@ function exitAnalysisMode() {
     isAnalysisMode = false;
     isReviewing = false;
     if (stockfishWorker) stockfishWorker.postMessage('stop');
+
+    $('body').removeClass('analysis-mode');   // ✅ YENİ
 
     $('#analysisNav').addClass('hidden');
     $('#normalControls').removeClass('hidden');
@@ -885,13 +888,11 @@ function updateAnalysisBoard() {
     requestEngineAnalysis();
 }
 
-// ✅ Desktop navigasyon
 $('#navStart').on('click', () => { if (isAnalysisMode) { analysisIdx = -1; updateAnalysisBoard(); } });
 $('#navPrev').on('click', () => { if (isAnalysisMode && analysisIdx > -1) { analysisIdx--; updateAnalysisBoard(); } });
 $('#navNext').on('click', () => { if (isAnalysisMode && analysisIdx < analysisMoveHistory.length - 1) { analysisIdx++; updateAnalysisBoard(); } });
 $('#navEnd').on('click', () => { if (isAnalysisMode && analysisMoveHistory.length > 0) { analysisIdx = analysisMoveHistory.length - 1; updateAnalysisBoard(); } });
 
-// ✅ Mobil navigasyon
 $('#mNavStart').on('click', () => { if (isAnalysisMode) { analysisIdx = -1; updateAnalysisBoard(); } });
 $('#mNavPrev').on('click', () => { if (isAnalysisMode && analysisIdx > -1) { analysisIdx--; updateAnalysisBoard(); } });
 $('#mNavNext').on('click', () => { if (isAnalysisMode && analysisIdx < analysisMoveHistory.length - 1) { analysisIdx++; updateAnalysisBoard(); } });
@@ -909,9 +910,7 @@ $(document).on('keydown', function(e) {
     }
 });
 
-// ✅ En İyi Hamleyi Oyna - Desktop
 $('#playBestMoveBtn').on('click', playBestMove);
-// ✅ En İyi Hamleyi Oyna - Mobil
 $('#mPlayBestMoveBtn').on('click', playBestMove);
 
 function playBestMove() {
@@ -1019,6 +1018,9 @@ function resetGame() {
     if (stockfishWorker) stockfishWorker.postMessage('stop');
     game.reset();
     analysisGame.reset();
+
+    $('body').removeClass('analysis-mode');   // ✅ YENİ
+
     analysisMoveHistory = [];
     analysisIdx = -1;
     isAnalysisMode = false;
