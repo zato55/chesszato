@@ -85,6 +85,10 @@ function initStockfish() {
             const message = event.data;
             if (typeof message !== 'string') return;
 
+            // ✅ Derinlik bilgisini mesaj içerisinden ayıklıyoruz
+            const depthMatch = message.match(/depth (\d+)/);
+            const currentDepth = depthMatch ? parseInt(depthMatch[1]) : 0;
+
             if (message.includes('score cp')) {
                 const parts = message.split(' ');
                 const cpIdx = parts.indexOf('cp');
@@ -103,6 +107,11 @@ function initStockfish() {
                     if (engineSide === 'b') mateIn = -mateIn;
                     pendingEvalScore = { score: mateIn, isMate: true };
                 }
+            }
+
+            // ✅ TITREME DÜZELTMESİ: Sadece yeterli derinliğe ulaşıldığında (depth >= 5) barı güncelliyoruz.
+            if ((isAnalysisMode || isReviewing) && pendingEvalScore && currentDepth >= 5) {
+                updateEvalBar(pendingEvalScore.score, pendingEvalScore.isMate);
             }
 
             if (message.startsWith('bestmove')) {

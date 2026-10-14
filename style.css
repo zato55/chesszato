@@ -142,7 +142,8 @@
 .eval-bar-white {
     width: 100%;
     background-color: #ffffff;
-    transition: height 0.5s ease-out;
+    /* ✅ Akıcı ve pürüzsüz geçiş için transition süresi optimize edildi */
+    transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @media (min-width: 768px) {
@@ -208,7 +209,7 @@ aside.collapsed .nav-item {
         height: min(92vw, 45vh) !important;
         max-height: none !important;
         border-radius: 6px !important;
-        margin-right: 2px !important; /* Tahta ile eval bar arasında hafif sol nefes alma alanı */
+        margin-right: 2px !important;
     }
 
     #topCapturedPieces img, #bottomCapturedPieces img {
