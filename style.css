@@ -358,3 +358,38 @@ aside.collapsed .nav-item {
 #bottomPlayerCard[data-board-theme] #bottomTimerMobile {
     color: #e5e7eb !important;
 }
+
+/* Mobil oyuncu kartı: Elo, süre ve açılış metni için yüksek kontrast. */
+@media (max-width: 767px) {
+    #topPlayerCard[data-board-theme] #topPlayerElo,
+    #bottomPlayerCard[data-board-theme] #bottomPlayerElo {
+        color: #ffffff !important;
+        background-color: #1e3a8a !important;
+        border-color: #1d4ed8 !important;
+        font-size: 10px !important;
+        font-weight: 800 !important;
+        line-height: 1.2 !important;
+    }
+
+    #topPlayerCard[data-board-theme] #topTimerMobile,
+    #bottomPlayerCard[data-board-theme] #bottomTimerMobile {
+        color: #ffffff !important;
+        background-color: #111827 !important;
+        border: 1px solid #374151 !important;
+        font-size: 14px !important;
+        font-weight: 900 !important;
+        line-height: 1.25 !important;
+        padding: 5px 7px !important;
+        letter-spacing: 0.02em !important;
+        font-variant-numeric: tabular-nums !important;
+        text-shadow: 0 1px 1px rgba(0, 0, 0, 0.45);
+    }
+
+    #topPlayerCard[data-board-theme] #topOpeningText,
+    #bottomPlayerCard[data-board-theme] #bottomOpeningText {
+        color: #1e3a8a !important;
+        font-size: 11px !important;
+        font-weight: 800 !important;
+        text-shadow: none !important;
+    }
+}
