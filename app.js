@@ -442,7 +442,7 @@ function updatePlayerCards() {
             const key = isWhiteCaptures ? normalizedPiece : normalizedPiece.toUpperCase();
             const overlapsSamePiece = normalizedPiece === previousPiece;
             previousPiece = normalizedPiece;
-            const overlapStyle = overlapsSamePiece ? 'margin-left:-16px' : '';
+            const overlapStyle = overlapsSamePiece ? 'margin-left:-20px' : '';
             return `<img src="${getPieceSVG(key)}" style="${overlapStyle}" class="w-4 h-4 sm:w-5 sm:h-5 object-contain opacity-100 inline-block">`;
         }).join('');
     };
