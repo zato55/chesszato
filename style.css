@@ -346,8 +346,15 @@ aside.collapsed .nav-item {
     color: #111827 !important;
 }
 #topPlayerCard[data-board-theme] .text-zinc-200,
-#bottomPlayerCard[data-board-theme] .text-zinc-200,
+#bottomPlayerCard[data-board-theme] .text-zinc-200 {
+    color: #1f2937 !important;
+}
 #topPlayerCard[data-board-theme] .text-zinc-400,
 #bottomPlayerCard[data-board-theme] .text-zinc-400 {
-    color: #374151 !important;
+    color: #4b5563 !important;
+}
+/* Zaman göstergesi koyu zeminde kaldığı için açık yazı kullanır. */
+#topPlayerCard[data-board-theme] #topTimerMobile,
+#bottomPlayerCard[data-board-theme] #bottomTimerMobile {
+    color: #e5e7eb !important;
 }
