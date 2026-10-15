@@ -839,7 +839,12 @@ function showGameOverModal(title, reason, icon = '🏆') {
         clearInterval(timerInterval);
         timerInterval = null;
     }
-    if (stockfishWorker) stockfishWorker.postMessage('stop');
+    if (stockfishWorker && isEngineThinking) {
+        discardEngineBestMove = true;
+        stockfishWorker.postMessage('stop');
+    } else if (stockfishWorker) {
+        stockfishWorker.postMessage('stop');
+    }
     isEngineThinking = false;
     $('#modalTitle').text(title);
     $('#modalReason').text(reason);
