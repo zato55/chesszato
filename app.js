@@ -774,16 +774,35 @@ function updateTimerDisplay() {
     const format = (s) => `${Math.floor(s/60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`;
     const formattedWhite = format(whiteTime);
     const formattedBlack = format(blackTime);
+    const whiteActive = game.turn() === 'w';
+    const blackActive = game.turn() === 'b';
 
     $('#whiteTimer').text(formattedWhite);
     $('#blackTimer').text(formattedBlack);
 
+    const applyTimerStyle = (selector, isActive, remaining) => {
+        const timer = $(selector);
+        timer.removeClass('text-emerald-300 bg-emerald-950 border-emerald-700 shadow-[0_0_8px_rgba(52,211,153,0.25)] text-red-200 bg-red-950 border-red-700 animate-pulse');
+        if (isActive && remaining <= 30) {
+            timer.addClass('text-red-200 bg-red-950 border-red-700 animate-pulse');
+        } else if (isActive) {
+            timer.addClass('text-emerald-300 bg-emerald-950 border-emerald-700 shadow-[0_0_8px_rgba(52,211,153,0.25)]');
+        }
+    };
+
+    applyTimerStyle('#whiteTimer', whiteActive, whiteTime);
+    applyTimerStyle('#blackTimer', blackActive, blackTime);
+
     if (!isFlipped) {
         $('#topTimerMobile').text(formattedBlack);
         $('#bottomTimerMobile').text(formattedWhite);
+        applyTimerStyle('#topTimerMobile', blackActive, blackTime);
+        applyTimerStyle('#bottomTimerMobile', whiteActive, whiteTime);
     } else {
         $('#topTimerMobile').text(formattedWhite);
         $('#bottomTimerMobile').text(formattedBlack);
+        applyTimerStyle('#topTimerMobile', whiteActive, whiteTime);
+        applyTimerStyle('#bottomTimerMobile', blackActive, blackTime);
     }
 }
 
