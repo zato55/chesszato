@@ -137,16 +137,14 @@ function initStockfish() {
                 isEngineThinking = false;
 
                 if (isAnalysisMode || isReviewing) {
-                    if (pendingEvalScore) {
+                    const activeGame = isAnalysisMode ? analysisGame : game;
+                    if (activeGame.in_checkmate()) {
+                        const winnerIsWhite = activeGame.turn() === 'b';
+                        updateEvalBar(winnerIsWhite ? 1 : -1, true);
+                    } else if (activeGame.in_draw() || activeGame.in_stalemate() || activeGame.in_threefold_repetition()) {
+                        updateEvalBar(0, false);
+                    } else if (pendingEvalScore) {
                         updateEvalBar(pendingEvalScore.score, pendingEvalScore.isMate);
-                    } else {
-                        const activeGame = isAnalysisMode ? analysisGame : game;
-                        if (activeGame.in_checkmate()) {
-                            const winnerIsWhite = activeGame.turn() === 'b';
-                            updateEvalBar(winnerIsWhite ? 1 : -1, true);
-                        } else if (activeGame.in_draw() || activeGame.in_stalemate() || activeGame.in_threefold_repetition()) {
-                            updateEvalBar(0, false);
-                        }
                     }
                     pendingEvalScore = null;
                 }
