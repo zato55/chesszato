@@ -125,9 +125,15 @@ function initStockfish() {
                 if (discardEngineBestMove) {
                     discardEngineBestMove = false;
                     analysisSearchStopPending = false;
-                    queuedAnalysisFen = null;
                     pendingEvalScore = null;
                     isEngineThinking = false;
+                    const nextFen = queuedAnalysisFen;
+                    queuedAnalysisFen = null;
+                    if (nextFen && (isAnalysisMode || isReviewing)) {
+                        stockfishWorker.postMessage('position fen ' + nextFen);
+                        stockfishWorker.postMessage('go depth 8');
+                        isEngineThinking = true;
+                    }
                     return;
                 }
                 if (analysisSearchStopPending) {
