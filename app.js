@@ -14,6 +14,7 @@ let whiteTime = 300, blackTime = 300;
 let stockfishWorker = null;
 
 let isEngineThinking = false;
+let discardEngineBestMove = false;
 let isGameOver = false;
 let isReviewing = false;
 
@@ -121,6 +122,20 @@ function initStockfish() {
             }
 
             if (message.startsWith('bestmove')) {
+                if (discardEngineBestMove) {
+                    discardEngineBestMove = false;
+                    analysisSearchStopPending = false;
+                    pendingEvalScore = null;
+                    isEngineThinking = false;
+                    const nextFen = queuedAnalysisFen;
+                    queuedAnalysisFen = null;
+                    if (nextFen && (isAnalysisMode || isReviewing)) {
+                        stockfishWorker.postMessage('position fen ' + nextFen);
+                        stockfishWorker.postMessage('go depth 8');
+                        isEngineThinking = true;
+                    }
+                    return;
+                }
                 if (analysisSearchStopPending) {
                     analysisSearchStopPending = false;
                     isEngineThinking = false;
@@ -387,21 +402,24 @@ function updatePlayerCards() {
     updateBotEloUI(elo);
 
     if (vsBot) {
-        if (actualPlayerColor === 'b') {
-            $('#topPlayerName').text('Siz');
-            $('#topPlayerElo').text('(1500)');
-            $('#bottomPlayerName').text('Stockfish Bot');
-            $('#bottomPlayerElo').text(`(${elo})`);
-            $('#topAvatar').text('♟').addClass('bg-zinc-800 text-zinc-300').removeClass('bg-zinc-100 text-zinc-900');
-            $('#bottomAvatar').text('♙').addClass('bg-zinc-100 text-zinc-900').removeClass('bg-zinc-800 text-zinc-300');
-        } else {
-            $('#topPlayerName').text('Stockfish Bot');
-            $('#topPlayerElo').text(`(${elo})`);
-            $('#bottomPlayerName').text('Siz');
-            $('#bottomPlayerElo').text('(1500)');
-            $('#topAvatar').text('♟').addClass('bg-zinc-800 text-zinc-300').removeClass('bg-zinc-100 text-zinc-900');
-            $('#bottomAvatar').text('♙').addClass('bg-zinc-100 text-zinc-900').removeClass('bg-zinc-800 text-zinc-300');
-        }
+        const topColor = isFlipped ? 'w' : 'b';
+        const bottomColor = isFlipped ? 'b' : 'w';
+        const topIsUser = actualPlayerColor === topColor;
+        const bottomIsUser = actualPlayerColor === bottomColor;
+
+        $('#topPlayerName').text(topIsUser ? 'Siz' : 'Stockfish Bot');
+        $('#topPlayerElo').text(topIsUser ? '(1500)' : `(${elo})`);
+        $('#bottomPlayerName').text(bottomIsUser ? 'Siz' : 'Stockfish Bot');
+        $('#bottomPlayerElo').text(bottomIsUser ? '(1500)' : `(${elo})`);
+
+        $('#topAvatar')
+            .text(topColor === 'w' ? '♙' : '♟')
+            .toggleClass('bg-zinc-100 text-zinc-900', topColor === 'w')
+            .toggleClass('bg-zinc-800 text-zinc-300', topColor === 'b');
+        $('#bottomAvatar')
+            .text(bottomColor === 'w' ? '♙' : '♟')
+            .toggleClass('bg-zinc-100 text-zinc-900', bottomColor === 'w')
+            .toggleClass('bg-zinc-800 text-zinc-300', bottomColor === 'b');
     } else {
         $('#topPlayerName').text(isFlipped ? 'Oyuncu 1 (Beyaz)' : 'Oyuncu 2 (Siyah)');
         $('#bottomPlayerName').text(isFlipped ? 'Oyuncu 2 (Siyah)' : 'Oyuncu 1 (Beyaz)');
@@ -591,6 +609,8 @@ function handleMove(from, to) {
 }
 
 function executeMove(from, to, promoPiece) {
+    if (isGameOver && !isReviewing && !isAnalysisMode) return;
+
     const activeGame = isAnalysisMode ? analysisGame : game;
     const targetPiece = activeGame.get(to);
     const movingColor = activeGame.turn();
@@ -824,6 +844,17 @@ function updateTimerDisplay() {
 
 function showGameOverModal(title, reason, icon = '🏆') {
     isGameOver = true;
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+    if (stockfishWorker && isEngineThinking) {
+        discardEngineBestMove = true;
+        stockfishWorker.postMessage('stop');
+    } else if (stockfishWorker) {
+        stockfishWorker.postMessage('stop');
+    }
+    isEngineThinking = false;
     $('#modalTitle').text(title);
     $('#modalReason').text(reason);
     $('#modalIcon').text(icon);
@@ -1012,6 +1043,7 @@ function exitAnalysisMode() {
 
     renderBoard();
     updateStatus();
+    if (!isGameOver && !game.game_over()) startTimer();
 }
 
 function updateAnalysisBoard() {
@@ -1065,7 +1097,7 @@ function playBestMove() {
     const promo = currentBestMove.length > 4 ? currentBestMove.substring(4, 5) : 'q';
     const moveObj = analysisGame.move({ from: from, to: to, promotion: promo });
     if (moveObj) {
-        playMoveSound(moveObj, true);
+        playMoveSound(moveObj, Boolean(moveObj.captured));
         analysisMoveHistory = analysisMoveHistory.slice(0, analysisIdx + 1);
         analysisMoveHistory.push(moveObj);
         analysisIdx = analysisMoveHistory.length - 1;
@@ -1215,6 +1247,11 @@ $('#quickFlipBtn, #flipBtn').on('click', function (e) {
 $('#quickUndoBtn, #undoBtn').on('click', function () {
     if (isAnalysisMode) return;
     if (isGameOver && !isReviewing) return;
+    if (stockfishWorker && isEngineThinking) {
+        discardEngineBestMove = true;
+        stockfishWorker.postMessage('stop');
+        isEngineThinking = false;
+    }
     game.undo();
     if (vsBot && !isReviewing) game.undo();
     selectedSquare = null;
@@ -1232,7 +1269,12 @@ $('#botElo').on('change', function() {
 });
 
 function resetGame() {
-    if (stockfishWorker) stockfishWorker.postMessage('stop');
+    if (stockfishWorker && isEngineThinking) {
+        discardEngineBestMove = true;
+        stockfishWorker.postMessage('stop');
+    } else if (stockfishWorker) {
+        stockfishWorker.postMessage('stop');
+    }
     game.reset();
     analysisGame.reset();
 
@@ -1245,6 +1287,8 @@ function resetGame() {
     isEngineThinking = false;
     isGameOver = false;
     isReviewing = false;
+    analysisSearchStopPending = false;
+    queuedAnalysisFen = null;
     pendingEvalScore = null;
     currentEvalScore = 0;
     currentBestMove = null;
@@ -1281,6 +1325,7 @@ function resetGame() {
     updateTimerDisplay();
     renderBoard();
     updateStatus();
+    startTimer();
 
     if (vsBot && actualPlayerColor === 'b') {
         triggerStockfishMove();
@@ -1303,3 +1348,4 @@ loadSavedSettings();
 updateTimerDisplay();
 renderBoard();
 updateStatus();
+startTimer();
