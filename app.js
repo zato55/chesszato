@@ -432,9 +432,18 @@ function updatePlayerCards() {
     }
 
     const drawIcons = (capturedArr, isWhiteCaptures) => {
-        return capturedArr.map(p => {
-            const key = isWhiteCaptures ? p.toLowerCase() : p.toUpperCase();
-            return `<img src="${getPieceSVG(key)}" class="w-4 h-4 sm:w-5 sm:h-5 object-contain opacity-100 inline-block">`;
+        const pieceOrder = { p: 0, n: 1, b: 2, r: 3, q: 4 };
+        const sortedPieces = [...capturedArr].sort((a, b) =>
+            (pieceOrder[a.toLowerCase()] ?? 99) - (pieceOrder[b.toLowerCase()] ?? 99)
+        );
+        let previousPiece = null;
+        return sortedPieces.map(p => {
+            const normalizedPiece = p.toLowerCase();
+            const key = isWhiteCaptures ? normalizedPiece : normalizedPiece.toUpperCase();
+            const overlapsSamePiece = normalizedPiece === previousPiece;
+            previousPiece = normalizedPiece;
+            const overlapClass = overlapsSamePiece ? '-ml-1' : '';
+            return `<img src="${getPieceSVG(key)}" class="w-4 h-4 sm:w-5 sm:h-5 object-contain opacity-100 inline-block ${overlapClass}">`;
         }).join('');
     };
 
