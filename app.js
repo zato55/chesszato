@@ -600,6 +600,8 @@ function handleMove(from, to) {
 }
 
 function executeMove(from, to, promoPiece) {
+    if (isGameOver && !isReviewing && !isAnalysisMode) return;
+
     const activeGame = isAnalysisMode ? analysisGame : game;
     const targetPiece = activeGame.get(to);
     const movingColor = activeGame.turn();
