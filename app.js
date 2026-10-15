@@ -277,6 +277,16 @@ function requestEngineAnalysis() {
     const targetFen = targetGame.fen();
     pendingEvalScore = null;
 
+    if (targetGame.in_checkmate()) {
+        queuedAnalysisFen = null;
+        if (isEngineThinking && !analysisSearchStopPending) {
+            analysisSearchStopPending = true;
+            stockfishWorker.postMessage('stop');
+        }
+        updateEvalBar(targetGame.turn() === 'b' ? 1 : -1, true);
+        return;
+    }
+
     if (isEngineThinking) {
         queuedAnalysisFen = targetFen;
         if (!analysisSearchStopPending) {
