@@ -833,6 +833,12 @@ function updateTimerDisplay() {
 
 function showGameOverModal(title, reason, icon = '🏆') {
     isGameOver = true;
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+    if (stockfishWorker) stockfishWorker.postMessage('stop');
+    isEngineThinking = false;
     $('#modalTitle').text(title);
     $('#modalReason').text(reason);
     $('#modalIcon').text(icon);
