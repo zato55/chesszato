@@ -279,12 +279,18 @@ aside.collapsed .nav-item {
 
     #topCapturedPieces, #bottomCapturedPieces {
         display: flex !important;
-        flex-wrap: nowrap !important;
+        flex-flow: row nowrap !important;
+        align-items: center;
+        width: 100%;
         max-width: 100%;
         min-width: 0;
-        overflow-x: auto;
-        overflow-y: hidden;
+        height: 24px !important;
+        min-height: 24px !important;
+        max-height: 24px !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
         scrollbar-width: none;
+        box-sizing: border-box;
     }
 
     #topCapturedPieces::-webkit-scrollbar, #bottomCapturedPieces::-webkit-scrollbar {
