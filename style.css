@@ -61,8 +61,8 @@
     }
 
     #desktopPanel {
-        height: min(74vw, 74vh) !important;
-        max-height: 670px !important;
+        height: min(76vw, 76vh) !important;
+        max-height: 690px !important;
         padding: 0.75rem !important;
     }
 
