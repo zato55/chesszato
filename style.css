@@ -34,8 +34,8 @@
 
 #board-wrapper {
     position: relative;
-    width: min(88vw, 48vh);
-    height: min(88vw, 48vh);
+    width: min(92vw, 50vh);
+    height: min(92vw, 50vh);
     max-width: 680px;
     max-height: 680px;
 }
@@ -54,15 +54,15 @@
     }
 
     #board-wrapper {
-        width: min(72vw, 72vh) !important;
-        height: min(72vw, 72vh) !important;
-        max-width: 650px !important;
-        max-height: 650px !important;
+        width: min(74vw, 74vh) !important;
+        height: min(74vw, 74vh) !important;
+        max-width: 670px !important;
+        max-height: 670px !important;
     }
 
     #desktopPanel {
-        height: min(72vw, 72vh) !important;
-        max-height: 650px !important;
+        height: min(74vw, 74vh) !important;
+        max-height: 670px !important;
         padding: 0.75rem !important;
     }
 
@@ -265,13 +265,13 @@ aside.collapsed .nav-item {
     }
 
     #board-wrapper {
-        width: min(92vw, 45vh) !important;
-        height: min(92vw, 45vh) !important;
+        width: min(94vw, 47vh) !important;
+        height: min(94vw, 47vh) !important;
     }
 
     .eval-bar-wrapper {
         width: 10px !important;
-        height: min(92vw, 45vh) !important;
+        height: min(94vw, 47vh) !important;
         max-height: none !important;
         border-radius: 6px !important;
         margin-right: 2px !important;
