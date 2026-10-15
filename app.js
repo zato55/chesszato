@@ -632,7 +632,12 @@ function executeMove(from, to, promoPiece) {
         selectedSquare = null;
 
         if (isAnalysisMode) {
-            analysisMoveHistory = analysisMoveHistory.slice(0, analysisIdx + 1);
+            if (analysisBranchStartIdx === null || analysisIdx < analysisBranchStartIdx) {
+                analysisBranchStartIdx = analysisIdx;
+                analysisMoveHistory = analysisMainlineHistory.slice(0, analysisIdx + 1);
+            } else {
+                analysisMoveHistory = analysisMoveHistory.slice(0, analysisIdx + 1);
+            }
             analysisMoveHistory.push(moveObj);
             analysisIdx = analysisMoveHistory.length - 1;
         }
