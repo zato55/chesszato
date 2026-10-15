@@ -387,21 +387,24 @@ function updatePlayerCards() {
     updateBotEloUI(elo);
 
     if (vsBot) {
-        if (actualPlayerColor === 'b') {
-            $('#topPlayerName').text('Siz');
-            $('#topPlayerElo').text('(1500)');
-            $('#bottomPlayerName').text('Stockfish Bot');
-            $('#bottomPlayerElo').text(`(${elo})`);
-            $('#topAvatar').text('♟').addClass('bg-zinc-800 text-zinc-300').removeClass('bg-zinc-100 text-zinc-900');
-            $('#bottomAvatar').text('♙').addClass('bg-zinc-100 text-zinc-900').removeClass('bg-zinc-800 text-zinc-300');
-        } else {
-            $('#topPlayerName').text('Stockfish Bot');
-            $('#topPlayerElo').text(`(${elo})`);
-            $('#bottomPlayerName').text('Siz');
-            $('#bottomPlayerElo').text('(1500)');
-            $('#topAvatar').text('♟').addClass('bg-zinc-800 text-zinc-300').removeClass('bg-zinc-100 text-zinc-900');
-            $('#bottomAvatar').text('♙').addClass('bg-zinc-100 text-zinc-900').removeClass('bg-zinc-800 text-zinc-300');
-        }
+        const topColor = isFlipped ? 'w' : 'b';
+        const bottomColor = isFlipped ? 'b' : 'w';
+        const topIsUser = actualPlayerColor === topColor;
+        const bottomIsUser = actualPlayerColor === bottomColor;
+
+        $('#topPlayerName').text(topIsUser ? 'Siz' : 'Stockfish Bot');
+        $('#topPlayerElo').text(topIsUser ? '(1500)' : `(${elo})`);
+        $('#bottomPlayerName').text(bottomIsUser ? 'Siz' : 'Stockfish Bot');
+        $('#bottomPlayerElo').text(bottomIsUser ? '(1500)' : `(${elo})`);
+
+        $('#topAvatar')
+            .text(topColor === 'w' ? '♙' : '♟')
+            .toggleClass('bg-zinc-100 text-zinc-900', topColor === 'w')
+            .toggleClass('bg-zinc-800 text-zinc-300', topColor === 'b');
+        $('#bottomAvatar')
+            .text(bottomColor === 'w' ? '♙' : '♟')
+            .toggleClass('bg-zinc-100 text-zinc-900', bottomColor === 'w')
+            .toggleClass('bg-zinc-800 text-zinc-300', bottomColor === 'b');
     } else {
         $('#topPlayerName').text(isFlipped ? 'Oyuncu 1 (Beyaz)' : 'Oyuncu 2 (Siyah)');
         $('#bottomPlayerName').text(isFlipped ? 'Oyuncu 2 (Siyah)' : 'Oyuncu 1 (Beyaz)');
