@@ -14,6 +14,7 @@ let whiteTime = 300, blackTime = 300;
 let stockfishWorker = null;
 
 let isEngineThinking = false;
+let discardEngineBestMove = false;
 let isGameOver = false;
 let isReviewing = false;
 
@@ -121,6 +122,11 @@ function initStockfish() {
             }
 
             if (message.startsWith('bestmove')) {
+                if (discardEngineBestMove) {
+                    discardEngineBestMove = false;
+                    isEngineThinking = false;
+                    return;
+                }
                 if (analysisSearchStopPending) {
                     analysisSearchStopPending = false;
                     isEngineThinking = false;
@@ -1218,6 +1224,11 @@ $('#quickFlipBtn, #flipBtn').on('click', function (e) {
 $('#quickUndoBtn, #undoBtn').on('click', function () {
     if (isAnalysisMode) return;
     if (isGameOver && !isReviewing) return;
+    if (stockfishWorker && isEngineThinking) {
+        discardEngineBestMove = true;
+        stockfishWorker.postMessage('stop');
+        isEngineThinking = false;
+    }
     game.undo();
     if (vsBot && !isReviewing) game.undo();
     selectedSquare = null;
@@ -1246,6 +1257,7 @@ function resetGame() {
     isAnalysisMode = false;
     pendingMove = null;
     isEngineThinking = false;
+    discardEngineBestMove = false;
     isGameOver = false;
     isReviewing = false;
     pendingEvalScore = null;
