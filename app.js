@@ -133,6 +133,8 @@ function initStockfish() {
                         stockfishWorker.postMessage('position fen ' + nextFen);
                         stockfishWorker.postMessage('go depth 8');
                         isEngineThinking = true;
+                    } else if (nextFen && !isGameOver && vsBot && game.turn() !== actualPlayerColor) {
+                        triggerStockfishMove();
                     }
                     return;
                 }
@@ -691,6 +693,10 @@ $('.promo-choice').on('click', function() {
 
 function triggerStockfishMove() {
     if (!stockfishWorker || isGameOver || isReviewing || isAnalysisMode) return;
+    if (discardEngineBestMove || analysisSearchStopPending) {
+        queuedAnalysisFen = game.fen();
+        return;
+    }
 
     isEngineThinking = true;
     const elo = parseInt($('#botElo').val()) || 1400;
@@ -1269,11 +1275,17 @@ $('#botElo').on('change', function() {
 });
 
 function resetGame() {
-    if (stockfishWorker && isEngineThinking) {
+    const engineSearchPending = Boolean(stockfishWorker && (isEngineThinking || discardEngineBestMove));
+    if (engineSearchPending) {
         discardEngineBestMove = true;
+        analysisSearchStopPending = true;
+        isEngineThinking = true;
         stockfishWorker.postMessage('stop');
     } else if (stockfishWorker) {
         stockfishWorker.postMessage('stop');
+        discardEngineBestMove = false;
+        analysisSearchStopPending = false;
+        isEngineThinking = false;
     }
     game.reset();
     analysisGame.reset();
@@ -1284,10 +1296,8 @@ function resetGame() {
     analysisIdx = -1;
     isAnalysisMode = false;
     pendingMove = null;
-    isEngineThinking = false;
     isGameOver = false;
     isReviewing = false;
-    analysisSearchStopPending = false;
     queuedAnalysisFen = null;
     pendingEvalScore = null;
     currentEvalScore = 0;
