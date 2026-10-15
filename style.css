@@ -54,10 +54,10 @@
     }
 
     #board-wrapper {
-        width: min(74vw, 74vh) !important;
-        height: min(74vw, 74vh) !important;
-        max-width: 670px !important;
-        max-height: 670px !important;
+        width: min(76vw, 76vh) !important;
+        height: min(76vw, 76vh) !important;
+        max-width: 690px !important;
+        max-height: 690px !important;
     }
 
     #desktopPanel {
@@ -68,8 +68,8 @@
 
     .eval-bar-wrapper {
         width: 16px !important;
-        height: min(72vw, 72vh) !important;
-        max-height: 650px !important;
+        height: min(76vw, 76vh) !important;
+        max-height: 690px !important;
     }
 }
 
@@ -172,7 +172,7 @@
 
 .eval-bar-wrapper {
     width: 16px;
-    height: min(88vw, 48vh);
+    height: min(92vw, 50vh);
     max-height: 680px;
     background-color: #18181b;
     border: 1px solid #3f3f46;
@@ -265,8 +265,8 @@ aside.collapsed .nav-item {
     }
 
     #board-wrapper {
-        width: min(94vw, 47vh) !important;
-        height: min(94vw, 47vh) !important;
+        width: min(95vw, 48vh) !important;
+        height: min(95vw, 48vh) !important;
     }
 
     .eval-bar-wrapper {
