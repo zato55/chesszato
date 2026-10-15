@@ -1029,6 +1029,7 @@ function exitAnalysisMode() {
 
     renderBoard();
     updateStatus();
+    if (!isGameOver && !game.game_over()) startTimer();
 }
 
 function updateAnalysisBoard() {
