@@ -1278,6 +1278,8 @@ function resetGame() {
     isEngineThinking = false;
     isGameOver = false;
     isReviewing = false;
+    analysisSearchStopPending = false;
+    queuedAnalysisFen = null;
     pendingEvalScore = null;
     currentEvalScore = 0;
     currentBestMove = null;
