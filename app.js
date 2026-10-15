@@ -414,8 +414,8 @@ function updatePlayerCards() {
         return capturedArr.map(p => {
             const key = isWhiteCaptures ? p.toLowerCase() : p.toUpperCase();
             const contrastBg = isWhiteCaptures
-                ? 'bg-zinc-800 border border-zinc-600'
-                : 'bg-zinc-200 border border-zinc-400';
+                ? 'bg-zinc-200 border border-zinc-400'
+                : 'bg-zinc-800 border border-zinc-600';
             const fallback = fallbackPieces[key] || '♟';
             return `<span class="inline-flex flex-shrink-0 items-center justify-center rounded-sm p-px ${contrastBg}"><img src="${getPieceSVG(key)}" alt="${fallback}" onerror="this.replaceWith(document.createTextNode(this.alt))" class="w-3 h-3 sm:w-3.5 sm:h-3.5 object-contain opacity-100 block"><span class="hidden">${fallback}</span></span>`;
         }).join('');
