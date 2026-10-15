@@ -1170,9 +1170,22 @@ $('#openSettingsBtn, #mobileSettingsModalBtn').on('click', function(e) {
 });
 
 // 1. Tahta Renk Teması
+const applyPlayerCardTheme = (theme) => {
+    const colors = {
+        'theme-red': ['#fff1f2', '#fda4af'],
+        'theme-green': ['#dce8cc', '#9caf88'],
+        'theme-wood': ['#f0d9b5', '#b58863'],
+        'theme-dark': ['#e5e7eb', '#9ca3af']
+    };
+    const [background, border] = colors[theme] || colors['theme-green'];
+    $('#topPlayerCard, #bottomPlayerCard').css({ backgroundColor: background, borderColor: border });
+    $('#topPlayerCard, #bottomPlayerCard').attr('data-board-theme', theme);
+};
+
 $(document).on('click', '.theme-option-btn', function(e) {
     e.preventDefault();
     const selectedTheme = $(this).attr('data-theme');$('#board').removeClass('theme-red theme-green theme-wood theme-dark').addClass(selectedTheme);
+    applyPlayerCardTheme(selectedTheme);
     $('.theme-option-btn').removeClass('border-blue-500 bg-blue-950/40').addClass('border-zinc-800 bg-[#09090b]');
     $(this).addClass('border-blue-500 bg-blue-950/40').removeClass('border-zinc-800 bg-[#09090b]');
     localStorage.setItem('zato_theme', selectedTheme);
@@ -1214,6 +1227,7 @@ $('#toggleKingCheckEffect').on('change', function() {
 function loadSavedSettings() {
     const savedTheme = localStorage.getItem('zato_theme') || 'theme-green';
     $('#board').removeClass('theme-red theme-green theme-wood theme-dark').addClass(savedTheme);
+    applyPlayerCardTheme(savedTheme);
     $(`.theme-option-btn[data-theme="${savedTheme}"]`).addClass('border-blue-500 bg-blue-950/40').removeClass('border-zinc-800 bg-[#09090b]');
 
     const savedStyle = localStorage.getItem('zato_piece_style') || 'neo';
