@@ -278,8 +278,8 @@ aside.collapsed .nav-item {
     }
 
     #topCapturedPieces img, #bottomCapturedPieces img {
-        width: 11px !important;
-        height: 11px !important;
+        width: 18px !important;
+        height: 18px !important;
     }
 
     #topPlayerCard, #bottomPlayerCard {
