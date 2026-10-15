@@ -686,7 +686,23 @@ function triggerStockfishMove() {
     if (elo >= 2000) depth = 15;
     if (elo >= 2200) depth = 18;
 
+    // Stockfish Skill Level deliberately weakens play at lower settings.
+    // Elo labels are approximate; Stockfish's built-in Elo limiter cannot represent the lowest menu levels.
+    const skillLevelByElo = {
+        250: 0,
+        400: 1,
+        800: 4,
+        1200: 8,
+        1400: 10,
+        1600: 12,
+        1800: 14,
+        2000: 17,
+        2200: 20
+    };
+    const skillLevel = skillLevelByElo[elo] ?? 10;
+
     stockfishWorker.postMessage('stop');
+    stockfishWorker.postMessage('setoption name Skill Level value ' + skillLevel);
     stockfishWorker.postMessage('position fen ' + fen);
     stockfishWorker.postMessage('go depth ' + depth);
 }
