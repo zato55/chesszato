@@ -20,6 +20,8 @@ let isReviewing = false;
 
 let isAnalysisMode = false;
 let analysisMoveHistory = [];
+let analysisMainlineHistory = [];
+let analysisBranchStartIdx = null;
 let analysisIdx = -1;
 let pendingEvalScore = null;
 let currentEvalScore = 0;
@@ -1010,7 +1012,9 @@ function startAnalysisMode() {
     currentBestMove = null;
     clearArrow();
 
-    analysisMoveHistory = game.history({ verbose: true });
+    analysisMainlineHistory = game.history({ verbose: true });
+    analysisMoveHistory = analysisMainlineHistory.slice();
+    analysisBranchStartIdx = null;
     analysisIdx = analysisMoveHistory.length - 1;
 
     updateAnalysisBoard();
@@ -1045,6 +1049,8 @@ function exitAnalysisMode() {
     clearArrow();
 
     analysisMoveHistory = [];
+    analysisMainlineHistory = [];
+    analysisBranchStartIdx = null;
     analysisIdx = -1;
 
     renderBoard();
@@ -1073,12 +1079,12 @@ function updateAnalysisBoard() {
 
 $('#navStart').on('click', () => { if (isAnalysisMode) { analysisIdx = -1; updateAnalysisBoard(); } });
 $('#navPrev').on('click', () => { if (isAnalysisMode && analysisIdx > -1) { analysisIdx--; updateAnalysisBoard(); } });
-$('#navNext').on('click', () => { if (isAnalysisMode && analysisIdx < analysisMoveHistory.length - 1) { analysisIdx++; updateAnalysisBoard(); } });
+$('#navNext').on('click', () => { if (!isAnalysisMode) return; if (analysisBranchStartIdx !== null && analysisIdx === analysisBranchStartIdx && analysisIdx < analysisMainlineHistory.length - 1) { analysisMoveHistory = analysisMainlineHistory.slice(); analysisBranchStartIdx = null; } if (analysisIdx < analysisMoveHistory.length - 1) { analysisIdx++; updateAnalysisBoard(); } });
 $('#navEnd').on('click', () => { if (isAnalysisMode && analysisMoveHistory.length > 0) { analysisIdx = analysisMoveHistory.length - 1; updateAnalysisBoard(); } });
 
 $('#mNavStart').on('click', () => { if (isAnalysisMode) { analysisIdx = -1; updateAnalysisBoard(); } });
 $('#mNavPrev').on('click', () => { if (isAnalysisMode && analysisIdx > -1) { analysisIdx--; updateAnalysisBoard(); } });
-$('#mNavNext').on('click', () => { if (isAnalysisMode && analysisIdx < analysisMoveHistory.length - 1) { analysisIdx++; updateAnalysisBoard(); } });
+$('#mNavNext').on('click', () => { if (!isAnalysisMode) return; if (analysisBranchStartIdx !== null && analysisIdx === analysisBranchStartIdx && analysisIdx < analysisMainlineHistory.length - 1) { analysisMoveHistory = analysisMainlineHistory.slice(); analysisBranchStartIdx = null; } if (analysisIdx < analysisMoveHistory.length - 1) { analysisIdx++; updateAnalysisBoard(); } });
 $('#mNavEnd').on('click', () => { if (isAnalysisMode && analysisMoveHistory.length > 0) { analysisIdx = analysisMoveHistory.length - 1; updateAnalysisBoard(); } });
 
 $('#exitAnalysisBtn').on('click', exitAnalysisMode);
@@ -1089,6 +1095,7 @@ $(document).on('keydown', function(e) {
     if (e.key === 'ArrowLeft') {
         if (analysisIdx > -1) { analysisIdx--; updateAnalysisBoard(); }
     } else if (e.key === 'ArrowRight') {
+        if (analysisBranchStartIdx !== null && analysisIdx === analysisBranchStartIdx && analysisIdx < analysisMainlineHistory.length - 1) { analysisMoveHistory = analysisMainlineHistory.slice(); analysisBranchStartIdx = null; }
         if (analysisIdx < analysisMoveHistory.length - 1) { analysisIdx++; updateAnalysisBoard(); }
     }
 });
@@ -1104,7 +1111,12 @@ function playBestMove() {
     const moveObj = analysisGame.move({ from: from, to: to, promotion: promo });
     if (moveObj) {
         playMoveSound(moveObj, Boolean(moveObj.captured));
-        analysisMoveHistory = analysisMoveHistory.slice(0, analysisIdx + 1);
+        if (analysisBranchStartIdx === null || analysisIdx < analysisBranchStartIdx) {
+            analysisBranchStartIdx = analysisIdx;
+            analysisMoveHistory = analysisMainlineHistory.slice(0, analysisIdx + 1);
+        } else {
+            analysisMoveHistory = analysisMoveHistory.slice(0, analysisIdx + 1);
+        }
         analysisMoveHistory.push(moveObj);
         analysisIdx = analysisMoveHistory.length - 1;
         clearArrow();
