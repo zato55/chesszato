@@ -339,3 +339,15 @@ aside.collapsed .nav-item {
         margin-top: 0 !important;
     }
 }
+
+/* Oyuncu kartları tahta temasına uyar; siyah taşlar açık zeminde net görünür. */
+#topPlayerCard[data-board-theme],
+#bottomPlayerCard[data-board-theme] {
+    color: #111827 !important;
+}
+#topPlayerCard[data-board-theme] .text-zinc-200,
+#bottomPlayerCard[data-board-theme] .text-zinc-200,
+#topPlayerCard[data-board-theme] .text-zinc-400,
+#bottomPlayerCard[data-board-theme] .text-zinc-400 {
+    color: #374151 !important;
+}
