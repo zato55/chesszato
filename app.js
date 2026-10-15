@@ -412,7 +412,10 @@ function updatePlayerCards() {
     const drawIcons = (capturedArr, isWhiteCaptures) => {
         return capturedArr.map(p => {
             const key = isWhiteCaptures ? p.toLowerCase() : p.toUpperCase();
-            return `<img src="${getPieceSVG(key)}" class="w-3 h-3 sm:w-3.5 sm:h-3.5 object-contain opacity-80 inline-block">`;
+            const contrastBg = isWhiteCaptures
+                ? 'bg-zinc-800 border border-zinc-600'
+                : 'bg-zinc-200 border border-zinc-400';
+            return `<span class="inline-flex flex-shrink-0 items-center justify-center rounded-sm p-px ${contrastBg}"><img src="${getPieceSVG(key)}" class="w-3 h-3 sm:w-3.5 sm:h-3.5 object-contain opacity-100 block"></span>`;
         }).join('');
     };
 
