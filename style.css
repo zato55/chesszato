@@ -277,9 +277,23 @@ aside.collapsed .nav-item {
         margin-right: 2px !important;
     }
 
+    #topCapturedPieces, #bottomCapturedPieces {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        align-items: center !important;
+        justify-content: flex-end !important;
+        height: auto !important;
+        min-height: 19px !important;
+        max-height: none !important;
+        overflow: visible !important;
+        min-width: 0 !important;
+    }
+
     #topCapturedPieces img, #bottomCapturedPieces img {
         width: 19px !important;
         height: 19px !important;
+        flex: 0 0 19px !important;
+        object-fit: contain;
     }
 
     #topPlayerCard, #bottomPlayerCard {
