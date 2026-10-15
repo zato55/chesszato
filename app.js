@@ -22,6 +22,8 @@ let analysisMoveHistory = [];
 let analysisIdx = -1;
 let pendingEvalScore = null;
 let currentEvalScore = 0;
+let analysisSearchStopPending = false;
+let queuedAnalysisFen = null;
 
 let currentBestMove = null;
 
@@ -89,6 +91,7 @@ function initStockfish() {
         stockfishWorker.onmessage = function (event) {
             const message = event.data;
             if (typeof message !== 'string') return;
+            if (analysisSearchStopPending && !message.startsWith('bestmove')) return;
 
             const depthMatch = message.match(/depth (\d+)/);
             const currentDepth = depthMatch ? parseInt(depthMatch[1]) : 0;
@@ -118,6 +121,19 @@ function initStockfish() {
             }
 
             if (message.startsWith('bestmove')) {
+                if (analysisSearchStopPending) {
+                    analysisSearchStopPending = false;
+                    isEngineThinking = false;
+                    pendingEvalScore = null;
+                    const nextFen = queuedAnalysisFen;
+                    queuedAnalysisFen = null;
+                    if (nextFen && (isAnalysisMode || isReviewing)) {
+                        stockfishWorker.postMessage('position fen ' + nextFen);
+                        stockfishWorker.postMessage('go depth 8');
+                        isEngineThinking = true;
+                    }
+                    return;
+                }
                 isEngineThinking = false;
 
                 if (isAnalysisMode || isReviewing) {
@@ -260,9 +276,22 @@ function clearArrow() {
 function requestEngineAnalysis() {
     if (!stockfishWorker) return;
     const targetGame = isAnalysisMode ? analysisGame : game;
-    stockfishWorker.postMessage('stop');
-    stockfishWorker.postMessage('position fen ' + targetGame.fen());
+    const targetFen = targetGame.fen();
+    pendingEvalScore = null;
+
+    if (isEngineThinking) {
+        queuedAnalysisFen = targetFen;
+        if (!analysisSearchStopPending) {
+            analysisSearchStopPending = true;
+            stockfishWorker.postMessage('stop');
+        }
+        return;
+    }
+
+    queuedAnalysisFen = null;
+    stockfishWorker.postMessage('position fen ' + targetFen);
     stockfishWorker.postMessage('go depth 8');
+    isEngineThinking = true;
 }
 
 function playMoveSound(moveObj, isCapture) {
@@ -885,7 +914,6 @@ window.jumpToMove = function(idx) {
 function startAnalysisMode() {
     isAnalysisMode = true;
     isReviewing = true;
-    if (stockfishWorker) stockfishWorker.postMessage('stop');
 
     $('body').addClass('analysis-mode');
 
@@ -911,7 +939,11 @@ function startAnalysisMode() {
 function exitAnalysisMode() {
     isAnalysisMode = false;
     isReviewing = false;
-    if (stockfishWorker) stockfishWorker.postMessage('stop');
+    queuedAnalysisFen = null;
+    if (stockfishWorker && isEngineThinking) {
+        analysisSearchStopPending = true;
+        stockfishWorker.postMessage('stop');
+    }
 
     $('body').removeClass('analysis-mode');
 
