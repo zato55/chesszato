@@ -1252,7 +1252,12 @@ $('#botElo').on('change', function() {
 });
 
 function resetGame() {
-    if (stockfishWorker) stockfishWorker.postMessage('stop');
+    if (stockfishWorker && isEngineThinking) {
+        discardEngineBestMove = true;
+        stockfishWorker.postMessage('stop');
+    } else if (stockfishWorker) {
+        stockfishWorker.postMessage('stop');
+    }
     game.reset();
     analysisGame.reset();
 
@@ -1263,7 +1268,6 @@ function resetGame() {
     isAnalysisMode = false;
     pendingMove = null;
     isEngineThinking = false;
-    discardEngineBestMove = false;
     isGameOver = false;
     isReviewing = false;
     pendingEvalScore = null;
