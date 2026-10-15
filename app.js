@@ -124,6 +124,9 @@ function initStockfish() {
             if (message.startsWith('bestmove')) {
                 if (discardEngineBestMove) {
                     discardEngineBestMove = false;
+                    analysisSearchStopPending = false;
+                    queuedAnalysisFen = null;
+                    pendingEvalScore = null;
                     isEngineThinking = false;
                     return;
                 }
