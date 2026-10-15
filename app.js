@@ -1068,7 +1068,7 @@ function playBestMove() {
     const promo = currentBestMove.length > 4 ? currentBestMove.substring(4, 5) : 'q';
     const moveObj = analysisGame.move({ from: from, to: to, promotion: promo });
     if (moveObj) {
-        playMoveSound(moveObj, true);
+        playMoveSound(moveObj, Boolean(moveObj.captured));
         analysisMoveHistory = analysisMoveHistory.slice(0, analysisIdx + 1);
         analysisMoveHistory.push(moveObj);
         analysisIdx = analysisMoveHistory.length - 1;
