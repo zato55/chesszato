@@ -434,7 +434,7 @@ function updatePlayerCards() {
     const drawIcons = (capturedArr, isWhiteCaptures) => {
         return capturedArr.map(p => {
             const key = isWhiteCaptures ? p.toLowerCase() : p.toUpperCase();
-            return `<img src="${getPieceSVG(key)}" class="w-5 h-5 sm:w-6 sm:h-6 object-contain opacity-100 inline-block">`;
+            return `<img src="${getPieceSVG(key)}" class="w-4 h-4 sm:w-5 sm:h-5 object-contain opacity-100 inline-block">`;
         }).join('');
     };
 
