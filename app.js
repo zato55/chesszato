@@ -1281,6 +1281,7 @@ function resetGame() {
     updateTimerDisplay();
     renderBoard();
     updateStatus();
+    startTimer();
 
     if (vsBot && actualPlayerColor === 'b') {
         triggerStockfishMove();
@@ -1303,3 +1304,4 @@ loadSavedSettings();
 updateTimerDisplay();
 renderBoard();
 updateStatus();
+startTimer();
