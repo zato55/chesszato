@@ -277,30 +277,9 @@ aside.collapsed .nav-item {
         margin-right: 2px !important;
     }
 
-    #topCapturedPieces, #bottomCapturedPieces {
-        display: flex !important;
-        flex-flow: row nowrap !important;
-        align-items: center;
-        width: 100%;
-        max-width: 100%;
-        min-width: 0;
-        height: 24px !important;
-        min-height: 24px !important;
-        max-height: 24px !important;
-        overflow-x: auto !important;
-        overflow-y: hidden !important;
-        scrollbar-width: none;
-        box-sizing: border-box;
-    }
-
-    #topCapturedPieces::-webkit-scrollbar, #bottomCapturedPieces::-webkit-scrollbar {
-        display: none;
-    }
-
     #topCapturedPieces img, #bottomCapturedPieces img {
-        width: 24px !important;
-        height: 24px !important;
-        flex: 0 0 24px;
+        width: 19px !important;
+        height: 19px !important;
     }
 
     #topPlayerCard, #bottomPlayerCard {
