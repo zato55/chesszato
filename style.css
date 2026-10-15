@@ -363,20 +363,14 @@ aside.collapsed .nav-item {
 @media (max-width: 767px) {
     #topPlayerElo,
     #bottomPlayerElo {
-    #bottomPlayerElo {
-        color: #ffffff !important;
-        background-color: #1e3a8a !important;
-        border-color: #1d4ed8 !important;
-        text-shadow: none !important;
-        opacity: 1 !important;
-    }
-
         color: #ffffff !important;
         background-color: #1e3a8a !important;
         border-color: #1d4ed8 !important;
         font-size: 10px !important;
         font-weight: 800 !important;
         line-height: 1.2 !important;
+        text-shadow: none !important;
+        opacity: 1 !important;
     }
 
     #topTimerMobile,
