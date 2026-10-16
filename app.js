@@ -381,6 +381,35 @@ function detectOpening(side) {
     return bestMatch;
 }
 
+function drawChessComCapturedPieces(capturedArr, isWhiteCaptures) {
+    if (!capturedArr || capturedArr.length === 0) return '';
+
+    const order = ['p', 'n', 'b', 'r', 'q'];
+    const counts = { p: 0, n: 0, b: 0, r: 0, q: 0 };
+
+    capturedArr.forEach(p => {
+        const key = p.toLowerCase();
+        if (counts[key] !== undefined) counts[key]++;
+    });
+
+    let html = '';
+
+    order.forEach(type => {
+        const count = counts[type];
+        if (count > 0) {
+            html += `<div class="captured-group">`;
+            for (let i = 0; i < count; i++) {
+                const imgKey = isWhiteCaptures ? type : type.toUpperCase();
+                const stackedClass = i > 0 ? 'captured-stacked' : '';
+                html += `<img src="${getPieceSVG(imgKey)}" class="captured-icon ${stackedClass}">`;
+            }
+            html += `</div>`;
+        }
+    });
+
+    return html;
+}
+
 function updatePlayerCards() {
     const activeGame = isAnalysisMode ? analysisGame : game;
     const history = activeGame.history({ verbose: true });
@@ -419,11 +448,11 @@ function updatePlayerCards() {
         $('#topAvatar')
             .text(topColor === 'w' ? '♙' : '♟')
             .toggleClass('bg-zinc-100 text-zinc-900', topColor === 'w')
-            .toggleClass('bg-zinc-800 text-zinc-300', topColor === 'b');
+            .toggleClass('bg-zinc-900 text-white', topColor === 'b');
         $('#bottomAvatar')
             .text(bottomColor === 'w' ? '♙' : '♟')
             .toggleClass('bg-zinc-100 text-zinc-900', bottomColor === 'w')
-            .toggleClass('bg-zinc-800 text-zinc-300', bottomColor === 'b');
+            .toggleClass('bg-zinc-900 text-white', bottomColor === 'b');
     } else {
         $('#topPlayerName').text(isFlipped ? 'Oyuncu 1 (Beyaz)' : 'Oyuncu 2 (Siyah)');
         $('#bottomPlayerName').text(isFlipped ? 'Oyuncu 2 (Siyah)' : 'Oyuncu 1 (Beyaz)');
@@ -431,31 +460,15 @@ function updatePlayerCards() {
         $('#bottomPlayerElo').text('');
     }
 
-    const drawIcons = (capturedArr, isWhiteCaptures) => {
-        const pieceOrder = { p: 0, n: 1, b: 2, r: 3, q: 4 };
-        const sortedPieces = [...capturedArr].sort((a, b) =>
-            (pieceOrder[a.toLowerCase()] ?? 99) - (pieceOrder[b.toLowerCase()] ?? 99)
-        );
-        let previousPiece = null;
-        return sortedPieces.map(p => {
-            const normalizedPiece = p.toLowerCase();
-            const key = isWhiteCaptures ? normalizedPiece : normalizedPiece.toUpperCase();
-            const overlapsSamePiece = normalizedPiece === previousPiece;
-            previousPiece = normalizedPiece;
-            const overlapStyle = overlapsSamePiece ? 'margin-left:-20px' : '';
-            return `<img src="${getPieceSVG(key)}" style="${overlapStyle}" class="w-4 h-4 sm:w-5 sm:h-5 object-contain opacity-100 inline-block">`;
-        }).join('');
-    };
-
     if (!isFlipped) {
-        $('#topCapturedPieces').html(drawIcons(blackCaptured, false));
-        $('#bottomCapturedPieces').html(drawIcons(whiteCaptured, true));
+        $('#topCapturedPieces').html(drawChessComCapturedPieces(blackCaptured, false));
+        $('#bottomCapturedPieces').html(drawChessComCapturedPieces(whiteCaptured, true));
 
         $('#topMaterialDiff').text(blackScore > whiteScore ? `+${blackScore - whiteScore}` : '');
         $('#bottomMaterialDiff').text(whiteScore > blackScore ? `+${whiteScore - blackScore}` : '');
     } else {
-        $('#topCapturedPieces').html(drawIcons(whiteCaptured, true));
-        $('#bottomCapturedPieces').html(drawIcons(blackCaptured, false));
+        $('#topCapturedPieces').html(drawChessComCapturedPieces(whiteCaptured, true));
+        $('#bottomCapturedPieces').html(drawChessComCapturedPieces(blackCaptured, false));
 
         $('#topMaterialDiff').text(whiteScore > blackScore ? `+${whiteScore - blackScore}` : '');
         $('#bottomMaterialDiff').text(blackScore > whiteScore ? `+${blackScore - whiteScore}` : '');
@@ -507,7 +520,7 @@ window.offerDraw = function(position) {
 };
 
 function renderBoard() {
-    const $board =$('#board');
+    const $board = $('#board');
     $board.empty();
 
     const activeGame = isAnalysisMode ? analysisGame : game;
@@ -560,7 +573,7 @@ function renderBoard() {
             const piece = boardState[rowIdx][colIdx];
             const isLight = (rowIdx + colIdx) % 2 === 0;
 
-            const $square =$('<div></div>')
+            const $square = $('<div></div>')
                 .addClass('w-full h-full flex items-center justify-center select-none')
                 .addClass(isLight ? 'square-light' : 'square-dark')
                 .attr('data-square', squareName);
@@ -587,7 +600,7 @@ function renderBoard() {
 
             if (piece) {
                 const key = piece.color === 'w' ? piece.type.toUpperCase() : piece.type;
-                const $img =$('<img>').attr('src', getPieceSVG(key)).addClass('piece');
+                const $img = $('<img>').attr('src', getPieceSVG(key)).addClass('piece');
                 $square.append($img);
             }
 
@@ -700,7 +713,8 @@ function openPromotionModal(color) {
 }
 
 $('.promo-choice').on('click', function() {
-    const chosenPiece = $(this).attr('data-piece');$('#promotionModal').addClass('hidden');
+    const chosenPiece = $(this).attr('data-piece');
+    $('#promotionModal').addClass('hidden');
     if (pendingMove) {
         executeMove(pendingMove.from, pendingMove.to, chosenPiece);
         pendingMove = null;
@@ -728,8 +742,6 @@ function triggerStockfishMove() {
     if (elo >= 2000) depth = 15;
     if (elo >= 2200) depth = 18;
 
-    // Stockfish Skill Level deliberately weakens play at lower settings.
-    // Elo labels are approximate; Stockfish's built-in Elo limiter cannot represent the lowest menu levels.
     const skillLevelByElo = {
         250: 0,
         400: 1,
@@ -797,7 +809,8 @@ $('#toggleAutoFlip').on('change', function() {
 });
 
 $('.side-choice-btn').on('click', function() {
-    $('.side-choice-btn').removeClass('bg-blue-600 text-white font-bold').addClass('text-zinc-400');$(this).addClass('bg-blue-600 text-white font-bold').removeClass('text-zinc-400');
+    $('.side-choice-btn').removeClass('bg-blue-600 text-white font-bold').addClass('text-zinc-400');
+    $(this).addClass('bg-blue-600 text-white font-bold').removeClass('text-zinc-400');
     
     userColorSelection = $(this).attr('data-color');
     resetGame();
@@ -840,11 +853,11 @@ function updateTimerDisplay() {
 
     const applyTimerStyle = (selector, isActive, remaining) => {
         const timer = $(selector);
-        timer.removeClass('text-emerald-300 bg-emerald-950 border-emerald-700 shadow-[0_0_8px_rgba(52,211,153,0.25)] text-red-200 bg-red-950 border-red-700 animate-pulse');
+        timer.removeClass('text-emerald-400 bg-emerald-950 border-emerald-600 shadow-[0_0_10px_rgba(52,211,153,0.35)] text-red-300 bg-red-950 border-red-600 animate-pulse');
         if (isActive && remaining <= 30) {
-            timer.addClass('text-red-200 bg-red-950 border-red-700 animate-pulse');
+            timer.addClass('text-red-300 bg-red-950 border-red-600 animate-pulse');
         } else if (isActive) {
-            timer.addClass('text-emerald-300 bg-emerald-950 border-emerald-700 shadow-[0_0_8px_rgba(52,211,153,0.25)]');
+            timer.addClass('text-emerald-400 bg-emerald-950 border-emerald-600 shadow-[0_0_10px_rgba(52,211,153,0.35)]');
         }
     };
 
@@ -852,15 +865,19 @@ function updateTimerDisplay() {
     applyTimerStyle('#blackTimer', blackActive, blackTime);
 
     if (!isFlipped) {
-        $('#topTimerMobile').text(formattedBlack);
-        $('#bottomTimerMobile').text(formattedWhite);
+        $('#topTimerMobile, #topTimerDesktop').text(formattedBlack);
+        $('#bottomTimerMobile, #bottomTimerDesktop').text(formattedWhite);
         applyTimerStyle('#topTimerMobile', blackActive, blackTime);
         applyTimerStyle('#bottomTimerMobile', whiteActive, whiteTime);
+        applyTimerStyle('#topTimerDesktop', blackActive, blackTime);
+        applyTimerStyle('#bottomTimerDesktop', whiteActive, whiteTime);
     } else {
-        $('#topTimerMobile').text(formattedWhite);
-        $('#bottomTimerMobile').text(formattedBlack);
+        $('#topTimerMobile, #topTimerDesktop').text(formattedWhite);
+        $('#bottomTimerMobile, #bottomTimerDesktop').text(formattedBlack);
         applyTimerStyle('#topTimerMobile', whiteActive, whiteTime);
         applyTimerStyle('#bottomTimerMobile', blackActive, blackTime);
+        applyTimerStyle('#topTimerDesktop', whiteActive, whiteTime);
+        applyTimerStyle('#bottomTimerDesktop', blackActive, blackTime);
     }
 }
 
@@ -1016,10 +1033,16 @@ function startAnalysisMode() {
     $('#gameOverModal').addClass('hidden');
     $('#evalBarWrapper').removeClass('hidden');
     $('#evalScoreWrapper').removeClass('hidden');
-    $('#analysisNav').removeClass('hidden');
+    
+    $('#gameplayConfigGroup').addClass('hidden');
     $('#normalControls').addClass('hidden');
-    $('#mobileAnalysisPanel').removeClass('hidden');
-    $('#mobileQuickControls').addClass('hidden');
+    $('#analysisNav').removeClass('hidden');
+
+    if (window.innerWidth <= 768) {
+        $('#mobileAnalysisPanel').removeClass('hidden');
+        $('#mobileQuickControls').addClass('hidden');
+    }
+
     $('#panelTitle').text('🔍 Analiz Modu');
 
     showEvalLoading();
@@ -1045,10 +1068,13 @@ function exitAnalysisMode() {
 
     $('body').removeClass('analysis-mode');
 
+    $('#gameplayConfigGroup').removeClass('hidden');
     $('#analysisNav').addClass('hidden');
     $('#normalControls').removeClass('hidden');
+
     $('#mobileAnalysisPanel').addClass('hidden');
     $('#mobileQuickControls').removeClass('hidden');
+
     $('#panelTitle').text('Canlı Karşılaşma');
 
     $('#evalBarWrapper').addClass('hidden');
@@ -1091,18 +1117,12 @@ function updateAnalysisBoard() {
     requestEngineAnalysis();
 }
 
-$('#navStart').on('click', () => { if (isAnalysisMode) { analysisIdx = -1; updateAnalysisBoard(); } });
-$('#navPrev').on('click', () => { if (isAnalysisMode && analysisIdx > -1) { analysisIdx--; updateAnalysisBoard(); } });
-$('#navNext').on('click', () => { if (!isAnalysisMode) return; if (analysisBranchStartIdx !== null && analysisIdx === analysisBranchStartIdx && analysisIdx < analysisMainlineHistory.length - 1) { analysisMoveHistory = analysisMainlineHistory.slice(); analysisBranchStartIdx = null; } if (analysisIdx < analysisMoveHistory.length - 1) { analysisIdx++; updateAnalysisBoard(); } });
-$('#navEnd').on('click', () => { if (isAnalysisMode && analysisMoveHistory.length > 0) { analysisIdx = analysisMoveHistory.length - 1; updateAnalysisBoard(); } });
+$('#navStart, #mNavStart').on('click', () => { if (isAnalysisMode) { analysisIdx = -1; updateAnalysisBoard(); } });
+$('#navPrev, #mNavPrev').on('click', () => { if (isAnalysisMode && analysisIdx > -1) { analysisIdx--; updateAnalysisBoard(); } });
+$('#navNext, #mNavNext').on('click', () => { if (!isAnalysisMode) return; if (analysisBranchStartIdx !== null && analysisIdx === analysisBranchStartIdx && analysisIdx < analysisMainlineHistory.length - 1) { analysisMoveHistory = analysisMainlineHistory.slice(); analysisBranchStartIdx = null; } if (analysisIdx < analysisMoveHistory.length - 1) { analysisIdx++; updateAnalysisBoard(); } });
+$('#navEnd, #mNavEnd').on('click', () => { if (isAnalysisMode && analysisMoveHistory.length > 0) { analysisIdx = analysisMoveHistory.length - 1; updateAnalysisBoard(); } });
 
-$('#mNavStart').on('click', () => { if (isAnalysisMode) { analysisIdx = -1; updateAnalysisBoard(); } });
-$('#mNavPrev').on('click', () => { if (isAnalysisMode && analysisIdx > -1) { analysisIdx--; updateAnalysisBoard(); } });
-$('#mNavNext').on('click', () => { if (!isAnalysisMode) return; if (analysisBranchStartIdx !== null && analysisIdx === analysisBranchStartIdx && analysisIdx < analysisMainlineHistory.length - 1) { analysisMoveHistory = analysisMainlineHistory.slice(); analysisBranchStartIdx = null; } if (analysisIdx < analysisMoveHistory.length - 1) { analysisIdx++; updateAnalysisBoard(); } });
-$('#mNavEnd').on('click', () => { if (isAnalysisMode && analysisMoveHistory.length > 0) { analysisIdx = analysisMoveHistory.length - 1; updateAnalysisBoard(); } });
-
-$('#exitAnalysisBtn').on('click', exitAnalysisMode);
-$('#mExitAnalysisBtn').on('click', exitAnalysisMode);
+$('#exitAnalysisBtn, #mExitAnalysisBtn').on('click', exitAnalysisMode);
 
 $(document).on('keydown', function(e) {
     if (!isAnalysisMode) return;
@@ -1114,8 +1134,7 @@ $(document).on('keydown', function(e) {
     }
 });
 
-$('#playBestMoveBtn').on('click', playBestMove);
-$('#mPlayBestMoveBtn').on('click', playBestMove);
+$('#playBestMoveBtn, #mPlayBestMoveBtn').on('click', playBestMove);
 
 function playBestMove() {
     if (!isAnalysisMode || !currentBestMove) return;
@@ -1169,7 +1188,6 @@ $('#openSettingsBtn, #mobileSettingsModalBtn').on('click', function(e) {
     $('#settingsModal').removeClass('hidden');
 });
 
-// 1. Tahta Renk Teması
 const applyPlayerCardTheme = (theme) => {
     const colors = {
         'theme-red': ['#fff1f2', '#fda4af'],
@@ -1191,7 +1209,6 @@ $(document).on('click', '.theme-option-btn', function(e) {
     localStorage.setItem('zato_theme', selectedTheme);
 });
 
-// 2. Taş Stili Seçimi
 $(document).on('click', '.piece-style-btn', function(e) {
     e.preventDefault();
     const $btn =$(this).closest('.piece-style-btn');
@@ -1204,7 +1221,6 @@ $(document).on('click', '.piece-style-btn', function(e) {
     renderBoard();
 });
 
-// 3. Animasyon Hızı Seçimi
 $(document).on('click', '.anim-speed-btn', function(e) {
     e.preventDefault();
     const animClass = $(this).attr('data-anim');$('#board').removeClass('anim-off anim-slow anim-normal anim-fast').addClass(animClass);
@@ -1212,7 +1228,6 @@ $(document).on('click', '.anim-speed-btn', function(e) {
     localStorage.setItem('zato_anim_speed', animClass);
 });
 
-// 4. Ses ve Efekt Toggles
 $('#toggleSoundEffects').on('change', function() {
     playSoundsEnabled = $(this).is(':checked');
     localStorage.setItem('zato_sound', playSoundsEnabled);
@@ -1353,10 +1368,14 @@ function resetGame() {
     isFlipped = actualPlayerColor === 'b';
 
     $('#promotionModal').addClass('hidden');
+    
+    $('#gameplayConfigGroup').removeClass('hidden');
     $('#analysisNav').addClass('hidden');
     $('#normalControls').removeClass('hidden');
+
     $('#mobileAnalysisPanel').addClass('hidden');
     $('#mobileQuickControls').removeClass('hidden');
+
     $('#panelTitle').text('Canlı Karşılaşma');
     selectedSquare = null;
     whiteTime = selectedTimeInSeconds;

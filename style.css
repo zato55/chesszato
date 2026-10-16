@@ -9,6 +9,26 @@
     transition: transform 0.15s ease-in-out, opacity 0.12s ease;
 }
 
+/* ⚡ CHESS.COM TARZI YENİLEN TAŞLAR STİLİ */
+.captured-group {
+    display: flex;
+    align-items: center;
+    position: relative;
+    margin-right: 4px;
+}
+
+.captured-icon {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+    display: inline-block;
+    filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.4));
+}
+
+.captured-stacked {
+    margin-left: -11px;
+}
+
 /* ⚡ TAHTA ANİMASYON HIZI SINIFLARI */
 #board.anim-off .piece { transition: none !important; }
 #board.anim-slow .piece { transition: transform 0.3s ease-in-out, opacity 0.25s ease !important; }
@@ -16,19 +36,15 @@
 #board.anim-fast .piece { transition: transform 0.08s ease-in-out, opacity 0.06s ease !important; }
 
 /* 🎨 TAHTA RENK TEMALARI */
-/* 1. Zato Bordo */
 #board.theme-red .square-light { background-color: #ffffff; }
 #board.theme-red .square-dark { background-color: #a81c1c; }
 
-/* 2. Turnuva Yeşil (Varsayılan - Göz Dostu) */
 #board.theme-green .square-light { background-color: #eeeee2; }
 #board.theme-green .square-dark { background-color: #769656; }
 
-/* 3. Klasik Ahşap */
 #board.theme-wood .square-light { background-color: #f0d9b5; }
 #board.theme-wood .square-dark { background-color: #b58863; }
 
-/* 4. Gece Mavisi / Koyu */
 #board.theme-dark .square-light { background-color: #9ca3af; }
 #board.theme-dark .square-dark { background-color: #374151; }
 
@@ -40,7 +56,7 @@
     max-height: 680px;
 }
 
-/* 💻 MASAÜSTÜ: BÜYÜTÜLMÜŞ TAHTA & SIFIR KAYDIRMA (100VH LAYOUT) */
+/* 💻 MASAÜSTÜ: EKRANA TAM SIĞDIRMA VE DİKEY SIKIŞTIRMA MANTIĞI */
 @media (min-width: 768px) {
     body {
         height: 100vh;
@@ -49,27 +65,48 @@
 
     main {
         height: 100vh;
-        padding: 0.5rem 1rem !important;
+        padding: 0 !important;
+        gap: 1rem !important;
         overflow: hidden !important;
     }
 
     #board-wrapper {
-        width: min(76vw, 76vh) !important;
-        height: min(76vw, 76vh) !important;
-        max-width: 690px !important;
-        max-height: 690px !important;
-    }
-
-    #desktopPanel {
-        height: min(76vw, 76vh) !important;
-        max-height: 690px !important;
-        padding: 0.75rem !important;
+        width: min(68vw, calc(100vh - 120px)) !important;
+        height: min(68vw, calc(100vh - 120px)) !important;
+        max-width: 620px !important;
+        max-height: 620px !important;
     }
 
     .eval-bar-wrapper {
         width: 16px !important;
-        height: min(76vw, 76vh) !important;
-        max-height: 690px !important;
+        height: min(68vw, calc(100vh - 120px)) !important;
+        max-height: 620px !important;
+    }
+
+    #desktopPanel {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+        height: 100vh !important;
+        max-height: 100vh !important;
+        padding: 1rem 0.75rem !important;
+        border-radius: 0 !important;
+        z-index: 10;
+    }
+
+    #pgn {
+        display: block !important;
+        flex: 1 1 auto !important;
+        min-height: 50px !important;
+    }
+
+    #normalControls {
+        display: block !important;
+        visibility: visible !important;
+    }
+
+    #mobileAnalysisPanel {
+        display: none !important;
     }
 }
 
@@ -223,7 +260,6 @@ aside.collapsed .nav-item {
     scrollbar-width: none;
 }
 
-/* ♟️ MOBİL PARMAK DOSTU DOKUNMA YÜKSEKLİĞİ SIFIRLARI */
 .piece-style-btn {
     cursor: pointer !important;
     touch-action: manipulation;
@@ -236,7 +272,7 @@ aside.collapsed .nav-item {
 }
 
 #mobileAnalysisPanel button {
-    min-height: 48px !important; /* Global mobil dokunma standardı */
+    min-height: 48px !important;
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
 }
@@ -250,7 +286,45 @@ aside.collapsed .nav-item {
     justify-content: center;
 }
 
-/* ===== MOBİL ===== */
+/* ===== OYUNCU KARTLARI YAZI KONTRASTI VE YÜKSEK OKUNABİLİRLİK ===== */
+#topPlayerCard, #bottomPlayerCard {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+#topPlayerName, #bottomPlayerName {
+    color: #09090b !important;
+    font-weight: 900 !important;
+    text-shadow: 0 0 1px rgba(255, 255, 255, 0.6);
+}
+
+#topOpeningText, #bottomOpeningText {
+    color: #1e3a8a !important;
+    font-weight: 800 !important;
+}
+
+#topPlayerElo, #bottomPlayerElo {
+    color: #ffffff !important;
+    background-color: #1e3a8a !important;
+    border-color: #1d4ed8 !important;
+    font-weight: 900 !important;
+}
+
+#topMaterialDiff, #bottomMaterialDiff {
+    color: #065f46 !important;
+    font-weight: 900 !important;
+    font-size: 13px !important;
+}
+
+#topTimerDesktop, #bottomTimerDesktop,
+#topTimerMobile, #bottomTimerMobile {
+    color: #ffffff !important;
+    background-color: #09090b !important;
+    border: 1.5px solid #27272a !important;
+    font-weight: 900 !important;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.8);
+}
+
+/* ===== MOBİL UYARLAMALARI ===== */
 @media (max-width: 768px) {
     body {
         height: 100dvh;
@@ -275,25 +349,6 @@ aside.collapsed .nav-item {
         max-height: none !important;
         border-radius: 6px !important;
         margin-right: 2px !important;
-    }
-
-    #topCapturedPieces, #bottomCapturedPieces {
-        display: flex !important;
-        flex-wrap: wrap !important;
-        align-items: center !important;
-        justify-content: flex-end !important;
-        height: auto !important;
-        min-height: 19px !important;
-        max-height: none !important;
-        overflow: visible !important;
-        min-width: 0 !important;
-    }
-
-    #topCapturedPieces img, #bottomCapturedPieces img {
-        width: 19px !important;
-        height: 19px !important;
-        flex: 0 0 19px !important;
-        object-fit: contain;
     }
 
     #topPlayerCard, #bottomPlayerCard {
@@ -337,61 +392,5 @@ aside.collapsed .nav-item {
 
     body.analysis-mode #mobileAnalysisPanel {
         margin-top: 0 !important;
-    }
-}
-
-/* Oyuncu kartları tahta temasına uyar; siyah taşlar açık zeminde net görünür. */
-#topPlayerCard[data-board-theme],
-#bottomPlayerCard[data-board-theme] {
-    color: #111827 !important;
-}
-#topPlayerCard[data-board-theme] .text-zinc-200,
-#bottomPlayerCard[data-board-theme] .text-zinc-200 {
-    color: #1f2937 !important;
-}
-#topPlayerCard[data-board-theme] .text-zinc-400,
-#bottomPlayerCard[data-board-theme] .text-zinc-400 {
-    color: #4b5563 !important;
-}
-/* Zaman göstergesi koyu zeminde kaldığı için açık yazı kullanır. */
-#topPlayerCard[data-board-theme] #topTimerMobile,
-#bottomPlayerCard[data-board-theme] #bottomTimerMobile {
-    color: #e5e7eb !important;
-}
-
-/* Mobil oyuncu kartı: tema JavaScript'ine bağlı kalmadan yüksek kontrast. */
-@media (max-width: 767px) {
-    #topPlayerElo,
-    #bottomPlayerElo {
-        color: #ffffff !important;
-        background-color: #1e3a8a !important;
-        border-color: #1d4ed8 !important;
-        font-size: 10px !important;
-        font-weight: 800 !important;
-        line-height: 1.2 !important;
-        text-shadow: none !important;
-        opacity: 1 !important;
-    }
-
-    #topTimerMobile,
-    #bottomTimerMobile {
-        color: #ffffff !important;
-        background-color: #111827 !important;
-        border: 1px solid #374151 !important;
-        font-size: 15px !important;
-        font-weight: 900 !important;
-        line-height: 1.25 !important;
-        padding: 6px 8px !important;
-        letter-spacing: 0.03em !important;
-        font-variant-numeric: tabular-nums !important;
-        text-shadow: 0 1px 1px rgba(0, 0, 0, 0.45) !important;
-    }
-
-    #topOpeningText,
-    #bottomOpeningText {
-        color: #1e3a8a !important;
-        font-size: 11px !important;
-        font-weight: 800 !important;
-        text-shadow: none !important;
     }
 }
