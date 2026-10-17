@@ -1266,29 +1266,57 @@ function loadSavedSettings() {
     }
 }
 
-// 📱 MOBİL ALT NAVİGASYON BUTONLARI (GARANTİ EVENT DELEGASYONU)
+// 📱 MOBİL ALT NAVİGASYON TIKLAMA VE AÇILMA YÖNETİMİ
+function setMobileNavActive(activeBtnId) {
+    const btns = ['#mobileNavPlayBtn', '#mobileNavBotBtn', '#mobileNavTempoBtn', '#mobileNavSettingsBtn'];
+    btns.forEach(id => {
+        const $btn =$(id);
+        if (id === activeBtnId) {
+            $btn.removeClass('text-zinc-400 font-medium').addClass('text-blue-500 font-bold');
+        } else {
+            $btn.removeClass('text-blue-500 font-bold').addClass('text-zinc-400 font-medium');
+        }
+    });
+}
+
 $(document).on('click', '#mobileNavPlayBtn', function(e) {
     e.preventDefault();
+    setMobileNavActive('#mobileNavPlayBtn');
+    $('#tempoModal, #botModal, #settingsModal').addClass('hidden');
     resetGame();
 });
 
 $(document).on('click', '#mobileNavBotBtn, #mobileBotModalBtn', function(e) {
     e.preventDefault();
+    setMobileNavActive('#mobileNavBotBtn');
+    $('#tempoModal, #settingsModal').addClass('hidden');
     $('#botModal').removeClass('hidden');
 });
 
 $(document).on('click', '#mobileNavTempoBtn, #mobileTempoModalBtn', function(e) {
     e.preventDefault();
+    setMobileNavActive('#mobileNavTempoBtn');
+    $('#botModal, #settingsModal').addClass('hidden');
     $('#tempoModal').removeClass('hidden');
 });
 
 $(document).on('click', '#mobileNavSettingsBtn, #openSettingsBtn, #mobileSettingsModalBtn', function(e) {
     e.preventDefault();
+    setMobileNavActive('#mobileNavSettingsBtn');
+    $('#tempoModal, #botModal').addClass('hidden');
     $('#settingsModal').removeClass('hidden');
 });
 
-$('.close-modal-btn, #tempoModal, #botModal, #settingsModal').on('click', function(e) {
-    if (e.target === this || $(e.target).hasClass('close-modal-btn')) {$('#tempoModal, #botModal, #settingsModal').addClass('hidden');
+$(document).on('click', '.close-modal-btn', function(e) {
+    e.preventDefault();
+    $('#tempoModal, #botModal, #settingsModal').addClass('hidden');
+    setMobileNavActive('#mobileNavPlayBtn');
+});
+
+$('#tempoModal, #botModal, #settingsModal').on('click', function(e) {
+    if (e.target === this) {
+        $(this).addClass('hidden');
+        setMobileNavActive('#mobileNavPlayBtn');
     }
 });
 
@@ -1298,6 +1326,7 @@ $('.tempo-option-btn').on('click', function() {
     $('#timeSelect').val(timeVal);
     $('.tempo-option-btn').removeClass('border-emerald-500 active-tempo').addClass('border-zinc-800');
     $(this).addClass('border-emerald-500 active-tempo');$('#tempoModal').addClass('hidden');
+    setMobileNavActive('#mobileNavPlayBtn');
     resetGame();
 });
 
@@ -1306,6 +1335,7 @@ $('.bot-level-btn').on('click', function() {
     updateBotEloUI(eloVal);
     updatePlayerCards();
     $('#botModal').addClass('hidden');
+    setMobileNavActive('#mobileNavPlayBtn');
 });
 
 $('#quickFlipBtn, #flipBtn').on('click', function (e) {
