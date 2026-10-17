@@ -1190,7 +1190,7 @@ $('#modeBot, #mModeBot').on('click', function() {
     }
 });
 
-$('#openSettingsBtn, #mobileSettingsModalBtn').on('click', function(e) {
+$('#openSettingsBtn, #mobileSettingsModalBtn, #mobileNavSettingsBtn').on('click', function(e) {
     e.preventDefault();
     $('#settingsModal').removeClass('hidden');
 });
@@ -1271,12 +1271,12 @@ function loadSavedSettings() {
     }
 }
 
-$('#mobileTempoModalBtn').on('click', function(e) {
+$('#mobileTempoModalBtn, #mobileNavTempoBtn').on('click', function(e) {
     e.preventDefault();
     $('#tempoModal').removeClass('hidden');
 });
 
-$('#mobileBotModalBtn').on('click', function(e) {
+$('#mobileBotModalBtn, #mobileNavBotBtn').on('click', function(e) {
     e.preventDefault();
     $('#botModal').removeClass('hidden');
 });
@@ -1408,7 +1408,7 @@ function resetGame() {
     }
 }
 
-$('#resetBtn, #modalResetBtn, #quickResetBtn').on('click', function(e) {
+$('#resetBtn, #modalResetBtn, #quickResetBtn, #mobileNavPlayBtn').on('click', function(e) {
     e.preventDefault();
     resetGame();
 });
