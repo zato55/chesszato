@@ -56,42 +56,74 @@
     max-height: 680px;
 }
 
-/* 💻 MASAÜSTÜ: EKRANA TAM SIĞDIRMA VE DİKEY SIKIŞTIRMA MANTIĞI */
+/* 💻 MASAÜSTÜ: DİNAMİK MENÜ VE TAM ORTALANAN TAHTA DÜZENİ */
 @media (min-width: 768px) {
     body {
         height: 100vh;
         overflow: hidden !important;
     }
 
-    main {
-        height: 100vh;
-        padding: 0 !important;
-        gap: 1rem !important;
-        overflow: hidden !important;
+    /* Sol menü açıldığında genişlik */
+    #mainSidebar {
+        width: 280px !important;
+        min-width: 280px !important;
+        max-width: 280px !important;
+        transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), min-width 0.25s cubic-bezier(0.4, 0, 0.2, 1), max-width 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
     }
 
-    #board-wrapper {
-        width: min(68vw, calc(100vh - 120px)) !important;
-        height: min(68vw, calc(100vh - 120px)) !important;
-        max-width: 620px !important;
-        max-height: 620px !important;
+    /* Sol menü kapatıldığında/daraltıldığında KESİN DARALMA */
+    #mainSidebar.collapsed {
+        width: 4.5rem !important;
+        min-width: 4.5rem !important;
+        max-width: 4.5rem !important;
     }
 
-    .eval-bar-wrapper {
-        width: 16px !important;
-        height: min(68vw, calc(100vh - 120px)) !important;
-        max-height: 620px !important;
-    }
-
+    /* Sağ panel genişliği sabit */
     #desktopPanel {
         display: flex !important;
         flex-direction: column !important;
         justify-content: space-between !important;
         height: 100vh !important;
         max-height: 100vh !important;
-        padding: 1rem 0.75rem !important;
+        width: 280px !important;
+        min-width: 280px !important;
+        max-width: 280px !important;
+        padding: 1rem 0.85rem !important;
         border-radius: 0 !important;
         z-index: 10;
+        box-sizing: border-box !important;
+    }
+
+    /* Tahtayı barındıran orta alan: Sol menü kapandığında kendiliğinden genişleyip tahtayı tam ortalar */
+    main {
+        height: 100vh;
+        padding: 0 1rem !important;
+        margin: 0 !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        flex: 1 1 auto !important;
+        min-width: 0 !important;
+        overflow: hidden !important;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    main > div.flex-col {
+        margin: 0 auto !important;
+        flex-shrink: 0 !important;
+    }
+
+    #board-wrapper {
+        width: min(50vw, calc(100vh - 130px)) !important;
+        height: min(50vw, calc(100vh - 130px)) !important;
+        max-width: 600px !important;
+        max-height: 600px !important;
+    }
+
+    .eval-bar-wrapper {
+        width: 16px !important;
+        height: min(50vw, calc(100vh - 130px)) !important;
+        max-height: 600px !important;
     }
 
     #pgn {
@@ -234,12 +266,8 @@ aside {
 }
 
 .sidebar-text {
-    transition: opacity 0.2s ease, max-width 0.25s ease;
+    transition: opacity 0.2s ease, max-width 0.2s ease;
     white-space: nowrap;
-}
-
-aside.collapsed {
-    width: 4.5rem !important;
 }
 
 aside.collapsed .sidebar-text {
@@ -247,6 +275,12 @@ aside.collapsed .sidebar-text {
 }
 
 aside.collapsed .nav-item {
+    justify-content: center !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+aside.collapsed #logoToggleBtn {
     justify-content: center !important;
     padding-left: 0 !important;
     padding-right: 0 !important;

@@ -81,7 +81,10 @@ const openingDatabase = [
     { moves: ['e4', 'e5', 'Nf3', 'Nc6', 'Bc4'], name: 'İtalyan Açılışı' }
 ];
 
-$('#logoToggleBtn').on('click', function() {
+// 🎯 KESİN MENÜ AÇMA/KAPAMA DİNLEYİCİSİ
+$(document).off('click', '#logoToggleBtn').on('click', '#logoToggleBtn', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
     $('#mainSidebar').toggleClass('collapsed');
 });
 
@@ -471,7 +474,7 @@ function updatePlayerCards() {
         $('#bottomCapturedPieces').html(drawChessComCapturedPieces(blackCaptured, false));
 
         $('#topMaterialDiff').text(whiteScore > blackScore ? `+${whiteScore - blackScore}` : '');
-        $('#bottomMaterialDiff').text(blackScore > whiteScore ? `+${blackScore - whiteScore}` : '');
+        $('#bottomMaterialDiff').text(blackScore > whiteScore ? `+${blackScore - blackScore}` : '');
     }
 }
 
@@ -1035,7 +1038,9 @@ function startAnalysisMode() {
     $('#evalScoreWrapper').removeClass('hidden');
     
     $('#gameplayConfigGroup').addClass('hidden');
-    $('#normalControls').addClass('hidden');
+    
+    /* 🎯 CANLI OYUN KONTROLLERİNİ TAMAMEN GİZLİYORUZ */
+    $('#liveGameControls').addClass('hidden');
     $('#analysisNav').removeClass('hidden');
 
     if (window.innerWidth <= 768) {
@@ -1070,7 +1075,9 @@ function exitAnalysisMode() {
 
     $('#gameplayConfigGroup').removeClass('hidden');
     $('#analysisNav').addClass('hidden');
-    $('#normalControls').removeClass('hidden');
+    
+    /* 🎯 CANLI OYUN KONTROLLERİNİ GERİ GETİRİYORUZ */
+    $('#liveGameControls').removeClass('hidden');
 
     $('#mobileAnalysisPanel').addClass('hidden');
     $('#mobileQuickControls').removeClass('hidden');
@@ -1371,7 +1378,7 @@ function resetGame() {
     
     $('#gameplayConfigGroup').removeClass('hidden');
     $('#analysisNav').addClass('hidden');
-    $('#normalControls').removeClass('hidden');
+    $('#liveGameControls').removeClass('hidden');
 
     $('#mobileAnalysisPanel').addClass('hidden');
     $('#mobileQuickControls').removeClass('hidden');
