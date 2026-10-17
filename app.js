@@ -1190,11 +1190,6 @@ $('#modeBot, #mModeBot').on('click', function() {
     }
 });
 
-$('#openSettingsBtn, #mobileSettingsModalBtn, #mobileNavSettingsBtn').on('click', function(e) {
-    e.preventDefault();
-    $('#settingsModal').removeClass('hidden');
-});
-
 const applyPlayerCardTheme = (theme) => {
     const colors = {
         'theme-red': ['#fff1f2', '#fda4af'],
@@ -1271,14 +1266,25 @@ function loadSavedSettings() {
     }
 }
 
-$('#mobileTempoModalBtn, #mobileNavTempoBtn').on('click', function(e) {
+// 📱 MOBİL ALT NAVİGASYON BUTONLARI (GARANTİ EVENT DELEGASYONU)
+$(document).on('click', '#mobileNavPlayBtn', function(e) {
+    e.preventDefault();
+    resetGame();
+});
+
+$(document).on('click', '#mobileNavBotBtn, #mobileBotModalBtn', function(e) {
+    e.preventDefault();
+    $('#botModal').removeClass('hidden');
+});
+
+$(document).on('click', '#mobileNavTempoBtn, #mobileTempoModalBtn', function(e) {
     e.preventDefault();
     $('#tempoModal').removeClass('hidden');
 });
 
-$('#mobileBotModalBtn, #mobileNavBotBtn').on('click', function(e) {
+$(document).on('click', '#mobileNavSettingsBtn, #openSettingsBtn, #mobileSettingsModalBtn', function(e) {
     e.preventDefault();
-    $('#botModal').removeClass('hidden');
+    $('#settingsModal').removeClass('hidden');
 });
 
 $('.close-modal-btn, #tempoModal, #botModal, #settingsModal').on('click', function(e) {
@@ -1408,7 +1414,7 @@ function resetGame() {
     }
 }
 
-$('#resetBtn, #modalResetBtn, #quickResetBtn, #mobileNavPlayBtn').on('click', function(e) {
+$('#resetBtn, #modalResetBtn, #quickResetBtn').on('click', function(e) {
     e.preventDefault();
     resetGame();
 });
