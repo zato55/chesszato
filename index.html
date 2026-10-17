@@ -330,6 +330,95 @@
         </div>
     </div>
 
+    <!-- MOBİL TEMPO MODAL -->
+    <div id="tempoModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-end justify-center p-0 md:p-4">
+        <div class="bg-[#121215] border-t-2 md:border-2 border-zinc-800 rounded-t-3xl md:rounded-3xl p-5 w-full max-w-sm space-y-3 max-h-[85vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-zinc-800 pb-2.5">
+                <h3 class="text-base font-bold text-white flex items-center gap-2">⏱️ Zaman Temposu Seç</h3>
+                <button class="close-modal-btn text-zinc-400 hover:text-white text-lg font-bold p-1">✕</button>
+            </div>
+            <div class="space-y-1.5">
+                <button class="tempo-option-btn w-full bg-[#09090b] hover:bg-zinc-800 border border-zinc-800 p-2.5 rounded-xl flex items-center justify-between text-xs transition" data-time="60">
+                    <span class="font-bold text-white">⚡ 1 Min</span>
+                    <span class="text-emerald-400 font-mono font-bold">1 | 0 Bullet</span>
+                </button>
+                <button class="tempo-option-btn w-full bg-[#09090b] hover:bg-zinc-800 border border-zinc-800 p-2.5 rounded-xl flex items-center justify-between text-xs transition" data-time="60-1">
+                    <span class="font-bold text-white">⚡ 1 | 1 Min</span>
+                    <span class="text-emerald-400 font-mono font-bold">1 + 1 Bullet</span>
+                </button>
+                <button class="tempo-option-btn w-full bg-[#09090b] hover:bg-zinc-800 border border-zinc-800 p-2.5 rounded-xl flex items-center justify-between text-xs transition" data-time="120-1">
+                    <span class="font-bold text-white">⚡ 2 | 1 Min</span>
+                    <span class="text-emerald-400 font-mono font-bold">2 + 1 Bullet</span>
+                </button>
+                <button class="tempo-option-btn w-full bg-[#09090b] hover:bg-zinc-800 border border-zinc-800 p-2.5 rounded-xl flex items-center justify-between text-xs transition" data-time="180">
+                    <span class="font-bold text-white">⏱️ 3 Min</span>
+                    <span class="text-emerald-400 font-mono font-bold">3 | 0 Blitz</span>
+                </button>
+                <button class="tempo-option-btn w-full bg-[#09090b] hover:bg-zinc-800 border border-zinc-800 p-2.5 rounded-xl flex items-center justify-between text-xs transition" data-time="180-2">
+                    <span class="font-bold text-white">⏱️ 3 | 2 Min</span>
+                    <span class="text-emerald-400 font-mono font-bold">3 + 2 Blitz</span>
+                </button>
+                <button class="tempo-option-btn w-full bg-[#09090b] hover:bg-zinc-800 border border-zinc-800 p-2.5 rounded-xl flex items-center justify-between text-xs transition active-tempo border-emerald-500" data-time="300">
+                    <span class="font-bold text-white">⏱️ 5 Min</span>
+                    <span class="text-emerald-400 font-mono font-bold">5 | 0 Blitz</span>
+                </button>
+                <button class="tempo-option-btn w-full bg-[#09090b] hover:bg-zinc-800 border border-zinc-800 p-2.5 rounded-xl flex items-center justify-between text-xs transition" data-time="600">
+                    <span class="font-bold text-white">⏳ 10 Min</span>
+                    <span class="text-emerald-400 font-mono font-bold">10 | 0 Rapid</span>
+                </button>
+                <button class="tempo-option-btn w-full bg-[#09090b] hover:bg-zinc-800 border border-zinc-800 p-2.5 rounded-xl flex items-center justify-between text-xs transition" data-time="900-10">
+                    <span class="font-bold text-white">⏳ 15 | 10 Min</span>
+                    <span class="text-emerald-400 font-mono font-bold">15 + 10 Rapid</span>
+                </button>
+                <button class="tempo-option-btn w-full bg-[#09090b] hover:bg-zinc-800 border border-zinc-800 p-2.5 rounded-xl flex items-center justify-between text-xs transition" data-time="1800">
+                    <span class="font-bold text-white">⏳ 30 Min</span>
+                    <span class="text-emerald-400 font-mono font-bold">30 | 0 Rapid</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MOBİL BOT MODAL -->
+    <div id="botModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-end justify-center p-0 md:p-4">
+        <div class="bg-[#121215] border-t-2 md:border-2 border-zinc-800 rounded-t-3xl md:rounded-3xl p-5 w-full max-w-sm space-y-3 max-h-[88vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-zinc-800 pb-2.5">
+                <h3 class="text-base font-bold text-white flex items-center gap-2">🤖 Oyun Modu ve Seviye</h3>
+                <button class="close-modal-btn text-zinc-400 hover:text-white text-lg font-bold p-1">✕</button>
+            </div>
+            
+            <div class="space-y-3">
+                <div class="grid grid-cols-2 gap-2 bg-[#09090b] p-1 rounded-xl border border-zinc-800">
+                    <button id="mModeBot" class="py-2 rounded-lg bg-blue-600 font-bold text-xs text-white transition">Stockfish Bot</button>
+                    <button id="mModePvP" class="py-2 rounded-lg text-zinc-400 hover:text-white text-xs font-semibold transition">2 Kişilik (Yerel)</button>
+                </div>
+
+                <div class="space-y-1 pt-1">
+                    <label class="text-xs text-zinc-400 font-medium">Tarafınız:</label>
+                    <div class="grid grid-cols-3 gap-1.5">
+                        <button class="side-choice-btn py-2 rounded-xl bg-blue-600 text-white font-bold text-xs transition flex items-center justify-center gap-1" data-color="w">⚪ Beyaz</button>
+                        <button class="side-choice-btn py-2 rounded-xl bg-[#09090b] text-zinc-400 border border-zinc-800 font-bold text-xs transition flex items-center justify-center gap-1" data-color="r">🎲 Rastgele</button>
+                        <button class="side-choice-btn py-2 rounded-xl bg-[#09090b] text-zinc-400 border border-zinc-800 font-bold text-xs transition flex items-center justify-center gap-1" data-color="b">🖤 Siyah</button>
+                    </div>
+                </div>
+
+                <div id="mBotLevelWrapper" class="space-y-1.5 pt-1">
+                    <label class="text-xs text-zinc-400 font-medium">Bot Zorluk Seviyesi:</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button class="bot-level-btn p-2 bg-[#09090b] border border-zinc-800 rounded-xl text-xs text-center transition" data-elo="250">250 Elo (Acemi)</button>
+                        <button class="bot-level-btn p-2 bg-[#09090b] border border-zinc-800 rounded-xl text-xs text-center transition" data-elo="400">400 Elo (Amatör)</button>
+                        <button class="bot-level-btn p-2 bg-[#09090b] border border-zinc-800 rounded-xl text-xs text-center transition" data-elo="800">800 Elo (Kulüp)</button>
+                        <button class="bot-level-btn p-2 bg-[#09090b] border border-zinc-800 rounded-xl text-xs text-center transition" data-elo="1200">1200 Elo (Orta)</button>
+                        <button class="bot-level-btn p-2 bg-[#09090b] border border-zinc-800 rounded-xl text-xs text-center transition" data-elo="1400">1400 Elo (Gelişmiş)</button>
+                        <button class="bot-level-btn p-2 bg-[#09090b] border border-zinc-800 rounded-xl text-xs text-center transition" data-elo="1600">1600 Elo (İleri)</button>
+                        <button class="bot-level-btn p-2 bg-[#09090b] border border-zinc-800 rounded-xl text-xs text-center transition" data-elo="1800">1800 Elo (Usta)</button>
+                        <button class="bot-level-btn p-2 bg-[#09090b] border border-zinc-800 rounded-xl text-xs text-center transition" data-elo="2000">2000 Elo (Üstat)</button>
+                        <button class="bot-level-btn p-2 bg-[#09090b] border border-zinc-800 rounded-xl text-xs text-center transition col-span-2" data-elo="2200">2200 Elo (Maksimum Bot)</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- ⚙️ AYARLAR MODALI -->
     <div id="settingsModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-[#121215] border border-zinc-800 rounded-2xl p-6 max-w-md w-full flex flex-col gap-5 shadow-2xl">
