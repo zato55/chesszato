@@ -1068,6 +1068,7 @@ window.jumpToMove = function(idx) {
 };
 
 function startAnalysisMode() {
+    returnToLivePosition();
     isAnalysisMode = true;
     isReviewing = true;
 
