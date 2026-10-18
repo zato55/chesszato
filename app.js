@@ -1293,10 +1293,10 @@ $('#modeBot, #mModeBot').on('click', function() {
 
 const applyPlayerCardTheme = (theme) => {
     const colors = {
-        'theme-red': ['#fff1f2', '#fda4af'],
-        'theme-green': ['#dce8cc', '#9caf88'],
-        'theme-wood': ['#f0d9b5', '#b58863'],
-        'theme-dark': ['#e5e7eb', '#9ca3af']
+        'theme-red': ['#a81c1c', '#861616'],
+        'theme-green': ['#769656', '#5e7944'],
+        'theme-wood': ['#b58863', '#916b4e'],
+        'theme-dark': ['#374151', '#28303d']
     };
     const [background, border] = colors[theme] || colors['theme-green'];
     $('#topPlayerCard, #bottomPlayerCard').css({ backgroundColor: background, borderColor: border });
