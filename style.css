@@ -729,3 +729,17 @@ aside.collapsed #logoToggleBtn {
     }
 }
 
+
+
+/* Analiz öncesi maç raporu: yalnızca yeni rapor bileşenini biçimlendirir. */
+.pre-analysis-card { color: #f4f4f5; }
+.summary-stat {
+    display: flex; flex-direction: column; gap: 5px; padding: 12px;
+    border: 1px solid #27272a; border-radius: 12px; background: #09090b; min-width: 0;
+}
+.summary-stat span { color: #a1a1aa; font-size: 11px; }
+.summary-stat strong {
+    color: #fafafa; font-size: 16px; line-height: 1.35; overflow-wrap: anywhere;
+}
+#preAnalysisSummary table { border-collapse: collapse; min-width: 510px; }
+#preAnalysisSummary th, #preAnalysisSummary td { white-space: nowrap; }
