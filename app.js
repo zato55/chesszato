@@ -1046,6 +1046,8 @@ function startAnalysisMode() {
     if (window.innerWidth <= 768) {
         $('#mobileAnalysisPanel').removeClass('hidden');
         $('#mobileQuickControls').addClass('hidden');
+        $('#mobileBottomNav').addClass('hidden');
+        $('#mobileAnalysisBottomNav').removeClass('hidden');
     }
 
     $('#panelTitle').text('🔍 Analiz Modu');
@@ -1081,6 +1083,8 @@ function exitAnalysisMode() {
 
     $('#mobileAnalysisPanel').addClass('hidden');
     $('#mobileQuickControls').removeClass('hidden');
+    $('#mobileAnalysisBottomNav').addClass('hidden');
+    $('#mobileBottomNav').removeClass('hidden');
 
     $('#panelTitle').text('Canlı Karşılaşma');
 
