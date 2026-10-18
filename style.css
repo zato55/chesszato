@@ -517,12 +517,12 @@ aside.collapsed #logoToggleBtn {
     }
 
     #board-wrapper {
-        width: auto !important;
-        height: 100% !important;
+        width: min(95vw, calc(100dvh - 300px)) !important;
+        height: min(95vw, calc(100dvh - 300px)) !important;
         max-width: min(95vw, 100%) !important;
         max-height: 100% !important;
         aspect-ratio: 1 / 1 !important;
-        flex: 0 1 auto !important;
+        flex: 0 0 auto !important;
     }
 
     .eval-bar-wrapper {
