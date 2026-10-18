@@ -598,6 +598,16 @@ aside.collapsed #logoToggleBtn {
         padding-bottom: calc(88px + env(safe-area-inset-bottom)) !important;
     }
 
+    /* Analiz ekranında tahta iki eksende aynı ölçüyü kullanır; değerlendirme çubuğu kareyi sıkıştıramaz. */
+    body.analysis-mode #board-wrapper {
+        width: min(95vw, calc(100dvh - 340px)) !important;
+        height: min(95vw, calc(100dvh - 340px)) !important;
+        max-width: 100% !important;
+        max-height: 100% !important;
+        aspect-ratio: 1 / 1 !important;
+        flex: 0 0 auto !important;
+    }
+
     /* Analiz tablosu: oyuncu kartları sınırlı pay alır, kare tahta ana alanı kullanır. */
     body.analysis-mode main > div.flex-col {
         grid-template-rows: minmax(54px, 0.18fr) minmax(0, 1fr) minmax(54px, 0.18fr) !important;
