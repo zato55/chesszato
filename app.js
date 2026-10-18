@@ -10,6 +10,7 @@ let timerInterval = null;
 let selectedTimeInSeconds = 300;
 let timeIncrementInSeconds = 0;
 let whiteTime = 300, blackTime = 300;
+let clockStarted = false;
 
 let stockfishWorker = null;
 
@@ -34,6 +35,37 @@ let userColorSelection = 'w';
 let actualPlayerColor = 'w';
 let showLegalMoves = true;
 let autoFlipPvP = false;
+
+// Canlı maç geçmişi yalnızca görüntüleme içindir; gerçek game ve saatler değişmez.
+let liveReviewPly = null;
+const liveReviewGame = new Chess();
+
+function getDisplayedGame() {
+    if (isAnalysisMode) return analysisGame;
+    if (liveReviewPly === null) return game;
+
+    liveReviewGame.reset();
+    const moves = game.history({ verbose: true });
+    const visibleCount = Math.min(liveReviewPly, moves.length);
+    for (let i = 0; i < visibleCount; i++) {
+        const move = moves[i];
+        liveReviewGame.move({ from: move.from, to: move.to, promotion: move.promotion });
+    }
+    return liveReviewGame;
+}
+
+function showLiveReviewPosition(ply) {
+    if (isAnalysisMode) return;
+    const moveCount = game.history({ verbose: true }).length;
+    liveReviewPly = Math.max(0, Math.min(ply, moveCount));
+    if (liveReviewPly >= moveCount) liveReviewPly = null;
+    selectedSquare = null;
+    renderBoard();
+}
+
+function returnToLivePosition() {
+    liveReviewPly = null;
+}
 
 // ⚙️ AYARLAR VE DİNAMİK TERCİHLER
 let playSoundsEnabled = true;
@@ -191,6 +223,11 @@ function initStockfish() {
 
                     const targetPiece = game.get(to);
                     const moveObj = game.move({ from: from, to: to, promotion: promotion });
+                    if (moveObj) returnToLivePosition();
+                    if (moveObj && botTurnColor === 'w' && !clockStarted) {
+                        clockStarted = true;
+                        startTimer();
+                    }
 
                     if (timeIncrementInSeconds > 0) {
                         if (botTurnColor === 'w') whiteTime += timeIncrementInSeconds;
@@ -356,7 +393,7 @@ function playMoveSound(moveObj, isCapture) {
 }
 
 function detectOpening(side) {
-    const activeGame = isAnalysisMode ? analysisGame : game;
+    const activeGame = getDisplayedGame();
     const historySAN = activeGame.history();
     if (historySAN.length === 0) return '📖 ...';
 
@@ -414,7 +451,7 @@ function drawChessComCapturedPieces(capturedArr, isWhiteCaptures) {
 }
 
 function updatePlayerCards() {
-    const activeGame = isAnalysisMode ? analysisGame : game;
+    const activeGame = getDisplayedGame();
     const history = activeGame.history({ verbose: true });
 
     let whiteCaptured = [];
@@ -526,7 +563,7 @@ function renderBoard() {
     const $board = $('#board');
     $board.empty();
 
-    const activeGame = isAnalysisMode ? analysisGame : game;
+    const activeGame = getDisplayedGame();
     const historyVerbose = activeGame.history({ verbose: true });
     let lastMove = null;
     if (isAnalysisMode) {
@@ -615,6 +652,10 @@ function renderBoard() {
 }
 
 function handleMove(from, to) {
+    if (!isAnalysisMode && liveReviewPly !== null) {
+        returnToLivePosition();
+        renderBoard();
+    }
     if (isGameOver && !isReviewing && !isAnalysisMode) return;
 
     if (!isAnalysisMode && !isReviewing) {
@@ -647,6 +688,8 @@ function executeMove(from, to, promoPiece) {
     const moveObj = activeGame.move({ from: from, to: to, promotion: promoPiece });
 
     if (moveObj !== null) {
+        if (!isAnalysisMode && !isReviewing && movingColor === 'w') clockStarted = true;
+        if (!isAnalysisMode && activeGame === game) returnToLivePosition();
         if (!isAnalysisMode && !isReviewing && timeIncrementInSeconds > 0) {
             if (movingColor === 'w') whiteTime += timeIncrementInSeconds;
             else blackTime += timeIncrementInSeconds;
@@ -786,6 +829,17 @@ $('#board').on('click', 'div[data-square]', function () {
     }
 });
 
+function syncTempoSelection(valStr) {
+    const selectedValue = String(valStr);
+    $('#timeSelect').val(selectedValue);
+    $('.tempo-option-btn').each(function() {
+        const isSelected = String($(this).attr('data-time')) === selectedValue;
+        $(this)
+            .toggleClass('active-tempo border-emerald-500', isSelected)
+            .toggleClass('border-zinc-800', !isSelected);
+    });
+}
+
 function parseTimeControl(valStr) {
     if (valStr.includes('-')) {
         const parts = valStr.split('-');
@@ -798,7 +852,9 @@ function parseTimeControl(valStr) {
 }
 
 $('#timeSelect').on('change', function() {
-    parseTimeControl($(this).val());
+    const timeVal = $(this).val();
+    parseTimeControl(timeVal);
+    syncTempoSelection(timeVal);
     resetGame();
 });
 
@@ -821,6 +877,8 @@ $('.side-choice-btn').on('click', function() {
 
 function startTimer() {
     if (timerInterval) clearInterval(timerInterval);
+    timerInterval = null;
+    if (!clockStarted) return;
     timerInterval = setInterval(() => {
         if (game.game_over() || isGameOver || isReviewing || isAnalysisMode) { clearInterval(timerInterval); return; }
         if (game.turn() === 'w') {
@@ -1024,10 +1082,14 @@ window.jumpToMove = function(idx) {
             analysisIdx = idx;
             updateAnalysisBoard();
         }
+    } else {
+        const moveCount = game.history({ verbose: true }).length;
+        if (idx >= 0 && idx < moveCount) showLiveReviewPosition(idx + 1);
     }
 };
 
 function startAnalysisMode() {
+    returnToLivePosition();
     isAnalysisMode = true;
     isReviewing = true;
 
@@ -1327,9 +1389,8 @@ $('#tempoModal, #botModal, #settingsModal').on('click', function(e) {
 $('.tempo-option-btn').on('click', function() {
     const timeVal = $(this).attr('data-time');
     parseTimeControl(timeVal);
-    $('#timeSelect').val(timeVal);
-    $('.tempo-option-btn').removeClass('border-emerald-500 active-tempo').addClass('border-zinc-800');
-    $(this).addClass('border-emerald-500 active-tempo');$('#tempoModal').addClass('hidden');
+    syncTempoSelection(timeVal);
+    $('#tempoModal').addClass('hidden');
     setMobileNavActive('#mobileNavPlayBtn');
     resetGame();
 });
@@ -1341,6 +1402,19 @@ $('.bot-level-btn').on('click', function() {
     $('#botModal').addClass('hidden');
     setMobileNavActive('#mobileNavPlayBtn');
 });
+
+$('#liveNavStart').on('click', () => showLiveReviewPosition(0));
+$('#liveNavPrev').on('click', () => {
+    const moveCount = game.history({ verbose: true }).length;
+    const currentPly = liveReviewPly === null ? moveCount : liveReviewPly;
+    showLiveReviewPosition(Math.max(0, currentPly - 1));
+});
+$('#liveNavNext').on('click', () => {
+    const moveCount = game.history({ verbose: true }).length;
+    const currentPly = liveReviewPly === null ? moveCount : liveReviewPly;
+    showLiveReviewPosition(Math.min(moveCount, currentPly + 1));
+});
+$('#liveNavEnd').on('click', () => showLiveReviewPosition(game.history({ verbose: true }).length));
 
 $('#quickFlipBtn, #flipBtn').on('click', function (e) {
     e.preventDefault();
@@ -1354,6 +1428,7 @@ $('#quickFlipBtn, #flipBtn').on('click', function (e) {
 
 $('#quickUndoBtn, #undoBtn').on('click', function () {
     if (isAnalysisMode) return;
+    returnToLivePosition();
     if (isGameOver && !isReviewing) return;
     if (stockfishWorker && isEngineThinking) {
         discardEngineBestMove = true;
@@ -1391,6 +1466,7 @@ function resetGame() {
     }
     game.reset();
     analysisGame.reset();
+    returnToLivePosition();
 
     $('body').removeClass('analysis-mode');
 
@@ -1427,6 +1503,7 @@ function resetGame() {
     selectedSquare = null;
     whiteTime = selectedTimeInSeconds;
     blackTime = selectedTimeInSeconds;
+    clockStarted = false;
     if (timerInterval) clearInterval(timerInterval);
     $('#gameOverModal').addClass('hidden');
 
@@ -1461,6 +1538,7 @@ $('#closeModalBtn').on('click', () => $('#gameOverModal').addClass('hidden'));
 
 initStockfish();
 loadSavedSettings();
+syncTempoSelection($('#timeSelect').val());
 updateTimerDisplay();
 renderBoard();
 updateStatus();
