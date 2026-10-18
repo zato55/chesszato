@@ -377,24 +377,7 @@ aside.collapsed #logoToggleBtn {
     font-weight: 800 !important;
 }
 
-/* Kartın zemini oyuncunun rengine göre değişir; taş satırı aynı kartın parçasıdır. */
-#topPlayerCard:has(#topAvatar.bg-zinc-900),
-#bottomPlayerCard:has(#bottomAvatar.bg-zinc-900) {
-    background: #101013 !important;
-    border-color: #303036 !important;
-}
-
-#topPlayerCard:has(#topAvatar.bg-zinc-100),
-#bottomPlayerCard:has(#bottomAvatar.bg-zinc-100) {
-    background: #f4f2ea !important;
-    border-color: #d6d3c9 !important;
-}
-
-#topPlayerCard:has(#topAvatar.bg-zinc-900) .player-capture-row,
-#bottomPlayerCard:has(#bottomAvatar.bg-zinc-900) .player-capture-row {
-    background: #09090b;
-    border-top-color: #303036;
-}
+/* Renk değişimi yalnızca eklenen yenilen taşlar satırına uygulanır. */
 
 #topPlayerCard:has(#topAvatar.bg-zinc-100) .player-capture-row,
 #bottomPlayerCard:has(#bottomAvatar.bg-zinc-100) .player-capture-row {
