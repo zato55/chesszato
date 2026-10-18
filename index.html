@@ -207,13 +207,16 @@
                 <div class="flex items-center justify-between text-xs font-medium text-zinc-400 px-1">
                     <span>Zaman Temposu:</span>
                     <select id="timeSelect" class="bg-[#09090b] border border-zinc-800 text-emerald-400 font-bold rounded-lg px-2 py-1 outline-none">
-                        <option value="60">1 Min (Bullet)</option>
-                        <option value="180">3 Min (Blitz)</option>
-                        <option value="300" selected>5 Min (5|0 Blitz)</option>
+                        <option value="60">1+0 Bullet</option>
+                        <option value="60-1">1+1 Bullet</option>
+                        <option value="120-1">2+1 Bullet</option>
+                        <option value="180">3+0 Blitz</option>
                         <option value="180-2">3+2 Blitz</option>
+                        <option value="300" selected>5+0 Blitz</option>
                         <option value="300-3">5+3 Blitz</option>
-                        <option value="600">10 Min (Rapid)</option>
+                        <option value="600">10+0 Rapid</option>
                         <option value="900-10">15+10 Rapid</option>
+                        <option value="1800">30+0 Rapid</option>
                     </select>
                 </div>
 
@@ -359,9 +362,13 @@
                     <span class="font-bold text-white">⏱️ 3 | 2 Min</span>
                     <span class="text-emerald-400 font-mono font-bold">3 + 2 Blitz</span>
                 </button>
-                <button class="tempo-option-btn w-full bg-[#09090b] hover:bg-zinc-800 border border-zinc-800 p-2.5 rounded-xl flex items-center justify-between text-xs transition active-tempo border-emerald-500" data-time="300">
+                <button class="tempo-option-btn w-full bg-[#09090b] hover:bg-zinc-800 border border-zinc-800 p-2.5 rounded-xl flex items-center justify-between text-xs transition" data-time="300">
                     <span class="font-bold text-white">⏱️ 5 Min</span>
                     <span class="text-emerald-400 font-mono font-bold">5 | 0 Blitz</span>
+                </button>
+                <button class="tempo-option-btn w-full bg-[#09090b] hover:bg-zinc-800 border border-zinc-800 p-2.5 rounded-xl flex items-center justify-between text-xs transition" data-time="300-3">
+                    <span class="font-bold text-white">⏱️ 5 | 3 Min</span>
+                    <span class="text-emerald-400 font-mono font-bold">5 + 3 Blitz</span>
                 </button>
                 <button class="tempo-option-btn w-full bg-[#09090b] hover:bg-zinc-800 border border-zinc-800 p-2.5 rounded-xl flex items-center justify-between text-xs transition" data-time="600">
                     <span class="font-bold text-white">⏳ 10 Min</span>
