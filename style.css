@@ -379,6 +379,12 @@ aside.collapsed #logoToggleBtn {
 
 /* Renk değişimi yalnızca eklenen yenilen taşlar satırına uygulanır. */
 
+#topPlayerCard:has(#topAvatar.bg-zinc-900) .player-capture-row,
+#bottomPlayerCard:has(#bottomAvatar.bg-zinc-900) .player-capture-row {
+    background: #09090b;
+    border-top-color: #303036;
+}
+
 #topPlayerCard:has(#topAvatar.bg-zinc-100) .player-capture-row,
 #bottomPlayerCard:has(#bottomAvatar.bg-zinc-100) .player-capture-row {
     background: #e9e6dc;
