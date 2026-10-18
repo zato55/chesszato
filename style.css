@@ -391,16 +391,6 @@ aside.collapsed #logoToggleBtn {
     border-top-color: #d6d3c9;
 }
 
-#topPlayerCard:has(#topAvatar.bg-zinc-100) #topPlayerName,
-#bottomPlayerCard:has(#bottomAvatar.bg-zinc-100) #bottomPlayerName {
-    color: #18181b !important;
-}
-
-#topPlayerCard:has(#topAvatar.bg-zinc-100) #topOpeningText,
-#bottomPlayerCard:has(#bottomAvatar.bg-zinc-100) #bottomOpeningText {
-    color: #374151 !important;
-}
-
 #topPlayerCard:has(#topAvatar.bg-zinc-900) #topOpeningText,
 #bottomPlayerCard:has(#bottomAvatar.bg-zinc-900) #bottomOpeningText {
     color: #c4c4cc !important;
