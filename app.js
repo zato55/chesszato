@@ -829,6 +829,17 @@ $('#board').on('click', 'div[data-square]', function () {
     }
 });
 
+function syncTempoSelection(valStr) {
+    const selectedValue = String(valStr);
+    $('#timeSelect').val(selectedValue);
+    $('.tempo-option-btn').each(function() {
+        const isSelected = String($(this).attr('data-time')) === selectedValue;
+        $(this)
+            .toggleClass('active-tempo border-emerald-500', isSelected)
+            .toggleClass('border-zinc-800', !isSelected);
+    });
+}
+
 function parseTimeControl(valStr) {
     if (valStr.includes('-')) {
         const parts = valStr.split('-');
@@ -841,7 +852,9 @@ function parseTimeControl(valStr) {
 }
 
 $('#timeSelect').on('change', function() {
-    parseTimeControl($(this).val());
+    const timeVal = $(this).val();
+    parseTimeControl(timeVal);
+    syncTempoSelection(timeVal);
     resetGame();
 });
 
@@ -1376,9 +1389,8 @@ $('#tempoModal, #botModal, #settingsModal').on('click', function(e) {
 $('.tempo-option-btn').on('click', function() {
     const timeVal = $(this).attr('data-time');
     parseTimeControl(timeVal);
-    $('#timeSelect').val(timeVal);
-    $('.tempo-option-btn').removeClass('border-emerald-500 active-tempo').addClass('border-zinc-800');
-    $(this).addClass('border-emerald-500 active-tempo');$('#tempoModal').addClass('hidden');
+    syncTempoSelection(timeVal);
+    $('#tempoModal').addClass('hidden');
     setMobileNavActive('#mobileNavPlayBtn');
     resetGame();
 });
@@ -1526,6 +1538,7 @@ $('#closeModalBtn').on('click', () => $('#gameOverModal').addClass('hidden'));
 
 initStockfish();
 loadSavedSettings();
+syncTempoSelection($('#timeSelect').val());
 updateTimerDisplay();
 renderBoard();
 updateStatus();
