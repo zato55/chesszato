@@ -10,6 +10,7 @@ let timerInterval = null;
 let selectedTimeInSeconds = 300;
 let timeIncrementInSeconds = 0;
 let whiteTime = 300, blackTime = 300;
+let clockStarted = false;
 
 let stockfishWorker = null;
 
@@ -223,6 +224,10 @@ function initStockfish() {
                     const targetPiece = game.get(to);
                     const moveObj = game.move({ from: from, to: to, promotion: promotion });
                     if (moveObj) returnToLivePosition();
+                    if (moveObj && botTurnColor === 'w' && !clockStarted) {
+                        clockStarted = true;
+                        startTimer();
+                    }
 
                     if (timeIncrementInSeconds > 0) {
                         if (botTurnColor === 'w') whiteTime += timeIncrementInSeconds;
@@ -683,6 +688,7 @@ function executeMove(from, to, promoPiece) {
     const moveObj = activeGame.move({ from: from, to: to, promotion: promoPiece });
 
     if (moveObj !== null) {
+        if (!isAnalysisMode && !isReviewing && movingColor === 'w') clockStarted = true;
         if (!isAnalysisMode && activeGame === game) returnToLivePosition();
         if (!isAnalysisMode && !isReviewing && timeIncrementInSeconds > 0) {
             if (movingColor === 'w') whiteTime += timeIncrementInSeconds;
@@ -858,6 +864,8 @@ $('.side-choice-btn').on('click', function() {
 
 function startTimer() {
     if (timerInterval) clearInterval(timerInterval);
+    timerInterval = null;
+    if (!clockStarted) return;
     timerInterval = setInterval(() => {
         if (game.game_over() || isGameOver || isReviewing || isAnalysisMode) { clearInterval(timerInterval); return; }
         if (game.turn() === 'w') {
@@ -1483,6 +1491,7 @@ function resetGame() {
     selectedSquare = null;
     whiteTime = selectedTimeInSeconds;
     blackTime = selectedTimeInSeconds;
+    clockStarted = false;
     if (timerInterval) clearInterval(timerInterval);
     $('#gameOverModal').addClass('hidden');
 
