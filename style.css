@@ -835,6 +835,11 @@ main > div.flex-col > * {
         display: none !important;
     }
 
+    /* Normal oyun ekranında analiz değerlendirme kutusu yer kaplamasın. */
+    #mobileAnalysisPanel {
+        display: none !important;
+    }
+
     body.analysis-mode #mobileAnalysisPanel {
         display: flex !important;
     }
