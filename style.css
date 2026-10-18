@@ -529,8 +529,8 @@ aside.collapsed #logoToggleBtn {
     }
 }
 
-/* ===== MASA GÖRÜNÜMÜ: KATMANLI KARTLAR VE TAHTA ÇERÇEVESİ ===== */
-/* Dış tabla yalnızca görsel bir katman: içerik ölçülerini değiştirmez. */
+/* ===== MASA GÖRÜNÜMÜ: BELİRGİN AHŞAP TABLA VE KATMANLAR ===== */
+/* Ahşap yüzeyi içerikten ayrı bir katmanda tut; tahta ölçülerine dokunma. */
 main > div.flex-col {
     position: relative;
     isolation: isolate;
@@ -539,40 +539,45 @@ main > div.flex-col {
 main > div.flex-col::before {
     content: "";
     position: absolute;
-    inset: -7px -6px;
-    z-index: -1;
+    inset: -14px -12px -18px;
+    z-index: 0;
     pointer-events: none;
-    border: 1px solid rgba(177, 126, 78, 0.72);
-    border-radius: 17px;
+    border: 3px solid #3b2416;
+    border-radius: 18px;
     background:
-        linear-gradient(90deg, rgba(255, 220, 165, 0.07) 0, transparent 12%, rgba(0, 0, 0, 0.08) 50%, transparent 88%, rgba(255, 220, 165, 0.05) 100%),
-        repeating-linear-gradient(2deg, rgba(76, 43, 25, 0.16) 0 2px, rgba(176, 117, 67, 0.12) 2px 5px, rgba(104, 63, 37, 0.1) 5px 8px),
-        linear-gradient(145deg, #795032, #4b2f20 48%, #684329);
+        repeating-linear-gradient(0deg, rgba(39, 20, 10, .20) 0 2px, transparent 2px 9px),
+        repeating-linear-gradient(90deg, rgba(238, 190, 128, .10) 0 1px, transparent 1px 76px),
+        linear-gradient(180deg, #a87345 0%, #80502f 24%, #684027 72%, #4b2d1c 100%);
     box-shadow:
-        inset 0 1px 0 rgba(255, 224, 180, 0.24),
-        inset 0 -2px 0 rgba(25, 13, 7, 0.45),
-        0 14px 24px rgba(0, 0, 0, 0.42);
+        inset 0 2px 0 rgba(255, 220, 174, .42),
+        inset 0 -5px 0 rgba(25, 13, 7, .52),
+        0 5px 0 #24160f,
+        0 16px 24px rgba(0, 0, 0, .55);
 }
 
-/* Geniş oyuncu satırları, masanın sağlam gövdesi gibi görünür. */
-.player-card-layout {
+/* İçerikler ahşap yüzeyin üzerinde kalır; mevcut akış ve ölçüler korunur. */
+main > div.flex-col > * {
     position: relative;
     z-index: 1;
-    border-color: rgba(177, 126, 78, 0.68) !important;
-    box-shadow:
-        inset 0 1px 0 rgba(255, 230, 194, 0.08),
-        0 3px 0 #2d1b11,
-        0 7px 12px rgba(0, 0, 0, 0.38);
 }
 
-/* İnce taş satırı, kart gövdesinden ayrı bir katman olarak kalır. */
+/* Oyuncu kartları masaya sabitlenmiş koyu ahşap kenarlı paneller gibi görünür. */
+.player-card-layout {
+    border: 2px solid #5b3822 !important;
+    border-radius: 7px !important;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 224, 180, .14),
+        0 3px 0 #3a2417,
+        0 6px 9px rgba(0, 0, 0, .42);
+}
+
+/* Taş alma satırı ayrı, ince bir şerit olarak kalır. */
 .player-capture-row {
     position: relative;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .05);
 }
 
-/* Tahta, dış çerçevesi ve derinlik gölgesiyle masanın üst yüzeyine oturur.
-   Pseudo-element akışta yer kaplamaz; tahtanın ölçüsü değişmez. */
+/* Tahtayı yükseltilmiş koyu bir çerçeve üzerine oturt. */
 #board-wrapper {
     isolation: isolate;
 }
@@ -580,43 +585,50 @@ main > div.flex-col::before {
 #board-wrapper::before {
     content: "";
     position: absolute;
-    inset: -7px;
+    inset: -8px;
     z-index: -1;
     pointer-events: none;
-    border: 1px solid rgba(161, 161, 170, 0.42);
-    border-radius: 6px;
-    background: linear-gradient(145deg, #3f3f46, #18181b 58%, #27272a);
+    border: 3px solid #65432d;
+    border-radius: 5px;
+    background: linear-gradient(145deg, #f0c28b 0%, #8c5a36 18%, #302017 19%, #171311 100%);
     box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.14),
-        0 5px 0 #09090b,
-        0 12px 18px rgba(0, 0, 0, 0.38);
+        inset 0 2px 0 rgba(255, 225, 185, .36),
+        0 5px 0 #2b1b12,
+        0 12px 16px rgba(0, 0, 0, .48);
 }
 
 #board {
     box-shadow:
-        0 0 30px rgba(37, 99, 235, 0.18),
-        0 4px 8px rgba(0, 0, 0, 0.32),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+        0 0 24px rgba(0, 0, 0, .28),
+        0 4px 8px rgba(0, 0, 0, .36),
+        inset 0 0 0 1px rgba(255, 255, 255, .08);
 }
 
 @media (max-width: 768px) {
     main > div.flex-col::before {
-        inset: -4px -3px;
-        border-radius: 13px;
+        inset: -9px -5px -13px;
+        border-width: 2px;
+        border-radius: 12px;
+        box-shadow:
+            inset 0 2px 0 rgba(255, 220, 174, .35),
+            inset 0 -4px 0 rgba(25, 13, 7, .5),
+            0 4px 0 #24160f,
+            0 10px 16px rgba(0, 0, 0, .48);
     }
 
     #board-wrapper::before {
-        inset: -5px;
+        inset: -6px;
+        border-width: 2px;
         box-shadow:
-            inset 0 1px 0 rgba(255, 255, 255, 0.12),
-            0 3px 0 #09090b,
-            0 8px 12px rgba(0, 0, 0, 0.34);
+            inset 0 1px 0 rgba(255, 225, 185, .3),
+            0 3px 0 #2b1b12,
+            0 8px 11px rgba(0, 0, 0, .4);
     }
 
     .player-card-layout {
         box-shadow:
-            inset 0 1px 0 rgba(255, 255, 255, 0.05),
-            0 2px 0 rgba(0, 0, 0, 0.25),
-            0 4px 8px rgba(0, 0, 0, 0.18);
+            inset 0 1px 0 rgba(255, 224, 180, .1),
+            0 2px 0 #3a2417,
+            0 4px 7px rgba(0, 0, 0, .35);
     }
 }
