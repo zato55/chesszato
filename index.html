@@ -14,7 +14,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
     
     <!-- Özel CSS -->
-    <link rel="stylesheet" href="style.css?v=20261019-desktop-layout-restore">
+    <link rel="stylesheet" href="style.css?v=20261019-pre-analysis-summary">
 </head>
 
 <body class="bg-[#09090b] text-zinc-100 font-sans antialiased h-screen overflow-hidden flex flex-col md:flex-row select-none">
@@ -314,6 +314,41 @@
         <button id="mExitAnalysisBtn" class="w-full max-w-[620px] mx-auto mt-1.5 block py-[0.675rem] bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-base font-bold">🎮 Oynamaya Dön</button>
     </nav>
 
+    <!-- ♟️ ANALİZ ÖNCESİ MAÇ RAPORU -->
+    <div id="preAnalysisSummary" class="hidden fixed inset-0 bg-black/85 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+        <section class="pre-analysis-card bg-[#121215] border border-zinc-700 rounded-2xl p-5 md:p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div class="flex items-start justify-between gap-3 mb-4">
+                <div>
+                    <p class="text-[11px] uppercase tracking-[0.18em] text-blue-400 font-bold">Maç raporu</p>
+                    <h2 class="text-2xl font-black text-white mt-1">Analiz Öncesi Özet</h2>
+                    <p id="summaryResult" class="text-sm text-zinc-400 mt-1">Oyun değerlendiriliyor…</p>
+                </div>
+                <button id="closeSummaryBtn" aria-label="Özeti kapat" class="text-zinc-400 hover:text-white text-xl px-2 py-1">✕</button>
+            </div>
+            <div class="h-1.5 rounded-full bg-zinc-800 overflow-hidden mb-2"><div id="summaryProgressBar" class="h-full bg-blue-500 transition-all" style="width:0%"></div></div>
+            <p id="summaryProgressText" class="text-xs text-zinc-500 mb-4">Analiz hazırlanıyor…</p>
+            <div id="summaryStats" class="grid grid-cols-2 md:grid-cols-3 gap-2 mb-4">
+                <div class="summary-stat"><span>Hamle sayısı</span><strong id="summaryMoveCount">—</strong></div>
+                <div class="summary-stat"><span>Açılış</span><strong id="summaryOpening">—</strong></div>
+                <div class="summary-stat"><span>Açılış hamleleri</span><strong id="summaryBookMoves">—</strong></div>
+            </div>
+            <div class="overflow-x-auto rounded-xl border border-zinc-800">
+                <table class="w-full text-sm text-left">
+                    <thead class="bg-zinc-900 text-zinc-400 text-xs"><tr><th class="px-3 py-2">Oyuncu</th><th class="px-3 py-2">Tahmini doğruluk</th><th class="px-3 py-2">Hata</th><th class="px-3 py-2">Büyük hata</th><th class="px-3 py-2">Kaçan kazanma</th></tr></thead>
+                    <tbody class="divide-y divide-zinc-800">
+                        <tr><th class="px-3 py-3 text-zinc-100">Beyaz</th><td id="summaryWhiteAccuracy" class="px-3 py-3">—</td><td id="summaryWhiteMistakes" class="px-3 py-3">—</td><td id="summaryWhiteBlunders" class="px-3 py-3">—</td><td id="summaryWhiteMissed" class="px-3 py-3">—</td></tr>
+                        <tr><th class="px-3 py-3 text-zinc-100">Siyah</th><td id="summaryBlackAccuracy" class="px-3 py-3">—</td><td id="summaryBlackMistakes" class="px-3 py-3">—</td><td id="summaryBlackBlunders" class="px-3 py-3">—</td><td id="summaryBlackMissed" class="px-3 py-3">—</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p id="summaryFootnote" class="text-[11px] leading-relaxed text-zinc-500 mt-3">Değerler Stockfish'in hızlı değerlendirmesine dayalı tahminlerdir; resmi bir puanlama değildir.</p>
+            <div class="flex flex-col-reverse sm:flex-row gap-2 mt-5">
+                <button id="summaryCloseBackBtn" class="flex-1 py-3 rounded-xl border border-zinc-700 bg-zinc-900 text-zinc-300 font-bold text-sm">Geri dön</button>
+                <button id="summaryContinueBtn" disabled class="flex-1 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-40 disabled:cursor-wait text-white font-bold text-sm">Analizi Aç</button>
+            </div>
+        </section>
+    </div>
+
     <!-- 🏆 OYUN BİTTİ MODALI -->
     <div id="gameOverModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-[#121215] border border-zinc-800 rounded-2xl p-6 max-w-sm w-full flex flex-col items-center text-center gap-4 shadow-2xl">
@@ -520,7 +555,7 @@
     </div>
 
     <!-- Ana Uygulama Kodu -->
-    <script src="app.js?v=20261019-player-card-board-colors"></script>
+    <script src="app.js?v=20261019-pre-analysis-summary"></script>
 </body>
 
 </html>
