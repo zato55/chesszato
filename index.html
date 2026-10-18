@@ -75,7 +75,7 @@
         <div class="flex flex-col gap-2 items-center justify-center w-full max-w-[620px]">
             
             <!-- 👤 ÜST OYUNCU KARTI -->
-            <div id="topPlayerCard" class="w-full flex items-center justify-between bg-[#121215] border border-zinc-800/80 rounded-xl px-3 py-2 shadow-sm transition-all">
+            <div id="topPlayerCard" class="player-card-layout w-full grid items-center bg-[#121215] border border-zinc-800/80 rounded-xl px-3 py-2 shadow-sm transition-all">
                 <div class="flex items-center gap-2.5 min-w-0">
                     <div id="topAvatar" class="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center font-bold text-sm shrink-0 border border-zinc-700">♟</div>
                     <div class="flex flex-col min-w-0">
@@ -87,11 +87,11 @@
                     </div>
                 </div>
 
-                <div class="flex items-center gap-3 shrink-0">
+                <div class="player-card-captured flex items-center gap-1 min-w-0">
                     <div id="topCapturedPieces" class="flex items-center gap-1"></div>
                     <span id="topMaterialDiff" class="text-xs font-bold text-emerald-400"></span>
-                    <div id="topTimerDesktop" class="font-mono font-black text-sm px-2.5 py-1 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-200">05:00</div>
                 </div>
+                <div id="topTimerDesktop" class="player-card-clock font-mono font-black text-sm px-2.5 py-1 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-200">05:00</div>
             </div>
 
             <!-- 🟩 SATRANÇ TAHTASI KAPSAYICISI VE EVAL BAR -->
@@ -116,7 +116,7 @@
             </div>
 
             <!-- 👤 ALT OYUNCU KARTI -->
-            <div id="bottomPlayerCard" class="w-full flex items-center justify-between bg-[#121215] border border-zinc-800/80 rounded-xl px-3 py-2 shadow-sm transition-all">
+            <div id="bottomPlayerCard" class="player-card-layout w-full grid items-center bg-[#121215] border border-zinc-800/80 rounded-xl px-3 py-2 shadow-sm transition-all">
                 <div class="flex items-center gap-2.5 min-w-0">
                     <div id="bottomAvatar" class="w-8 h-8 rounded-lg bg-zinc-100 text-zinc-900 flex items-center justify-center font-bold text-sm shrink-0 border border-zinc-300">♙</div>
                     <div class="flex flex-col min-w-0">
@@ -128,11 +128,11 @@
                     </div>
                 </div>
 
-                <div class="flex items-center gap-3 shrink-0">
+                <div class="player-card-captured flex items-center gap-1 min-w-0">
                     <div id="bottomCapturedPieces" class="flex items-center gap-1"></div>
                     <span id="bottomMaterialDiff" class="text-xs font-bold text-emerald-400"></span>
-                    <div id="bottomTimerDesktop" class="font-mono font-black text-sm px-2.5 py-1 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-200">05:00</div>
                 </div>
+                <div id="bottomTimerDesktop" class="player-card-clock font-mono font-black text-sm px-2.5 py-1 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-200">05:00</div>
             </div>
 
         </div>
