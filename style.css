@@ -393,8 +393,13 @@ aside.collapsed #logoToggleBtn {
         display: none !important;
     }
 
-    body.analysis-mode nav.md\:hidden {
+    body.analysis-mode nav.md\\:hidden {
         display: none !important;
+    }
+
+    /* Analiz modunda analiz alt menüsünü görünür tut. */
+    body.analysis-mode #mobileAnalysisBottomNav {
+        display: block !important;
     }
 
     body.analysis-mode main {
