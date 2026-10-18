@@ -70,6 +70,7 @@ function returnToLivePosition() {
 // ⚙️ AYARLAR VE DİNAMİK TERCİHLER
 let playSoundsEnabled = true;
 let kingCheckEffectEnabled = true;
+let moveAudioContext = null;
 let currentPieceSet = 'neo';
 
 const pieceThemeURLs = {
@@ -365,30 +366,54 @@ function playMoveSound(moveObj, isCapture) {
     if (!playSoundsEnabled) return;
 
     try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const bufferSize = ctx.sampleRate * 0.03;
-        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-        const data = buffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) {
-            data[i] = Math.random() * 2 - 1;
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) return;
+
+        if (!moveAudioContext || moveAudioContext.state === 'closed') {
+            moveAudioContext = new AudioContextClass();
         }
+        const ctx = moveAudioContext;
 
-        const noise = ctx.createBufferSource();
-        noise.buffer = buffer;
+        const playSound = () => {
+            if (!playSoundsEnabled || ctx.state !== 'running') return;
 
-        const filter = ctx.createBiquadFilter();
-        filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(isCapture ? 400 : 800, ctx.currentTime);
+            try {
+                const bufferSize = Math.floor(ctx.sampleRate * 0.03);
+                const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = Math.random() * 2 - 1;
+                }
 
-        const gain = ctx.createGain();
-        gain.gain.setValueAtTime(isCapture ? 0.3 : 0.15, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.03);
+                const noise = ctx.createBufferSource();
+                noise.buffer = buffer;
 
-        noise.connect(filter);
-        filter.connect(gain);
-        gain.connect(ctx.destination);
+                const filter = ctx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(isCapture ? 400 : 800, ctx.currentTime);
 
-        noise.start();
+                const gain = ctx.createGain();
+                gain.gain.setValueAtTime(isCapture ? 0.3 : 0.15, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.03);
+
+                noise.connect(filter);
+                filter.connect(gain);
+                gain.connect(ctx.destination);
+
+                noise.onended = () => {
+                    noise.disconnect();
+                    filter.disconnect();
+                    gain.disconnect();
+                };
+                noise.start();
+            } catch (e) {}
+        };
+
+        if (ctx.state === 'suspended') {
+            ctx.resume().then(playSound).catch(() => {});
+        } else {
+            playSound();
+        }
     } catch (e) {}
 }
 
