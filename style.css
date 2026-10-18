@@ -418,116 +418,7 @@ aside.collapsed #logoToggleBtn {
     box-shadow: inset 0 1px 3px rgba(0,0,0,0.8);
 }
 
-/* ===== MOBİL UYARLAMALARI ===== */
-@media (max-width: 768px) {
-    body {
-        height: 100dvh;
-        overflow: hidden !important;
-    }
-
-    main {
-        padding-top: 0.25rem !important;
-        padding-bottom: 6rem !important;
-        justify-content: flex-start !important;
-        overflow-y: auto !important;
-    }
-
-    #board-wrapper {
-        width: min(95vw, 48vh) !important;
-        height: min(95vw, 48vh) !important;
-    }
-
-    .eval-bar-wrapper {
-        width: 10px !important;
-        height: min(94vw, 47vh) !important;
-        max-height: none !important;
-        border-radius: 6px !important;
-        margin-right: 2px !important;
-    }
-
-    #topPlayerCard, #bottomPlayerCard {
-        padding: 0.35rem 0.5rem !important;
-    }
-
-    .player-card-layout {
-        grid-template-columns: minmax(0, 1fr);
-        column-gap: 0;
-    }
-
-    .player-card-main {
-        grid-template-columns: minmax(0, 1fr) 62px;
-        column-gap: 4px;
-        padding: 6px 8px;
-    }
-
-    .player-card-clock {
-        width: 62px;
-        min-width: 62px;
-        padding-left: 4px !important;
-        padding-right: 4px !important;
-        font-size: 13px !important;
-    }
-
-    .player-capture-row {
-        min-height: 22px;
-        padding: 1px 6px;
-        gap: 6px;
-    }
-
-    /* Taşların gruplama ve üst üste dizilme mantığı değişmez. */
-    .captured-icon {
-        width: 13px;
-        height: 13px;
-    }
-
-    .captured-stacked {
-        margin-left: -9px;
-    }
-
-    #desktopPanel {
-        display: none !important;
-    }
-
-    body.analysis-mode nav.md\\:hidden {
-        display: none !important;
-    }
-
-    /* Analiz modunda analiz alt menüsünü görünür tut. */
-    body.analysis-mode #mobileAnalysisBottomNav {
-        display: block !important;
-    }
-
-    body.analysis-mode main {
-        padding-bottom: 0.5rem !important;
-        overflow-y: hidden !important;
-    }
-
-    body.analysis-mode #mobileMoveStrip {
-        display: none !important;
-    }
-
-    body.analysis-mode .flex.flex-col.gap-1\.5 {
-        gap: 0.25rem !important;
-    }
-
-    body.analysis-mode #topPlayerCard,
-    body.analysis-mode #bottomPlayerCard {
-        padding: 0.25rem 0.5rem !important;
-    }
-
-    body.analysis-mode #topOpeningText,
-    body.analysis-mode #bottomOpeningText,
-    body.analysis-mode #topCapturedPieces,
-    body.analysis-mode #bottomCapturedPieces,
-    body.analysis-mode #topMaterialDiff,
-    body.analysis-mode #bottomMaterialDiff {
-        display: none !important;
-    }
-
-    body.analysis-mode #mobileAnalysisPanel {
-        margin-top: 0 !important;
-    }
-}
+/* Mobil yerleşim kuralları tek blokta, dosyanın altındaki tam ekran düzeninde tutulur. */
 
 /* ===== MASA GÖRÜNÜMÜ: KALIN TABLA VE GERÇEKÇİ DERİNLİK ===== */
 main > div.flex-col {
@@ -602,26 +493,6 @@ main > div.flex-col > * {
 #mobileAnalysisPanel {
     position: relative;
     z-index: 2;
-}
-
-/* Mobilde hamle yazıları alt oyuncu kartından ayrı, okunabilir bir satırda kalır. */
-@media (max-width: 768px) {
-    #mobileMoveStrip {
-        flex-shrink: 0;
-        min-height: 30px;
-        margin-top: 8px !important;
-        padding: 4px 6px !important;
-        background: #09090b;
-        border: 1px solid #3f2720;
-        border-radius: 6px;
-        z-index: 3;
-    }
-
-    #mobilePgnList {
-        position: relative;
-        z-index: 1;
-        min-height: 20px;
-    }
 }
 
 /* Tahtanın çerçevesinde üst highlight ve alt kenar ayrı katmanlar oluşturur. */
@@ -744,6 +615,36 @@ main > div.flex-col > * {
         padding: clamp(3px, 0.7dvh, 6px) 7px !important;
     }
 
+    .player-card-main {
+        grid-template-columns: minmax(0, 1fr) 62px !important;
+        column-gap: 4px !important;
+    }
+
+    .player-card-clock {
+        width: 62px !important;
+        min-width: 62px !important;
+        padding-left: 4px !important;
+        padding-right: 4px !important;
+        font-size: 13px !important;
+    }
+
+    .eval-bar-wrapper {
+        border-radius: 6px !important;
+    }
+
+    .captured-icon {
+        width: 13px !important;
+        height: 13px !important;
+    }
+
+    .captured-stacked {
+        margin-left: -9px !important;
+    }
+
+    #desktopPanel {
+        display: none !important;
+    }
+
     .player-capture-row {
         min-height: 18px !important;
         padding: 0 5px !important;
@@ -784,6 +685,19 @@ main > div.flex-col > * {
         padding: 2px 5px !important;
         flex-shrink: 0 !important;
         box-sizing: border-box !important;
+    }
+
+    #mobileMoveStrip {
+        background: #09090b !important;
+        border: 1px solid #3f2720 !important;
+        border-radius: 6px !important;
+        z-index: 3 !important;
+    }
+
+    #mobilePgnList {
+        position: relative !important;
+        z-index: 1 !important;
+        min-height: 0 !important;
     }
 
     #mobilePgnList {
