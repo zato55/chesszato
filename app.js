@@ -30,6 +30,8 @@ let analysisSearchStopPending = false;
 let queuedAnalysisFen = null;
 
 let currentBestMove = null;
+let summaryWorker = null;
+let summaryAnalysisRunId = 0;
 
 let userColorSelection = 'w';
 let actualPlayerColor = 'w';
@@ -1123,6 +1125,148 @@ window.jumpToMove = function(idx) {
     }
 };
 
+function closePreAnalysisSummary() {
+    summaryAnalysisRunId++;
+    if (summaryWorker) {
+        summaryWorker.terminate();
+        summaryWorker = null;
+    }
+    $('#preAnalysisSummary').addClass('hidden');
+}
+
+function openPreAnalysisSummary() {
+    const history = game.history({ verbose: true });
+    if (!history.length) {
+        startAnalysisMode();
+        return;
+    }
+
+    closePreAnalysisSummary();
+    const runId = ++summaryAnalysisRunId;
+    $('#gameOverModal').addClass('hidden');
+    $('#preAnalysisSummary').removeClass('hidden');
+    $('#summaryResult').text(game.in_checkmate()
+        ? (game.turn() === 'b' ? 'Beyaz kazandı · Şah mat' : 'Siyah kazandı · Şah mat')
+        : game.in_draw() ? 'Berabere' : 'Maç özeti');
+    $('#summaryMoveCount').text(history.length);
+    $('#summaryOpening').text(detectOpening('w') || detectOpening('b') || 'Tanımlanamadı');
+    $('#summaryBookMoves').text('Hesaplanıyor…');
+    $('#summaryProgressBar').css('width', '0%');
+    $('#summaryProgressText').text('Konumlar Stockfish ile değerlendiriliyor…');
+    $('#summaryContinueBtn').prop('disabled', true);
+    $('#summaryWhiteAccuracy, #summaryBlackAccuracy, #summaryWhiteMistakes, #summaryBlackMistakes, #summaryWhiteBlunders, #summaryBlackBlunders, #summaryWhiteMissed, #summaryBlackMissed').text('—');
+
+    const positions = [];
+    const replay = new Chess();
+    positions.push(replay.fen());
+    history.forEach(move => {
+        replay.move(move);
+        positions.push(replay.fen());
+    });
+
+    let matchedOpeningPlies = 0;
+    const sans = history.map(move => move.san);
+    openingDatabase.forEach(opening => {
+        let matched = 0;
+        for (let i = 0; i < opening.moves.length && i < sans.length; i++) {
+            if (opening.moves[i] !== sans[i]) break;
+            matched++;
+        }
+        matchedOpeningPlies = Math.max(matchedOpeningPlies, matched);
+    });
+    $('#summaryBookMoves').text(matchedOpeningPlies + ' tanımlı');
+
+    const evaluations = [];
+    let positionIndex = 0;
+    let latestScore = 0;
+    let currentFenTurn = 'w';
+    const finishWithFallback = (message) => {
+        if (runId !== summaryAnalysisRunId) return;
+        if (summaryWorker) summaryWorker.terminate();
+        summaryWorker = null;
+        $('#summaryProgressText').text(message);
+        $('#summaryFootnote').text('Stockfish değerlendirmesi tamamlanamadı. Hamle ve tanımlı açılış bilgileri gösteriliyor; doğruluk ve hata istatistikleri hesaplanamadı.');
+        $('#summaryContinueBtn').prop('disabled', false);
+    };
+
+    try {
+        const workerCode = "importScripts('https://cdnjs.cloudflare.com/ajax/libs/stockfish.js/10.0.2/stockfish.js');";
+        summaryWorker = new Worker(URL.createObjectURL(new Blob([workerCode], { type: 'application/javascript' })));
+    } catch (error) {
+        finishWithFallback('Motor başlatılamadı.');
+        return;
+    }
+
+    const evaluateNext = () => {
+        if (runId !== summaryAnalysisRunId || !summaryWorker) return;
+        if (positionIndex >= positions.length) {
+            const metrics = {
+                w: { losses: [], mistakes: 0, blunders: 0, missed: 0 },
+                b: { losses: [], mistakes: 0, blunders: 0, missed: 0 }
+            };
+            history.forEach((move, i) => {
+                const before = evaluations[i];
+                const after = evaluations[i + 1];
+                if (!Number.isFinite(before) || !Number.isFinite(after)) return;
+                const lossCp = Math.max(0, move.color === 'w' ? before - after : after - before);
+                const player = metrics[move.color];
+                player.losses.push(lossCp);
+                if (lossCp >= 100 && lossCp < 300) player.mistakes++;
+                if (lossCp >= 300) player.blunders++;
+                const beforeForMover = move.color === 'w' ? before : -before;
+                const afterForMover = move.color === 'w' ? after : -after;
+                if (beforeForMover >= 300 && afterForMover < 100) player.missed++;
+            });
+            const accuracy = (player) => player.losses.length
+                ? Math.round(player.losses.reduce((sum, loss) => sum + 100 * Math.exp(-loss / 400), 0) / player.losses.length) + '%'
+                : '—';
+            $('#summaryWhiteAccuracy').text(accuracy(metrics.w));
+            $('#summaryWhiteMistakes').text(metrics.w.mistakes);
+            $('#summaryWhiteBlunders').text(metrics.w.blunders);
+            $('#summaryWhiteMissed').text(metrics.w.missed);
+            $('#summaryBlackAccuracy').text(accuracy(metrics.b));
+            $('#summaryBlackMistakes').text(metrics.b.mistakes);
+            $('#summaryBlackBlunders').text(metrics.b.blunders);
+            $('#summaryBlackMissed').text(metrics.b.missed);
+            $('#summaryProgressBar').css('width', '100%');
+            $('#summaryProgressText').text('Değerlendirme tamamlandı.');
+            $('#summaryFootnote').text('Tahmini doğruluk ve hata sınıfları, Stockfish 10 derinlik 8 değerlendirmelerindeki hamle öncesi/sonrası farklardan hesaplanır; Chess.com puanlamasıyla aynı değildir. “Tanımlı açılış hamleleri” yalnızca uygulamadaki sınırlı açılış listesini ifade eder.');
+            summaryWorker.terminate();
+            summaryWorker = null;
+            $('#summaryContinueBtn').prop('disabled', false);
+            return;
+        }
+        currentFenTurn = positions[positionIndex].split(' ')[1] || 'w';
+        latestScore = 0;
+        summaryWorker.postMessage('position fen ' + positions[positionIndex]);
+        summaryWorker.postMessage('go depth 8');
+    };
+
+    summaryWorker.onmessage = function(event) {
+        if (runId !== summaryAnalysisRunId) return;
+        const message = event.data;
+        if (typeof message !== 'string') return;
+        const parts = message.split(' ');
+        const cpIdx = parts.indexOf('cp');
+        const mateIdx = parts.indexOf('mate');
+        if (message.includes(' score cp ') && cpIdx !== -1 && parts[cpIdx + 1]) {
+            latestScore = parseInt(parts[cpIdx + 1], 10);
+        } else if (message.includes(' score mate ') && mateIdx !== -1 && parts[mateIdx + 1]) {
+            const mate = parseInt(parts[mateIdx + 1], 10);
+            latestScore = mate > 0 ? 10000 : mate < 0 ? -10000 : 0;
+        }
+        if (message.startsWith('bestmove')) {
+            evaluations[positionIndex] = currentFenTurn === 'w' ? latestScore : -latestScore;
+            positionIndex++;
+            $('#summaryProgressBar').css('width', Math.round(positionIndex / positions.length * 100) + '%');
+            $('#summaryProgressText').text('Konum ' + positionIndex + ' / ' + positions.length + ' değerlendirildi.');
+            evaluateNext();
+        }
+    };
+    summaryWorker.onerror = () => finishWithFallback('Stockfish yüklenirken hata oluştu.');
+    evaluateNext();
+}
+
 function startAnalysisMode() {
     returnToLivePosition();
     isAnalysisMode = true;
@@ -1487,6 +1631,7 @@ $('#botElo').on('change', function() {
 });
 
 function resetGame() {
+    closePreAnalysisSummary();
     const engineSearchPending = Boolean(stockfishWorker && (isEngineThinking || discardEngineBestMove));
     if (engineSearchPending) {
         discardEngineBestMove = true;
@@ -1566,6 +1711,14 @@ $('#resetBtn, #modalResetBtn, #quickResetBtn').on('click', function(e) {
 });
 
 $('#reviewBoardBtn').on('click', function() {
+    openPreAnalysisSummary();
+});
+
+$('#closeSummaryBtn, #summaryCloseBackBtn').on('click', closePreAnalysisSummary);
+
+$('#summaryContinueBtn').on('click', function() {
+    if ($(this).prop('disabled')) return;
+    closePreAnalysisSummary();
     startAnalysisMode();
 });
 
