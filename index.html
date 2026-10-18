@@ -118,6 +118,10 @@
 
             <!-- 👤 ALT OYUNCU KARTI -->
             <div id="bottomPlayerCard" class="player-card-layout w-full grid items-center bg-[#121215] border border-zinc-800/80 rounded-xl shadow-sm transition-all">
+                <div class="player-capture-row" aria-label="Alt oyuncunun yediği taşlar">
+                    <div id="bottomCapturedPieces" class="flex items-center gap-1"></div>
+                    <span id="bottomMaterialDiff" class="text-xs font-bold text-emerald-400"></span>
+                </div>
                 <div class="player-card-main">
                     <div class="flex items-center gap-2.5 min-w-0">
                         <div id="bottomAvatar" class="w-8 h-8 rounded-lg bg-zinc-100 text-zinc-900 flex items-center justify-center font-bold text-sm shrink-0 border border-zinc-300">♙</div>
@@ -130,10 +134,6 @@
                         </div>
                     </div>
                     <div id="bottomTimerDesktop" class="player-card-clock font-mono font-black text-sm px-2.5 py-1 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-200">05:00</div>
-                </div>
-                <div class="player-capture-row" aria-label="Alt oyuncunun yediği taşlar">
-                    <div id="bottomCapturedPieces" class="flex items-center gap-1"></div>
-                    <span id="bottomMaterialDiff" class="text-xs font-bold text-emerald-400"></span>
                 </div>
             </div>
 
