@@ -821,13 +821,32 @@ main > div.flex-col > * {
         padding: 4px 8px !important;
     }
 
-    /* Analiz gezinme menüsü sabit kalır; kalan alan yeniden hesaplanır. */
+    /* Analiz: sabit alt menüye yalnızca gerçek yüksekliği kadar yer ayır. */
     body.analysis-mode main {
-        padding-bottom: calc(132px + env(safe-area-inset-bottom)) !important;
+        grid-template-rows: minmax(0, 1fr) auto !important;
+        padding-bottom: calc(88px + env(safe-area-inset-bottom)) !important;
     }
 
+    /* Analiz tablosu: oyuncu kartları sınırlı pay alır, kare tahta ana alanı kullanır. */
     body.analysis-mode main > div.flex-col {
+        grid-template-rows: minmax(54px, 0.18fr) minmax(0, 1fr) minmax(54px, 0.18fr) !important;
         gap: clamp(2px, 0.35dvh, 4px) !important;
+    }
+
+    body.analysis-mode #topPlayerCard,
+    body.analysis-mode #bottomPlayerCard {
+        overflow: hidden !important;
+    }
+
+    body.analysis-mode #mobileAnalysisPanel {
+        min-height: 0 !important;
+        padding: 0 !important;
+    }
+
+    body.analysis-mode #mobileAnalysisPanel > div {
+        min-height: 30px !important;
+        height: auto !important;
+        box-sizing: border-box !important;
     }
 
     body.analysis-mode #topPlayerCard .player-capture-row,
