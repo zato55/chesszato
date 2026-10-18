@@ -519,10 +519,20 @@ function updatePlayerCards() {
             .toggleClass('bg-zinc-100 text-zinc-900', bottomColor === 'w')
             .toggleClass('bg-zinc-900 text-white', bottomColor === 'b');
     } else {
+        const topColor = isFlipped ? 'w' : 'b';
+        const bottomColor = isFlipped ? 'b' : 'w';
         $('#topPlayerName').text(isFlipped ? 'Oyuncu 1 (Beyaz)' : 'Oyuncu 2 (Siyah)');
         $('#bottomPlayerName').text(isFlipped ? 'Oyuncu 2 (Siyah)' : 'Oyuncu 1 (Beyaz)');
         $('#topPlayerElo').text('');
         $('#bottomPlayerElo').text('');
+        $('#topAvatar')
+            .text(topColor === 'w' ? '♙' : '♟')
+            .toggleClass('bg-zinc-100 text-zinc-900', topColor === 'w')
+            .toggleClass('bg-zinc-900 text-white', topColor === 'b');
+        $('#bottomAvatar')
+            .text(bottomColor === 'w' ? '♙' : '♟')
+            .toggleClass('bg-zinc-100 text-zinc-900', bottomColor === 'w')
+            .toggleClass('bg-zinc-900 text-white', bottomColor === 'b');
     }
 
     if (!isFlipped) {
