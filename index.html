@@ -142,12 +142,14 @@
             <div id="mobilePgnList" class="flex items-center gap-1 text-xs whitespace-nowrap"></div>
         </div>
 
-        <!-- 📱 MOBİL HIZLI KONTROLLER -->
-        <div id="mobileQuickControls" class="md:hidden flex items-center justify-between w-full max-w-[620px] gap-2 mt-2">
-            <button id="mobileTempoModalBtn" class="flex-1 py-2 bg-[#121215] border border-zinc-800 rounded-xl text-xs font-bold text-zinc-300">⏱️ <span id="mobileTempoText">5 Min</span></button>
-            <button id="mobileBotModalBtn" class="flex-1 py-2 bg-[#121215] border border-zinc-800 rounded-xl text-xs font-bold text-zinc-300">🤖 <span id="mobileModeText">Stockfish</span></button>
-            <button id="quickFlipBtn" class="py-2 px-3 bg-[#121215] border border-zinc-800 rounded-xl text-xs font-bold text-zinc-300">🔄</button>
-            <button id="quickUndoBtn" class="py-2 px-3 bg-[#121215] border border-zinc-800 rounded-xl text-xs font-bold text-zinc-300">↩️</button>
+        <!-- 📱 MOBİL CANLI HAMLE GEZİNME VE HIZLI KONTROLLER -->
+        <div id="mobileQuickControls" class="md:hidden grid grid-cols-6 items-center w-full max-w-[620px] gap-1.5 mt-2">
+            <button id="liveNavStart" aria-label="Oyunun başına git" title="Başa git" class="py-2 bg-[#121215] border border-zinc-800 rounded-xl text-sm font-bold text-zinc-200">|◀</button>
+            <button id="liveNavPrev" aria-label="Önceki hamle" title="Önceki hamle" class="py-2 bg-[#121215] border border-zinc-800 rounded-xl text-sm font-bold text-zinc-200">◀</button>
+            <button id="liveNavNext" aria-label="Sonraki hamle" title="Sonraki hamle" class="py-2 bg-[#121215] border border-zinc-800 rounded-xl text-sm font-bold text-zinc-200">▶</button>
+            <button id="liveNavEnd" aria-label="Canlı konuma dön" title="Canlı konuma dön" class="py-2 bg-[#121215] border border-zinc-800 rounded-xl text-sm font-bold text-zinc-200">▶|</button>
+            <button id="quickFlipBtn" aria-label="Tahtayı çevir" title="Tahtayı çevir" class="py-2 bg-[#121215] border border-zinc-800 rounded-xl text-sm font-bold text-zinc-200">🔄</button>
+            <button id="quickUndoBtn" aria-label="Hamleyi geri al" title="Gerçek hamleyi geri al" class="py-2 bg-[#121215] border border-zinc-800 rounded-xl text-sm font-bold text-zinc-200">↩️</button>
         </div>
 
         <!-- 📱 MOBİL ANALİZ BİLGİSİ: gezinme butonları alt menüye taşındı -->
