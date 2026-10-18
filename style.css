@@ -320,6 +320,24 @@ aside.collapsed #logoToggleBtn {
     justify-content: center;
 }
 
+/* Oyuncu kartları: oyuncu bilgisi | yenilen taşlar | sabit saat. */
+.player-card-layout {
+    grid-template-columns: minmax(0, 1fr) auto 68px;
+    column-gap: 8px;
+}
+
+.player-card-captured {
+    justify-self: center;
+    white-space: nowrap;
+}
+
+.player-card-clock {
+    box-sizing: border-box;
+    width: 68px;
+    min-width: 68px;
+    text-align: center;
+}
+
 /* ===== OYUNCU KARTLARI YAZI KONTRASTI VE YÜKSEK OKUNABİLİRLİK ===== */
 #topPlayerCard, #bottomPlayerCard {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
@@ -387,6 +405,29 @@ aside.collapsed #logoToggleBtn {
 
     #topPlayerCard, #bottomPlayerCard {
         padding: 0.35rem 0.5rem !important;
+    }
+
+    .player-card-layout {
+        grid-template-columns: minmax(0, 1fr) auto 62px;
+        column-gap: 4px;
+    }
+
+    .player-card-clock {
+        width: 62px;
+        min-width: 62px;
+        padding-left: 4px !important;
+        padding-right: 4px !important;
+        font-size: 13px !important;
+    }
+
+    /* Taşların gruplama ve üst üste dizilme mantığı değişmez. */
+    .captured-icon {
+        width: 13px;
+        height: 13px;
+    }
+
+    .captured-stacked {
+        margin-left: -9px;
     }
 
     #desktopPanel {
