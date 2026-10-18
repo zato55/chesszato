@@ -680,3 +680,52 @@ aside.collapsed #logoToggleBtn {
         height: 20px !important;
     }
 }
+
+/* PC görünümü: oyuncu kartları yedekteki tek satırlı düzene döner.
+   Mobil kart satırları ve diğer yeni görsel düzenlemeler korunur. */
+@media (min-width: 768px) {
+    #topPlayerCard,
+    #bottomPlayerCard {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        padding: 0.5rem 0.75rem !important;
+        overflow: visible !important;
+    }
+
+    .player-card-main {
+        display: contents !important;
+    }
+
+    .player-card-main > div:first-child {
+        order: 1;
+        min-width: 0;
+    }
+
+    #topPlayerCard .player-capture-row,
+    #bottomPlayerCard .player-capture-row {
+        order: 2;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        gap: 12px !important;
+        width: auto !important;
+        min-height: 0 !important;
+        margin-left: auto !important;
+        padding: 0 !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+    }
+
+    #topTimerDesktop,
+    #bottomTimerDesktop {
+        order: 3;
+        width: auto !important;
+        min-width: 0 !important;
+        text-align: center !important;
+        margin-left: 12px;
+        flex-shrink: 0;
+    }
+}
+
