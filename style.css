@@ -347,9 +347,6 @@ aside.collapsed #logoToggleBtn {
     border-radius: 8px;
 }
 
-.player-capture-row:empty {
-    display: none;
-}
 
 /* ===== OYUNCU KARTLARI YAZI KONTRASTI VE YÜKSEK OKUNABİLİRLİK ===== */
 #topPlayerCard, #bottomPlayerCard {
