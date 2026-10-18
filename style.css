@@ -322,8 +322,20 @@ aside.collapsed #logoToggleBtn {
 
 /* Oyuncu kartları: oyuncu bilgisi | yenilen taşlar | sabit saat. */
 .player-card-layout {
+    grid-template-columns: minmax(0, 1fr);
+    column-gap: 0;
+    row-gap: 0;
+    padding: 0 !important;
+    overflow: hidden;
+}
+
+.player-card-main {
+    display: grid;
     grid-template-columns: minmax(0, 1fr) 68px;
+    align-items: center;
     column-gap: 8px;
+    padding: 8px 12px;
+    min-width: 0;
 }
 
 .player-card-clock {
@@ -338,13 +350,14 @@ aside.collapsed #logoToggleBtn {
     align-items: center;
     justify-content: center;
     gap: 8px;
+    grid-column: 1 / -1;
     width: 100%;
     min-height: 24px;
     padding: 2px 8px;
     box-sizing: border-box;
-    background: #101013;
-    border: 1px solid rgba(63, 63, 70, 0.65);
-    border-radius: 8px;
+    border: 0;
+    border-top: 1px solid rgba(63, 63, 70, 0.35);
+    border-radius: 0;
 }
 
 
@@ -354,14 +367,54 @@ aside.collapsed #logoToggleBtn {
 }
 
 #topPlayerName, #bottomPlayerName {
-    color: #09090b !important;
+    color: #f4f4f5 !important;
     font-weight: 900 !important;
-    text-shadow: 0 0 1px rgba(255, 255, 255, 0.6);
+    text-shadow: none;
 }
 
 #topOpeningText, #bottomOpeningText {
-    color: #1e3a8a !important;
+    color: #a1a1aa !important;
     font-weight: 800 !important;
+}
+
+/* Kartın zemini oyuncunun rengine göre değişir; taş satırı aynı kartın parçasıdır. */
+#topPlayerCard:has(#topAvatar.bg-zinc-900),
+#bottomPlayerCard:has(#bottomAvatar.bg-zinc-900) {
+    background: #101013 !important;
+    border-color: #303036 !important;
+}
+
+#topPlayerCard:has(#topAvatar.bg-zinc-100),
+#bottomPlayerCard:has(#bottomAvatar.bg-zinc-100) {
+    background: #f4f2ea !important;
+    border-color: #d6d3c9 !important;
+}
+
+#topPlayerCard:has(#topAvatar.bg-zinc-900) .player-capture-row,
+#bottomPlayerCard:has(#bottomAvatar.bg-zinc-900) .player-capture-row {
+    background: #09090b;
+    border-top-color: #303036;
+}
+
+#topPlayerCard:has(#topAvatar.bg-zinc-100) .player-capture-row,
+#bottomPlayerCard:has(#bottomAvatar.bg-zinc-100) .player-capture-row {
+    background: #e9e6dc;
+    border-top-color: #d6d3c9;
+}
+
+#topPlayerCard:has(#topAvatar.bg-zinc-100) #topPlayerName,
+#bottomPlayerCard:has(#bottomAvatar.bg-zinc-100) #bottomPlayerName {
+    color: #18181b !important;
+}
+
+#topPlayerCard:has(#topAvatar.bg-zinc-100) #topOpeningText,
+#bottomPlayerCard:has(#bottomAvatar.bg-zinc-100) #bottomOpeningText {
+    color: #374151 !important;
+}
+
+#topPlayerCard:has(#topAvatar.bg-zinc-900) #topOpeningText,
+#bottomPlayerCard:has(#bottomAvatar.bg-zinc-900) #bottomOpeningText {
+    color: #c4c4cc !important;
 }
 
 #topPlayerElo, #bottomPlayerElo {
@@ -418,8 +471,14 @@ aside.collapsed #logoToggleBtn {
     }
 
     .player-card-layout {
+        grid-template-columns: minmax(0, 1fr);
+        column-gap: 0;
+    }
+
+    .player-card-main {
         grid-template-columns: minmax(0, 1fr) 62px;
         column-gap: 4px;
+        padding: 6px 8px;
     }
 
     .player-card-clock {
