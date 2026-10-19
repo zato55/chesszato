@@ -1188,8 +1188,10 @@ function openPreAnalysisSummary() {
     $('#summaryBookMoves').text(matchedOpeningPlies + ' tanımlı');
 
     const evaluations = [];
+    const evaluationMeta = [];
     let positionIndex = 0;
     let latestScore = null;
+    let latestDepth = null;
     let hasLatestScore = false;
     let currentFenTurn = 'w';
     const finishWithFallback = (message) => {
@@ -1218,6 +1220,7 @@ function openPreAnalysisSummary() {
         // Mat son konumunun puanını satranç durumundan belirle; Stockfish'e gönderme.
         if (Number.isFinite(terminalScores[positionIndex])) {
             evaluations[positionIndex] = terminalScores[positionIndex];
+            evaluationMeta[positionIndex] = { rawScore: null, turn: positions[positionIndex].split(' ')[1] || 'w', depth: 'MAT' };
             positionIndex++;
             $('#summaryProgressBar').css('width', Math.round(positionIndex / positions.length * 100) + '%');
             $('#summaryProgressText').text('Konum ' + positionIndex + ' / ' + positions.length + ' değerlendirildi.');
@@ -1241,7 +1244,9 @@ function openPreAnalysisSummary() {
                 if (lossCp >= 300) player.blunders++;
                 const moveLabel = (Math.floor(i / 2) + 1) + (move.color === 'w' ? '. ' : '... ') + move.san;
                 const moveClass = lossCp >= 300 ? 'BÜYÜK HATA' : lossCp >= 100 ? 'HATA' : 'Belirgin kayıp yok';
-                moveDetails.push(moveLabel + ': kayıp ' + Math.round(lossCp) + ' cp | önce ' + Math.round(before) + ' cp, sonra ' + Math.round(after) + ' cp (Beyaz açısından) — ' + moveClass);
+                const beforeMeta = evaluationMeta[i] || {};
+                const afterMeta = evaluationMeta[i + 1] || {};
+                moveDetails.push(moveLabel + ': kayıp ' + Math.round(lossCp) + ' cp | önce ' + Math.round(before) + ', sonra ' + Math.round(after) + ' cp (Beyaz açısından) | önce hamle: sıra ' + beforeMeta.turn + ', ham motor puanı ' + (beforeMeta.rawScore ?? 'mat') + ', derinlik ' + (beforeMeta.depth ?? '?') + ' | sonra hamle: sıra ' + afterMeta.turn + ', ham motor puanı ' + (afterMeta.rawScore ?? 'mat') + ', derinlik ' + (afterMeta.depth ?? '?') + ' — ' + moveClass);
                 const beforeForMover = move.color === 'w' ? before : -before;
                 const afterForMover = move.color === 'w' ? after : -after;
                 if (beforeForMover >= 300 && afterForMover < 100) player.missed++;
@@ -1276,9 +1281,10 @@ function openPreAnalysisSummary() {
         }, 20000);
         currentFenTurn = positions[positionIndex].split(' ')[1] || 'w';
         latestScore = null;
+        latestDepth = null;
         hasLatestScore = false;
         summaryWorker.postMessage('position fen ' + positions[positionIndex]);
-        summaryWorker.postMessage('go depth 6');
+        summaryWorker.postMessage('go depth 10');
     };
 
     summaryWorker.onmessage = function(event) {
@@ -1295,6 +1301,11 @@ function openPreAnalysisSummary() {
             return;
         }
         const parts = message.split(' ');
+        const depthIdx = parts.indexOf('depth');
+        if (message.startsWith('info ') && depthIdx !== -1 && parts[depthIdx + 1]) {
+            const reportedDepth = parseInt(parts[depthIdx + 1], 10);
+            if (Number.isFinite(reportedDepth)) latestDepth = reportedDepth;
+        }
         const cpIdx = parts.indexOf('cp');
         const mateIdx = parts.indexOf('mate');
         if (message.includes(' score cp ') && cpIdx !== -1 && parts[cpIdx + 1]) {
@@ -1322,6 +1333,7 @@ function openPreAnalysisSummary() {
                 return;
             }
             evaluations[positionIndex] = currentFenTurn === 'w' ? latestScore : -latestScore;
+            evaluationMeta[positionIndex] = { rawScore: latestScore, turn: currentFenTurn, depth: latestDepth };
             positionIndex++;
             $('#summaryProgressBar').css('width', Math.round(positionIndex / positions.length * 100) + '%');
             $('#summaryProgressText').text('Konum ' + positionIndex + ' / ' + positions.length + ' değerlendirildi.');
