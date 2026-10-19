@@ -1194,6 +1194,7 @@ function openPreAnalysisSummary() {
     let latestDepth = null;
     let latestScoreDepth = null;
     let hasLatestScore = false;
+    let waitingForGameReady = false;
     let currentFenTurn = 'w';
     const finishWithFallback = (message) => {
         if (runId !== summaryAnalysisRunId) return;
@@ -1285,10 +1286,10 @@ function openPreAnalysisSummary() {
         latestDepth = null;
         latestScoreDepth = null;
         hasLatestScore = false;
-        // Her konumu bağımsız değerlendir: önceki FEN aramalarının hash tablosunu kullanma.
+        // Yeni konuma geçmeden önce motorun yeni oyunu hazırladığını doğrula.
+        waitingForGameReady = true;
         summaryWorker.postMessage('ucinewgame');
-        summaryWorker.postMessage('position fen ' + positions[positionIndex]);
-        summaryWorker.postMessage('go depth 14');
+        summaryWorker.postMessage('isready');
     };
 
     summaryWorker.onmessage = function(event) {
@@ -1301,7 +1302,14 @@ function openPreAnalysisSummary() {
         }
         if (message.trim() === 'readyok') {
             if (summaryAnalysisTimeout) clearTimeout(summaryAnalysisTimeout);
-            evaluateNext();
+            if (waitingForGameReady) {
+                waitingForGameReady = false;
+                summaryWorker.postMessage('position fen ' + positions[positionIndex]);
+                summaryWorker.postMessage('go depth 14');
+            } else {
+                // İlk isready yanıtı: UCI el sıkışması tamamlandı, ilk konuma geç.
+                evaluateNext();
+            }
             return;
         }
         const parts = message.split(' ');
