@@ -1229,6 +1229,7 @@ function openPreAnalysisSummary() {
                 w: { losses: [], mistakes: 0, blunders: 0, missed: 0 },
                 b: { losses: [], mistakes: 0, blunders: 0, missed: 0 }
             };
+            const moveDetails = [];
             history.forEach((move, i) => {
                 const before = evaluations[i];
                 const after = evaluations[i + 1];
@@ -1238,6 +1239,9 @@ function openPreAnalysisSummary() {
                 player.losses.push(lossCp);
                 if (lossCp >= 100 && lossCp < 300) player.mistakes++;
                 if (lossCp >= 300) player.blunders++;
+                const moveLabel = (Math.floor(i / 2) + 1) + (move.color === 'w' ? '. ' : '... ') + move.san;
+                const moveClass = lossCp >= 300 ? 'BÜYÜK HATA' : lossCp >= 100 ? 'HATA' : 'Belirgin kayıp yok';
+                moveDetails.push(moveLabel + ': ' + Math.round(lossCp) + ' cp — ' + moveClass);
                 const beforeForMover = move.color === 'w' ? before : -before;
                 const afterForMover = move.color === 'w' ? after : -after;
                 if (beforeForMover >= 300 && afterForMover < 100) player.missed++;
@@ -1245,6 +1249,7 @@ function openPreAnalysisSummary() {
             const accuracy = (player) => player.losses.length
                 ? Math.round(player.losses.reduce((sum, loss) => sum + 100 * Math.exp(-loss / 400), 0) / player.losses.length) + '%'
                 : '—';
+            $('#summaryMoveDetails').text(moveDetails.join('\n'));
             $('#summaryWhiteAccuracy').text(accuracy(metrics.w));
             $('#summaryWhiteMistakes').text(metrics.w.mistakes);
             $('#summaryWhiteBlunders').text(metrics.w.blunders);
