@@ -1271,7 +1271,7 @@ function openPreAnalysisSummary() {
         currentFenTurn = positions[positionIndex].split(' ')[1] || 'w';
         latestScore = 0;
         summaryWorker.postMessage('position fen ' + positions[positionIndex]);
-        summaryWorker.postMessage('go depth 8');
+        summaryWorker.postMessage('go depth 6');
     };
 
     summaryWorker.onmessage = function(event) {
