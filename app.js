@@ -1249,6 +1249,10 @@ function openPreAnalysisSummary() {
             $('#summaryContinueBtn').prop('disabled', false);
             return;
         }
+        if (summaryAnalysisTimeout) clearTimeout(summaryAnalysisTimeout);
+        summaryAnalysisTimeout = setTimeout(() => {
+            finishWithFallback('Stockfish bir konumu zamanında değerlendiremedi.');
+        }, 20000);
         currentFenTurn = positions[positionIndex].split(' ')[1] || 'w';
         latestScore = 0;
         summaryWorker.postMessage('position fen ' + positions[positionIndex]);
@@ -1259,6 +1263,15 @@ function openPreAnalysisSummary() {
         if (runId !== summaryAnalysisRunId) return;
         const message = event.data;
         if (typeof message !== 'string') return;
+        if (message.trim() === 'uciok') {
+            summaryWorker.postMessage('isready');
+            return;
+        }
+        if (message.trim() === 'readyok') {
+            if (summaryAnalysisTimeout) clearTimeout(summaryAnalysisTimeout);
+            evaluateNext();
+            return;
+        }
         const parts = message.split(' ');
         const cpIdx = parts.indexOf('cp');
         const mateIdx = parts.indexOf('mate');
@@ -1269,6 +1282,10 @@ function openPreAnalysisSummary() {
             latestScore = mate > 0 ? 10000 : mate < 0 ? -10000 : 0;
         }
         if (message.startsWith('bestmove')) {
+            if (summaryAnalysisTimeout) {
+                clearTimeout(summaryAnalysisTimeout);
+                summaryAnalysisTimeout = null;
+            }
             evaluations[positionIndex] = currentFenTurn === 'w' ? latestScore : -latestScore;
             positionIndex++;
             $('#summaryProgressBar').css('width', Math.round(positionIndex / positions.length * 100) + '%');
@@ -1278,12 +1295,11 @@ function openPreAnalysisSummary() {
     };
     summaryWorker.onerror = () => finishWithFallback('Stockfish yüklenirken hata oluştu.');
 
-    // Motor yanıt vermezse rapor ekranı kilitli kalmasın.
+    // Önce UCI el sıkışmasını tamamla; motor hazır olmadan analiz komutu gönderme.
     summaryAnalysisTimeout = setTimeout(() => {
-        finishWithFallback('Stockfish yanıt vermedi; analiz süresi aşıldı.');
+        finishWithFallback('Stockfish başlatma yanıtı vermedi; analiz süresi aşıldı.');
     }, 20000);
-
-    evaluateNext();
+    summaryWorker.postMessage('uci');
 }
 
 function startAnalysisMode() {
