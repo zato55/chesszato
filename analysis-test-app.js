@@ -1241,7 +1241,7 @@ function openPreAnalysisSummary() {
                 if (lossCp >= 300) player.blunders++;
                 const moveLabel = (Math.floor(i / 2) + 1) + (move.color === 'w' ? '. ' : '... ') + move.san;
                 const moveClass = lossCp >= 300 ? 'BÜYÜK HATA' : lossCp >= 100 ? 'HATA' : 'Belirgin kayıp yok';
-                moveDetails.push(moveLabel + ': ' + Math.round(lossCp) + ' cp — ' + moveClass);
+                moveDetails.push(moveLabel + ': kayıp ' + Math.round(lossCp) + ' cp | önce ' + Math.round(before) + ' cp, sonra ' + Math.round(after) + ' cp (Beyaz açısından) — ' + moveClass);
                 const beforeForMover = move.color === 'w' ? before : -before;
                 const afterForMover = move.color === 'w' ? after : -after;
                 if (beforeForMover >= 300 && afterForMover < 100) player.missed++;
