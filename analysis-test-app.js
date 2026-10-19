@@ -1301,12 +1301,13 @@ function openPreAnalysisSummary() {
             return;
         }
         if (message.trim() === 'readyok') {
-            if (summaryAnalysisTimeout) clearTimeout(summaryAnalysisTimeout);
             if (waitingForGameReady) {
+                // Zaman aşımı, arama tamamlanana kadar aktif kalsın.
                 waitingForGameReady = false;
                 summaryWorker.postMessage('position fen ' + positions[positionIndex]);
                 summaryWorker.postMessage('go depth 14');
             } else {
+                if (summaryAnalysisTimeout) clearTimeout(summaryAnalysisTimeout);
                 // İlk isready yanıtı: UCI el sıkışması tamamlandı, ilk konuma geç.
                 evaluateNext();
             }
