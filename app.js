@@ -1189,7 +1189,8 @@ function openPreAnalysisSummary() {
 
     const evaluations = [];
     let positionIndex = 0;
-    let latestScore = 0;
+    let latestScore = null;
+    let hasLatestScore = false;
     let currentFenTurn = 'w';
     const finishWithFallback = (message) => {
         if (runId !== summaryAnalysisRunId) return;
@@ -1254,7 +1255,7 @@ function openPreAnalysisSummary() {
             $('#summaryBlackMissed').text(metrics.b.missed);
             $('#summaryProgressBar').css('width', '100%');
             $('#summaryProgressText').text('Değerlendirme tamamlandı.');
-            $('#summaryFootnote').text('Tahmini doğruluk ve hata sınıfları, Stockfish 10 derinlik 8 değerlendirmelerindeki hamle öncesi/sonrası farklardan hesaplanır; Chess.com puanlamasıyla aynı değildir. “Tanımlı açılış hamleleri” yalnızca uygulamadaki sınırlı açılış listesini ifade eder.');
+            $('#summaryFootnote').text('Tahmini doğruluk ve hata sınıfları, Stockfish 10 derinlik 6 değerlendirmelerindeki hamle öncesi/sonrası farklardan hesaplanır; mat mesafesi puanları da yaklaşık ölçeklenir. Chess.com puanlamasıyla aynı değildir. “Tanımlı açılış hamleleri” yalnızca uygulamadaki sınırlı açılış listesini ifade eder.');
             if (summaryAnalysisTimeout) {
                 clearTimeout(summaryAnalysisTimeout);
                 summaryAnalysisTimeout = null;
@@ -1269,7 +1270,8 @@ function openPreAnalysisSummary() {
             finishWithFallback('Stockfish bir konumu zamanında değerlendiremedi.');
         }, 20000);
         currentFenTurn = positions[positionIndex].split(' ')[1] || 'w';
-        latestScore = 0;
+        latestScore = null;
+        hasLatestScore = false;
         summaryWorker.postMessage('position fen ' + positions[positionIndex]);
         summaryWorker.postMessage('go depth 6');
     };
@@ -1291,15 +1293,28 @@ function openPreAnalysisSummary() {
         const cpIdx = parts.indexOf('cp');
         const mateIdx = parts.indexOf('mate');
         if (message.includes(' score cp ') && cpIdx !== -1 && parts[cpIdx + 1]) {
-            latestScore = parseInt(parts[cpIdx + 1], 10);
+            const cp = parseInt(parts[cpIdx + 1], 10);
+            if (Number.isFinite(cp)) {
+                latestScore = cp;
+                hasLatestScore = true;
+            }
         } else if (message.includes(' score mate ') && mateIdx !== -1 && parts[mateIdx + 1]) {
             const mate = parseInt(parts[mateIdx + 1], 10);
-            latestScore = mate > 0 ? 10000 : mate < 0 ? -10000 : 0;
+            if (Number.isFinite(mate)) {
+                // Mat mesafesini koru; ±10000 terminal mat skoruyla uyumludur.
+                const mateScore = 10000 - Math.min(Math.abs(mate), 99) * 100;
+                latestScore = mate > 0 ? mateScore : mate < 0 ? -mateScore : 0;
+                hasLatestScore = true;
+            }
         }
         if (message.startsWith('bestmove')) {
             if (summaryAnalysisTimeout) {
                 clearTimeout(summaryAnalysisTimeout);
                 summaryAnalysisTimeout = null;
+            }
+            if (!hasLatestScore || !Number.isFinite(latestScore)) {
+                finishWithFallback('Stockfish konum için geçerli bir puan üretmedi; istatistikler hesaplanamadı.');
+                return;
             }
             evaluations[positionIndex] = currentFenTurn === 'w' ? latestScore : -latestScore;
             positionIndex++;
