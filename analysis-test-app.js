@@ -1266,7 +1266,7 @@ function openPreAnalysisSummary() {
             $('#summaryBlackMissed').text(metrics.b.missed);
             $('#summaryProgressBar').css('width', '100%');
             $('#summaryProgressText').text('Değerlendirme tamamlandı.');
-            $('#summaryFootnote').text('Tahmini doğruluk ve hata sınıfları, Stockfish 10 derinlik 10 değerlendirmelerindeki hamle öncesi/sonrası farklardan hesaplanır; mat mesafesi puanları da yaklaşık ölçeklenir. Chess.com puanlamasıyla aynı değildir. “Tanımlı açılış hamleleri” yalnızca uygulamadaki sınırlı açılış listesini ifade eder.');
+            $('#summaryFootnote').text('Tahmini doğruluk ve hata sınıfları, Stockfish 10 derinlik 14 değerlendirmelerindeki hamle öncesi/sonrası farklardan hesaplanır; mat mesafesi puanları da yaklaşık ölçeklenir. Derinlik artışı puanları kararlı kılmayı garanti etmez. Chess.com puanlamasıyla aynı değildir. “Tanımlı açılış hamleleri” yalnızca uygulamadaki sınırlı açılış listesini ifade eder.');
             if (summaryAnalysisTimeout) {
                 clearTimeout(summaryAnalysisTimeout);
                 summaryAnalysisTimeout = null;
@@ -1286,7 +1286,7 @@ function openPreAnalysisSummary() {
         latestScoreDepth = null;
         hasLatestScore = false;
         summaryWorker.postMessage('position fen ' + positions[positionIndex]);
-        summaryWorker.postMessage('go depth 10');
+        summaryWorker.postMessage('go depth 14');
     };
 
     summaryWorker.onmessage = function(event) {
