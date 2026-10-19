@@ -1226,7 +1226,9 @@ function openPreAnalysisSummary() {
                 if (phase === 'best') summaryWorker.postMessage('go depth 14');
                 else {
                     const move = history[moveIndex];
-                    const uciMove = move.from + move.to + (move.promotion || '');
+                    const uciMove = phase === 'bestForced'
+                        ? bestMove
+                        : move.from + move.to + (move.promotion || '');
                     summaryWorker.postMessage('go depth 14 searchmoves ' + uciMove);
                 }
             } else startSearch();
@@ -1249,7 +1251,14 @@ function openPreAnalysisSummary() {
         if (!hasScore || !Number.isFinite(latestScore)) { finishWithFallback('Stockfish geçerli bir puan üretmedi; istatistikler tamamlanamadı.'); return; }
         const bestmoveNow = parts[1] && parts[1] !== '(none)' ? parts[1] : '';
         if (phase === 'best') {
-            bestScore = latestScore; bestKind = latestKind; bestDepth = latestDepth; bestMove = bestmoveNow;
+            bestMove = bestmoveNow;
+            if (!bestMove) { finishWithFallback('Stockfish en iyi hamleyi döndürmedi; istatistikler tamamlanamadı.'); return; }
+            phase = 'bestForced'; waitingForReady = true;
+            summaryWorker.postMessage('ucinewgame'); summaryWorker.postMessage('isready');
+            return;
+        }
+        if (phase === 'bestForced') {
+            bestScore = latestScore; bestKind = latestKind; bestDepth = latestDepth;
             phase = 'played'; waitingForReady = true;
             summaryWorker.postMessage('ucinewgame'); summaryWorker.postMessage('isready');
             return;
