@@ -1204,7 +1204,7 @@ function openPreAnalysisSummary() {
             $('#summaryWhiteAccuracy').text(accuracy(metrics.w)); $('#summaryWhiteMistakes').text(metrics.w.mistakes); $('#summaryWhiteBlunders').text(metrics.w.blunders); $('#summaryWhiteMissed').text(metrics.w.missed);
             $('#summaryBlackAccuracy').text(accuracy(metrics.b)); $('#summaryBlackMistakes').text(metrics.b.mistakes); $('#summaryBlackBlunders').text(metrics.b.blunders); $('#summaryBlackMissed').text(metrics.b.missed);
             $('#summaryProgressBar').css('width', '100%'); $('#summaryProgressText').text('Değerlendirme tamamlandı.');
-            $('#summaryFootnote').text('Her hamle, aynı konumda Stockfish 10 derinlik 14 ile bulunan en iyi hamlenin puanı ve oynanan hamle zorlanarak bulunan puan karşılaştırılarak tahmin edilir. Mat geçişleri yaklaşık 1000 cp eşdeğerine ölçeklenir; Chess.com ile birebir aynı değildir.');
+            $('#summaryFootnote').text('Her hamle, aynı konumda Stockfish 10 derinlik 14 ile bulunan en iyi hamlenin puanı ve oynanan hamle zorlanarak bulunan puan karşılaştırılarak tahmin edilir. Mat geçişleri hamle dökümünde ayrı gösterilir; doğruluk hesabında yaklaşık 1000 cp cezası kullanılır. Chess.com ile birebir aynı değildir.');
             if (summaryAnalysisTimeout) { clearTimeout(summaryAnalysisTimeout); summaryAnalysisTimeout = null; }
             summaryWorker.terminate(); summaryWorker = null; $('#summaryContinueBtn').prop('disabled', false); return;
         }
@@ -1274,7 +1274,11 @@ function openPreAnalysisSummary() {
         if (bestCp >= 300 && playedCp < 100) player.missed++;
         const label = (Math.floor(moveIndex / 2) + 1) + (move.color === 'w' ? '. ' : '... ') + move.san;
         const moveClass = lossCp >= 300 ? 'BÜYÜK HATA' : lossCp >= 100 ? 'HATA' : 'Belirgin kayıp yok';
-        moveDetails.push(label + ': kayıp ' + Math.round(lossCp) + ' cp' + (crossesMate && rawLoss > 0 ? ' (mat geçişi; 1000 cp eşdeğeri)' : '') + ' | en iyi hamle ' + (bestMove || '?') + ' (' + bestScore + ' ' + bestKind + ', derinlik ' + (bestDepth ?? '?') + ')' + ' | oynanan hamle ' + move.from + move.to + (move.promotion || '') + ' (' + latestScore + ' ' + latestKind + ', derinlik ' + (latestDepth ?? '?') + ')' + ' — ' + moveClass);
+        const lossText = crossesMate && rawLoss > 0 ? 'mat geçişi' : Math.round(lossCp) + ' cp';
+        const mateNote = crossesMate && rawLoss > 0
+            ? (latestKind === 'mate' && latestScore < 0 ? ' — Mat tehdidine izin verdi' : bestKind === 'mate' && bestScore > 0 ? ' — Kazandıran matı kaçırdı' : ' — Mat durumu değişti')
+            : '';
+        moveDetails.push(label + ': kayıp ' + lossText + ' | en iyi hamle ' + (bestMove || '?') + ' (' + bestScore + ' ' + bestKind + ', derinlik ' + (bestDepth ?? '?') + ')' + ' | oynanan hamle ' + move.from + move.to + (move.promotion || '') + ' (' + latestScore + ' ' + latestKind + ', derinlik ' + (latestDepth ?? '?') + ')' + ' — ' + moveClass + mateNote);
         moveIndex++; phase = 'best'; bestScore = null; bestKind = null; bestDepth = null; bestMove = '';
         $('#summaryProgressBar').css('width', Math.round(moveIndex / history.length * 100) + '%');
         $('#summaryProgressText').text('Hamle ' + moveIndex + ' / ' + history.length + ' karşılaştırıldı.');
