@@ -1786,6 +1786,36 @@ $('#reviewBoardBtn').on('click', function() {
 
 $('#closeSummaryBtn, #summaryCloseBackBtn').on('click', closePreAnalysisSummary);
 
+$(document).on('click', '#copySummaryMoveDetailsBtn', async function() {
+    const textToCopy = $('#summaryMoveDetails').text().trim();
+    if (!textToCopy || textToCopy === 'Hamleler değerlendiriliyor…') {
+        $('#copySummaryMoveDetailsBtn').text('Henüz hazır değil');
+        return;
+    }
+    const button = $(this);
+    try {
+        if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(textToCopy);
+        } else {
+            const temp = document.createElement('textarea');
+            temp.value = textToCopy;
+            temp.setAttribute('readonly', '');
+            temp.style.position = 'fixed';
+            temp.style.opacity = '0';
+            document.body.appendChild(temp);
+            temp.select();
+            const copied = document.execCommand('copy');
+            temp.remove();
+            if (!copied) throw new Error('copy failed');
+        }
+        button.text('Kopyalandı ✓');
+        setTimeout(() => button.text('Sonuçları kopyala'), 1800);
+    } catch (error) {
+        button.text('Kopyalanamadı');
+        setTimeout(() => button.text('Sonuçları kopyala'), 1800);
+    }
+});
+
 $('#summaryContinueBtn').on('click', function() {
     if ($(this).prop('disabled')) return;
     closePreAnalysisSummary();
