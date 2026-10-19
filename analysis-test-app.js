@@ -1193,6 +1193,8 @@ function openPreAnalysisSummary() {
     let latestScore = null;
     let latestDepth = null;
     let latestScoreDepth = null;
+    let latestScoreKind = null;
+    let latestPv = '';
     let hasLatestScore = false;
     let waitingForGameReady = false;
     let currentFenTurn = 'w';
@@ -1239,16 +1241,20 @@ function openPreAnalysisSummary() {
                 const before = evaluations[i];
                 const after = evaluations[i + 1];
                 if (!Number.isFinite(before) || !Number.isFinite(after)) return;
-                const lossCp = Math.max(0, move.color === 'w' ? before - after : after - before);
+                const beforeMeta = evaluationMeta[i] || {};
+                const afterMeta = evaluationMeta[i + 1] || {};
+                // Mat puanını normal cp gibi çıkarmak 10.000'i aşan sahte kayıplar üretebilir.
+                const crossesMateScore = beforeMeta.kind === 'mate' || afterMeta.kind === 'mate'
+                    || beforeMeta.depth === 'MAT' || afterMeta.depth === 'MAT';
+                const rawLossCp = Math.max(0, move.color === 'w' ? before - after : after - before);
+                const lossCp = crossesMateScore ? (rawLossCp > 0 ? 1000 : 0) : rawLossCp;
                 const player = metrics[move.color];
                 player.losses.push(lossCp);
                 if (lossCp >= 100 && lossCp < 300) player.mistakes++;
                 if (lossCp >= 300) player.blunders++;
                 const moveLabel = (Math.floor(i / 2) + 1) + (move.color === 'w' ? '. ' : '... ') + move.san;
                 const moveClass = lossCp >= 300 ? 'BÜYÜK HATA' : lossCp >= 100 ? 'HATA' : 'Belirgin kayıp yok';
-                const beforeMeta = evaluationMeta[i] || {};
-                const afterMeta = evaluationMeta[i + 1] || {};
-                moveDetails.push(moveLabel + ': kayıp ' + Math.round(lossCp) + ' cp | önce ' + Math.round(before) + ', sonra ' + Math.round(after) + ' cp (Beyaz açısından) | önce hamle: sıra ' + beforeMeta.turn + ', ham motor puanı ' + (beforeMeta.rawScore ?? 'mat') + ', derinlik ' + (beforeMeta.depth ?? '?') + ' | sonra hamle: sıra ' + afterMeta.turn + ', ham motor puanı ' + (afterMeta.rawScore ?? 'mat') + ', derinlik ' + (afterMeta.depth ?? '?') + ' — ' + moveClass);
+                moveDetails.push(moveLabel + ': kayıp ' + Math.round(lossCp) + ' cp' + (crossesMateScore && rawLossCp > 0 ? ' (mat geçişi; sınıflandırma için 1000 cp eşdeğeri)' : '') + ' | önce ' + Math.round(before) + ', sonra ' + Math.round(after) + ' cp (Beyaz açısından) | önce hamle: sıra ' + beforeMeta.turn + ', ham motor puanı ' + (beforeMeta.rawScore ?? 'mat') + ', tür ' + (beforeMeta.kind || beforeMeta.depth || '?') + ', derinlik ' + (beforeMeta.depth ?? '?') + ', en iyi hamle ' + (beforeMeta.bestmove || '?') + ' | sonra hamle: sıra ' + afterMeta.turn + ', ham motor puanı ' + (afterMeta.rawScore ?? 'mat') + ', tür ' + (afterMeta.kind || afterMeta.depth || '?') + ', derinlik ' + (afterMeta.depth ?? '?') + ', en iyi hamle ' + (afterMeta.bestmove || '?') + ' — ' + moveClass);
                 const beforeForMover = move.color === 'w' ? before : -before;
                 const afterForMover = move.color === 'w' ? after : -after;
                 if (beforeForMover >= 300 && afterForMover < 100) player.missed++;
@@ -1285,6 +1291,8 @@ function openPreAnalysisSummary() {
         latestScore = null;
         latestDepth = null;
         latestScoreDepth = null;
+        latestScoreKind = null;
+        latestPv = '';
         hasLatestScore = false;
         // Yeni konuma geçmeden önce motorun yeni oyunu hazırladığını doğrula.
         waitingForGameReady = true;
@@ -1326,6 +1334,7 @@ function openPreAnalysisSummary() {
             const cp = parseInt(parts[cpIdx + 1], 10);
             if (Number.isFinite(cp)) {
                 latestScore = cp;
+                latestScoreKind = 'cp';
                 latestScoreDepth = latestDepth;
                 hasLatestScore = true;
             }
@@ -1335,11 +1344,13 @@ function openPreAnalysisSummary() {
                 // Mat mesafesini koru; ±10000 terminal mat skoruyla uyumludur.
                 const mateScore = 10000 - Math.min(Math.abs(mate), 99) * 100;
                 latestScore = mate > 0 ? mateScore : mate < 0 ? -mateScore : 0;
+                latestScoreKind = 'mate';
                 latestScoreDepth = latestDepth;
                 hasLatestScore = true;
             }
         }
         if (message.startsWith('bestmove')) {
+            latestPv = parts[1] && parts[1] !== '(none)' ? parts[1] : '';
             if (summaryAnalysisTimeout) {
                 clearTimeout(summaryAnalysisTimeout);
                 summaryAnalysisTimeout = null;
@@ -1349,7 +1360,7 @@ function openPreAnalysisSummary() {
                 return;
             }
             evaluations[positionIndex] = currentFenTurn === 'w' ? latestScore : -latestScore;
-            evaluationMeta[positionIndex] = { rawScore: latestScore, turn: currentFenTurn, depth: latestScoreDepth };
+            evaluationMeta[positionIndex] = { rawScore: latestScore, turn: currentFenTurn, depth: latestScoreDepth, kind: latestScoreKind, bestmove: latestPv };
             positionIndex++;
             $('#summaryProgressBar').css('width', Math.round(positionIndex / positions.length * 100) + '%');
             $('#summaryProgressText').text('Konum ' + positionIndex + ' / ' + positions.length + ' değerlendirildi.');
