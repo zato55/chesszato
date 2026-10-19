@@ -32,6 +32,7 @@ let queuedAnalysisFen = null;
 let currentBestMove = null;
 let summaryWorker = null;
 let summaryAnalysisRunId = 0;
+let summaryAnalysisTimeout = null;
 
 let userColorSelection = 'w';
 let actualPlayerColor = 'w';
@@ -1127,6 +1128,10 @@ window.jumpToMove = function(idx) {
 
 function closePreAnalysisSummary() {
     summaryAnalysisRunId++;
+    if (summaryAnalysisTimeout) {
+        clearTimeout(summaryAnalysisTimeout);
+        summaryAnalysisTimeout = null;
+    }
     if (summaryWorker) {
         summaryWorker.terminate();
         summaryWorker = null;
@@ -1182,6 +1187,10 @@ function openPreAnalysisSummary() {
     let currentFenTurn = 'w';
     const finishWithFallback = (message) => {
         if (runId !== summaryAnalysisRunId) return;
+        if (summaryAnalysisTimeout) {
+            clearTimeout(summaryAnalysisTimeout);
+            summaryAnalysisTimeout = null;
+        }
         if (summaryWorker) summaryWorker.terminate();
         summaryWorker = null;
         $('#summaryProgressText').text(message);
@@ -1231,6 +1240,10 @@ function openPreAnalysisSummary() {
             $('#summaryProgressBar').css('width', '100%');
             $('#summaryProgressText').text('Değerlendirme tamamlandı.');
             $('#summaryFootnote').text('Tahmini doğruluk ve hata sınıfları, Stockfish 10 derinlik 8 değerlendirmelerindeki hamle öncesi/sonrası farklardan hesaplanır; Chess.com puanlamasıyla aynı değildir. “Tanımlı açılış hamleleri” yalnızca uygulamadaki sınırlı açılış listesini ifade eder.');
+            if (summaryAnalysisTimeout) {
+                clearTimeout(summaryAnalysisTimeout);
+                summaryAnalysisTimeout = null;
+            }
             summaryWorker.terminate();
             summaryWorker = null;
             $('#summaryContinueBtn').prop('disabled', false);
@@ -1264,6 +1277,12 @@ function openPreAnalysisSummary() {
         }
     };
     summaryWorker.onerror = () => finishWithFallback('Stockfish yüklenirken hata oluştu.');
+
+    // Motor yanıt vermezse rapor ekranı kilitli kalmasın.
+    summaryAnalysisTimeout = setTimeout(() => {
+        finishWithFallback('Stockfish yanıt vermedi; analiz süresi aşıldı.');
+    }, 20000);
+
     evaluateNext();
 }
 
