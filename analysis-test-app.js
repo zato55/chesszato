@@ -1285,6 +1285,8 @@ function openPreAnalysisSummary() {
         latestDepth = null;
         latestScoreDepth = null;
         hasLatestScore = false;
+        // Her konumu bağımsız değerlendir: önceki FEN aramalarının hash tablosunu kullanma.
+        summaryWorker.postMessage('ucinewgame');
         summaryWorker.postMessage('position fen ' + positions[positionIndex]);
         summaryWorker.postMessage('go depth 14');
     };
