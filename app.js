@@ -1162,11 +1162,17 @@ function openPreAnalysisSummary() {
     $('#summaryWhiteAccuracy, #summaryBlackAccuracy, #summaryWhiteMistakes, #summaryBlackMistakes, #summaryWhiteBlunders, #summaryBlackBlunders, #summaryWhiteMissed, #summaryBlackMissed').text('—');
 
     const positions = [];
+    const terminalScores = [];
     const replay = new Chess();
     positions.push(replay.fen());
+    terminalScores.push(null);
     history.forEach(move => {
         replay.move(move);
         positions.push(replay.fen());
+        // Şah matla biten son konumda yasal hamle olmadığından motoru çalıştırma.
+        terminalScores.push(replay.in_checkmate()
+            ? (replay.turn() === 'b' ? 10000 : -10000)
+            : null);
     });
 
     let matchedOpeningPlies = 0;
@@ -1208,6 +1214,15 @@ function openPreAnalysisSummary() {
 
     const evaluateNext = () => {
         if (runId !== summaryAnalysisRunId || !summaryWorker) return;
+        // Mat son konumunun puanını satranç durumundan belirle; Stockfish'e gönderme.
+        if (Number.isFinite(terminalScores[positionIndex])) {
+            evaluations[positionIndex] = terminalScores[positionIndex];
+            positionIndex++;
+            $('#summaryProgressBar').css('width', Math.round(positionIndex / positions.length * 100) + '%');
+            $('#summaryProgressText').text('Konum ' + positionIndex + ' / ' + positions.length + ' değerlendirildi.');
+            evaluateNext();
+            return;
+        }
         if (positionIndex >= positions.length) {
             const metrics = {
                 w: { losses: [], mistakes: 0, blunders: 0, missed: 0 },
