@@ -1610,6 +1610,7 @@ const applyPlayerCardTheme = (theme) => {
         'theme-dark': ['#374151', '#28303d']
     };
     const [background, border] = colors[theme] || colors['theme-green'];
+    document.documentElement.style.setProperty('--player-card-theme-bg', background);
     $('#topPlayerCard, #bottomPlayerCard').css({ backgroundColor: background, borderColor: border });
     $('#topPlayerCard, #bottomPlayerCard').attr('data-board-theme', theme);
 };
