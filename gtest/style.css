@@ -592,9 +592,9 @@ aside.collapsed #logoToggleBtn {
         padding: 4px 8px !important;
     }
 
-    /* Analiz: sabit alt menüye yalnızca gerçek yüksekliği kadar yer ayır. */
+    /* Analizde görünür ana içerik, hamle şeridi ve değerlendirme satırı ayrı grid satırlarında kalır. */
     body.analysis-mode main {
-        grid-template-rows: minmax(0, 1fr) auto !important;
+        grid-template-rows: minmax(0, 1fr) auto auto !important;
         padding-bottom: calc(88px + env(safe-area-inset-bottom)) !important;
     }
 
