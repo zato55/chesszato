@@ -811,3 +811,49 @@ aside.collapsed #logoToggleBtn {
         padding-bottom: calc(104px + env(safe-area-inset-bottom)) !important;
     }
 }
+
+
+/* Analiz modunda hamlenin kalite işareti, varış karesinin sağ üstünde görünür. */
+.analysis-move-quality-badge {
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    z-index: 25;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 15px;
+    height: 15px;
+    padding: 0 2px;
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    border-radius: 4px;
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    font-weight: 900;
+    line-height: 1;
+    color: #fff;
+    background: #27272a;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.55);
+    pointer-events: none;
+    box-sizing: border-box;
+}
+
+.analysis-move-quality-badge.quality-brilliant { background: #0e7490; border-color: #67e8f9; }
+.analysis-move-quality-badge.quality-best { background: #047857; border-color: #6ee7b7; }
+.analysis-move-quality-badge.quality-good { background: #15803d; border-color: #86efac; }
+.analysis-move-quality-badge.quality-inaccuracy { background: #b45309; border-color: #fcd34d; }
+.analysis-move-quality-badge.quality-mistakes { background: #c2410c; border-color: #fdba74; }
+.analysis-move-quality-badge.quality-blunders { background: #b91c1c; border-color: #fca5a5; }
+.analysis-move-quality-badge.quality-missed { background: #7e22ce; border-color: #d8b4fe; }
+
+@media (max-width: 767px) {
+    .analysis-move-quality-badge {
+        top: 1px;
+        right: 1px;
+        min-width: 14px;
+        height: 14px;
+        padding: 0 1px;
+        font-size: 9px;
+        border-radius: 3px;
+    }
+}
