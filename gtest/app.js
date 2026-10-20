@@ -2080,7 +2080,13 @@ $('#summaryContinueBtn').on('click', function() {
     startAnalysisMode();
 });
 
-$('#closeModalBtn').on('click', () => $('#gameOverModal').addClass('hidden'));
+$('#gameOverModal').on('click', function(e) {
+    if (e.target === this) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).removeClass('hidden');
+    }
+});
 
 initStockfish();
 loadSavedSettings();
