@@ -1211,7 +1211,10 @@ function openPreAnalysisSummary() {
         ? (game.turn() === 'b' ? 'Beyaz kazandı · Şah mat' : 'Siyah kazandı · Şah mat')
         : game.in_draw() ? 'Berabere' : 'Maç özeti');
     $('#summaryMoveCount').text(history.length);
-    $('#summaryOpening').text(detectOpening('w') || detectOpening('b') || 'Tanımlanamadı');
+    const summaryOpening = openingDatabase
+        .filter(opening => opening.moves.length <= history.length && opening.moves.every((move, index) => history[index].san === move))
+        .sort((a, b) => b.moves.length - a.moves.length)[0];
+    $('#summaryOpening').text(summaryOpening ? '📖 ' + summaryOpening.name : 'Tanımlanamadı');
     $('#summaryBookMoves').text('Hesaplanıyor…');
     $('#summaryProgressBar').css('width', '0%');
     $('#summaryProgressText').text('Konumlar Stockfish ile değerlendiriliyor…');
