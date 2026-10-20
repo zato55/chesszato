@@ -197,7 +197,7 @@ function initStockfish() {
                     const activeGame = isAnalysisMode ? analysisGame : game;
                     if (activeGame.in_checkmate()) {
                         const winnerIsWhite = activeGame.turn() === 'b';
-                        updateEvalBar(winnerIsWhite ? 1 : -1, true);
+                        updateEvalBar(winnerIsWhite ? 1 : -1, true, true);
                     } else if (activeGame.in_draw() || activeGame.in_stalemate() || activeGame.in_threefold_repetition()) {
                         updateEvalBar(0, false);
                     } else if (pendingEvalScore) {
@@ -254,10 +254,15 @@ function initStockfish() {
     }
 }
 
-function updateEvalBar(score, isMate) {
+function updateEvalBar(score, isMate, isCheckmate = false) {
     let scoreText, descText, percentage;
 
-    if (isMate) {
+    if (isCheckmate) {
+        const winner = score > 0 ? 'Beyaz' : 'Siyah';
+        scoreText = 'MAT';
+        descText = `Şah mat — ${winner} kazandı`;
+        percentage = score > 0 ? 98 : 2;
+    } else if (isMate) {
         scoreText = score > 0 ? `#M${score}` : `-M${Math.abs(score)}`;
         descText = score > 0 ? `Beyaz ${score} hamlede mat ediyor` : `Siyah ${Math.abs(score)} hamlede mat ediyor`;
         percentage = score > 0 ? 98 : 2;
@@ -345,7 +350,7 @@ function requestEngineAnalysis() {
             analysisSearchStopPending = true;
             stockfishWorker.postMessage('stop');
         }
-        updateEvalBar(targetGame.turn() === 'b' ? 1 : -1, true);
+        updateEvalBar(targetGame.turn() === 'b' ? 1 : -1, true, true);
         return;
     }
 
