@@ -773,3 +773,41 @@ aside.collapsed #logoToggleBtn {
         font-size: 10px;
     }
 }
+
+
+/* Yalnızca GTEST mobil analiz ekranı: kart-tahta aralığını sıkılaştır,
+   kazanılan alanı alt gezinme ve özellikle oyuna dönüş düğmesine ver. */
+@media (max-width: 767px) {
+    body.analysis-mode main > div.flex-col {
+        row-gap: 1px !important;
+    }
+
+    body.analysis-mode #board-wrapper {
+        width: min(95vw, calc(100dvh - 378px)) !important;
+        height: min(95vw, calc(100dvh - 378px)) !important;
+    }
+
+    body.analysis-mode #mobileAnalysisBottomNav > div button {
+        min-height: 44px !important;
+        padding-top: 8px !important;
+        padding-bottom: 8px !important;
+    }
+
+    body.analysis-mode #mobileAnalysisBottomNav > div button svg {
+        width: 27px !important;
+        height: 27px !important;
+    }
+
+    body.analysis-mode #mExitAnalysisBtn {
+        min-height: 48px !important;
+        margin-top: 5px !important;
+        padding: 10px 12px !important;
+        font-size: 14px !important;
+        line-height: 1.25 !important;
+        border-radius: 10px !important;
+    }
+
+    body.analysis-mode main {
+        padding-bottom: calc(104px + env(safe-area-inset-bottom)) !important;
+    }
+}
