@@ -111,8 +111,13 @@ const openingDatabase = [
     { moves: ['d4', 'd5', 'c4'], name: 'Vezir Gambiti' },
     { moves: ['e4', 'e5', 'Nf3', 'Nc6'], name: 'Açık Oyun' },
     { moves: ['e4', 'e5', 'Nf3', 'Nf6'], name: 'Petrov Savunması' },
-    { moves: ['d4', 'Nf6', 'c4', 'g6'], name: 'Şah-Hint Savunması' },
+    { moves: ['d4', 'Nf6', 'c4', 'g6'], name: 'Hint Savunması' },
     { moves: ['d4', 'Nf6', 'c4', 'e6'], name: 'Hint Savunması' },
+    { moves: ['d4', 'd5', 'c4', 'e6'], name: 'Vezir Gambiti Reddedildi' },
+    { moves: ['d4', 'd5', 'c4', 'dxc4'], name: 'Vezir Gambiti Kabul Edildi' },
+    { moves: ['e4', 'e5', 'Nf3', 'Nc6', 'Nc3'], name: 'Dört At Oyunu' },
+    { moves: ['e4', 'e5', 'Nf3', 'Nc6', 'Bc4', 'Bc5'], name: 'İtalyan Açılışı (Giuoco Piano)' },
+    { moves: ['d4', 'Nf6', 'c4', 'g6', 'Nc3', 'Bg7'], name: 'Şah-Hint Savunması' },
     { moves: ['e4', 'e5', 'Nf3', 'Nc6', 'Bb5'], name: 'Ruy Lopez (İspanyol)' },
     { moves: ['e4', 'e5', 'Nf3', 'Nc6', 'Bc4'], name: 'İtalyan Açılışı' }
 ];
