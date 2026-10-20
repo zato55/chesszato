@@ -65,6 +65,7 @@ function showLiveReviewPosition(ply) {
     if (liveReviewPly >= moveCount) liveReviewPly = null;
     selectedSquare = null;
     renderBoard();
+    updateStatus();
 }
 
 function returnToLivePosition() {
@@ -1176,12 +1177,15 @@ function showGameOverModal(title, reason, icon = '🏆') {
 }
 
 function updateStatus() {
-    const activeGame = isAnalysisMode ? analysisGame : game;
+    const reviewingLivePosition = !isAnalysisMode && liveReviewPly !== null;
+    const activeGame = isAnalysisMode ? analysisGame : getDisplayedGame();
     const moveColor = activeGame.turn() === 'b' ? 'Siyah' : 'Beyaz';
 
     if (activeGame.in_checkmate()) {
         if (isAnalysisMode) {
             $('#status').text('Analiz: Şah Mat');
+        } else if (reviewingLivePosition) {
+            $('#status').text('🔍 Geçmiş Konum (Şah Mat)');
         } else if (!isReviewing) {
             isGameOver = true;
             $('#status').text('Şah Mat!');
@@ -1202,6 +1206,8 @@ function updateStatus() {
     } else if (activeGame.in_draw()) {
         if (isAnalysisMode) {
             $('#status').text('Analiz: Berabere');
+        } else if (reviewingLivePosition) {
+            $('#status').text('🔍 Geçmiş Konum (Berabere)');
         } else if (!isReviewing) {
             isGameOver = true;
             $('#status').text('Berabere');
@@ -1212,7 +1218,8 @@ function updateStatus() {
     } else {
         let statusText = 'Sıra: ' + moveColor;
         if (activeGame.in_check()) statusText = moveColor + ' (Şah!)';
-        if (isAnalysisMode) statusText = '🔍 Analiz — ' + statusText;
+        if (reviewingLivePosition) statusText = '🔍 Geçmiş Konum — ' + statusText;
+        else if (isAnalysisMode) statusText = '🔍 Analiz — ' + statusText;
         else if (isReviewing) statusText = '🔍 İnceleme — ' + statusText;
         $('#status').text(statusText);
     }
