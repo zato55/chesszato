@@ -650,6 +650,20 @@ function renderBoard() {
                 .addClass(isLight ? 'square-light' : 'square-dark')
                 .attr('data-square', squareName);
 
+            // Koordinatları yalnızca tahtanın görünen sol ve alt kenarındaki karelere ekle.
+            if (c === 0) {
+                $('<span></span>')
+                    .addClass('board-coordinate board-coordinate-rank')
+                    .text(squareName[1])
+                    .appendTo($square);
+            }
+            if (r === 7) {
+                $('<span></span>')
+                    .addClass('board-coordinate board-coordinate-file')
+                    .text(squareName[0])
+                    .appendTo($square);
+            }
+
             if (selectedSquare === squareName) {
                 $square.addClass('selected');
             }
