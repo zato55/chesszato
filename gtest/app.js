@@ -1809,7 +1809,7 @@ function updateAnalysisBoard() {
 
 $('#navStart, #mNavStart').on('click', () => { if (isAnalysisMode) { analysisIdx = -1; updateAnalysisBoard(); } });
 $('#navPrev, #mNavPrev').on('click', () => { if (isAnalysisMode && analysisIdx > -1) { analysisIdx--; updateAnalysisBoard(); } });
-$('#navNext, #mNavNext').on('click', () => { if (!isAnalysisMode) return; if (analysisBranchStartIdx !== null && analysisBranchStartIdx >= 0 && analysisIdx === analysisBranchStartIdx && analysisIdx < analysisMainlineHistory.length - 1) { analysisMoveHistory = analysisMainlineHistory.slice(); analysisBranchStartIdx = null; } if (analysisIdx < analysisMoveHistory.length - 1) { analysisIdx++; updateAnalysisBoard(); } });
+$('#navNext, #mNavNext').on('click', () => { if (!isAnalysisMode) return; if (analysisBranchStartIdx !== null && analysisIdx === analysisBranchStartIdx && analysisIdx < analysisMainlineHistory.length - 1) { analysisMoveHistory = analysisMainlineHistory.slice(); analysisBranchStartIdx = null; } if (analysisIdx < analysisMoveHistory.length - 1) { analysisIdx++; updateAnalysisBoard(); } });
 $('#navEnd, #mNavEnd').on('click', () => { if (isAnalysisMode && analysisMoveHistory.length > 0) { analysisIdx = analysisMoveHistory.length - 1; updateAnalysisBoard(); } });
 
 $('#exitAnalysisBtn, #mExitAnalysisBtn').on('click', exitAnalysisMode);
@@ -1819,7 +1819,7 @@ $(document).on('keydown', function(e) {
     if (e.key === 'ArrowLeft') {
         if (analysisIdx > -1) { analysisIdx--; updateAnalysisBoard(); }
     } else if (e.key === 'ArrowRight') {
-        if (analysisBranchStartIdx !== null && analysisBranchStartIdx >= 0 && analysisIdx === analysisBranchStartIdx && analysisIdx < analysisMainlineHistory.length - 1) { analysisMoveHistory = analysisMainlineHistory.slice(); analysisBranchStartIdx = null; }
+        if (analysisBranchStartIdx !== null && analysisIdx === analysisBranchStartIdx && analysisIdx < analysisMainlineHistory.length - 1) { analysisMoveHistory = analysisMainlineHistory.slice(); analysisBranchStartIdx = null; }
         if (analysisIdx < analysisMoveHistory.length - 1) { analysisIdx++; updateAnalysisBoard(); }
     }
 });
