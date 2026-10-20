@@ -1797,26 +1797,56 @@ $(document).on('click', '#copySummaryTimingDetailsBtn', async function() {
         setTimeout(() => button.text('Süreleri kopyala'), 1800);
         return;
     }
+
+    const fallbackCopy = () => {
+        const temp = document.createElement('textarea');
+        temp.value = textToCopy;
+        temp.setAttribute('readonly', '');
+        temp.style.position = 'fixed';
+        temp.style.top = '0';
+        temp.style.left = '0';
+        temp.style.width = '2em';
+        temp.style.height = '2em';
+        temp.style.padding = '0';
+        temp.style.border = '0';
+        temp.style.outline = '0';
+        temp.style.boxShadow = 'none';
+        temp.style.background = 'transparent';
+        document.body.appendChild(temp);
+        temp.focus();
+        temp.select();
+        temp.setSelectionRange(0, temp.value.length);
+        let copied = false;
+        try { copied = document.execCommand('copy'); } finally { temp.remove(); }
+        return copied;
+    };
+
     try {
+        let copied = false;
         if (navigator.clipboard && window.isSecureContext) {
-            await navigator.clipboard.writeText(textToCopy);
-        } else {
-            const temp = document.createElement('textarea');
-            temp.value = textToCopy;
-            temp.setAttribute('readonly', '');
-            temp.style.position = 'fixed';
-            temp.style.opacity = '0';
-            document.body.appendChild(temp);
-            temp.select();
-            const copied = document.execCommand('copy');
-            temp.remove();
-            if (!copied) throw new Error('copy failed');
+            try {
+                await navigator.clipboard.writeText(textToCopy);
+                copied = true;
+            } catch (_) {
+                copied = false;
+            }
         }
+        if (!copied) copied = fallbackCopy();
+        if (!copied) throw new Error('copy failed');
+
         button.text('Kopyalandı ✓');
         setTimeout(() => button.text('Süreleri kopyala'), 1800);
     } catch (error) {
-        button.text('Kopyalanamadı');
-        setTimeout(() => button.text('Süreleri kopyala'), 1800);
+        button.text('Kopyalanamadı — metni seç');
+        const details = document.getElementById('summaryTimingDetails');
+        if (details) {
+            const range = document.createRange();
+            range.selectNodeContents(details);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
+        setTimeout(() => button.text('Süreleri kopyala'), 2600);
     }
 });
 
