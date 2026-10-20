@@ -884,7 +884,11 @@ function handleMove(from, to) {
     const isWhite = activeGame.turn() === 'w';
 
     if (movingPiece && movingPiece.type === 'p') {
-        if ((isWhite && to.charAt(1) === '8') || (!isWhite && to.charAt(1) === '1')) {
+        const reachesPromotionRank = (isWhite && to.charAt(1) === '8') || (!isWhite && to.charAt(1) === '1');
+        const isLegalPromotionMove = reachesPromotionRank && activeGame.moves({ square: from, verbose: true })
+            .some(move => move.to === to && move.promotion);
+
+        if (isLegalPromotionMove) {
             pendingMove = { from: from, to: to };
             openPromotionModal(isWhite ? 'w' : 'b');
             return;
