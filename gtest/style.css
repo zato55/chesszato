@@ -944,3 +944,10 @@ aside.collapsed #logoToggleBtn {
         padding-bottom: calc(116px + env(safe-area-inset-bottom)) !important;
     }
 }
+
+
+/* Mobil alt gezinme düğmelerinin kenarı, seçili tahta temasındaki oyuncu kartı rengiyle eşleşir. */
+#mobileQuickControls button,
+#mobileAnalysisBottomNav button {
+    border-color: var(--player-card-theme-bg, #769656) !important;
+}
