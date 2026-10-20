@@ -14,7 +14,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
     
     <!-- Özel CSS -->
-    <link rel="stylesheet" href="style.css?v=20261020-gtest-square-overlay">
+    <link rel="stylesheet" href="style.css?v=20261020-gtest-eval-row">
 </head>
 
 <body class="bg-[#09090b] text-zinc-100 font-sans antialiased h-screen h-[100dvh] overflow-hidden flex flex-col md:flex-row select-none">
@@ -154,7 +154,8 @@
 
         <!-- 📱 MOBİL ANALİZ BİLGİSİ: gezinme butonları alt menüye taşındı -->
         <div id="mobileAnalysisPanel" class="hidden md:hidden w-full max-w-[620px] flex flex-col gap-2 mt-2">
-            <div class="flex items-center gap-2 bg-[#121215] border border-zinc-800 rounded-xl p-2">
+            <div class="mobile-analysis-eval-row flex items-center gap-2 bg-[#121215] border border-zinc-800 rounded-xl p-2">
+                <span class="mobile-analysis-eval-label text-[10px] font-extrabold uppercase tracking-wide text-zinc-500">Değerlendirme</span>
                 <span id="mEvalScoreText" class="font-black text-sm text-blue-400 bg-blue-950/60 border border-blue-800/50 px-2 py-0.5 rounded">+0.0</span>
                 <span id="mEvalDescription" class="text-xs text-zinc-300 font-medium">Eşit konum</span>
             </div>
