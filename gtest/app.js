@@ -1075,7 +1075,7 @@ function renderLivePGN() {
                 <span class="pgn-move text-blue-400 font-medium" onclick="jumpToMove(${i + 1})">${blackMove}</span>
             </div>`;
 
-        mobilePgnHtml += `<span class="bg-zinc-900 px-2 py-1 rounded border border-zinc-800 text-zinc-300"><span class="text-zinc-500 font-bold mr-1">${round}.</span>${whiteMove} ${blackMove}</span>`;
+        mobilePgnHtml += `<span class="bg-zinc-900 px-2 py-0.5 rounded border border-zinc-800 text-zinc-300"><span class="text-zinc-500 font-bold mr-1">${round}.</span>${whiteMove} ${blackMove}</span>`;
     }
 
     $('#pgn').html(pgnHtml);
@@ -1091,13 +1091,13 @@ function renderLivePGN() {
 function getBadgeHtml(catKey) {
     if (!catKey) return '';
     const badges = {
-        brilliant: '<span class="ml-1 px-1 rounded bg-cyan-950 text-cyan-400 text-[10px] font-black border border-cyan-800">‼️</span>',
-        best: '<span class="ml-1 px-1 rounded bg-emerald-950 text-emerald-400 text-[10px] font-black border border-emerald-800">⭐</span>',
-        good: '<span class="ml-1 px-1 rounded bg-green-950 text-green-400 text-[10px] font-black border border-green-800">👍</span>',
-        inaccuracy: '<span class="ml-1 px-1 rounded bg-amber-950 text-amber-400 text-[10px] font-black border border-amber-800">?!</span>',
-        mistakes: '<span class="ml-1 px-1 rounded bg-orange-950 text-orange-400 text-[10px] font-black border border-orange-800">?</span>',
-        blunders: '<span class="ml-1 px-1 rounded bg-red-950 text-red-400 text-[10px] font-black border border-red-800">??</span>',
-        missed: '<span class="ml-1 px-1 rounded bg-purple-950 text-purple-400 text-[10px] font-black border border-purple-800">❌</span>'
+        brilliant: '<span class="ml-0.5 px-0.5 rounded bg-cyan-950 text-cyan-400 text-[9px] font-black border border-cyan-800">‼️</span>',
+        best: '<span class="ml-0.5 px-0.5 rounded bg-emerald-950 text-emerald-400 text-[9px] font-black border border-emerald-800">⭐</span>',
+        good: '<span class="ml-0.5 px-0.5 rounded bg-green-950 text-green-400 text-[9px] font-black border border-green-800">👍</span>',
+        inaccuracy: '<span class="ml-0.5 px-0.5 rounded bg-amber-950 text-amber-400 text-[9px] font-black border border-amber-800">?!</span>',
+        mistakes: '<span class="ml-0.5 px-0.5 rounded bg-orange-950 text-orange-400 text-[9px] font-black border border-orange-800">?</span>',
+        blunders: '<span class="ml-0.5 px-0.5 rounded bg-red-950 text-red-400 text-[9px] font-black border border-red-800">??</span>',
+        missed: '<span class="ml-0.5 px-0.5 rounded bg-purple-950 text-purple-400 text-[9px] font-black border border-purple-800">❌</span>'
     };
     return badges[catKey] || '';
 }
@@ -1128,7 +1128,7 @@ function renderAnalysisPGN() {
             </div>`;
 
         mobilePgnHtml += `
-            <span class="bg-zinc-900 px-2 py-1 rounded border border-zinc-800 text-zinc-300 flex items-center gap-1">
+            <span class="bg-zinc-900 px-2 py-0.5 rounded border border-zinc-800 text-zinc-300 flex items-center gap-1">
                 <span class="text-zinc-500 font-bold">${round}.</span>
                 <span class="cursor-pointer ${whiteActive}" onclick="jumpToMove(${i})">${whiteMove}${whiteBadge}</span>
                 ${blackMove ? `<span class="cursor-pointer ${blackActive}" onclick="jumpToMove(${i + 1})">${blackMove}${blackBadge}</span>` : ''}
@@ -1436,7 +1436,6 @@ function startAnalysisMode() {
         $('#mobileQuickControls').addClass('hidden');
         $('#mobileBottomNav').addClass('hidden');
         $('#mobileAnalysisBottomNav').removeClass('hidden');
-        // Hamle şeridini görünür kıl
         $('#mobileMoveStrip').removeClass('hidden');
     }
 
