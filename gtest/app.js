@@ -39,10 +39,8 @@ let actualPlayerColor = 'w';
 let showLegalMoves = true;
 let autoFlipPvP = false;
 
-// Hamlelerin kategorilendirilmiş dizin tutucuları (Tıklayıp zıplamak için)
 let moveCategoryMap = {};
 
-// Canlı maç geçmişi yalnızca görüntüleme içindir; gerçek game ve saatler değişmez.
 let liveReviewPly = null;
 const liveReviewGame = new Chess();
 
@@ -73,7 +71,6 @@ function returnToLivePosition() {
     liveReviewPly = null;
 }
 
-// ⚙️ AYARLAR VE DİNAMİK TERCİHLER
 let playSoundsEnabled = true;
 let kingCheckEffectEnabled = true;
 let moveAudioContext = null;
@@ -120,7 +117,6 @@ const openingDatabase = [
     { moves: ['e4', 'e5', 'Nf3', 'Nc6', 'Bc4'], name: 'İtalyan Açılışı' }
 ];
 
-// 🎯 KESİN MENÜ AÇMA/KAPAMA DİNLEYİCİSİ
 $(document).off('click', '#logoToggleBtn').on('click', '#logoToggleBtn', function(e) {
     e.preventDefault();
     e.stopPropagation();
@@ -1092,7 +1088,6 @@ function renderLivePGN() {
     if (mobileStrip) mobileStrip.scrollLeft = mobileStrip.scrollWidth;
 }
 
-// 🎯 KATEGORİ ROZETİ ÜRETİCİ
 function getBadgeHtml(catKey) {
     if (!catKey) return '';
     const badges = {
@@ -1172,7 +1167,6 @@ function closePreAnalysisSummary() {
     $('#preAnalysisSummary').addClass('hidden');
 }
 
-// ♟️ CHESS.COM TARZI GELİŞMİŞ ANALİZ ÖZETİ HESAPLAMA
 function openPreAnalysisSummary() {
     const history = game.history({ verbose: true });
     if (!history.length) {
@@ -1181,7 +1175,7 @@ function openPreAnalysisSummary() {
     }
 
     closePreAnalysisSummary();
-    moveCategoryMap = {}; // Temizle
+    moveCategoryMap = {};
     const runId = ++summaryAnalysisRunId;
     $('#gameOverModal').addClass('hidden');
     $('#preAnalysisSummary').removeClass('hidden');
@@ -1412,7 +1406,6 @@ function openPreAnalysisSummary() {
     summaryWorker.postMessage('uci');
 }
 
-// 🎯 TABLODAKİ SAYILARA TIKLADIĞINDA O HAMLEYE ZIPLAMA
 $(document).on('click', '.summary-click-cell', function() {
     const indices = $(this).data('indices');
     if (indices && indices.length > 0) {
@@ -1443,6 +1436,8 @@ function startAnalysisMode() {
         $('#mobileQuickControls').addClass('hidden');
         $('#mobileBottomNav').addClass('hidden');
         $('#mobileAnalysisBottomNav').removeClass('hidden');
+        // Hamle şeridini görünür kıl
+        $('#mobileMoveStrip').removeClass('hidden');
     }
 
     $('#panelTitle').text('🔍 Analiz Modu');
@@ -1665,7 +1660,6 @@ function loadSavedSettings() {
     }
 }
 
-// 📱 MOBİL ALT NAVİGASYON TIKLAMA VE AÇILMA YÖNETİMİ
 function setMobileNavActive(activeBtnId) {
     const btns = ['#mobileNavPlayBtn', '#mobileNavBotBtn', '#mobileNavTempoBtn', '#mobileNavSettingsBtn'];
     btns.forEach(id => {
