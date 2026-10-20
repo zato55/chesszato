@@ -39,7 +39,18 @@ let actualPlayerColor = 'w';
 let showLegalMoves = true;
 let autoFlipPvP = false;
 
-// Canlı maç geçmişi yalnızca görüntüleme içindir; gerçek game ve saatler değişmez.
+let moveCategoryMap = {};
+
+const moveQualityBadges = {
+    brilliant: { symbol: '‼', label: 'Harika hamle' },
+    best: { symbol: '★', label: 'En iyi hamle' },
+    good: { symbol: '👍', label: 'İyi hamle' },
+    inaccuracy: { symbol: '?!', label: 'Hatalı hamle' },
+    mistakes: { symbol: '?', label: 'Hata' },
+    blunders: { symbol: '??', label: 'Büyük hata' },
+    missed: { symbol: '✕', label: 'Kaçan kazanma fırsatı' }
+};
+
 let liveReviewPly = null;
 const liveReviewGame = new Chess();
 
@@ -64,13 +75,13 @@ function showLiveReviewPosition(ply) {
     if (liveReviewPly >= moveCount) liveReviewPly = null;
     selectedSquare = null;
     renderBoard();
+    updateStatus();
 }
 
 function returnToLivePosition() {
     liveReviewPly = null;
 }
 
-// ⚙️ AYARLAR VE DİNAMİK TERCİHLER
 let playSoundsEnabled = true;
 let moveSoundVolume = 1;
 let kingCheckEffectEnabled = true;
@@ -112,13 +123,25 @@ const openingDatabase = [
     { moves: ['d4', 'd5', 'c4'], name: 'Vezir Gambiti' },
     { moves: ['e4', 'e5', 'Nf3', 'Nc6'], name: 'Açık Oyun' },
     { moves: ['e4', 'e5', 'Nf3', 'Nf6'], name: 'Petrov Savunması' },
-    { moves: ['d4', 'Nf6', 'c4', 'g6'], name: 'Şah-Hint Savunması' },
-    { moves: ['d4', 'Nf6', 'c4', 'e6'], name: 'Nimzo / Bogo-Hint' },
+    { moves: ['d4', 'Nf6', 'c4', 'g6'], name: 'Hint Savunması' },
+    { moves: ['d4', 'Nf6', 'c4', 'e6'], name: 'Hint Savunması' },
+    { moves: ['d4', 'd5', 'c4', 'e6'], name: 'Vezir Gambiti Reddedildi' },
+    { moves: ['d4', 'd5', 'c4', 'dxc4'], name: 'Vezir Gambiti Kabul Edildi' },
+    { moves: ['e4', 'e5', 'Nf3', 'Nc6', 'Nc3'], name: 'Dört At Oyunu' },
+    { moves: ['e4', 'e5', 'Nf3', 'Nc6', 'Bc4', 'Bc5'], name: 'İtalyan Açılışı (Giuoco Piano)' },
+    { moves: ['d4', 'Nf6', 'c4', 'g6', 'Nc3', 'Bg7'], name: 'Şah-Hint Savunması' },
     { moves: ['e4', 'e5', 'Nf3', 'Nc6', 'Bb5'], name: 'Ruy Lopez (İspanyol)' },
     { moves: ['e4', 'e5', 'Nf3', 'Nc6', 'Bc4'], name: 'İtalyan Açılışı' }
 ];
 
-// 🎯 KESİN MENÜ AÇMA/KAPAMA DİNLEYİCİSİ
+// The full, CC0-licensed Lichess opening dataset is loaded before this file.
+if (Array.isArray(window.zatoOpeningDatabase)) {
+    for (const [eco, name, moveLine] of window.zatoOpeningDatabase) {
+        openingDatabase.push({ eco, name, moves: moveLine.split(' ') });
+    }
+}
+
+
 $(document).off('click', '#logoToggleBtn').on('click', '#logoToggleBtn', function(e) {
     e.preventDefault();
     e.stopPropagation();
@@ -199,7 +222,7 @@ function initStockfish() {
                     const activeGame = isAnalysisMode ? analysisGame : game;
                     if (activeGame.in_checkmate()) {
                         const winnerIsWhite = activeGame.turn() === 'b';
-                        updateEvalBar(winnerIsWhite ? 1 : -1, true);
+                        updateEvalBar(winnerIsWhite ? 1 : -1, true, true);
                     } else if (activeGame.in_draw() || activeGame.in_stalemate() || activeGame.in_threefold_repetition()) {
                         updateEvalBar(0, false);
                     } else if (pendingEvalScore) {
@@ -226,7 +249,6 @@ function initStockfish() {
                     const to = moveStr.substring(2, 4);
                     const promotion = moveStr.length > 4 ? moveStr.substring(4, 5) : 'q';
 
-                    const targetPiece = game.get(to);
                     const moveObj = game.move({ from: from, to: to, promotion: promotion });
                     if (moveObj) returnToLivePosition();
                     if (moveObj && botTurnColor === 'w' && !clockStarted) {
@@ -240,7 +262,7 @@ function initStockfish() {
                         updateTimerDisplay();
                     }
 
-                    playMoveSound(moveObj, targetPiece !== null);
+                    playMoveSound(moveObj, Boolean(moveObj && moveObj.captured));
                     renderBoard();
                     updateStatus();
                 }
@@ -256,10 +278,15 @@ function initStockfish() {
     }
 }
 
-function updateEvalBar(score, isMate) {
+function updateEvalBar(score, isMate, isCheckmate = false) {
     let scoreText, descText, percentage;
 
-    if (isMate) {
+    if (isCheckmate) {
+        const winner = score > 0 ? 'Beyaz' : 'Siyah';
+        scoreText = 'MAT';
+        descText = `Şah mat — ${winner} kazandı`;
+        percentage = score > 0 ? 98 : 2;
+    } else if (isMate) {
         scoreText = score > 0 ? `#M${score}` : `-M${Math.abs(score)}`;
         descText = score > 0 ? `Beyaz ${score} hamlede mat ediyor` : `Siyah ${Math.abs(score)} hamlede mat ediyor`;
         percentage = score > 0 ? 98 : 2;
@@ -347,7 +374,7 @@ function requestEngineAnalysis() {
             analysisSearchStopPending = true;
             stockfishWorker.postMessage('stop');
         }
-        updateEvalBar(targetGame.turn() === 'b' ? 1 : -1, true);
+        updateEvalBar(targetGame.turn() === 'b' ? 1 : -1, true, true);
         return;
     }
 
@@ -421,33 +448,158 @@ function playMoveSound(moveObj, isCapture) {
     } catch (e) {}
 }
 
-function detectOpening(side) {
-    const activeGame = getDisplayedGame();
-    const historySAN = activeGame.history();
-    if (historySAN.length === 0) return '📖 ...';
 
-    let bestMatch = '📖 ...';
-    let maxMatchedMoves = 0;
+function localizeOpeningName(name) {
+    const exactTranslations = [
+        ["Nimzowitsch Defense", "Nimzowitsch Savunması"],
+        ["Sicilian Defense", "Sicilya Savunması"],
+        ["French Defense", "Fransız Savunması"],
+        ["Caro-Kann Defense", "Caro-Kann Savunması"],
+        ["Alekhine Defense", "Alekhine Savunması"],
+        ["Scandinavian Defense", "İskandinav Savunması"],
+        ["Pirc Defense", "Pirc Savunması"],
+        ["Modern Defense", "Modern Savunma"],
+        ["Dutch Defense", "Hollanda Savunması"],
+        ["King's Indian Defense", "Şah-Hint Savunması"],
+        ["Queen's Indian Defense", "Vezir-Hint Savunması"],
+        ["Indian Defense", "Hint Savunması"],
+        ["Queen's Gambit", "Vezir Gambiti"],
+        ["King's Gambit", "Şah Gambiti"],
+        ["Italian Game", "İtalyan Açılışı"],
+        ["English Opening", "İngiliz Açılışı"],
+        ["Réti Opening", "Réti Açılışı"],
+        ["Reti Opening", "Réti Açılışı"],
+        ["King's Pawn Opening", "Şah Piyonu Açılışı"],
+        ["Queen's Pawn Opening", "Vezir Piyonu Açılışı"],
+        ["Four Knights Game", "Dört At Oyunu"],
+        ["Petrov's Defense", "Petrov Savunması"],
+        ["Petrov Defense", "Petrov Savunması"],
+        ["Bishop's Opening", "Fil Açılışı"],
+        ["Vienna Game", "Viyana Oyunu"],
+        ["Ruy Lopez", "Ruy Lopez (İspanyol Açılışı)"],
+        ["King's Indian", "Şah-Hint"],
+        ["Queen's Indian", "Vezir-Hint"],
+        ["Nimzo-Indian", "Nimzo-Hint"],
+        ["Old Indian", "Eski Hint"],
+        ["Bogo-Indian", "Bogo-Hint"],
+        ["Grünfeld", "Grünfeld"],
+        ["Queen's Gambit", "Vezir Gambiti"],
+        ["King's Gambit", "Şah Gambiti"],
+        ["Queen's Pawn", "Vezir Piyonu"],
+        ["King's Pawn", "Şah Piyonu"],
+        ["Bird Opening", "Bird Açılışı"],
+        ["Réti", "Réti"],
+        ["Benoni", "Benoni"],
+        ["Catalan Opening", "Katalan Açılışı"],
+        ["Slav Defense", "Slav Savunması"],
+        ["Semi-Slav Defense", "Yarı-Slav Savunması"],
+        ["King's Indian Attack", "Şah-Hint Atağı"],
+        ["London System", "Londra Sistemi"],
+        ["Colle System", "Colle Sistemi"],
+        ["Trompowsky Attack", "Trompowsky Atağı"],
+        ["Polish Opening", "Polonya Açılışı"],
+        ["Scotch Game", "İskoç Oyunu"],
+        ["Spanish Game", "İspanyol Oyunu"],
+        ["Four Knights", "Dört At"],
+        ["Three Knights", "Üç At"],
+        ["Two Knights", "İki At"],
+        ["Open Game", "Açık Oyun"],
+        ["Closed Game", "Kapalı Oyun"]
+    ];
+
+    for (const [english, turkish] of exactTranslations) {
+        if (name === english || name.startsWith(english + ":")) {
+            name = turkish + name.slice(english.length);
+            break;
+        }
+    }
+
+    const terms = [
+        [/\bCountergambit\b/g, "Karşı Gambit"],
+        [/\bDefense\b/g, "Savunması"],
+        [/\bDefence\b/g, "Savunması"],
+        [/\bOpening\b/g, "Açılışı"],
+        [/\bGambit\b/g, "Gambiti"],
+        [/\bAttack\b/g, "Atağı"],
+        [/\bGame\b/g, "Oyunu"],
+        [/\bSystem\b/g, "Sistemi"],
+        [/\bVariation\b/g, "Varyantı"],
+        [/\bLine\b/g, "Hattı"],
+        [/\bAccepted\b/g, "Kabul Edildi"],
+        [/\bDeclined\b/g, "Reddedildi"],
+        [/\bExchange\b/g, "Değişim"],
+        [/\bClassical\b/g, "Klasik"],
+        [/\bClassical Variation\b/g, "Klasik Varyant"],
+        [/\bModern\b/g, "Modern"],
+        [/\bIndian\b/g, "Hint"],
+        [/\bSicilian\b/g, "Sicilya"],
+        [/\bFrench\b/g, "Fransız"],
+        [/\bDutch\b/g, "Hollanda"],
+        [/\bEnglish\b/g, "İngiliz"],
+        [/\bSpanish\b/g, "İspanyol"],
+        [/\bItalian\b/g, "İtalyan"],
+        [/\bScandinavian\b/g, "İskandinav"],
+        [/\bVienna\b/g, "Viyana"],
+        [/\bAustrian\b/g, "Avusturya"],
+        [/\bHungarian\b/g, "Macar"],
+        [/\bPolish\b/g, "Polonya"],
+        [/\bRussian\b/g, "Rus"],
+        [/\bGerman\b/g, "Alman"],
+        [/\bDanish\b/g, "Danimarka"],
+        [/\bDutch\b/g, "Hollanda"],
+        [/\bQueen's\b/g, "Vezir"],
+        [/\bKing's\b/g, "Şah"],
+        [/\bPawn\b/g, "Piyonu"],
+        [/\bBishop\b/g, "Fil"],
+        [/\bKnight\b/g, "At"],
+        [/\bRook\b/g, "Kale"],
+        [/\bQueen\b/g, "Vezir"],
+        [/\bKing\b/g, "Şah"],
+        [/\bCenter\b/g, "Merkez"],
+        [/\bCentre\b/g, "Merkez"],
+        [/\bWing\b/g, "Kanat"],
+        [/\bSide\b/g, "Kanat"],
+        [/\bFianchetto\b/g, "Fianchetto"],
+        [/\bTarrasch\b/g, "Tarrasch"],
+        [/\bClassical\b/g, "Klasik"],
+        [/\bSymmetrical\b/g, "Simetrik"],
+        [/\bAccelerated\b/g, "Hızlandırılmış"],
+        [/\bHyperaccelerated\b/g, "Aşırı Hızlandırılmış"],
+        [/\bRetreat\b/g, "Geri Çekilme"],
+        [/\bBlitz\b/g, "Blitz"],
+        [/\bTrap\b/g, "Tuzağı"],
+        [/\bGunderam\b/g, "Gunderam"]
+    ];
+
+    for (const [pattern, translated] of terms) {
+        name = name.replace(pattern, translated);
+    }
+
+    return name;
+}
+
+function findOpeningForSide(historySAN, side) {
+    let bestMatch = null;
 
     for (const opening of openingDatabase) {
         const owner = (opening.moves.length % 2 === 1) ? 'w' : 'b';
-        if (owner !== side) continue;
+        if (owner !== side || opening.moves.length > historySAN.length) continue;
 
-        if (opening.moves.length <= historySAN.length) {
-            let match = true;
-            for (let i = 0; i < opening.moves.length; i++) {
-                if (historySAN[i] !== opening.moves[i]) {
-                    match = false;
-                    break;
-                }
-            }
-            if (match && opening.moves.length > maxMatchedMoves) {
-                maxMatchedMoves = opening.moves.length;
-                bestMatch = '📖 ' + opening.name;
-            }
+        const matches = opening.moves.every((move, index) => historySAN[index] === move);
+        if (matches && (!bestMatch || opening.moves.length > bestMatch.moves.length)) {
+            bestMatch = opening;
         }
     }
+
     return bestMatch;
+}
+
+function detectOpening(side) {
+    const historySAN = getDisplayedGame().history();
+    const opening = findOpeningForSide(historySAN, side);
+    if (opening) return '📖 ' + localizeOpeningName(opening.name);
+    if (side === 'b' && historySAN.length >= 2 && findOpeningForSide(historySAN, 'w')) return '📖 Özel savunma adı yok';
+    return '📖 ...';
 }
 
 function drawChessComCapturedPieces(capturedArr, isWhiteCaptures) {
@@ -466,11 +618,11 @@ function drawChessComCapturedPieces(capturedArr, isWhiteCaptures) {
     order.forEach(type => {
         const count = counts[type];
         if (count > 0) {
-            html += `<div class="captured-group">`;
+            html += `<div class="captured-group flex items-center shrink-0">`;
             for (let i = 0; i < count; i++) {
                 const imgKey = isWhiteCaptures ? type : type.toUpperCase();
-                const stackedClass = i > 0 ? 'captured-stacked' : '';
-                html += `<img src="${getPieceSVG(imgKey)}" class="captured-icon ${stackedClass}">`;
+                const stackedClass = i > 0 ? '-ml-1.5' : '';
+                html += `<img src="${getPieceSVG(imgKey)}" class="w-3.5 h-3.5 object-contain ${stackedClass}">`;
             }
             html += `</div>`;
         }
@@ -485,17 +637,13 @@ function updatePlayerCards() {
 
     let whiteCaptured = [];
     let blackCaptured = [];
-    let whiteScore = 0;
-    let blackScore = 0;
 
     history.forEach(m => {
         if (m.captured) {
             if (m.color === 'w') {
                 whiteCaptured.push(m.captured);
-                whiteScore += pieceValues[m.captured] || 0;
             } else {
                 blackCaptured.push(m.captured);
-                blackScore += pieceValues[m.captured] || 0;
             }
         }
     });
@@ -539,18 +687,23 @@ function updatePlayerCards() {
             .toggleClass('bg-zinc-900 text-white', bottomColor === 'b');
     }
 
+    const openingForWhite = detectOpening('w');
+    const openingForBlack = detectOpening('b');
+
+    if (!isFlipped) {
+        $('#topOpeningText').text(openingForBlack);
+        $('#bottomOpeningText').text(openingForWhite);
+    } else {
+        $('#topOpeningText').text(openingForWhite);
+        $('#bottomOpeningText').text(openingForBlack);
+    }
+
     if (!isFlipped) {
         $('#topCapturedPieces').html(drawChessComCapturedPieces(blackCaptured, false));
         $('#bottomCapturedPieces').html(drawChessComCapturedPieces(whiteCaptured, true));
-
-        $('#topMaterialDiff').text(blackScore > whiteScore ? `+${blackScore - whiteScore}` : '');
-        $('#bottomMaterialDiff').text(whiteScore > blackScore ? `+${whiteScore - blackScore}` : '');
     } else {
         $('#topCapturedPieces').html(drawChessComCapturedPieces(whiteCaptured, true));
         $('#bottomCapturedPieces').html(drawChessComCapturedPieces(blackCaptured, false));
-
-        $('#topMaterialDiff').text(whiteScore > blackScore ? `+${whiteScore - blackScore}` : '');
-        $('#bottomMaterialDiff').text(blackScore > whiteScore ? `+${blackScore - blackScore}` : '');
     }
 }
 
@@ -657,6 +810,20 @@ function renderBoard() {
                 .addClass(isLight ? 'square-light' : 'square-dark')
                 .attr('data-square', squareName);
 
+            // Koordinatları yalnızca tahtanın görünen sol ve alt kenarındaki karelere ekle.
+            if (c === 0) {
+                $('<span></span>')
+                    .addClass('board-coordinate board-coordinate-rank')
+                    .text(squareName[1])
+                    .appendTo($square);
+            }
+            if (r === 7) {
+                $('<span></span>')
+                    .addClass('board-coordinate board-coordinate-file')
+                    .text(squareName[0])
+                    .appendTo($square);
+            }
+
             if (selectedSquare === squareName) {
                 $square.addClass('selected');
             }
@@ -683,6 +850,18 @@ function renderBoard() {
                 $square.append($img);
             }
 
+            // Sembolü hedef karenin pseudo-element katmanına bağla; taşın flex düzeni etkilenmez.
+            if (isAnalysisMode && lastMove && squareName === lastMove.to) {
+                const category = moveCategoryMap[analysisIdx];
+                const badge = moveQualityBadges[category];
+                if (badge) {
+                    $square
+                        .addClass('analysis-quality-' + category)
+                        .attr('data-quality-symbol', badge.symbol)
+                        .attr('data-quality-label', badge.label);
+                }
+            }
+
             $board.append($square);
         }
     }
@@ -707,7 +886,11 @@ function handleMove(from, to) {
     const isWhite = activeGame.turn() === 'w';
 
     if (movingPiece && movingPiece.type === 'p') {
-        if ((isWhite && to.charAt(1) === '8') || (!isWhite && to.charAt(1) === '1')) {
+        const reachesPromotionRank = (isWhite && to.charAt(1) === '8') || (!isWhite && to.charAt(1) === '1');
+        const isLegalPromotionMove = reachesPromotionRank && activeGame.moves({ square: from, verbose: true })
+            .some(move => move.to === to && move.promotion);
+
+        if (isLegalPromotionMove) {
             pendingMove = { from: from, to: to };
             openPromotionModal(isWhite ? 'w' : 'b');
             return;
@@ -721,7 +904,6 @@ function executeMove(from, to, promoPiece) {
     if (isGameOver && !isReviewing && !isAnalysisMode) return;
 
     const activeGame = isAnalysisMode ? analysisGame : game;
-    const targetPiece = activeGame.get(to);
     const movingColor = activeGame.turn();
 
     const moveObj = activeGame.move({ from: from, to: to, promotion: promoPiece });
@@ -735,7 +917,7 @@ function executeMove(from, to, promoPiece) {
             updateTimerDisplay();
         }
 
-        playMoveSound(moveObj, targetPiece !== null);
+        playMoveSound(moveObj, Boolean(moveObj && moveObj.captured));
         selectedSquare = null;
 
         if (isAnalysisMode) {
@@ -1001,23 +1183,15 @@ function showGameOverModal(title, reason, icon = '🏆') {
 }
 
 function updateStatus() {
-    const activeGame = isAnalysisMode ? analysisGame : game;
+    const reviewingLivePosition = !isAnalysisMode && liveReviewPly !== null;
+    const activeGame = isAnalysisMode ? analysisGame : getDisplayedGame();
     const moveColor = activeGame.turn() === 'b' ? 'Siyah' : 'Beyaz';
-
-    const openingForWhite = detectOpening('w');
-    const openingForBlack = detectOpening('b');
-
-    if (!isFlipped) {
-        $('#topOpeningText').text(openingForBlack);
-        $('#bottomOpeningText').text(openingForWhite);
-    } else {
-        $('#topOpeningText').text(openingForWhite);
-        $('#bottomOpeningText').text(openingForBlack);
-    }
 
     if (activeGame.in_checkmate()) {
         if (isAnalysisMode) {
             $('#status').text('Analiz: Şah Mat');
+        } else if (reviewingLivePosition) {
+            $('#status').text('🔍 Geçmiş Konum (Şah Mat)');
         } else if (!isReviewing) {
             isGameOver = true;
             $('#status').text('Şah Mat!');
@@ -1038,6 +1212,8 @@ function updateStatus() {
     } else if (activeGame.in_draw()) {
         if (isAnalysisMode) {
             $('#status').text('Analiz: Berabere');
+        } else if (reviewingLivePosition) {
+            $('#status').text('🔍 Geçmiş Konum (Berabere)');
         } else if (!isReviewing) {
             isGameOver = true;
             $('#status').text('Berabere');
@@ -1048,7 +1224,8 @@ function updateStatus() {
     } else {
         let statusText = 'Sıra: ' + moveColor;
         if (activeGame.in_check()) statusText = moveColor + ' (Şah!)';
-        if (isAnalysisMode) statusText = '🔍 Analiz — ' + statusText;
+        if (reviewingLivePosition) statusText = '🔍 Geçmiş Konum — ' + statusText;
+        else if (isAnalysisMode) statusText = '🔍 Analiz — ' + statusText;
         else if (isReviewing) statusText = '🔍 İnceleme — ' + statusText;
         $('#status').text(statusText);
     }
@@ -1077,7 +1254,7 @@ function renderLivePGN() {
                 <span class="pgn-move text-blue-400 font-medium" onclick="jumpToMove(${i + 1})">${blackMove}</span>
             </div>`;
 
-        mobilePgnHtml += `<span class="bg-zinc-900 px-2 py-1 rounded border border-zinc-800 text-zinc-300"><span class="text-zinc-500 font-bold mr-1">${round}.</span>${whiteMove} ${blackMove}</span>`;
+        mobilePgnHtml += `<span class="bg-zinc-900 px-2 py-0.5 rounded border border-zinc-800 text-zinc-300"><span class="text-zinc-500 font-bold mr-1">${round}.</span>${whiteMove} ${blackMove}</span>`;
     }
 
     $('#pgn').html(pgnHtml);
@@ -1090,13 +1267,38 @@ function renderLivePGN() {
     if (mobileStrip) mobileStrip.scrollLeft = mobileStrip.scrollWidth;
 }
 
+function getBadgeHtml(catKey) {
+    const badge = moveQualityBadges[catKey];
+    if (!badge) return '';
+
+    const badgeClasses = {
+        brilliant: 'bg-cyan-950 text-cyan-400 border-cyan-800',
+        best: 'bg-emerald-950 text-emerald-400 border-emerald-800',
+        good: 'bg-green-950 text-green-400 border-green-800',
+        inaccuracy: 'bg-amber-950 text-amber-400 border-amber-800',
+        mistakes: 'bg-orange-950 text-orange-400 border-orange-800',
+        blunders: 'bg-red-950 text-red-400 border-red-800',
+        missed: 'bg-purple-950 text-purple-400 border-purple-800'
+    };
+
+    return '<span class="ml-0.5 px-0.5 rounded text-[9px] font-black border ' +
+        badgeClasses[catKey] + '">' + badge.symbol + '</span>';
+}
+
 function renderAnalysisPGN() {
     let pgnHtml = '';
+    let mobilePgnHtml = '';
 
     for (let i = 0; i < analysisMoveHistory.length; i += 2) {
         const round = Math.floor(i / 2) + 1;
         const whiteActive = (i === analysisIdx) ? 'pgn-move-active' : '';
         const blackActive = (i + 1 === analysisIdx) ? 'pgn-move-active' : '';
+
+        const whiteCat = moveCategoryMap[i];
+        const blackCat = moveCategoryMap[i + 1];
+
+        const whiteBadge = getBadgeHtml(whiteCat);
+        const blackBadge = getBadgeHtml(blackCat);
 
         const whiteMove = analysisMoveHistory[i].from + '→' + analysisMoveHistory[i].to;
         const blackMove = analysisMoveHistory[i + 1] ? analysisMoveHistory[i + 1].from + '→' + analysisMoveHistory[i + 1].to : '';
@@ -1104,15 +1306,23 @@ function renderAnalysisPGN() {
         pgnHtml += `
             <div class="py-1 border-b border-zinc-800/50 flex justify-between gap-2 items-center">
                 <span class="text-zinc-600 font-semibold">${round}.</span>
-                <span class="pgn-move text-zinc-300 font-medium ${whiteActive}" onclick="jumpToMove(${i})">${whiteMove}</span>
-                <span class="pgn-move text-blue-400 font-medium ${blackActive}" onclick="jumpToMove(${i + 1})">${blackMove}</span>
+                <span class="pgn-move text-zinc-300 font-medium ${whiteActive}" onclick="jumpToMove(${i})">${whiteMove}${whiteBadge}</span>
+                <span class="pgn-move text-blue-400 font-medium ${blackActive}" onclick="jumpToMove(${i + 1})">${blackMove}${blackBadge}</span>
             </div>`;
+
+        mobilePgnHtml += `
+            <span class="bg-zinc-900 px-2 py-0.5 rounded border border-zinc-800 text-zinc-300 flex items-center gap-1">
+                <span class="text-zinc-500 font-bold">${round}.</span>
+                <span class="cursor-pointer ${whiteActive}" onclick="jumpToMove(${i})">${whiteMove}${whiteBadge}</span>
+                ${blackMove ? `<span class="cursor-pointer ${blackActive}" onclick="jumpToMove(${i + 1})">${blackMove}${blackBadge}</span>` : ''}
+            </span>`;
     }
 
     $('#pgn').html(pgnHtml || '<span class="text-zinc-600 italic">Analiz için hamle yok</span>');
+    $('#mobilePgnList').html(mobilePgnHtml || '<span class="text-zinc-600 italic">Analiz için hamle yok</span>');
 
     const activeEl = document.querySelector('.pgn-move-active');
-    if (activeEl) activeEl.scrollIntoView({ block: 'nearest' });
+    if (activeEl) activeEl.scrollIntoView({ block: 'nearest', inline: 'center' });
 }
 
 window.jumpToMove = function(idx) {
@@ -1148,6 +1358,7 @@ function openPreAnalysisSummary() {
     }
 
     closePreAnalysisSummary();
+    moveCategoryMap = {};
     const runId = ++summaryAnalysisRunId;
     $('#gameOverModal').addClass('hidden');
     $('#preAnalysisSummary').removeClass('hidden');
@@ -1155,22 +1366,27 @@ function openPreAnalysisSummary() {
         ? (game.turn() === 'b' ? 'Beyaz kazandı · Şah mat' : 'Siyah kazandı · Şah mat')
         : game.in_draw() ? 'Berabere' : 'Maç özeti');
     $('#summaryMoveCount').text(history.length);
-    $('#summaryOpening').text(detectOpening('w') || detectOpening('b') || 'Tanımlanamadı');
+    const summaryHistorySAN = history.map(move => move.san);
+    const summaryWhiteOpening = findOpeningForSide(summaryHistorySAN, 'w');
+    const summaryBlackOpening = findOpeningForSide(summaryHistorySAN, 'b');
+    $('#summaryWhiteOpening').text(summaryWhiteOpening ? '📖 ' + localizeOpeningName(summaryWhiteOpening.name) : 'Tanımlanamadı');
+    $('#summaryBlackOpening').text(summaryBlackOpening ? '📖 ' + localizeOpeningName(summaryBlackOpening.name) : 'Tanımlanamadı');
     $('#summaryBookMoves').text('Hesaplanıyor…');
     $('#summaryProgressBar').css('width', '0%');
     $('#summaryProgressText').text('Konumlar Stockfish ile değerlendiriliyor…');
     $('#summaryContinueBtn').prop('disabled', true);
-    $('#summaryWhiteAccuracy, #summaryBlackAccuracy, #summaryWhiteMistakes, #summaryBlackMistakes, #summaryWhiteBlunders, #summaryBlackBlunders, #summaryWhiteMissed, #summaryBlackMissed').text('—');
+
+    $('#summaryWhiteAccuracy, #summaryBlackAccuracy, #summaryWhiteBrilliant, #summaryBlackBrilliant, #summaryWhiteBest, #summaryBlackBest, #summaryWhiteGood, #summaryBlackGood, #summaryWhiteInaccuracy, #summaryBlackInaccuracy, #summaryWhiteMistakes, #summaryBlackMistakes, #summaryWhiteBlunders, #summaryBlackBlunders, #summaryWhiteMissed, #summaryBlackMissed, #summaryWhiteAcpl, #summaryBlackAcpl').text('—');
 
     const positions = [];
     const terminalScores = [];
     const replay = new Chess();
     positions.push(replay.fen());
     terminalScores.push(null);
+
     history.forEach(move => {
         replay.move(move);
         positions.push(replay.fen());
-        // Şah matla biten son konumda yasal hamle olmadığından motoru çalıştırma.
         terminalScores.push(replay.in_checkmate()
             ? (replay.turn() === 'b' ? 10000 : -10000)
             : null);
@@ -1192,16 +1408,19 @@ function openPreAnalysisSummary() {
     let positionIndex = 0;
     let latestScore = 0;
     let currentFenTurn = 'w';
+
     const finishWithFallback = (message) => {
         if (runId !== summaryAnalysisRunId) return;
         if (summaryAnalysisTimeout) {
             clearTimeout(summaryAnalysisTimeout);
             summaryAnalysisTimeout = null;
         }
-        if (summaryWorker) summaryWorker.terminate();
-        summaryWorker = null;
+        if (summaryWorker) {
+            summaryWorker.terminate();
+            summaryWorker = null;
+        }
         $('#summaryProgressText').text(message);
-        $('#summaryFootnote').text('Stockfish değerlendirmesi tamamlanamadı. Hamle ve tanımlı açılış bilgileri gösteriliyor; doğruluk ve hata istatistikleri hesaplanamadı.');
+        $('#summaryFootnote').text('Stockfish değerlendirmesi tamamlanamadı. Hamle ve tanımlı açılış bilgileri gösteriliyor; detaylı metrikler hesaplanamadı.');
         $('#summaryContinueBtn').prop('disabled', false);
     };
 
@@ -1213,9 +1432,53 @@ function openPreAnalysisSummary() {
         return;
     }
 
+    summaryWorker.onmessage = function(event) {
+        if (runId !== summaryAnalysisRunId) return;
+        const message = event.data;
+        if (typeof message !== 'string') return;
+
+        if (message.trim() === 'uciok') {
+            summaryWorker.postMessage('isready');
+            return;
+        }
+
+        if (message.trim() === 'readyok') {
+            if (summaryAnalysisTimeout) clearTimeout(summaryAnalysisTimeout);
+            evaluateNext();
+            return;
+        }
+
+        const parts = message.split(' ');
+        const cpIdx = parts.indexOf('cp');
+        const mateIdx = parts.indexOf('mate');
+
+        if (message.includes(' score cp ') && cpIdx !== -1 && parts[cpIdx + 1]) {
+            let cp = parseInt(parts[cpIdx + 1], 10);
+            latestScore = currentFenTurn === 'b' ? -cp : cp;
+        } else if (message.includes(' score mate ') && mateIdx !== -1 && parts[mateIdx + 1]) {
+            const mate = parseInt(parts[mateIdx + 1], 10);
+            let mateScore = mate > 0 ? 10000 : mate < 0 ? -10000 : 0;
+            latestScore = currentFenTurn === 'b' ? -mateScore : mateScore;
+        }
+
+        if (message.startsWith('bestmove')) {
+            if (summaryAnalysisTimeout) {
+                clearTimeout(summaryAnalysisTimeout);
+                summaryAnalysisTimeout = null;
+            }
+            evaluations[positionIndex] = latestScore;
+            positionIndex++;
+            $('#summaryProgressBar').css('width', Math.round(positionIndex / positions.length * 100) + '%');
+            $('#summaryProgressText').text('Konum ' + positionIndex + ' / ' + positions.length + ' değerlendirildi.');
+            evaluateNext();
+        }
+    };
+
+    summaryWorker.onerror = () => finishWithFallback('Stockfish yüklenirken hata oluştu.');
+
     const evaluateNext = () => {
         if (runId !== summaryAnalysisRunId || !summaryWorker) return;
-        // Mat son konumunun puanını satranç durumundan belirle; Stockfish'e gönderme.
+
         if (Number.isFinite(terminalScores[positionIndex])) {
             evaluations[positionIndex] = terminalScores[positionIndex];
             positionIndex++;
@@ -1224,38 +1487,85 @@ function openPreAnalysisSummary() {
             evaluateNext();
             return;
         }
+
         if (positionIndex >= positions.length) {
             const metrics = {
-                w: { losses: [], mistakes: 0, blunders: 0, missed: 0 },
-                b: { losses: [], mistakes: 0, blunders: 0, missed: 0 }
+                w: { losses: [], brilliant: [], best: [], good: [], inaccuracy: [], mistakes: [], blunders: [], missed: [] },
+                b: { losses: [], brilliant: [], best: [], good: [], inaccuracy: [], mistakes: [], blunders: [], missed: [] }
             };
+
             history.forEach((move, i) => {
                 const before = evaluations[i];
                 const after = evaluations[i + 1];
                 if (!Number.isFinite(before) || !Number.isFinite(after)) return;
+
                 const lossCp = Math.max(0, move.color === 'w' ? before - after : after - before);
                 const player = metrics[move.color];
                 player.losses.push(lossCp);
-                if (lossCp >= 100 && lossCp < 300) player.mistakes++;
-                if (lossCp >= 300) player.blunders++;
+
                 const beforeForMover = move.color === 'w' ? before : -before;
                 const afterForMover = move.color === 'w' ? after : -after;
-                if (beforeForMover >= 300 && afterForMover < 100) player.missed++;
+
+                let catKey = 'good';
+
+                if (move.captured && lossCp <= 10 && beforeForMover <= -100 && afterForMover >= 150) {
+                    player.brilliant.push(i);
+                    catKey = 'brilliant';
+                } else if (lossCp <= 12) {
+                    player.best.push(i);
+                    catKey = 'best';
+                } else if (lossCp <= 40) {
+                    player.good.push(i);
+                    catKey = 'good';
+                } else if (lossCp <= 100) {
+                    player.inaccuracy.push(i);
+                    catKey = 'inaccuracy';
+                } else if (lossCp < 300) {
+                    player.mistakes.push(i);
+                    catKey = 'mistakes';
+                } else {
+                    player.blunders.push(i);
+                    catKey = 'blunders';
+                }
+
+                if (beforeForMover >= 250 && afterForMover < 80) {
+                    player.missed.push(i);
+                    catKey = 'missed';
+                }
+
+                moveCategoryMap[i] = catKey;
             });
+
             const accuracy = (player) => player.losses.length
                 ? Math.round(player.losses.reduce((sum, loss) => sum + 100 * Math.exp(-loss / 400), 0) / player.losses.length) + '%'
                 : '—';
+
+            const acpl = (player) => player.losses.length
+                ? Math.round(player.losses.reduce((a, b) => a + b, 0) / player.losses.length)
+                : '—';
+
             $('#summaryWhiteAccuracy').text(accuracy(metrics.w));
-            $('#summaryWhiteMistakes').text(metrics.w.mistakes);
-            $('#summaryWhiteBlunders').text(metrics.w.blunders);
-            $('#summaryWhiteMissed').text(metrics.w.missed);
+            $('#summaryWhiteBrilliant').text(metrics.w.brilliant.length).data('indices', metrics.w.brilliant);
+            $('#summaryWhiteBest').text(metrics.w.best.length).data('indices', metrics.w.best);
+            $('#summaryWhiteGood').text(metrics.w.good.length).data('indices', metrics.w.good);
+            $('#summaryWhiteInaccuracy').text(metrics.w.inaccuracy.length).data('indices', metrics.w.inaccuracy);
+            $('#summaryWhiteMistakes').text(metrics.w.mistakes.length).data('indices', metrics.w.mistakes);
+            $('#summaryWhiteBlunders').text(metrics.w.blunders.length).data('indices', metrics.w.blunders);
+            $('#summaryWhiteMissed').text(metrics.w.missed.length).data('indices', metrics.w.missed);
+            $('#summaryWhiteAcpl').text(acpl(metrics.w));
+
             $('#summaryBlackAccuracy').text(accuracy(metrics.b));
-            $('#summaryBlackMistakes').text(metrics.b.mistakes);
-            $('#summaryBlackBlunders').text(metrics.b.blunders);
-            $('#summaryBlackMissed').text(metrics.b.missed);
+            $('#summaryBlackBrilliant').text(metrics.b.brilliant.length).data('indices', metrics.b.brilliant);
+            $('#summaryBlackBest').text(metrics.b.best.length).data('indices', metrics.b.best);
+            $('#summaryBlackGood').text(metrics.b.good.length).data('indices', metrics.b.good);
+            $('#summaryBlackInaccuracy').text(metrics.b.inaccuracy.length).data('indices', metrics.b.inaccuracy);
+            $('#summaryBlackMistakes').text(metrics.b.mistakes.length).data('indices', metrics.b.mistakes);
+            $('#summaryBlackBlunders').text(metrics.b.blunders.length).data('indices', metrics.b.blunders);
+            $('#summaryBlackMissed').text(metrics.b.missed.length).data('indices', metrics.b.missed);
+            $('#summaryBlackAcpl').text(acpl(metrics.b));
+
             $('#summaryProgressBar').css('width', '100%');
             $('#summaryProgressText').text('Değerlendirme tamamlandı.');
-            $('#summaryFootnote').text('Tahmini doğruluk ve hata sınıfları, Stockfish 10 derinlik 6 değerlendirmelerindeki hamle öncesi/sonrası farklardan hesaplanır; Chess.com puanlamasıyla aynı değildir. “Tanımlı açılış hamleleri” yalnızca uygulamadaki sınırlı açılış listesini ifade eder.');
             if (summaryAnalysisTimeout) {
                 clearTimeout(summaryAnalysisTimeout);
                 summaryAnalysisTimeout = null;
@@ -1265,64 +1575,33 @@ function openPreAnalysisSummary() {
             $('#summaryContinueBtn').prop('disabled', false);
             return;
         }
+
         if (summaryAnalysisTimeout) clearTimeout(summaryAnalysisTimeout);
         summaryAnalysisTimeout = setTimeout(() => {
             finishWithFallback('Stockfish bir konumu zamanında değerlendiremedi.');
         }, 20000);
+
         currentFenTurn = positions[positionIndex].split(' ')[1] || 'w';
-        // Geçerli bir motor skoru gelmediyse bu konumu 0 cp varsayma.
-        latestScore = null;
+        latestScore = 0;
         summaryWorker.postMessage('position fen ' + positions[positionIndex]);
         summaryWorker.postMessage('go depth 6');
     };
 
-    summaryWorker.onmessage = function(event) {
-        if (runId !== summaryAnalysisRunId) return;
-        const message = event.data;
-        if (typeof message !== 'string') return;
-        if (message.trim() === 'uciok') {
-            summaryWorker.postMessage('isready');
-            return;
-        }
-        if (message.trim() === 'readyok') {
-            if (summaryAnalysisTimeout) clearTimeout(summaryAnalysisTimeout);
-            evaluateNext();
-            return;
-        }
-        const parts = message.split(' ');
-        const cpIdx = parts.indexOf('cp');
-        const mateIdx = parts.indexOf('mate');
-        // UCI upperbound/lowerbound skorları kesin değerlendirme değildir; son kesin skoru koru.
-        const isBoundScore = message.includes(' upperbound') || message.includes(' lowerbound');
-        if (!isBoundScore && message.includes(' score cp ') && cpIdx !== -1 && parts[cpIdx + 1]) {
-            const score = parseInt(parts[cpIdx + 1], 10);
-            if (Number.isFinite(score)) latestScore = score;
-        } else if (!isBoundScore && message.includes(' score mate ') && mateIdx !== -1 && parts[mateIdx + 1]) {
-            const mate = parseInt(parts[mateIdx + 1], 10);
-            if (Number.isFinite(mate)) latestScore = mate > 0 ? 10000 : mate < 0 ? -10000 : 0;
-        }
-        if (message.startsWith('bestmove')) {
-            if (summaryAnalysisTimeout) {
-                clearTimeout(summaryAnalysisTimeout);
-                summaryAnalysisTimeout = null;
-            }
-            evaluations[positionIndex] = Number.isFinite(latestScore)
-                ? (currentFenTurn === 'w' ? latestScore : -latestScore)
-                : null;
-            positionIndex++;
-            $('#summaryProgressBar').css('width', Math.round(positionIndex / positions.length * 100) + '%');
-            $('#summaryProgressText').text('Konum ' + positionIndex + ' / ' + positions.length + ' değerlendirildi.');
-            evaluateNext();
-        }
-    };
-    summaryWorker.onerror = () => finishWithFallback('Stockfish yüklenirken hata oluştu.');
-
-    // Önce UCI el sıkışmasını tamamla; motor hazır olmadan analiz komutu gönderme.
     summaryAnalysisTimeout = setTimeout(() => {
         finishWithFallback('Stockfish başlatma yanıtı vermedi; analiz süresi aşıldı.');
     }, 20000);
     summaryWorker.postMessage('uci');
 }
+
+$(document).on('click', '.summary-click-cell', function() {
+    const indices = $(this).data('indices');
+    if (indices && indices.length > 0) {
+        const targetMoveIdx = indices[0];
+        closePreAnalysisSummary();
+        startAnalysisMode();
+        jumpToMove(targetMoveIdx);
+    }
+});
 
 function startAnalysisMode() {
     returnToLivePosition();
@@ -1336,8 +1615,6 @@ function startAnalysisMode() {
     $('#evalScoreWrapper').removeClass('hidden');
     
     $('#gameplayConfigGroup').addClass('hidden');
-    
-    /* 🎯 CANLI OYUN KONTROLLERİNİ TAMAMEN GİZLİYORUZ */
     $('#liveGameControls').addClass('hidden');
     $('#analysisNav').removeClass('hidden');
 
@@ -1346,6 +1623,7 @@ function startAnalysisMode() {
         $('#mobileQuickControls').addClass('hidden');
         $('#mobileBottomNav').addClass('hidden');
         $('#mobileAnalysisBottomNav').removeClass('hidden');
+        $('#mobileMoveStrip').removeClass('hidden');
     }
 
     $('#panelTitle').text('🔍 Analiz Modu');
@@ -1357,7 +1635,9 @@ function startAnalysisMode() {
     analysisMainlineHistory = game.history({ verbose: true });
     analysisMoveHistory = analysisMainlineHistory.slice();
     analysisBranchStartIdx = null;
-    analysisIdx = analysisMoveHistory.length - 1;
+    if (analysisIdx < 0) {
+        analysisIdx = analysisMoveHistory.length - 1;
+    }
 
     updateAnalysisBoard();
 }
@@ -1375,8 +1655,6 @@ function exitAnalysisMode() {
 
     $('#gameplayConfigGroup').removeClass('hidden');
     $('#analysisNav').addClass('hidden');
-    
-    /* 🎯 CANLI OYUN KONTROLLERİNİ GERİ GETİRİYORUZ */
     $('#liveGameControls').removeClass('hidden');
 
     $('#mobileAnalysisPanel').addClass('hidden');
@@ -1580,7 +1858,6 @@ function loadSavedSettings() {
     }
 }
 
-// 📱 MOBİL ALT NAVİGASYON TIKLAMA VE AÇILMA YÖNETİMİ
 function setMobileNavActive(activeBtnId) {
     const btns = ['#mobileNavPlayBtn', '#mobileNavBotBtn', '#mobileNavTempoBtn', '#mobileNavSettingsBtn'];
     btns.forEach(id => {
@@ -1729,6 +2006,7 @@ function resetGame() {
     pendingEvalScore = null;
     currentEvalScore = 0;
     currentBestMove = null;
+    moveCategoryMap = {};
     clearArrow();
 
     if (userColorSelection === 'r') {
