@@ -813,8 +813,9 @@ aside.collapsed #logoToggleBtn {
 }
 
 
-/* Analiz modunda hamlenin kalite işareti, varış karesinin sağ üstünde görünür. */
-.analysis-move-quality-badge {
+/* Analiz kalite sembolü kareye aittir; pseudo-element akışa katılmaz ve taşı kaydırmaz. */
+#board > div[class*="analysis-quality-"]::after {
+    content: attr(data-quality-symbol);
     position: absolute;
     top: 1px;
     right: 1px;
@@ -837,17 +838,15 @@ aside.collapsed #logoToggleBtn {
     pointer-events: none;
     box-sizing: border-box;
 }
-
-.analysis-move-quality-badge.quality-brilliant { background: #0e7490; border-color: #67e8f9; }
-.analysis-move-quality-badge.quality-best { background: #047857; border-color: #6ee7b7; }
-.analysis-move-quality-badge.quality-good { background: #15803d; border-color: #86efac; }
-.analysis-move-quality-badge.quality-inaccuracy { background: #b45309; border-color: #fcd34d; }
-.analysis-move-quality-badge.quality-mistakes { background: #c2410c; border-color: #fdba74; }
-.analysis-move-quality-badge.quality-blunders { background: #b91c1c; border-color: #fca5a5; }
-.analysis-move-quality-badge.quality-missed { background: #7e22ce; border-color: #d8b4fe; }
-
+#board > div.analysis-quality-brilliant::after { background: #0e7490; border-color: #67e8f9; }
+#board > div.analysis-quality-best::after { background: #047857; border-color: #6ee7b7; }
+#board > div.analysis-quality-good::after { background: #15803d; border-color: #86efac; }
+#board > div.analysis-quality-inaccuracy::after { background: #b45309; border-color: #fcd34d; }
+#board > div.analysis-quality-mistakes::after { background: #c2410c; border-color: #fdba74; }
+#board > div.analysis-quality-blunders::after { background: #b91c1c; border-color: #fca5a5; }
+#board > div.analysis-quality-missed::after { background: #7e22ce; border-color: #d8b4fe; }
 @media (max-width: 767px) {
-    .analysis-move-quality-badge {
+    #board > div[class*="analysis-quality-"]::after {
         top: 1px;
         right: 1px;
         min-width: 14px;
