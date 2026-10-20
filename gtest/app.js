@@ -41,6 +41,16 @@ let autoFlipPvP = false;
 
 let moveCategoryMap = {};
 
+const moveQualityBadges = {
+    brilliant: { symbol: '‼', label: 'Harika hamle' },
+    best: { symbol: '★', label: 'En iyi hamle' },
+    good: { symbol: '👍', label: 'İyi hamle' },
+    inaccuracy: { symbol: '?!', label: 'Hatalı hamle' },
+    mistakes: { symbol: '?', label: 'Hata' },
+    blunders: { symbol: '??', label: 'Büyük hata' },
+    missed: { symbol: '✕', label: 'Kaçan kazanma fırsatı' }
+};
+
 let liveReviewPly = null;
 const liveReviewGame = new Chess();
 
@@ -843,16 +853,7 @@ function renderBoard() {
             // Sembolü hedef karenin pseudo-element katmanına bağla; taşın flex düzeni etkilenmez.
             if (isAnalysisMode && lastMove && squareName === lastMove.to) {
                 const category = moveCategoryMap[analysisIdx];
-                const qualityBadges = {
-                    brilliant: { symbol: '‼', label: 'Harika hamle' },
-                    best: { symbol: '★', label: 'En iyi hamle' },
-                    good: { symbol: '👍', label: 'İyi hamle' },
-                    inaccuracy: { symbol: '?!', label: 'Hatalı hamle' },
-                    mistakes: { symbol: '?', label: 'Hata' },
-                    blunders: { symbol: '??', label: 'Büyük hata' },
-                    missed: { symbol: '✕', label: 'Kaçan kazanma fırsatı' }
-                };
-                const badge = qualityBadges[category];
+                const badge = moveQualityBadges[category];
                 if (badge) {
                     $square
                         .addClass('analysis-quality-' + category)
@@ -1267,17 +1268,21 @@ function renderLivePGN() {
 }
 
 function getBadgeHtml(catKey) {
-    if (!catKey) return '';
-    const badges = {
-        brilliant: '<span class="ml-0.5 px-0.5 rounded bg-cyan-950 text-cyan-400 text-[9px] font-black border border-cyan-800">‼️</span>',
-        best: '<span class="ml-0.5 px-0.5 rounded bg-emerald-950 text-emerald-400 text-[9px] font-black border border-emerald-800">⭐</span>',
-        good: '<span class="ml-0.5 px-0.5 rounded bg-green-950 text-green-400 text-[9px] font-black border border-green-800">👍</span>',
-        inaccuracy: '<span class="ml-0.5 px-0.5 rounded bg-amber-950 text-amber-400 text-[9px] font-black border border-amber-800">?!</span>',
-        mistakes: '<span class="ml-0.5 px-0.5 rounded bg-orange-950 text-orange-400 text-[9px] font-black border border-orange-800">?</span>',
-        blunders: '<span class="ml-0.5 px-0.5 rounded bg-red-950 text-red-400 text-[9px] font-black border border-red-800">??</span>',
-        missed: '<span class="ml-0.5 px-0.5 rounded bg-purple-950 text-purple-400 text-[9px] font-black border border-purple-800">❌</span>'
+    const badge = moveQualityBadges[catKey];
+    if (!badge) return '';
+
+    const badgeClasses = {
+        brilliant: 'bg-cyan-950 text-cyan-400 border-cyan-800',
+        best: 'bg-emerald-950 text-emerald-400 border-emerald-800',
+        good: 'bg-green-950 text-green-400 border-green-800',
+        inaccuracy: 'bg-amber-950 text-amber-400 border-amber-800',
+        mistakes: 'bg-orange-950 text-orange-400 border-orange-800',
+        blunders: 'bg-red-950 text-red-400 border-red-800',
+        missed: 'bg-purple-950 text-purple-400 border-purple-800'
     };
-    return badges[catKey] || '';
+
+    return '<span class="ml-0.5 px-0.5 rounded text-[9px] font-black border ' +
+        badgeClasses[catKey] + '">' + badge.symbol + '</span>';
 }
 
 function renderAnalysisPGN() {
