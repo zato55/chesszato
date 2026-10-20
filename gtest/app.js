@@ -438,7 +438,7 @@ function playMoveSound(moveObj, isCapture) {
 
 
 function localizeOpeningName(name) {
-    const translations = [
+    const exactTranslations = [
         ["Nimzowitsch Defense", "Nimzowitsch Savunması"],
         ["Sicilian Defense", "Sicilya Savunması"],
         ["French Defense", "Fransız Savunması"],
@@ -464,13 +464,105 @@ function localizeOpeningName(name) {
         ["Petrov Defense", "Petrov Savunması"],
         ["Bishop's Opening", "Fil Açılışı"],
         ["Vienna Game", "Viyana Oyunu"],
-        ["Ruy Lopez", "Ruy Lopez (İspanyol Açılışı)"]
+        ["Ruy Lopez", "Ruy Lopez (İspanyol Açılışı)"],
+        ["King's Indian", "Şah-Hint"],
+        ["Queen's Indian", "Vezir-Hint"],
+        ["Nimzo-Indian", "Nimzo-Hint"],
+        ["Old Indian", "Eski Hint"],
+        ["Bogo-Indian", "Bogo-Hint"],
+        ["Grünfeld", "Grünfeld"],
+        ["Queen's Gambit", "Vezir Gambiti"],
+        ["King's Gambit", "Şah Gambiti"],
+        ["Queen's Pawn", "Vezir Piyonu"],
+        ["King's Pawn", "Şah Piyonu"],
+        ["Bird Opening", "Bird Açılışı"],
+        ["Réti", "Réti"],
+        ["Benoni", "Benoni"],
+        ["Catalan Opening", "Katalan Açılışı"],
+        ["Slav Defense", "Slav Savunması"],
+        ["Semi-Slav Defense", "Yarı-Slav Savunması"],
+        ["King's Indian Attack", "Şah-Hint Atağı"],
+        ["London System", "Londra Sistemi"],
+        ["Colle System", "Colle Sistemi"],
+        ["Trompowsky Attack", "Trompowsky Atağı"],
+        ["Polish Opening", "Polonya Açılışı"],
+        ["Scotch Game", "İskoç Oyunu"],
+        ["Spanish Game", "İspanyol Oyunu"],
+        ["Four Knights", "Dört At"],
+        ["Three Knights", "Üç At"],
+        ["Two Knights", "İki At"],
+        ["Open Game", "Açık Oyun"],
+        ["Closed Game", "Kapalı Oyun"]
     ];
-    for (const [english, turkish] of translations) {
+
+    for (const [english, turkish] of exactTranslations) {
         if (name === english || name.startsWith(english + ":")) {
-            return turkish + name.slice(english.length);
+            name = turkish + name.slice(english.length);
+            break;
         }
     }
+
+    const terms = [
+        [/\\bCountergambit\\b/g, "Karşı Gambit"],
+        [/\\bDefense\\b/g, "Savunması"],
+        [/\\bDefence\\b/g, "Savunması"],
+        [/\\bOpening\\b/g, "Açılışı"],
+        [/\\bGambit\\b/g, "Gambiti"],
+        [/\\bAttack\\b/g, "Atağı"],
+        [/\\bGame\\b/g, "Oyunu"],
+        [/\\bSystem\\b/g, "Sistemi"],
+        [/\\bVariation\\b/g, "Varyantı"],
+        [/\\bLine\\b/g, "Hattı"],
+        [/\\bAccepted\\b/g, "Kabul Edildi"],
+        [/\\bDeclined\\b/g, "Reddedildi"],
+        [/\\bExchange\\b/g, "Değişim"],
+        [/\\bClassical\\b/g, "Klasik"],
+        [/\\bClassical Variation\\b/g, "Klasik Varyant"],
+        [/\\bModern\\b/g, "Modern"],
+        [/\\bIndian\\b/g, "Hint"],
+        [/\\bSicilian\\b/g, "Sicilya"],
+        [/\\bFrench\\b/g, "Fransız"],
+        [/\\bDutch\\b/g, "Hollanda"],
+        [/\\bEnglish\\b/g, "İngiliz"],
+        [/\\bSpanish\\b/g, "İspanyol"],
+        [/\\bItalian\\b/g, "İtalyan"],
+        [/\\bScandinavian\\b/g, "İskandinav"],
+        [/\\bVienna\\b/g, "Viyana"],
+        [/\\bAustrian\\b/g, "Avusturya"],
+        [/\\bHungarian\\b/g, "Macar"],
+        [/\\bPolish\\b/g, "Polonya"],
+        [/\\bRussian\\b/g, "Rus"],
+        [/\\bGerman\\b/g, "Alman"],
+        [/\\bDanish\\b/g, "Danimarka"],
+        [/\\bDutch\\b/g, "Hollanda"],
+        [/\\bQueen's\\b/g, "Vezir"],
+        [/\\bKing's\\b/g, "Şah"],
+        [/\\bPawn\\b/g, "Piyonu"],
+        [/\\bBishop\\b/g, "Fil"],
+        [/\\bKnight\\b/g, "At"],
+        [/\\bRook\\b/g, "Kale"],
+        [/\\bQueen\\b/g, "Vezir"],
+        [/\\bKing\\b/g, "Şah"],
+        [/\\bCenter\\b/g, "Merkez"],
+        [/\\bCentre\\b/g, "Merkez"],
+        [/\\bWing\\b/g, "Kanat"],
+        [/\\bSide\\b/g, "Kanat"],
+        [/\\bFianchetto\\b/g, "Fianchetto"],
+        [/\\bTarrasch\\b/g, "Tarrasch"],
+        [/\\bClassical\\b/g, "Klasik"],
+        [/\\bSymmetrical\\b/g, "Simetrik"],
+        [/\\bAccelerated\\b/g, "Hızlandırılmış"],
+        [/\\bHyperaccelerated\\b/g, "Aşırı Hızlandırılmış"],
+        [/\\bRetreat\\b/g, "Geri Çekilme"],
+        [/\\bBlitz\\b/g, "Blitz"],
+        [/\\bTrap\\b/g, "Tuzağı"],
+        [/\\bGunderam\\b/g, "Gunderam"]
+    ];
+
+    for (const [pattern, translated] of terms) {
+        name = name.replace(pattern, translated);
+    }
+
     return name;
 }
 
