@@ -600,17 +600,17 @@ aside.collapsed #logoToggleBtn {
 
     /* Analiz ekranında tahta iki eksende aynı ölçüyü kullanır; değerlendirme çubuğu kareyi sıkıştıramaz. */
     body.analysis-mode #board-wrapper {
-        width: min(95vw, calc(100dvh - 340px)) !important;
-        height: min(95vw, calc(100dvh - 340px)) !important;
+        width: min(95vw, calc(100dvh - 390px)) !important;
+        height: min(95vw, calc(100dvh - 390px)) !important;
         max-width: 100% !important;
         max-height: 100% !important;
         aspect-ratio: 1 / 1 !important;
         flex: 0 0 auto !important;
     }
 
-    /* Analiz tablosu: oyuncu kartları sınırlı pay alır, kare tahta ana alanı kullanır. */
+    /* Analizde oyuncu kartları normal oyundaki gibi tam içerikle görünür; tahta kalan alanı alır. */
     body.analysis-mode main > div.flex-col {
-        grid-template-rows: minmax(54px, 0.18fr) minmax(0, 1fr) minmax(54px, 0.18fr) !important;
+        grid-template-rows: auto minmax(0, 1fr) auto !important;
         gap: clamp(2px, 0.35dvh, 4px) !important;
     }
 
@@ -630,11 +630,6 @@ aside.collapsed #logoToggleBtn {
         box-sizing: border-box !important;
     }
 
-    body.analysis-mode #topPlayerCard .player-capture-row,
-    body.analysis-mode #bottomPlayerCard .player-capture-row {
-        display: none !important;
-    }
-
     /* Normal oyun ekranında analiz değerlendirme kutusu yer kaplamasın. */
     #mobileAnalysisPanel {
         display: none !important;
@@ -644,7 +639,11 @@ aside.collapsed #logoToggleBtn {
         display: flex !important;
     }
 
-    body.analysis-mode #mobileMoveStrip,
+    /* Analizde hamle şeridi görünür; yalnızca canlı oyun kontrolleri gizlenir. */
+    body.analysis-mode #mobileMoveStrip {
+        display: flex !important;
+    }
+
     body.analysis-mode #mobileQuickControls {
         display: none !important;
     }
