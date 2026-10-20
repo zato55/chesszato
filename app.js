@@ -26,6 +26,9 @@ let analysisBranchStartIdx = null;
 let analysisIdx = -1;
 let pendingEvalScore = null;
 let currentEvalScore = 0;
+let activeEngineTurn = 'w';
+let activeAnalysisFen = null;
+let analysisBestMoveByFen = new Map();
 let analysisSearchStopPending = false;
 let queuedAnalysisFen = null;
 
@@ -167,7 +170,7 @@ function initStockfish() {
                 const cpIdx = parts.indexOf('cp');
                 if (cpIdx !== -1 && parts[cpIdx + 1]) {
                     let score = parseInt(parts[cpIdx + 1]);
-                    const engineSide = isAnalysisMode ? analysisGame.turn() : game.turn();
+                    const engineSide = activeEngineTurn;
                     if (engineSide === 'b') score = -score;
                     pendingEvalScore = { score: score, isMate: false };
                 }
@@ -176,7 +179,7 @@ function initStockfish() {
                 const mateIdx = parts.indexOf('mate');
                 if (mateIdx !== -1 && parts[mateIdx + 1]) {
                     let mateIn = parseInt(parts[mateIdx + 1]);
-                    const engineSide = isAnalysisMode ? analysisGame.turn() : game.turn();
+                    const engineSide = activeEngineTurn;
                     if (engineSide === 'b') mateIn = -mateIn;
                     pendingEvalScore = { score: mateIn, isMate: true };
                 }
@@ -195,8 +198,11 @@ function initStockfish() {
                     const nextFen = queuedAnalysisFen;
                     queuedAnalysisFen = null;
                     if (nextFen && (isAnalysisMode || isReviewing)) {
+                        activeAnalysisFen = nextFen;
+                        activeEngineTurn = nextFen.split(' ')[1] || 'w';
+                        stockfishWorker.postMessage('ucinewgame');
                         stockfishWorker.postMessage('position fen ' + nextFen);
-                        stockfishWorker.postMessage('go depth 8');
+                        stockfishWorker.postMessage('go depth 6');
                         isEngineThinking = true;
                     } else if (nextFen && !isGameOver && vsBot && game.turn() !== actualPlayerColor) {
                         triggerStockfishMove();
@@ -210,13 +216,25 @@ function initStockfish() {
                     const nextFen = queuedAnalysisFen;
                     queuedAnalysisFen = null;
                     if (nextFen && (isAnalysisMode || isReviewing)) {
+                        activeAnalysisFen = nextFen;
+                        activeEngineTurn = nextFen.split(' ')[1] || 'w';
+                        stockfishWorker.postMessage('ucinewgame');
                         stockfishWorker.postMessage('position fen ' + nextFen);
-                        stockfishWorker.postMessage('go depth 8');
+                        stockfishWorker.postMessage('go depth 6');
                         isEngineThinking = true;
                     }
                     return;
                 }
                 isEngineThinking = false;
+
+                if ((isAnalysisMode || isReviewing) && activeAnalysisFen) {
+                    const activeGame = isAnalysisMode ? analysisGame : game;
+                    if (activeGame.fen() !== activeAnalysisFen) {
+                        pendingEvalScore = null;
+                        requestEngineAnalysis();
+                        return;
+                    }
+                }
 
                 if (isAnalysisMode || isReviewing) {
                     const activeGame = isAnalysisMode ? analysisGame : game;
@@ -234,9 +252,12 @@ function initStockfish() {
                 const moveStr = message.split(' ')[1];
 
                 if (isAnalysisMode && moveStr && moveStr !== '(none)') {
-                    currentBestMove = moveStr;
-                    const from = moveStr.substring(0, 2);
-                    const to = moveStr.substring(2, 4);
+                    if (!analysisBestMoveByFen.has(activeAnalysisFen)) {
+                        analysisBestMoveByFen.set(activeAnalysisFen, moveStr);
+                    }
+                    currentBestMove = analysisBestMoveByFen.get(activeAnalysisFen);
+                    const from = currentBestMove.substring(0, 2);
+                    const to = currentBestMove.substring(2, 4);
                     drawBestMoveArrow(from, to);
                     return;
                 }
@@ -368,6 +389,11 @@ function requestEngineAnalysis() {
     const targetFen = targetGame.fen();
     pendingEvalScore = null;
 
+    if (isAnalysisMode && analysisBestMoveByFen.has(targetFen)) {
+        currentBestMove = analysisBestMoveByFen.get(targetFen);
+        drawBestMoveArrow(currentBestMove.substring(0, 2), currentBestMove.substring(2, 4));
+    }
+
     if (targetGame.in_checkmate()) {
         queuedAnalysisFen = null;
         if (isEngineThinking && !analysisSearchStopPending) {
@@ -388,8 +414,11 @@ function requestEngineAnalysis() {
     }
 
     queuedAnalysisFen = null;
+    activeAnalysisFen = targetFen;
+    activeEngineTurn = targetFen.split(' ')[1] || 'w';
+    stockfishWorker.postMessage('ucinewgame');
     stockfishWorker.postMessage('position fen ' + targetFen);
-    stockfishWorker.postMessage('go depth 8');
+    stockfishWorker.postMessage('go depth 6');
     isEngineThinking = true;
 }
 
@@ -2033,6 +2062,7 @@ function resetGame() {
     pendingEvalScore = null;
     currentEvalScore = 0;
     currentBestMove = null;
+    analysisBestMoveByFen.clear();
     moveCategoryMap = {};
     clearArrow();
 
