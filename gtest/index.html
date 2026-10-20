@@ -14,21 +14,21 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
     
     <!-- Özel CSS -->
-    <link rel="stylesheet" href="style.css?v=20261020-mobile-fix">
+    <link rel="stylesheet" href="style.css?v=20261020-flex-fix">
 </head>
 
-<body class="bg-[#09090b] text-zinc-100 font-sans antialiased h-screen overflow-hidden flex flex-col md:flex-row select-none">
+<body class="bg-[#09090b] text-zinc-100 font-sans antialiased h-screen h-[100dvh] overflow-hidden flex flex-col md:flex-row select-none">
 
     <!-- 📱 MOBİL ÜST BAR -->
-    <header class="md:hidden bg-[#121215] border-b border-zinc-800/80 px-3 py-2 flex items-center justify-between z-30 flex-shrink-0">
+    <header class="md:hidden bg-[#121215] border-b border-zinc-800/80 px-3 py-1.5 flex items-center justify-between z-30 flex-shrink-0 h-[42px]">
         <div class="flex items-center gap-2">
-            <img src="logo.png" alt="ZATOI" class="w-7 h-7 object-contain rounded-lg border border-red-900/50" onerror="this.style.display='none'; $('#mobileLogoFallback').removeClass('hidden');">
-            <div id="mobileLogoFallback" class="hidden w-7 h-7 bg-red-700 rounded-lg flex items-center justify-center font-black text-sm text-white">Z</div>
-            <span class="font-extrabold text-sm text-red-600 tracking-wider">ZATO<span class="text-white">CHESS</span></span>
+            <img src="logo.png" alt="ZATOI" class="w-6 h-6 object-contain rounded-lg border border-red-900/50" onerror="this.style.display='none'; $('#mobileLogoFallback').removeClass('hidden');">
+            <div id="mobileLogoFallback" class="hidden w-6 h-6 bg-red-700 rounded-lg flex items-center justify-center font-black text-xs text-white">Z</div>
+            <span class="font-extrabold text-xs text-red-600 tracking-wider">ZATO<span class="text-white">CHESS</span></span>
         </div>
         <div class="flex items-center gap-1.5">
-            <button id="mobileQuickLogin" class="text-xs bg-blue-600 hover:bg-blue-500 font-bold px-2.5 py-1.5 rounded-lg text-white transition active:scale-95 shadow-sm">Giriş Yap</button>
-            <button id="mobileQuickRegister" class="text-xs bg-red-700 hover:bg-red-600 font-bold px-2.5 py-1.5 rounded-lg text-white transition active:scale-95 shadow-sm">Kayıt Ol</button>
+            <button id="mobileQuickLogin" class="text-[11px] bg-blue-600 hover:bg-blue-500 font-bold px-2 py-1 rounded-lg text-white transition active:scale-95 shadow-sm">Giriş Yap</button>
+            <button id="mobileQuickRegister" class="text-[11px] bg-red-700 hover:bg-red-600 font-bold px-2 py-1 rounded-lg text-white transition active:scale-95 shadow-sm">Kayıt Ol</button>
         </div>
     </header>
 
@@ -68,34 +68,37 @@
     </aside>
 
     <!-- ♟️ ORTA ALAN (SATRANÇ TAHTASI & OYUNCU KARTLARI) -->
-    <main class="flex-1 flex flex-col items-center justify-between relative p-1 md:p-6 overflow-hidden bg-[#09090b]">
-        <div class="flex flex-col gap-1 md:gap-2 items-center justify-center w-full max-w-[620px] my-auto">
-            <div id="topPlayerCard" class="player-card-layout w-full grid items-center bg-[#121215] border border-zinc-800/80 rounded-xl shadow-sm transition-all">
-                <div class="player-card-main">
+    <main class="flex-1 flex flex-col justify-between items-center relative p-1 md:p-4 overflow-hidden bg-[#09090b] h-full min-h-0">
+        <div class="flex-1 flex flex-col justify-center items-center gap-1 w-full max-w-[620px] min-h-0 py-1">
+            
+            <!-- ÜST OYUNCU KARTI (CANLI OYUN İLE BİREBİR AYNI) -->
+            <div id="topPlayerCard" class="player-card-layout w-full grid items-center bg-[#121215] border border-zinc-800/80 rounded-xl shadow-sm transition-all shrink-0">
+                <div class="player-card-main px-2.5 py-1.5">
                     <div class="flex items-center gap-2 min-w-0">
-                        <div id="topAvatar" class="w-7 h-7 md:w-8 md:h-8 rounded-lg bg-zinc-800 flex items-center justify-center font-bold text-xs md:text-sm shrink-0 border border-zinc-700">♟</div>
+                        <div id="topAvatar" class="w-7 h-7 rounded-lg bg-zinc-800 flex items-center justify-center font-bold text-xs shrink-0 border border-zinc-700">♟</div>
                         <div class="flex flex-col min-w-0">
                             <div class="flex items-center gap-1">
                                 <span id="topPlayerName" class="font-extrabold text-xs md:text-sm text-zinc-100 truncate">Stockfish Bot</span>
-                                <span id="topPlayerElo" class="text-[10px] md:text-xs text-blue-400 font-bold bg-blue-950/60 border border-blue-800/50 px-1 py-0.2 rounded">(1400)</span>
+                                <span id="topPlayerElo" class="text-[10px] md:text-xs text-blue-400 font-bold bg-blue-950/60 border border-blue-800/50 px-1 rounded">(1400)</span>
                             </div>
-                            <span id="topOpeningText" class="text-[10px] md:text-[11px] text-zinc-400 font-medium truncate">📖 ...</span>
+                            <span id="topOpeningText" class="text-[10px] text-zinc-400 font-medium truncate">📖 ...</span>
                         </div>
                     </div>
-                    <div id="topTimerDesktop" class="player-card-clock font-mono font-black text-xs md:text-sm px-2 py-0.5 md:px-2.5 md:py-1 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-200">05:00</div>
+                    <div id="topTimerDesktop" class="player-card-clock font-mono font-black text-xs md:text-sm px-2 py-0.5 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-200">05:00</div>
                 </div>
-                <div class="player-capture-row" aria-label="Üst oyuncunun yediği taşlar">
+                <div class="player-capture-row px-2.5 pb-1" aria-label="Üst oyuncunun yediği taşlar">
                     <div id="topCapturedPieces" class="flex items-center gap-1"></div>
-                    <span id="topMaterialDiff" class="text-xs font-bold text-emerald-400"></span>
+                    <span id="topMaterialDiff" class="text-[11px] font-bold text-emerald-400"></span>
                 </div>
             </div>
 
-            <div class="flex items-center justify-center gap-2 w-full">
+            <!-- TAHTA ALANI -->
+            <div class="flex items-center justify-center gap-2 w-full min-h-0 flex-1 my-auto">
                 <div id="evalBarWrapper" class="eval-bar-wrapper hidden">
                     <div id="evalBarWhite" class="eval-bar-white" style="height: 50%;"></div>
                 </div>
 
-                <div id="board-wrapper" class="relative">
+                <div id="board-wrapper" class="relative max-h-full aspect-square">
                     <div id="board" class="theme-green anim-normal"></div>
                     <svg id="arrowOverlay" class="absolute inset-0 w-full h-full pointer-events-none z-20">
                         <defs>
@@ -107,45 +110,51 @@
                 </div>
             </div>
 
-            <div id="bottomPlayerCard" class="player-card-layout w-full grid items-center bg-[#121215] border border-zinc-800/80 rounded-xl shadow-sm transition-all">
-                <div class="player-capture-row" aria-label="Alt oyuncunun yediği taşlar">
+            <!-- ALT OYUNCU KARTI (CANLI OYUN İLE BİREBİR AYNI) -->
+            <div id="bottomPlayerCard" class="player-card-layout w-full grid items-center bg-[#121215] border border-zinc-800/80 rounded-xl shadow-sm transition-all shrink-0">
+                <div class="player-capture-row px-2.5 pt-1" aria-label="Alt oyuncunun yediği taşlar">
                     <div id="bottomCapturedPieces" class="flex items-center gap-1"></div>
-                    <span id="bottomMaterialDiff" class="text-xs font-bold text-emerald-400"></span>
+                    <span id="bottomMaterialDiff" class="text-[11px] font-bold text-emerald-400"></span>
                 </div>
-                <div class="player-card-main">
+                <div class="player-card-main px-2.5 py-1.5">
                     <div class="flex items-center gap-2 min-w-0">
-                        <div id="bottomAvatar" class="w-7 h-7 md:w-8 md:h-8 rounded-lg bg-zinc-100 text-zinc-900 flex items-center justify-center font-bold text-xs md:text-sm shrink-0 border border-zinc-300">♙</div>
+                        <div id="bottomAvatar" class="w-7 h-7 rounded-lg bg-zinc-100 text-zinc-900 flex items-center justify-center font-bold text-xs shrink-0 border border-zinc-300">♙</div>
                         <div class="flex flex-col min-w-0">
                             <div class="flex items-center gap-1">
                                 <span id="bottomPlayerName" class="font-extrabold text-xs md:text-sm text-zinc-100 truncate">Siz</span>
-                                <span id="bottomPlayerElo" class="text-[10px] md:text-xs text-blue-400 font-bold bg-blue-950/60 border border-blue-800/50 px-1 py-0.2 rounded">(1500)</span>
+                                <span id="bottomPlayerElo" class="text-[10px] md:text-xs text-blue-400 font-bold bg-blue-950/60 border border-blue-800/50 px-1 rounded">(1500)</span>
                             </div>
-                            <span id="bottomOpeningText" class="text-[10px] md:text-[11px] text-zinc-400 font-medium truncate">📖 ...</span>
+                            <span id="bottomOpeningText" class="text-[10px] text-zinc-400 font-medium truncate">📖 ...</span>
                         </div>
                     </div>
-                    <div id="bottomTimerDesktop" class="player-card-clock font-mono font-black text-xs md:text-sm px-2 py-0.5 md:px-2.5 md:py-1 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-200">05:00</div>
+                    <div id="bottomTimerDesktop" class="player-card-clock font-mono font-black text-xs md:text-sm px-2 py-0.5 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-200">05:00</div>
                 </div>
             </div>
         </div>
 
-        <!-- MOBİL HAMLE ŞERİDİ (HEM CANLI HEM ANALİZ MODUNDA HER ZAMAN AÇIK) -->
-        <div id="mobileMoveStrip" class="md:hidden w-full max-w-[620px] overflow-x-auto no-scrollbar flex items-center gap-2 py-1 shrink-0 z-20 bg-[#09090b]">
-            <div id="mobilePgnList" class="flex items-center gap-1 text-xs whitespace-nowrap"></div>
-        </div>
+        <!-- MOBİL KONTROL & HAMLE ALANI (DİKEYE TAM SIĞAN KOMPAKT ALAN) -->
+        <div class="w-full max-w-[620px] flex flex-col gap-1 shrink-0 pb-1 z-20">
+            <!-- DEĞERLENDİRME ÇUBUĞU BİLGİSİ (SADECE ANALİZDE) -->
+            <div id="mobileAnalysisPanel" class="hidden md:hidden w-full">
+                <div class="flex items-center justify-between bg-[#121215] border border-zinc-800 rounded-lg px-2 py-1">
+                    <span id="mEvalScoreText" class="font-black text-xs text-blue-400 bg-blue-950/60 border border-blue-800/50 px-1.5 py-0.5 rounded">+0.0</span>
+                    <span id="mEvalDescription" class="text-[11px] text-zinc-300 font-medium truncate">Eşit konum</span>
+                </div>
+            </div>
 
-        <div id="mobileQuickControls" class="md:hidden grid grid-cols-6 items-center w-full max-w-[620px] gap-1 shrink-0">
-            <button id="liveNavStart" aria-label="Oyunun başına git" title="Başa git" class="flex items-center justify-center py-2 bg-[#09090b] hover:bg-zinc-800 border border-red-900 text-white rounded-lg transition-colors"><svg viewBox="0 0 24 24" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5v14"/><path d="M19 5 9 12l10 7z"/></svg></button>
-            <button id="liveNavPrev" aria-label="Önceki hamle" title="Önceki hamle" class="flex items-center justify-center py-2 bg-[#09090b] hover:bg-zinc-800 border border-red-900 text-white rounded-lg transition-colors"><svg viewBox="0 0 24 24" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
-            <button id="liveNavNext" aria-label="Sonraki hamle" title="Sonraki hamle" class="flex items-center justify-center py-2 bg-[#09090b] hover:bg-zinc-800 border border-red-900 text-white rounded-lg transition-colors"><svg viewBox="0 0 24 24" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
-            <button id="liveNavEnd" aria-label="Canlı konuma dön" title="Canlı konuma dön" class="flex items-center justify-center py-2 bg-[#09090b] hover:bg-zinc-800 border border-red-900 text-white rounded-lg transition-colors"><svg viewBox="0 0 24 24" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 5v14"/><path d="m5 5 10 7-10 7z"/></svg></button>
-            <button id="quickFlipBtn" aria-label="Tahtayı çevir" title="Tahtayı çevir" class="flex items-center justify-center py-2 bg-[#09090b] hover:bg-zinc-800 border border-red-900 text-white rounded-lg transition-colors"><svg viewBox="0 0 24 24" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7h-9a4 4 0 0 0-4 4v1"/><path d="m4 9 3-3 3 3"/><path d="M4 17h9a4 4 0 0 0 4-4v-1"/><path d="m20 15-3 3-3-3"/></svg></button>
-            <button id="quickUndoBtn" aria-label="Hamleyi geri al" title="Gerçek hamleyi geri al" class="flex items-center justify-center py-2 bg-[#09090b] hover:bg-zinc-800 border border-red-900 text-white rounded-lg transition-colors"><svg viewBox="0 0 24 24" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h9a7 7 0 0 1 0 14h-2"/></svg></button>
-        </div>
+            <!-- HAMLE ŞERİDİ (HEM CANLI HEM ANALİZDE HER ZAMAN AÇIK) -->
+            <div id="mobileMoveStrip" class="md:hidden w-full overflow-x-auto no-scrollbar flex items-center gap-1.5 py-0.5 bg-[#09090b] border-t border-b border-zinc-800/50">
+                <div id="mobilePgnList" class="flex items-center gap-1 text-[11px] whitespace-nowrap"></div>
+            </div>
 
-        <div id="mobileAnalysisPanel" class="hidden md:hidden w-full max-w-[620px] flex flex-col gap-1 shrink-0">
-            <div class="flex items-center justify-between bg-[#121215] border border-zinc-800 rounded-xl px-2 py-1">
-                <span id="mEvalScoreText" class="font-black text-xs text-blue-400 bg-blue-950/60 border border-blue-800/50 px-2 py-0.5 rounded">+0.0</span>
-                <span id="mEvalDescription" class="text-[11px] text-zinc-300 font-medium truncate">Eşit konum</span>
+            <!-- CANLI HIZLI KONTROLLER -->
+            <div id="mobileQuickControls" class="md:hidden grid grid-cols-6 items-center w-full gap-1">
+                <button id="liveNavStart" aria-label="Oyunun başına git" class="flex items-center justify-center py-1.5 bg-[#09090b] hover:bg-zinc-800 border border-red-900 text-white rounded-lg"><svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5v14"/><path d="M19 5 9 12l10 7z"/></svg></button>
+                <button id="liveNavPrev" aria-label="Önceki hamle" class="flex items-center justify-center py-1.5 bg-[#09090b] hover:bg-zinc-800 border border-red-900 text-white rounded-lg"><svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+                <button id="liveNavNext" aria-label="Sonraki hamle" class="flex items-center justify-center py-1.5 bg-[#09090b] hover:bg-zinc-800 border border-red-900 text-white rounded-lg"><svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+                <button id="liveNavEnd" aria-label="Canlı konuma dön" class="flex items-center justify-center py-1.5 bg-[#09090b] hover:bg-zinc-800 border border-red-900 text-white rounded-lg"><svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 5v14"/><path d="m5 5 10 7-10 7z"/></svg></button>
+                <button id="quickFlipBtn" aria-label="Tahtayı çevir" class="flex items-center justify-center py-1.5 bg-[#09090b] hover:bg-zinc-800 border border-red-900 text-white rounded-lg"><svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-9a4 4 0 0 0-4 4v1"/><path d="m4 9 3-3 3 3"/><path d="M4 17h9a4 4 0 0 0 4-4v-1"/><path d="m20 15-3 3-3-3"/></svg></button>
+                <button id="quickUndoBtn" aria-label="Hamleyi geri al" class="flex items-center justify-center py-1.5 bg-[#09090b] hover:bg-zinc-800 border border-red-900 text-white rounded-lg"><svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h9a7 7 0 0 1 0 14h-2"/></svg></button>
             </div>
         </div>
     </main>
@@ -276,16 +285,16 @@
 
     <nav id="mobileAnalysisBottomNav" class="hidden md:hidden fixed bottom-0 left-0 right-0 bg-[#121215] border-t border-zinc-800 px-2 pt-1.5 pb-[max(0.5rem,env(safe-area-inset-bottom))] z-30">
         <div class="grid grid-cols-5 gap-1 max-w-[620px] mx-auto">
-            <button id="mNavStart" aria-label="İlk hamleye git" class="flex items-center justify-center py-2 bg-[#09090b] hover:bg-zinc-800 border border-red-900 text-white rounded-lg transition-colors"><svg viewBox="0 0 24 24" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5v14"/><path d="M19 5 9 12l10 7z"/></svg></button>
-            <button id="mNavPrev" aria-label="Önceki hamle" class="flex items-center justify-center py-2 bg-[#09090b] hover:bg-zinc-800 border border-red-900 text-white rounded-lg transition-colors"><svg viewBox="0 0 24 24" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
-            <button id="mPlayBestMoveBtn" aria-label="En iyi hamle" class="flex items-center justify-center py-2 bg-gradient-to-b from-red-800 to-red-950 hover:from-red-700 hover:to-red-900 border border-red-500 text-white rounded-lg shadow-[0_0_12px_rgba(220,38,38,0.22)] ring-1 ring-red-900/60 transition-colors"><svg viewBox="0 0 24 24" class="w-6 h-6" fill="currentColor" aria-hidden="true"><path d="M13.2 2.5 5.6 13h5.2l-.8 8.5L18.4 10h-5.2z"/></svg></button>
-            <button id="mNavNext" aria-label="Sonraki hamle" class="flex items-center justify-center py-2 bg-[#09090b] hover:bg-zinc-800 border border-red-900 text-white rounded-lg transition-colors"><svg viewBox="0 0 24 24" class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
-            <button id="mNavEnd" aria-label="Son hamleye git" class="flex items-center justify-center py-2 bg-[#09090b] hover:bg-zinc-800 border border-red-900 text-white rounded-lg transition-colors"><svg viewBox="0 0 24 24" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 5v14"/><path d="m5 5 10 7-10 7z"/></svg></button>
+            <button id="mNavStart" aria-label="İlk hamleye git" class="flex items-center justify-center py-2 bg-[#09090b] hover:bg-zinc-800 border border-red-900 text-white rounded-lg transition-colors"><svg viewBox="0 0 24 24" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5v14"/><path d="M19 5 9 12l10 7z"/></svg></button>
+            <button id="mNavPrev" aria-label="Önceki hamle" class="flex items-center justify-center py-2 bg-[#09090b] hover:bg-zinc-800 border border-red-900 text-white rounded-lg transition-colors"><svg viewBox="0 0 24 24" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+            <button id="mPlayBestMoveBtn" aria-label="En iyi hamle" class="flex items-center justify-center py-2 bg-gradient-to-b from-red-800 to-red-950 hover:from-red-700 hover:to-red-900 border border-red-500 text-white rounded-lg shadow-[0_0_12px_rgba(220,38,38,0.22)] ring-1 ring-red-900/60 transition-colors"><svg viewBox="0 0 24 24" class="w-6 h-6" fill="currentColor"><path d="M13.2 2.5 5.6 13h5.2l-.8 8.5L18.4 10h-5.2z"/></svg></button>
+            <button id="mNavNext" aria-label="Sonraki hamle" class="flex items-center justify-center py-2 bg-[#09090b] hover:bg-zinc-800 border border-red-900 text-white rounded-lg transition-colors"><svg viewBox="0 0 24 24" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+            <button id="mNavEnd" aria-label="Son hamleye git" class="flex items-center justify-center py-2 bg-[#09090b] hover:bg-zinc-800 border border-red-900 text-white rounded-lg transition-colors"><svg viewBox="0 0 24 24" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 5v14"/><path d="m5 5 10 7-10 7z"/></svg></button>
         </div>
-        <button id="mExitAnalysisBtn" class="w-full max-w-[620px] mx-auto mt-1 block py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-bold">🎮 Oynamaya Dön</button>
+        <button id="mExitAnalysisBtn" class="w-full max-w-[620px] mx-auto mt-1 block py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold">🎮 Oynamaya Dön</button>
     </nav>
 
-    <!-- ♟️ CHESS.COM TARZI GELİŞMİŞ MAÇ RAPORU MODALI (DİKEYE UYUMLU MOBİL BOYUTLANDIRMA) -->
+    <!-- ♟️ MAÇ RAPORU MODALI -->
     <div id="preAnalysisSummary" class="hidden fixed inset-0 bg-black/85 backdrop-blur-sm z-[60] flex items-center justify-center p-2 md:p-4">
         <section class="pre-analysis-card bg-[#121215] border border-zinc-700 rounded-2xl p-3 md:p-6 w-full max-w-2xl max-h-[96vh] overflow-y-auto shadow-2xl flex flex-col justify-between">
             <div>
@@ -307,7 +316,6 @@
                     <div class="summary-stat p-1.5 rounded-lg bg-[#09090b] border border-zinc-800 text-center"><span class="block text-[10px] text-zinc-500">Teori</span><strong id="summaryBookMoves" class="text-xs text-white">—</strong></div>
                 </div>
 
-                <!-- DİKEYE TAM SIĞAN KOMPAKT TABLO -->
                 <div class="overflow-x-auto rounded-xl border border-zinc-800 bg-[#09090b]">
                     <table class="w-full text-xs text-left">
                         <thead class="bg-zinc-900 text-zinc-400 text-[10px] uppercase tracking-wider">
@@ -367,14 +375,14 @@
                     </table>
                 </div>
 
-                <p id="summaryFootnote" class="text-[10px] leading-tight text-zinc-500 mt-2">
+                <p id="summaryFootnote" class="text-[10px] leading-tight text-zinc-500 mt-1.5">
                     💡 Tablodaki sayılara tıklayarak o hamleye doğrudan gidebilirsiniz.
                 </p>
             </div>
 
             <div class="flex flex-row gap-2 mt-2 pt-2 border-t border-zinc-800">
-                <button id="summaryCloseBackBtn" class="flex-1 py-2 rounded-xl border border-zinc-700 bg-zinc-900 text-zinc-300 font-bold text-xs">Geri Dön</button>
-                <button id="summaryContinueBtn" disabled class="flex-1 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white font-bold text-xs">Analizi Aç</button>
+                <button id="summaryCloseBackBtn" class="flex-1 py-1.5 rounded-xl border border-zinc-700 bg-zinc-900 text-zinc-300 font-bold text-xs">Geri Dön</button>
+                <button id="summaryContinueBtn" disabled class="flex-1 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white font-bold text-xs">Analizi Aç</button>
             </div>
         </section>
     </div>
@@ -445,7 +453,7 @@
                     <span class="font-bold text-white">⏳ 15 | 10 Min</span>
                     <span class="text-emerald-400 font-mono font-bold">15 + 10 Rapid</span>
                 </button>
-                <button class="tempo-option-btn w-full bg-[#09090b] hover:bg-zinc-800 border border-zinc-800 p-2.5 rounded-xl flex items-center justify-between text-xs transition" data-time="1800">
+                <button class="tempo-option-btn w-full bg-[#09090b] hover:bg-zinc-800 border border-zinc-800 p-2.5 rounded-xl flex items-center justify-between text-xs transition" data-time="180800">
                     <span class="font-bold text-white">⏳ 30 Min</span>
                     <span class="text-emerald-400 font-mono font-bold">30 | 0 Rapid</span>
                 </button>
@@ -585,7 +593,7 @@
     </div>
 
     <!-- Ana Uygulama Kodu -->
-    <script src="app.js?v=20261020-mobile-fix"></script>
+    <script src="app.js?v=20261020-flex-fix"></script>
 </body>
 
 </html>
