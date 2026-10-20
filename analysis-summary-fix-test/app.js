@@ -1937,6 +1937,78 @@ $('#reviewBoardBtn').on('click', function() {
 
 $('#closeSummaryBtn, #summaryCloseBackBtn').on('click', closePreAnalysisSummary);
 
+function buildSummaryCopyText() {
+    const moves = game.history({ verbose: true });
+    let moveText = '';
+    moves.forEach((move, index) => {
+        if (move.color === 'w') moveText += Math.floor(index / 2) + 1 + '. ';
+        moveText += move.san + (index < moves.length - 1 ? ' ' : '');
+    });
+
+    const readTableRows = (selector) => Array.from(document.querySelectorAll(selector)).map(row =>
+        Array.from(row.querySelectorAll('th, td')).map(cell => cell.innerText.trim()).join(' | ')
+    ).filter(Boolean);
+
+    const lines = [
+        'ZATO CHESS — TEST SONUÇLARI',
+        'Sayfa: ' + location.href,
+        'Sonuç: ' + ($('#summaryResult').text().trim() || '—'),
+        'Hamle sayısı: ' + ($('#summaryMoveCount').text().trim() || '—'),
+        'Açılış: ' + ($('#summaryOpening').text().trim() || '—'),
+        'Açılış hamleleri: ' + ($('#summaryBookMoves').text().trim() || '—'),
+        'Analiz durumu: ' + ($('#summaryProgressText').text().trim() || '—'),
+        '',
+        'HAMLE LİSTESİ',
+        moveText || 'Hamle bulunamadı.',
+        '',
+        'MAÇ ÖZETİ',
+        'Beyaz | Doğruluk: ' + ($('#summaryWhiteAccuracy').text().trim() || '—') +
+            ' | Hata: ' + ($('#summaryWhiteMistakes').text().trim() || '—') +
+            ' | Büyük hata: ' + ($('#summaryWhiteBlunders').text().trim() || '—') +
+            ' | Kaçan kazanma: ' + ($('#summaryWhiteMissed').text().trim() || '—'),
+        'Siyah | Doğruluk: ' + ($('#summaryBlackAccuracy').text().trim() || '—') +
+            ' | Hata: ' + ($('#summaryBlackMistakes').text().trim() || '—') +
+            ' | Büyük hata: ' + ($('#summaryBlackBlunders').text().trim() || '—') +
+            ' | Kaçan kazanma: ' + ($('#summaryBlackMissed').text().trim() || '—'),
+        '',
+        'DERİNLİK 6 / 12 / 18 KARŞILAŞTIRMASI',
+        ...readTableRows('#summaryDepthCompareRows tr'),
+        '',
+        'BEYAZ HAMLELERİNİN DERİNLİĞE GÖRE KAYIP PUANLARI',
+        ...readTableRows('#summaryDepthMoveRows tr'),
+        '',
+        'AÇIKLAMA',
+        $('#summaryFootnote').text().trim() || '—',
+        'Karşılaştırma durumu: ' + ($('#summaryDepthCompareProgress').text().trim() || 'Henüz çalıştırılmadı.')
+    ];
+    return lines.join('\n');
+}
+
+$('#summaryCopyResultsBtn').on('click', async function() {
+    const report = buildSummaryCopyText();
+    const $text = $('#summaryCopyText');
+    const $status = $('#summaryCopyStatus');
+    $text.val(report).removeClass('hidden').trigger('focus').trigger('select');
+
+    try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(report);
+            $status.text('Sonuçlar kopyalandı. Şimdi buraya yapıştırabilirsin.');
+            $(this).text('Kopyalandı ✓');
+            return;
+        }
+        const copied = document.execCommand('copy');
+        $status.text(copied
+            ? 'Sonuçlar kopyalandı. Şimdi buraya yapıştırabilirsin.'
+            : 'Metin aşağıda hazır. Metin alanına dokunup tümünü seçerek kopyala.');
+        $(this).text(copied ? 'Kopyalandı ✓' : 'Metni seçip kopyala');
+    } catch (error) {
+        $status.text('Metin aşağıda hazır. Metin alanına dokunup tümünü seçerek kopyala.');
+        $text.trigger('focus').trigger('select');
+        $(this).text('Metni seçip kopyala');
+    }
+});
+
 $('#summaryDepthCompareBtn').on('click', startDepthComparison);
 
 $('#summaryContinueBtn').on('click', function() {
