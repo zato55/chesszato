@@ -35,6 +35,9 @@ let summaryAnalysisRunId = 0;
 let summaryAnalysisTimeout = null;
 let summaryAnalysisDeadlineTimeout = null;
 let summaryAnalysisStartedAt = 0;
+let depthCompareWorker = null;
+let depthCompareTimeout = null;
+let depthCompareRunId = 0;
 
 let userColorSelection = 'w';
 let actualPlayerColor = 'w';
@@ -1142,6 +1145,15 @@ function closePreAnalysisSummary() {
         summaryWorker.terminate();
         summaryWorker = null;
     }
+    depthCompareRunId++;
+    if (depthCompareTimeout) {
+        clearTimeout(depthCompareTimeout);
+        depthCompareTimeout = null;
+    }
+    if (depthCompareWorker) {
+        depthCompareWorker.terminate();
+        depthCompareWorker = null;
+    }
     $('#preAnalysisSummary').addClass('hidden');
 }
 
@@ -1337,6 +1349,119 @@ function openPreAnalysisSummary() {
         finishWithFallback('Stockfish başlatma yanıtı vermedi; analiz süresi aşıldı.');
     }, 20000);
     summaryWorker.postMessage('uci');
+}
+
+
+function startDepthComparison() {
+    const history = game.history({ verbose: true });
+    if (!history.length) return;
+    depthCompareRunId++;
+    const runId = depthCompareRunId;
+    if (depthCompareTimeout) clearTimeout(depthCompareTimeout);
+    if (depthCompareWorker) depthCompareWorker.terminate();
+    depthCompareWorker = null;
+
+    const positions = [], terminalScores = [], replay = new Chess();
+    positions.push(replay.fen());
+    terminalScores.push(null);
+    history.forEach(move => {
+        replay.move(move);
+        positions.push(replay.fen());
+        terminalScores.push(replay.in_checkmate() ? (replay.turn() === 'b' ? 10000 : -10000) : null);
+    });
+
+    const depths = [6, 12, 18];
+    let depthIndex = 0, positionIndex = 0, latestScore = 0, currentFenTurn = 'w', evaluations = [];
+    const $button = $('#summaryDepthCompareBtn');
+    $button.prop('disabled', true).text('Karşılaştırma sürüyor…');
+    $('#summaryDepthCompareResults').removeClass('hidden');
+    $('#summaryDepthCompareRows').empty();
+    $('#summaryDepthCompareProgress').text('Stockfish başlatılıyor; derinlik 18 daha uzun sürebilir.');
+
+    const stopComparison = (message) => {
+        if (runId !== depthCompareRunId) return;
+        if (depthCompareTimeout) { clearTimeout(depthCompareTimeout); depthCompareTimeout = null; }
+        if (depthCompareWorker) depthCompareWorker.terminate();
+        depthCompareWorker = null;
+        $button.prop('disabled', false).text('Tekrar karşılaştır');
+        $('#summaryDepthCompareProgress').text(message);
+    };
+    try {
+        const workerCode = "importScripts('https://cdnjs.cloudflare.com/ajax/libs/stockfish.js/10.0.2/stockfish.js');";
+        depthCompareWorker = new Worker(URL.createObjectURL(new Blob([workerCode], { type: 'application/javascript' })));
+    } catch (error) { stopComparison('Stockfish başlatılamadı.'); return; }
+
+    const finishDepth = () => {
+        const metrics = { w: { mistakes: 0, blunders: 0, missed: 0 }, b: { mistakes: 0, blunders: 0, missed: 0 } };
+        history.forEach((move, i) => {
+            const before = evaluations[i], after = evaluations[i + 1];
+            if (!Number.isFinite(before) || !Number.isFinite(after)) return;
+            const lossCp = Math.max(0, move.color === 'w' ? before - after : after - before);
+            const player = metrics[move.color];
+            if (lossCp >= 100 && lossCp < 300) player.mistakes++;
+            if (lossCp >= 300) player.blunders++;
+            const beforeForMover = move.color === 'w' ? before : -before;
+            const afterForMover = move.color === 'w' ? after : -after;
+            if (beforeForMover >= 300 && afterForMover < 100) player.missed++;
+        });
+        const d = depths[depthIndex];
+        $('#summaryDepthCompareRows').append(
+            '<tr class="border-t border-zinc-800"><th class="px-2 py-2 text-blue-300">Depth ' + d + '</th>' +
+            '<td class="px-2 py-2">' + metrics.w.mistakes + '</td><td class="px-2 py-2">' + metrics.w.blunders + '</td><td class="px-2 py-2">' + metrics.w.missed + '</td>' +
+            '<td class="px-2 py-2">' + metrics.b.mistakes + '</td><td class="px-2 py-2">' + metrics.b.blunders + '</td><td class="px-2 py-2">' + metrics.b.missed + '</td></tr>'
+        );
+        depthIndex++;
+        positionIndex = 0;
+        evaluations = [];
+        if (depthIndex >= depths.length) {
+            stopComparison('Karşılaştırma tamamlandı. Derinlikler arasında değişen sayılar, sınıflandırmanın arama derinliğine duyarlı olduğunu gösterir.');
+            return;
+        }
+        $('#summaryDepthCompareProgress').text('Depth ' + depths[depthIndex] + ' hazırlanıyor…');
+        runNextPosition();
+    };
+
+    const runNextPosition = () => {
+        if (runId !== depthCompareRunId || !depthCompareWorker) return;
+        if (positionIndex >= positions.length) { finishDepth(); return; }
+        if (Number.isFinite(terminalScores[positionIndex])) {
+            evaluations[positionIndex] = terminalScores[positionIndex];
+            positionIndex++;
+            runNextPosition();
+            return;
+        }
+        if (depthCompareTimeout) clearTimeout(depthCompareTimeout);
+        depthCompareTimeout = setTimeout(() => {
+            stopComparison('Depth ' + depths[depthIndex] + ', konum ' + (positionIndex + 1) + ' zaman aşımına uğradı. Tamamlanan derinlik sonuçları tabloda kaldı.');
+        }, 60000);
+        currentFenTurn = positions[positionIndex].split(' ')[1] || 'w';
+        latestScore = 0;
+        $('#summaryDepthCompareProgress').text('Depth ' + depths[depthIndex] + ' · konum ' + (positionIndex + 1) + ' / ' + positions.length);
+        depthCompareWorker.postMessage('position fen ' + positions[positionIndex]);
+        depthCompareWorker.postMessage('go depth ' + depths[depthIndex]);
+    };
+
+    depthCompareWorker.onmessage = function(event) {
+        if (runId !== depthCompareRunId) return;
+        const message = event.data;
+        if (typeof message !== 'string') return;
+        if (message.trim() === 'uciok') { depthCompareWorker.postMessage('isready'); return; }
+        if (message.trim() === 'readyok') { runNextPosition(); return; }
+        const parts = message.split(' '), cpIdx = parts.indexOf('cp'), mateIdx = parts.indexOf('mate');
+        if (message.includes(' score cp ') && cpIdx !== -1 && parts[cpIdx + 1]) latestScore = parseInt(parts[cpIdx + 1], 10);
+        else if (message.includes(' score mate ') && mateIdx !== -1 && parts[mateIdx + 1]) {
+            const mate = parseInt(parts[mateIdx + 1], 10);
+            latestScore = mate > 0 ? 10000 : mate < 0 ? -10000 : 0;
+        }
+        if (message.startsWith('bestmove')) {
+            if (depthCompareTimeout) { clearTimeout(depthCompareTimeout); depthCompareTimeout = null; }
+            evaluations[positionIndex] = currentFenTurn === 'w' ? latestScore : -latestScore;
+            positionIndex++;
+            runNextPosition();
+        }
+    };
+    depthCompareWorker.onerror = () => stopComparison('Stockfish hata verdi; tamamlanan derinlik sonuçları korunuyor.');
+    depthCompareWorker.postMessage('uci');
 }
 
 function startAnalysisMode() {
@@ -1787,6 +1912,8 @@ $('#reviewBoardBtn').on('click', function() {
 });
 
 $('#closeSummaryBtn, #summaryCloseBackBtn').on('click', closePreAnalysisSummary);
+
+$('#summaryDepthCompareBtn').on('click', startDepthComparison);
 
 $('#summaryContinueBtn').on('click', function() {
     if ($(this).prop('disabled')) return;
