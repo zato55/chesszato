@@ -1752,8 +1752,14 @@ function updateAnalysisBoard() {
     const atStart = analysisIdx <= -1;
     $('#navStart, #navPrev, #mNavStart, #mNavPrev')
         .prop('disabled', atStart)
+        .attr('aria-disabled', String(atStart))
         .toggleClass('opacity-40 cursor-not-allowed', atStart)
-        .toggleClass('hover:bg-zinc-800', !atStart);
+        .toggleClass('hover:bg-zinc-800', !atStart)
+        .css({
+            opacity: atStart ? '0.35' : '1',
+            filter: atStart ? 'grayscale(1)' : 'none',
+            pointerEvents: atStart ? 'none' : ''
+        });
 
     selectedSquare = null;
     clearArrow();
