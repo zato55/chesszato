@@ -33,6 +33,7 @@ let currentBestMove = null;
 let summaryWorker = null;
 let summaryAnalysisRunId = 0;
 let summaryAnalysisTimeout = null;
+let summaryAnalysisDeadlineTimeout = null;
 let summaryAnalysisStartedAt = 0;
 
 let userColorSelection = 'w';
@@ -1133,6 +1134,10 @@ function closePreAnalysisSummary() {
         clearTimeout(summaryAnalysisTimeout);
         summaryAnalysisTimeout = null;
     }
+    if (summaryAnalysisDeadlineTimeout) {
+        clearTimeout(summaryAnalysisDeadlineTimeout);
+        summaryAnalysisDeadlineTimeout = null;
+    }
     if (summaryWorker) {
         summaryWorker.terminate();
         summaryWorker = null;
@@ -1190,6 +1195,9 @@ function openPreAnalysisSummary() {
     $('#summaryBookMoves').text(matchedOpeningPlies + ' tanımlı');
 
     const evaluations = [];
+    // Test: toplam sürenin çoğunu motor aramalarına ayır; hamle sayısına göre arama süresini azalt.
+    const summarySearchBudgetMs = 24000;
+    const summaryMoveTimeMs = Math.max(100, Math.min(700, Math.floor(summarySearchBudgetMs / positions.length)));
     let positionIndex = 0;
     let latestScore = 0;
     let currentFenTurn = 'w';
@@ -1198,6 +1206,10 @@ function openPreAnalysisSummary() {
         if (summaryAnalysisTimeout) {
             clearTimeout(summaryAnalysisTimeout);
             summaryAnalysisTimeout = null;
+        }
+        if (summaryAnalysisDeadlineTimeout) {
+            clearTimeout(summaryAnalysisDeadlineTimeout);
+            summaryAnalysisDeadlineTimeout = null;
         }
         if (summaryWorker) summaryWorker.terminate();
         summaryWorker = null;
@@ -1256,10 +1268,14 @@ function openPreAnalysisSummary() {
             $('#summaryBlackMissed').text(metrics.b.missed);
             $('#summaryProgressBar').css('width', '100%');
             $('#summaryProgressText').text('Tamamlandı · toplam ' + ((Date.now() - summaryAnalysisStartedAt) / 1000).toFixed(1) + ' saniye');
-            $('#summaryFootnote').text('Tahmini doğruluk ve hata sınıfları, Stockfish 10 derinlik 6 değerlendirmelerindeki hamle öncesi/sonrası farklardan hesaplanır; Chess.com puanlamasıyla aynı değildir. “Tanımlı açılış hamleleri” yalnızca uygulamadaki sınırlı açılış listesini ifade eder.');
+            $('#summaryFootnote').text('HIZ TESTİ: Stockfish 10, konum başına ' + summaryMoveTimeMs + ' ms süre sınırıyla çalıştı. Bu hızlı taramanın hata sınıflandırma kalitesi ayrıca kontrol edilmelidir; Chess.com puanlamasıyla aynı değildir.');
             if (summaryAnalysisTimeout) {
                 clearTimeout(summaryAnalysisTimeout);
                 summaryAnalysisTimeout = null;
+            }
+            if (summaryAnalysisDeadlineTimeout) {
+                clearTimeout(summaryAnalysisDeadlineTimeout);
+                summaryAnalysisDeadlineTimeout = null;
             }
             summaryWorker.terminate();
             summaryWorker = null;
@@ -1269,11 +1285,11 @@ function openPreAnalysisSummary() {
         if (summaryAnalysisTimeout) clearTimeout(summaryAnalysisTimeout);
         summaryAnalysisTimeout = setTimeout(() => {
             finishWithFallback('Stockfish bir konumu zamanında değerlendiremedi.');
-        }, 20000);
+        }, Math.max(1500, summaryMoveTimeMs * 3));
         currentFenTurn = positions[positionIndex].split(' ')[1] || 'w';
         latestScore = 0;
         summaryWorker.postMessage('position fen ' + positions[positionIndex]);
-        summaryWorker.postMessage('go depth 6');
+        summaryWorker.postMessage('go movetime ' + summaryMoveTimeMs);
     };
 
     summaryWorker.onmessage = function(event) {
@@ -1306,12 +1322,16 @@ function openPreAnalysisSummary() {
             evaluations[positionIndex] = currentFenTurn === 'w' ? latestScore : -latestScore;
             positionIndex++;
             $('#summaryProgressBar').css('width', Math.round(positionIndex / positions.length * 100) + '%');
-            $('#summaryProgressText').text('Konum ' + positionIndex + ' / ' + positions.length + ' değerlendirildi.');
+            $('#summaryProgressText').text('Konum ' + positionIndex + ' / ' + positions.length + ' · ' + summaryMoveTimeMs + ' ms/arama · ' + ((Date.now() - summaryAnalysisStartedAt) / 1000).toFixed(1) + ' sn');
             evaluateNext();
         }
     };
     summaryWorker.onerror = () => finishWithFallback('Stockfish yüklenirken hata oluştu.');
 
+    // Toplam süre için sert sınır; normal arama bütçesi 24 sn, güvenlik payı 5 sn.
+    summaryAnalysisDeadlineTimeout = setTimeout(() => {
+        finishWithFallback('30 saniyelik özet süresi doldu; bu oyunda hızlı değerlendirme tamamlanamadı.');
+    }, 29000);
     // Önce UCI el sıkışmasını tamamla; motor hazır olmadan analiz komutu gönderme.
     summaryAnalysisTimeout = setTimeout(() => {
         finishWithFallback('Stockfish başlatma yanıtı vermedi; analiz süresi aşıldı.');
