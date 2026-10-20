@@ -778,6 +778,17 @@ aside.collapsed #logoToggleBtn {
     display: flex; flex-direction: column; gap: 5px; padding: 12px;
     border: 1px solid #27272a; border-radius: 12px; background: #09090b; min-width: 0;
 }
+
+/* GTEST maç özeti: yalnızca Hamle ve Teori kutularını daha kompakt tut. */
+#summaryStats .summary-stat {
+    gap: 3px;
+    padding: 6px !important;
+    border-radius: 8px;
+}
+#summaryStats .summary-stat strong {
+    font-size: 13px;
+    line-height: 1.2;
+}
 .summary-stat span { color: #a1a1aa; font-size: 11px; }
 .summary-stat strong {
     color: #fafafa; font-size: 16px; line-height: 1.35; overflow-wrap: anywhere;
