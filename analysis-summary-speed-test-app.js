@@ -1320,9 +1320,11 @@ function openPreAnalysisSummary() {
         const parts = message.split(' ');
         const cpIdx = parts.indexOf('cp');
         const mateIdx = parts.indexOf('mate');
-        if (message.includes(' score cp ') && cpIdx !== -1 && parts[cpIdx + 1]) {
+        // UCI upperbound/lowerbound skorları kesin değerlendirme değildir; son kesin skoru koru.
+        const isBoundScore = message.includes(' upperbound') || message.includes(' lowerbound');
+        if (!isBoundScore && message.includes(' score cp ') && cpIdx !== -1 && parts[cpIdx + 1]) {
             latestScore = parseInt(parts[cpIdx + 1], 10);
-        } else if (message.includes(' score mate ') && mateIdx !== -1 && parts[mateIdx + 1]) {
+        } else if (!isBoundScore && message.includes(' score mate ') && mateIdx !== -1 && parts[mateIdx + 1]) {
             const mate = parseInt(parts[mateIdx + 1], 10);
             latestScore = mate > 0 ? 10000 : mate < 0 ? -10000 : 0;
         }
@@ -1448,8 +1450,10 @@ function startDepthComparison() {
         if (message.trim() === 'uciok') { depthCompareWorker.postMessage('isready'); return; }
         if (message.trim() === 'readyok') { runNextPosition(); return; }
         const parts = message.split(' '), cpIdx = parts.indexOf('cp'), mateIdx = parts.indexOf('mate');
-        if (message.includes(' score cp ') && cpIdx !== -1 && parts[cpIdx + 1]) latestScore = parseInt(parts[cpIdx + 1], 10);
-        else if (message.includes(' score mate ') && mateIdx !== -1 && parts[mateIdx + 1]) {
+        // UCI upperbound/lowerbound skorları kesin değerlendirme değildir; son kesin skoru koru.
+        const isBoundScore = message.includes(' upperbound') || message.includes(' lowerbound');
+        if (!isBoundScore && message.includes(' score cp ') && cpIdx !== -1 && parts[cpIdx + 1]) latestScore = parseInt(parts[cpIdx + 1], 10);
+        else if (!isBoundScore && message.includes(' score mate ') && mateIdx !== -1 && parts[mateIdx + 1]) {
             const mate = parseInt(parts[mateIdx + 1], 10);
             latestScore = mate > 0 ? 10000 : mate < 0 ? -10000 : 0;
         }
