@@ -1373,6 +1373,7 @@ function startDepthComparison() {
     });
 
     const depths = [6, 12, 18];
+    const depthMoveDetails = [];
     let depthIndex = 0, positionIndex = 0, latestScore = 0, currentFenTurn = 'w', evaluations = [];
     const $button = $('#summaryDepthCompareBtn');
     $button.prop('disabled', true).text('Karşılaştırma sürüyor…');
@@ -1395,9 +1396,12 @@ function startDepthComparison() {
 
     const finishDepth = () => {
         const metrics = { w: { mistakes: 0, blunders: 0, missed: 0 }, b: { mistakes: 0, blunders: 0, missed: 0 } };
-        history.forEach((move, i) => {
+        const d = depths[depthIndex];
+        const moveDetails = history.map((move, i) => {
             const before = evaluations[i], after = evaluations[i + 1];
-            if (!Number.isFinite(before) || !Number.isFinite(after)) return;
+            if (!Number.isFinite(before) || !Number.isFinite(after)) {
+                return { ply: i + 1, color: move.color, san: move.san, lossCp: null };
+            }
             const lossCp = Math.max(0, move.color === 'w' ? before - after : after - before);
             const player = metrics[move.color];
             if (lossCp >= 100 && lossCp < 300) player.mistakes++;
@@ -1405,8 +1409,9 @@ function startDepthComparison() {
             const beforeForMover = move.color === 'w' ? before : -before;
             const afterForMover = move.color === 'w' ? after : -after;
             if (beforeForMover >= 300 && afterForMover < 100) player.missed++;
+            return { ply: i + 1, color: move.color, san: move.san, lossCp };
         });
-        const d = depths[depthIndex];
+        depthMoveDetails.push({ depth: d, moves: moveDetails });
         $('#summaryDepthCompareRows').append(
             '<tr class="border-t border-zinc-800"><th class="px-2 py-2 text-blue-300">Depth ' + d + '</th>' +
             '<td class="px-2 py-2">' + metrics.w.mistakes + '</td><td class="px-2 py-2">' + metrics.w.blunders + '</td><td class="px-2 py-2">' + metrics.w.missed + '</td>' +
@@ -1416,7 +1421,23 @@ function startDepthComparison() {
         positionIndex = 0;
         evaluations = [];
         if (depthIndex >= depths.length) {
-            stopComparison('Karşılaştırma tamamlandı. Derinlikler arasında değişen sayılar, sınıflandırmanın arama derinliğine duyarlı olduğunu gösterir.');
+            const whiteMoves = history.map((move, i) => ({ moveNo: Math.floor(i / 2) + 1, san: move.san, ply: i + 1 })).filter((item, i) => history[i].color === 'w');
+            const cellFor = (detail) => {
+                if (!detail || !Number.isFinite(detail.lossCp)) return '—';
+                const cp = Math.round(detail.lossCp);
+                const label = cp >= 300 ? ' · Büyük hata' : cp >= 100 ? ' · Hata' : '';
+                return cp + ' cp' + label;
+            };
+            const rows = whiteMoves.map(item => {
+                const cells = depthMoveDetails.map(result => {
+                    const detail = result.moves.find(move => move.ply === item.ply);
+                    return '<td class="px-2 py-2">' + cellFor(detail) + '</td>';
+                }).join('');
+                return '<tr class="border-t border-zinc-800"><td class="px-2 py-2">' + item.moveNo + '. ' + item.san + '</td>' + cells + '</tr>';
+            }).join('');
+            $('#summaryDepthMoveRows').html(rows);
+            $('#summaryDepthMoveDetails').removeClass('hidden');
+            stopComparison('Karşılaştırma tamamlandı. Her beyaz hamlesinin kayıp puanı aşağıda; bu, hata sayılarının hangi hamlelerden geldiğini gösterir.');
             return;
         }
         $('#summaryDepthCompareProgress').text('Depth ' + depths[depthIndex] + ' hazırlanıyor…');
