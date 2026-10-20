@@ -1,1 +1,561 @@
-a
+<!DOCTYPE html>
+<html lang="tr" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Zato Chess — Web Satranç</title>
+    
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- jQuery & Chess.js (CDN) -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+    
+    <!-- Özel CSS -->
+    <link rel="stylesheet" href="style.css?v=20261019-pre-analysis-summary">
+</head>
+
+<body class="bg-[#09090b] text-zinc-100 font-sans antialiased h-screen overflow-hidden flex flex-col md:flex-row select-none">
+
+    <!-- 📱 MOBİL ÜST BAR (ORİJİNAL) -->
+    <header class="md:hidden bg-[#121215] border-b border-zinc-800/80 px-3 py-2 flex items-center justify-between z-30 flex-shrink-0">
+        <div class="flex items-center gap-2">
+            <img src="logo.png" alt="ZATOI" class="w-7 h-7 object-contain rounded-lg border border-red-900/50" onerror="this.style.display='none'; $('#mobileLogoFallback').removeClass('hidden');">
+            <div id="mobileLogoFallback" class="hidden w-7 h-7 bg-red-700 rounded-lg flex items-center justify-center font-black text-sm text-white">Z</div>
+            <span class="font-extrabold text-sm text-red-600 tracking-wider">ZATO<span class="text-white">CHESS</span></span>
+        </div>
+        <div class="flex items-center gap-1.5">
+            <button id="mobileQuickLogin" class="text-xs bg-blue-600 hover:bg-blue-500 font-bold px-2.5 py-1.5 rounded-lg text-white transition active:scale-95 shadow-sm">Giriş Yap</button>
+            <button id="mobileQuickRegister" class="text-xs bg-red-700 hover:bg-red-600 font-bold px-2.5 py-1.5 rounded-lg text-white transition active:scale-95 shadow-sm">Kayıt Ol</button>
+        </div>
+    </header>
+
+    <!-- 💻 MASAÜSTÜ SOL MENÜ (ORİJİNAL LOGO YAPISI) -->
+    <aside id="mainSidebar" class="hidden md:flex flex-col bg-[#121215] border-r border-zinc-800 p-4 justify-between h-screen shrink-0 z-30">
+        <div class="flex flex-col gap-6">
+            <!-- LOGO & DARALTMA BUTONU -->
+            <button id="logoToggleBtn" class="flex items-center gap-2.5 w-full hover:opacity-80 transition-opacity text-left outline-none cursor-pointer">
+                <img src="logo.png" alt="ZATOI" class="w-8 h-8 object-contain rounded-lg border border-red-900/50" onerror="this.style.display='none'; $('#desktopLogoFallback').removeClass('hidden');">
+                <div id="desktopLogoFallback" class="hidden w-8 h-8 bg-red-700 rounded-lg flex items-center justify-center font-black text-sm text-white">Z</div>
+                <div class="sidebar-text flex items-center">
+                    <span class="font-extrabold text-xl tracking-wider text-red-600">ZATO<span class="text-white">CHESS</span></span>
+                </div>
+            </button>
+
+            <!-- NAVİGASYON -->
+            <nav class="flex flex-col gap-2">
+                <button id="resetBtn" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold transition-all shadow-md">
+                    <span class="text-lg">♟️</span>
+                    <span class="sidebar-text">Oyna</span>
+                </button>
+            </nav>
+        </div>
+
+        <div class="flex flex-col gap-2 border-t border-zinc-800/80 pt-4">
+            <button class="nav-item flex items-center gap-3 px-3 py-2 rounded-xl bg-blue-600/10 hover:bg-blue-600/20 text-blue-400 font-medium text-sm transition-all border border-blue-500/20">
+                <span>🔑</span>
+                <span class="sidebar-text">Giriş Yap</span>
+            </button>
+            <button class="nav-item flex items-center gap-3 px-3 py-2 rounded-xl bg-red-600/10 hover:bg-red-600/20 text-red-400 font-medium text-sm transition-all border border-red-500/20">
+                <span>✨</span>
+                <span class="sidebar-text">Kayıt Ol</span>
+            </button>
+            <button id="openSettingsBtn" class="nav-item flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-zinc-800/60 text-zinc-400 font-medium text-sm transition-all">
+                <span>⚙️</span>
+                <span class="sidebar-text">Ayarlar</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- ♟️ ORTA ALAN (SATRANÇ TAHTASI & OYUNCU KARTLARI) -->
+    <main class="flex-1 flex flex-col items-center justify-center relative p-2 md:p-6 overflow-hidden bg-[#09090b]">
+        
+        <div class="flex flex-col gap-2 items-center justify-center w-full max-w-[620px]">
+            
+            <!-- 👤 ÜST OYUNCU KARTI -->
+            <div id="topPlayerCard" class="player-card-layout w-full grid items-center bg-[#121215] border border-zinc-800/80 rounded-xl shadow-sm transition-all">
+                <div class="player-card-main">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <div id="topAvatar" class="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center font-bold text-sm shrink-0 border border-zinc-700">♟</div>
+                        <div class="flex flex-col min-w-0">
+                            <div class="flex items-center gap-1.5">
+                                <span id="topPlayerName" class="font-extrabold text-sm text-zinc-100 truncate">Stockfish Bot</span>
+                                <span id="topPlayerElo" class="text-xs text-blue-400 font-bold bg-blue-950/60 border border-blue-800/50 px-1.5 py-0.5 rounded">(1400)</span>
+                            </div>
+                            <span id="topOpeningText" class="text-[11px] text-zinc-400 font-medium truncate">📖 ...</span>
+                        </div>
+                    </div>
+                    <div id="topTimerDesktop" class="player-card-clock font-mono font-black text-sm px-2.5 py-1 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-200">05:00</div>
+                </div>
+                <div class="player-capture-row" aria-label="Üst oyuncunun yediği taşlar">
+                    <div id="topCapturedPieces" class="flex items-center gap-1"></div>
+                    <span id="topMaterialDiff" class="text-xs font-bold text-emerald-400"></span>
+                </div>
+            </div>
+
+            <!-- 🟩 SATRANÇ TAHTASI KAPSAYICISI VE EVAL BAR -->
+            <div class="flex items-center justify-center gap-3 w-full">
+                
+                <!-- 📊 DEĞERLENDİRME BARI (EVAL BAR) -->
+                <div id="evalBarWrapper" class="eval-bar-wrapper hidden">
+                    <div id="evalBarWhite" class="eval-bar-white" style="height: 50%;"></div>
+                </div>
+
+                <!-- ♟️ TAHTA -->
+                <div id="board-wrapper" class="relative">
+                    <div id="board" class="theme-green anim-normal"></div>
+                    <svg id="arrowOverlay" class="absolute inset-0 w-full h-full pointer-events-none z-20">
+                        <defs>
+                            <marker id="arrowhead" markerWidth="6" markerHeight="6" refX="4" refY="3" orient="auto">
+                                <polygon points="0 0, 6 3, 0 6" fill="#22c55e" />
+                            </marker>
+                        </defs>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- 👤 ALT OYUNCU KARTI -->
+            <div id="bottomPlayerCard" class="player-card-layout w-full grid items-center bg-[#121215] border border-zinc-800/80 rounded-xl shadow-sm transition-all">
+                <div class="player-capture-row" aria-label="Alt oyuncunun yediği taşlar">
+                    <div id="bottomCapturedPieces" class="flex items-center gap-1"></div>
+                    <span id="bottomMaterialDiff" class="text-xs font-bold text-emerald-400"></span>
+                </div>
+                <div class="player-card-main">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <div id="bottomAvatar" class="w-8 h-8 rounded-lg bg-zinc-100 text-zinc-900 flex items-center justify-center font-bold text-sm shrink-0 border border-zinc-300">♙</div>
+                        <div class="flex flex-col min-w-0">
+                            <div class="flex items-center gap-1.5">
+                                <span id="bottomPlayerName" class="font-extrabold text-sm text-zinc-100 truncate">Siz</span>
+                                <span id="bottomPlayerElo" class="text-xs text-blue-400 font-bold bg-blue-950/60 border border-blue-800/50 px-1.5 py-0.5 rounded">(1500)</span>
+                            </div>
+                            <span id="bottomOpeningText" class="text-[11px] text-zinc-400 font-medium truncate">📖 ...</span>
+                        </div>
+                    </div>
+                    <div id="bottomTimerDesktop" class="player-card-clock font-mono font-black text-sm px-2.5 py-1 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-200">05:00</div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 📱 MOBİL HAMLE STRİBİ -->
+        <div id="mobileMoveStrip" class="md:hidden w-full max-w-[620px] overflow-x-auto no-scrollbar flex items-center gap-2 mt-2 py-1">
+            <div id="mobilePgnList" class="flex items-center gap-1 text-xs whitespace-nowrap"></div>
+        </div>
+
+        <!-- 📱 MOBİL CANLI HAMLE GEZİNME VE HIZLI KONTROLLER -->
+        <div id="mobileQuickControls" class="md:hidden grid grid-cols-6 items-center w-full max-w-[620px] gap-1 mt-2">
+            <button id="liveNavStart" aria-label="Oyunun başına git" title="Başa git" class="flex items-center justify-center py-[0.65rem] bg-[#09090b] hover:bg-zinc-800 border border-red-900 text-white rounded-lg transition-colors"><svg viewBox="0 0 24 24" class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5v14"/><path d="M19 5 9 12l10 7z"/></svg></button>
+            <button id="liveNavPrev" aria-label="Önceki hamle" title="Önceki hamle" class="flex items-center justify-center py-[0.65rem] bg-[#09090b] hover:bg-zinc-800 border border-red-900 text-white rounded-lg transition-colors"><svg viewBox="0 0 24 24" class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
+            <button id="liveNavNext" aria-label="Sonraki hamle" title="Sonraki hamle" class="flex items-center justify-center py-[0.65rem] bg-[#09090b] hover:bg-zinc-800 border border-red-900 text-white rounded-lg transition-colors"><svg viewBox="0 0 24 24" class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+            <button id="liveNavEnd" aria-label="Canlı konuma dön" title="Canlı konuma dön" class="flex items-center justify-center py-[0.65rem] bg-[#09090b] hover:bg-zinc-800 border border-red-900 text-white rounded-lg transition-colors"><svg viewBox="0 0 24 24" class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 5v14"/><path d="m5 5 10 7-10 7z"/></svg></button>
+            <button id="quickFlipBtn" aria-label="Tahtayı çevir" title="Tahtayı çevir" class="flex items-center justify-center py-[0.65rem] bg-[#09090b] hover:bg-zinc-800 border border-red-900 text-white rounded-lg transition-colors"><svg viewBox="0 0 24 24" class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7h-9a4 4 0 0 0-4 4v1"/><path d="m4 9 3-3 3 3"/><path d="M4 17h9a4 4 0 0 0 4-4v-1"/><path d="m20 15-3 3-3-3"/></svg></button>
+            <button id="quickUndoBtn" aria-label="Hamleyi geri al" title="Gerçek hamleyi geri al" class="flex items-center justify-center py-[0.65rem] bg-[#09090b] hover:bg-zinc-800 border border-red-900 text-white rounded-lg transition-colors"><svg viewBox="0 0 24 24" class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h9a7 7 0 0 1 0 14h-2"/></svg></button>
+        </div>
+
+        <!-- 📱 MOBİL ANALİZ BİLGİSİ: gezinme butonları alt menüye taşındı -->
+        <div id="mobileAnalysisPanel" class="hidden md:hidden w-full max-w-[620px] flex flex-col gap-2 mt-2">
+            <div class="flex items-center gap-2 bg-[#121215] border border-zinc-800 rounded-xl p-2">
+                <span id="mEvalScoreText" class="font-black text-sm text-blue-400 bg-blue-950/60 border border-blue-800/50 px-2 py-0.5 rounded">+0.0</span>
+                <span id="mEvalDescription" class="text-xs text-zinc-300 font-medium">Eşit konum</span>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- 📋 MASAÜSTÜ SAĞ PANEL (CANLI KARŞILAŞMA & KONTROLLER) -->
+    <aside id="desktopPanel" class="hidden md:flex flex-col bg-[#121215] border-l border-zinc-800 p-4 justify-between h-screen shrink-0 z-30">
+        
+        <div class="flex flex-col gap-3 min-h-0 flex-1">
+            
+            <!-- PANEL BAŞLIĞI VE DURUM -->
+            <div class="flex items-center justify-between border-b border-zinc-800/80 pb-2">
+                <h2 id="panelTitle" class="font-extrabold text-sm tracking-wide text-zinc-200">Canlı Karşılaşma</h2>
+                <span id="status" class="text-xs font-bold text-blue-400 bg-blue-950/60 border border-blue-800/50 px-2 py-0.5 rounded">Sıra: Beyaz</span>
+            </div>
+
+            <!-- ANALİZ MODU DEĞERLENDİRME KUTUSU -->
+            <div id="evalScoreWrapper" class="hidden flex flex-col gap-1 bg-[#09090b] border border-zinc-800 rounded-xl p-2.5">
+                <div class="flex items-center justify-between">
+                    <span class="text-[11px] font-bold text-zinc-400">📊 Değerlendirme</span>
+                    <span id="evalScoreText" class="font-black text-sm text-blue-400 bg-blue-950/60 border border-blue-800/50 px-2 py-0.5 rounded">+0.0</span>
+                </div>
+                <span id="evalDescription" class="text-xs text-zinc-300 font-medium">Eşit konum</span>
+            </div>
+
+            <!-- MOD VE AYAR GRUBU -->
+            <div id="gameplayConfigGroup" class="flex flex-col gap-2">
+                <div class="flex items-center justify-between gap-1 bg-[#09090b] p-1 rounded-xl border border-zinc-800">
+                    <button id="modePvP" class="flex-1 py-1.5 rounded-lg text-xs font-bold text-zinc-400 hover:text-white transition-all">2 Kişilik (Yerel)</button>
+                    <button id="modeBot" class="flex-1 py-1.5 rounded-lg text-xs font-bold bg-blue-600 text-white shadow-md transition-all">Stockfish Bot</button>
+                </div>
+
+                <div id="botEloWrapper" class="flex items-center justify-between text-xs font-medium text-zinc-400 px-1 mt-1">
+                    <span>Bot Seviyesi:</span>
+                    <select id="botElo" class="bg-[#09090b] border border-zinc-800 text-blue-400 font-bold rounded-lg px-2 py-1 outline-none">
+                        <option value="250">250 Elo (Başlangıç)</option>
+                        <option value="400">400 Elo (Kolay)</option>
+                        <option value="800">800 Elo (Orta)</option>
+                        <option value="1200">1200 Elo (Zor)</option>
+                        <option value="1400" selected>1400 Elo (Gelişmiş)</option>
+                        <option value="1600">1600 Elo (Usta)</option>
+                        <option value="1800">1800 Elo (Uzman)</option>
+                        <option value="2000">2000 Elo (Şampiyon)</option>
+                        <option value="2200">2200 Elo (Büyükusta)</option>
+                    </select>
+                </div>
+
+                <div class="flex items-center justify-between text-xs font-medium text-zinc-400 px-1">
+                    <span>Zaman Temposu:</span>
+                    <select id="timeSelect" class="bg-[#09090b] border border-zinc-800 text-emerald-400 font-bold rounded-lg px-2 py-1 outline-none">
+                        <option value="60">1+0 Bullet</option>
+                        <option value="60-1">1+1 Bullet</option>
+                        <option value="120-1">2+1 Bullet</option>
+                        <option value="180">3+0 Blitz</option>
+                        <option value="180-2">3+2 Blitz</option>
+                        <option value="300" selected>5+0 Blitz</option>
+                        <option value="300-3">5+3 Blitz</option>
+                        <option value="600">10+0 Rapid</option>
+                        <option value="900-10">15+10 Rapid</option>
+                        <option value="1800">30+0 Rapid</option>
+                    </select>
+                </div>
+
+                <div class="flex items-center justify-between text-xs text-zinc-400 px-1 mt-1">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="toggleLegalMoves" checked class="rounded bg-zinc-900 border-zinc-700 text-blue-600 focus:ring-0">
+                        <span>Hamle İpuçları</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="toggleAutoFlip" class="rounded bg-zinc-900 border-zinc-700 text-blue-600 focus:ring-0">
+                        <span>PvP Otomatik Çevir</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- HAMLE GEÇMİŞİ (PGN) -->
+            <div class="flex flex-col min-h-0 flex-1 mt-1">
+                <span class="text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-1">Hamle Geçmişi</span>
+                <div id="pgn" class="flex-1 bg-[#09090b] border border-zinc-800/80 rounded-xl p-2.5 overflow-y-auto font-mono text-xs no-scrollbar"></div>
+            </div>
+
+        </div>
+
+        <!-- 🎮 MASAÜSTÜ AKSİYSOM VE NAVİGASYON KONTROLLERİ -->
+        <div id="normalControls" class="flex flex-col gap-2 pt-3 border-t border-zinc-800/80 shrink-0">
+            
+            <!-- ANALİZ NAVİGASYON BUTONLARI -->
+            <div id="analysisNav" class="hidden flex flex-col gap-2">
+                <div class="grid grid-cols-5 gap-1">
+                    <button id="navStart" class="py-2 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 rounded-lg font-bold text-xs border border-zinc-800">⏮️</button>
+                    <button id="navPrev" class="py-2 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 rounded-lg font-bold text-xs border border-zinc-800">◀️</button>
+                    <button id="playBestMoveBtn" class="py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-bold text-xs border border-emerald-500 shadow-md flex items-center justify-center">⚡</button>
+                    <button id="navNext" class="py-2 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 rounded-lg font-bold text-xs border border-zinc-800">▶️</button>
+                    <button id="navEnd" class="py-2 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 rounded-lg font-bold text-xs border border-zinc-800">⏭️</button>
+                </div>
+                <button id="exitAnalysisBtn" class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs transition-all shadow-md">
+                    🎮 Oynamaya Dön
+                </button>
+            </div>
+
+            <!-- 🎯 CANLI MAÇ AKSİYON BUTONLARI (ANALİZDE GİZLENİR) -->
+            <div id="liveGameControls" class="flex flex-col gap-2">
+                <div id="actionButtons" class="grid grid-cols-2 gap-2">
+                    <button id="flipBtn" class="py-2 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 font-bold rounded-xl text-xs border border-zinc-800 flex items-center justify-center gap-1.5">
+                        🔄 <span>Tahtayı Çevir</span>
+                    </button>
+                    <button id="undoBtn" class="py-2 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 font-bold rounded-xl text-xs border border-zinc-800 flex items-center justify-center gap-1.5">
+                        ↩️ <span>Geri Al</span>
+                    </button>
+                    <button onclick="offerDraw('bottom')" class="py-2 bg-zinc-900 hover:bg-zinc-800 text-amber-400 font-bold rounded-xl text-xs border border-zinc-800 flex items-center justify-center gap-1.5">
+                        🤝 <span>Berabere</span>
+                    </button>
+                    <button onclick="surrenderGame('bottom')" class="py-2 bg-zinc-900 hover:bg-zinc-800 text-red-400 font-bold rounded-xl text-xs border border-zinc-800 flex items-center justify-center gap-1.5">
+                        🏳️ <span>Terk Et</span>
+                    </button>
+                </div>
+
+                <button id="quickResetBtn" class="w-full py-2.5 bg-red-600 hover:bg-red-500 text-white font-extrabold rounded-xl text-xs transition-all shadow-md mt-1">
+                    Yeni Oyun Başlat
+                </button>
+            </div>
+
+        </div>
+
+    </aside>
+
+    <!-- 📱 SABİT MOBİL ALT NAVİGASYON BAR -->
+    <!-- 📱 MOBİL ALT MENÜ: normal oyun -->
+    <nav id="mobileBottomNav" class="md:hidden fixed bottom-0 left-0 right-0 bg-[#121215] border-t border-zinc-800 flex justify-around items-center py-2 px-3 z-30">
+        <button id="mobileNavPlayBtn" class="flex flex-col items-center gap-1 text-blue-500 font-bold text-[10px]">
+            <span class="text-base">♟</span><span>Oyna</span>
+        </button>
+        <button id="mobileNavBotBtn" class="flex flex-col items-center gap-1 text-zinc-400 font-medium text-[10px]">
+            <span class="text-base">🤖</span><span>Stockfish</span>
+        </button>
+        <button id="mobileNavTempoBtn" class="flex flex-col items-center gap-1 text-zinc-400 font-medium text-[10px]">
+            <span class="text-base">⏱️</span><span>Tempo</span>
+        </button>
+        <button id="mobileNavSettingsBtn" class="flex flex-col items-center gap-1 text-zinc-400 font-medium text-[10px]">
+            <span class="text-base">⚙️</span><span>Ayarlar</span>
+        </button>
+    </nav>
+
+    <!-- 📱 MOBİL ALT MENÜ: analiz gezinme kontrolleri -->
+    <nav id="mobileAnalysisBottomNav" class="hidden md:hidden fixed bottom-0 left-0 right-0 bg-[#121215] border-t border-zinc-800 px-2 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] z-30">
+        <div class="grid grid-cols-5 gap-1 max-w-[620px] mx-auto">
+            <button id="mNavStart" aria-label="İlk hamleye git" class="flex items-center justify-center py-[0.85rem] bg-[#09090b] hover:bg-zinc-800 border border-red-900 text-white rounded-lg transition-colors"><svg viewBox="0 0 24 24" class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5v14"/><path d="M19 5 9 12l10 7z"/></svg></button>
+            <button id="mNavPrev" aria-label="Önceki hamle" class="flex items-center justify-center py-[0.85rem] bg-[#09090b] hover:bg-zinc-800 border border-red-900 text-white rounded-lg transition-colors"><svg viewBox="0 0 24 24" class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
+            <button id="mPlayBestMoveBtn" aria-label="En iyi hamle" class="flex items-center justify-center py-[0.85rem] bg-gradient-to-b from-red-800 to-red-950 hover:from-red-700 hover:to-red-900 border border-red-500 text-white rounded-lg shadow-[0_0_12px_rgba(220,38,38,0.22)] ring-1 ring-red-900/60 transition-colors"><svg viewBox="0 0 24 24" class="w-8 h-8" fill="currentColor" aria-hidden="true"><path d="M13.2 2.5 5.6 13h5.2l-.8 8.5L18.4 10h-5.2z"/></svg></button>
+            <button id="mNavNext" aria-label="Sonraki hamle" class="flex items-center justify-center py-[0.85rem] bg-[#09090b] hover:bg-zinc-800 border border-red-900 text-white rounded-lg transition-colors"><svg viewBox="0 0 24 24" class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+            <button id="mNavEnd" aria-label="Son hamleye git" class="flex items-center justify-center py-[0.85rem] bg-[#09090b] hover:bg-zinc-800 border border-red-900 text-white rounded-lg transition-colors"><svg viewBox="0 0 24 24" class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 5v14"/><path d="m5 5 10 7-10 7z"/></svg></button>
+        </div>
+        <button id="mExitAnalysisBtn" class="w-full max-w-[620px] mx-auto mt-1.5 block py-[0.675rem] bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-base font-bold">🎮 Oynamaya Dön</button>
+    </nav>
+
+    <!-- ♟️ ANALİZ ÖNCESİ MAÇ RAPORU -->
+    <div id="preAnalysisSummary" class="hidden fixed inset-0 bg-black/85 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+        <section class="pre-analysis-card bg-[#121215] border border-zinc-700 rounded-2xl p-5 md:p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div class="flex items-start justify-between gap-3 mb-4">
+                <div>
+                    <p class="text-[11px] uppercase tracking-[0.18em] text-blue-400 font-bold">Maç raporu</p>
+                    <h2 class="text-2xl font-black text-white mt-1">Analiz Öncesi Özet</h2>
+                    <p id="summaryResult" class="text-sm text-zinc-400 mt-1">Oyun değerlendiriliyor…</p>
+                </div>
+                <button id="closeSummaryBtn" aria-label="Özeti kapat" class="text-zinc-400 hover:text-white text-xl px-2 py-1">✕</button>
+            </div>
+            <div class="h-1.5 rounded-full bg-zinc-800 overflow-hidden mb-2"><div id="summaryProgressBar" class="h-full bg-blue-500 transition-all" style="width:0%"></div></div>
+            <p id="summaryProgressText" class="text-xs text-zinc-500 mb-4">Analiz hazırlanıyor…</p>
+            <div id="summaryStats" class="grid grid-cols-2 md:grid-cols-3 gap-2 mb-4">
+                <div class="summary-stat"><span>Hamle sayısı</span><strong id="summaryMoveCount">—</strong></div>
+                <div class="summary-stat"><span>Açılış</span><strong id="summaryOpening">—</strong></div>
+                <div class="summary-stat"><span>Açılış hamleleri</span><strong id="summaryBookMoves">—</strong></div>
+            </div>
+            <div class="overflow-x-auto rounded-xl border border-zinc-800">
+                <table class="w-full text-sm text-left">
+                    <thead class="bg-zinc-900 text-zinc-400 text-xs"><tr><th class="px-3 py-2">Oyuncu</th><th class="px-3 py-2">Tahmini doğruluk</th><th class="px-3 py-2">Hata</th><th class="px-3 py-2">Büyük hata</th><th class="px-3 py-2">Kaçan kazanma</th></tr></thead>
+                    <tbody class="divide-y divide-zinc-800">
+                        <tr><th class="px-3 py-3 text-zinc-100">Beyaz</th><td id="summaryWhiteAccuracy" class="px-3 py-3">—</td><td id="summaryWhiteMistakes" class="px-3 py-3">—</td><td id="summaryWhiteBlunders" class="px-3 py-3">—</td><td id="summaryWhiteMissed" class="px-3 py-3">—</td></tr>
+                        <tr><th class="px-3 py-3 text-zinc-100">Siyah</th><td id="summaryBlackAccuracy" class="px-3 py-3">—</td><td id="summaryBlackMistakes" class="px-3 py-3">—</td><td id="summaryBlackBlunders" class="px-3 py-3">—</td><td id="summaryBlackMissed" class="px-3 py-3">—</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p id="summaryFootnote" class="text-[11px] leading-relaxed text-zinc-500 mt-3">Değerler Stockfish'in hızlı değerlendirmesine dayalı tahminlerdir; resmi bir puanlama değildir.</p>
+            <div class="flex flex-col-reverse sm:flex-row gap-2 mt-5">
+                <button id="summaryCloseBackBtn" class="flex-1 py-3 rounded-xl border border-zinc-700 bg-zinc-900 text-zinc-300 font-bold text-sm">Geri dön</button>
+                <button id="summaryContinueBtn" disabled class="flex-1 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-40 disabled:cursor-wait text-white font-bold text-sm">Analizi Aç</button>
+            </div>
+        </section>
+    </div>
+
+    <!-- 🏆 OYUN BİTTİ MODALI -->
+    <div id="gameOverModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-[#121215] border border-zinc-800 rounded-2xl p-6 max-w-sm w-full flex flex-col items-center text-center gap-4 shadow-2xl">
+            <div id="modalIcon" class="text-5xl">🏆</div>
+            <div class="flex flex-col gap-1">
+                <h3 id="modalTitle" class="font-extrabold text-xl text-white">Oyuncu Kazandı!</h3>
+                <p id="modalReason" class="text-xs text-zinc-400 font-medium">Şah mat ile oyun sona erdi.</p>
+            </div>
+            <div class="flex flex-col gap-2 w-full mt-2">
+                <button id="reviewBoardBtn" class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs transition-all">
+                    🔍 Tahtayı İncele (Analiz Modu)
+                </button>
+                <button id="modalResetBtn" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs transition-all">
+                    🎮 Yeni Oyun Başlat
+                </button>
+                <button id="closeModalBtn" class="w-full py-2 bg-zinc-900 hover:bg-zinc-800 text-zinc-400 font-semibold rounded-xl text-xs border border-zinc-800">
+                    Kapat
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MOBİL TEMPO MODAL -->
+    <div id="tempoModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-end justify-center p-0 md:p-4">
+        <div class="bg-[#121215] border-t-2 md:border-2 border-zinc-800 rounded-t-3xl md:rounded-3xl p-5 w-full max-w-sm space-y-3 max-h-[85vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-zinc-800 pb-2.5">
+                <h3 class="text-base font-bold text-white flex items-center gap-2">⏱️ Zaman Temposu Seç</h3>
+                <button class="close-modal-btn text-zinc-400 hover:text-white text-lg font-bold p-1">✕</button>
+            </div>
+            <div class="space-y-1.5">
+                <button class="tempo-option-btn w-full bg-[#09090b] hover:bg-zinc-800 border border-zinc-800 p-2.5 rounded-xl flex items-center justify-between text-xs transition" data-time="60">
+                    <span class="font-bold text-white">⚡ 1 Min</span>
+                    <span class="text-emerald-400 font-mono font-bold">1 | 0 Bullet</span>
+                </button>
+                <button class="tempo-option-btn w-full bg-[#09090b] hover:bg-zinc-800 border border-zinc-800 p-2.5 rounded-xl flex items-center justify-between text-xs transition" data-time="60-1">
+                    <span class="font-bold text-white">⚡ 1 | 1 Min</span>
+                    <span class="text-emerald-400 font-mono font-bold">1 + 1 Bullet</span>
+                </button>
+                <button class="tempo-option-btn w-full bg-[#09090b] hover:bg-zinc-800 border border-zinc-800 p-2.5 rounded-xl flex items-center justify-between text-xs transition" data-time="120-1">
+                    <span class="font-bold text-white">⚡ 2 | 1 Min</span>
+                    <span class="text-emerald-400 font-mono font-bold">2 + 1 Bullet</span>
+                </button>
+                <button class="tempo-option-btn w-full bg-[#09090b] hover:bg-zinc-800 border border-zinc-800 p-2.5 rounded-xl flex items-center justify-between text-xs transition" data-time="180">
+                    <span class="font-bold text-white">⏱️ 3 Min</span>
+                    <span class="text-emerald-400 font-mono font-bold">3 | 0 Blitz</span>
+                </button>
+                <button class="tempo-option-btn w-full bg-[#09090b] hover:bg-zinc-800 border border-zinc-800 p-2.5 rounded-xl flex items-center justify-between text-xs transition" data-time="180-2">
+                    <span class="font-bold text-white">⏱️ 3 | 2 Min</span>
+                    <span class="text-emerald-400 font-mono font-bold">3 + 2 Blitz</span>
+                </button>
+                <button class="tempo-option-btn w-full bg-[#09090b] hover:bg-zinc-800 border border-zinc-800 p-2.5 rounded-xl flex items-center justify-between text-xs transition" data-time="300">
+                    <span class="font-bold text-white">⏱️ 5 Min</span>
+                    <span class="text-emerald-400 font-mono font-bold">5 | 0 Blitz</span>
+                </button>
+                <button class="tempo-option-btn w-full bg-[#09090b] hover:bg-zinc-800 border border-zinc-800 p-2.5 rounded-xl flex items-center justify-between text-xs transition" data-time="300-3">
+                    <span class="font-bold text-white">⏱️ 5 | 3 Min</span>
+                    <span class="text-emerald-400 font-mono font-bold">5 + 3 Blitz</span>
+                </button>
+                <button class="tempo-option-btn w-full bg-[#09090b] hover:bg-zinc-800 border border-zinc-800 p-2.5 rounded-xl flex items-center justify-between text-xs transition" data-time="600">
+                    <span class="font-bold text-white">⏳ 10 Min</span>
+                    <span class="text-emerald-400 font-mono font-bold">10 | 0 Rapid</span>
+                </button>
+                <button class="tempo-option-btn w-full bg-[#09090b] hover:bg-zinc-800 border border-zinc-800 p-2.5 rounded-xl flex items-center justify-between text-xs transition" data-time="900-10">
+                    <span class="font-bold text-white">⏳ 15 | 10 Min</span>
+                    <span class="text-emerald-400 font-mono font-bold">15 + 10 Rapid</span>
+                </button>
+                <button class="tempo-option-btn w-full bg-[#09090b] hover:bg-zinc-800 border border-zinc-800 p-2.5 rounded-xl flex items-center justify-between text-xs transition" data-time="1800">
+                    <span class="font-bold text-white">⏳ 30 Min</span>
+                    <span class="text-emerald-400 font-mono font-bold">30 | 0 Rapid</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MOBİL BOT MODAL -->
+    <div id="botModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-end justify-center p-0 md:p-4">
+        <div class="bg-[#121215] border-t-2 md:border-2 border-zinc-800 rounded-t-3xl md:rounded-3xl p-5 w-full max-w-sm space-y-3 max-h-[88vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-zinc-800 pb-2.5">
+                <h3 class="text-base font-bold text-white flex items-center gap-2">🤖 Oyun Modu ve Seviye</h3>
+                <button class="close-modal-btn text-zinc-400 hover:text-white text-lg font-bold p-1">✕</button>
+            </div>
+            
+            <div class="space-y-3">
+                <div class="grid grid-cols-2 gap-2 bg-[#09090b] p-1 rounded-xl border border-zinc-800">
+                    <button id="mModeBot" class="py-2 rounded-lg bg-blue-600 font-bold text-xs text-white transition">Stockfish Bot</button>
+                    <button id="mModePvP" class="py-2 rounded-lg text-zinc-400 hover:text-white text-xs font-semibold transition">2 Kişilik (Yerel)</button>
+                </div>
+
+                <div class="space-y-1 pt-1">
+                    <label class="text-xs text-zinc-400 font-medium">Tarafınız:</label>
+                    <div class="grid grid-cols-3 gap-1.5">
+                        <button class="side-choice-btn py-2 rounded-xl bg-blue-600 text-white font-bold text-xs transition flex items-center justify-center gap-1" data-color="w">⚪ Beyaz</button>
+                        <button class="side-choice-btn py-2 rounded-xl bg-[#09090b] text-zinc-400 border border-zinc-800 font-bold text-xs transition flex items-center justify-center gap-1" data-color="r">🎲 Rastgele</button>
+                        <button class="side-choice-btn py-2 rounded-xl bg-[#09090b] text-zinc-400 border border-zinc-800 font-bold text-xs transition flex items-center justify-center gap-1" data-color="b">🖤 Siyah</button>
+                    </div>
+                </div>
+
+                <div id="mBotLevelWrapper" class="space-y-1.5 pt-1">
+                    <label class="text-xs text-zinc-400 font-medium">Bot Zorluk Seviyesi:</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button class="bot-level-btn p-2 bg-[#09090b] border border-zinc-800 rounded-xl text-xs text-center transition" data-elo="250">250 Elo (Acemi)</button>
+                        <button class="bot-level-btn p-2 bg-[#09090b] border border-zinc-800 rounded-xl text-xs text-center transition" data-elo="400">400 Elo (Amatör)</button>
+                        <button class="bot-level-btn p-2 bg-[#09090b] border border-zinc-800 rounded-xl text-xs text-center transition" data-elo="800">800 Elo (Kulüp)</button>
+                        <button class="bot-level-btn p-2 bg-[#09090b] border border-zinc-800 rounded-xl text-xs text-center transition" data-elo="1200">1200 Elo (Orta)</button>
+                        <button class="bot-level-btn p-2 bg-[#09090b] border border-zinc-800 rounded-xl text-xs text-center transition" data-elo="1400">1400 Elo (Gelişmiş)</button>
+                        <button class="bot-level-btn p-2 bg-[#09090b] border border-zinc-800 rounded-xl text-xs text-center transition" data-elo="1600">1600 Elo (İleri)</button>
+                        <button class="bot-level-btn p-2 bg-[#09090b] border border-zinc-800 rounded-xl text-xs text-center transition" data-elo="1800">1800 Elo (Usta)</button>
+                        <button class="bot-level-btn p-2 bg-[#09090b] border border-zinc-800 rounded-xl text-xs text-center transition" data-elo="2000">2000 Elo (Üstat)</button>
+                        <button class="bot-level-btn p-2 bg-[#09090b] border border-zinc-800 rounded-xl text-xs text-center transition col-span-2" data-elo="2200">2200 Elo (Maksimum Bot)</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ⚙️ AYARLAR MODALI -->
+    <div id="settingsModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-[#121215] border border-zinc-800 rounded-2xl p-6 max-w-md w-full flex flex-col gap-5 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-zinc-800 pb-3">
+                <h3 class="font-extrabold text-lg text-white flex items-center gap-2">⚙️ Ayarlar</h3>
+                <button class="close-modal-btn text-zinc-400 hover:text-white font-bold text-lg">✕</button>
+            </div>
+
+            <div class="flex flex-col gap-4 text-xs font-medium text-zinc-300">
+                <div class="flex flex-col gap-2">
+                    <span class="text-zinc-400 font-bold">🎨 Tahta Teması</span>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button class="theme-option-btn p-2 rounded-xl border border-zinc-800 bg-[#09090b] hover:border-blue-500 flex items-center gap-2 font-semibold" data-theme="theme-green">
+                            <span class="w-4 h-4 rounded bg-[#769656] border border-[#eeeee2]"></span> Yeşil (Varsayılan)
+                        </button>
+                        <button class="theme-option-btn p-2 rounded-xl border border-zinc-800 bg-[#09090b] hover:border-blue-500 flex items-center gap-2 font-semibold" data-theme="theme-wood">
+                            <span class="w-4 h-4 rounded bg-[#b58863] border border-[#f0d9b5]"></span> Ahşap
+                        </button>
+                        <button class="theme-option-btn p-2 rounded-xl border border-zinc-800 bg-[#09090b] hover:border-blue-500 flex items-center gap-2 font-semibold" data-theme="theme-red">
+                            <span class="w-4 h-4 rounded bg-[#a81c1c] border border-white"></span> Kırmızı
+                        </button>
+                        <button class="theme-option-btn p-2 rounded-xl border border-zinc-800 bg-[#09090b] hover:border-blue-500 flex items-center gap-2 font-semibold" data-theme="theme-dark">
+                            <span class="w-4 h-4 rounded bg-[#374151] border border-[#9ca3af]"></span> Koyu
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <span class="text-zinc-400 font-bold">♟️ Taş Stili</span>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button class="piece-style-btn p-2 rounded-xl border border-zinc-800 bg-[#09090b] hover:border-blue-500 flex items-center justify-between font-semibold" data-style="neo">
+                            <span>Neo</span>
+                            <img src="https://images.chesscomfiles.com/chess-themes/pieces/neo/300/wn.png" class="w-6 h-6 object-contain">
+                        </button>
+                        <button class="piece-style-btn p-2 rounded-xl border border-zinc-800 bg-[#09090b] hover:border-blue-500 flex items-center justify-between font-semibold" data-style="alpha">
+                            <span>Alpha</span>
+                            <img src="https://images.chesscomfiles.com/chess-themes/pieces/alpha/300/wn.png" class="w-6 h-6 object-contain">
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <span class="text-zinc-400 font-bold">⚡ Animasyon Hızı</span>
+                    <div class="grid grid-cols-4 gap-1 bg-[#09090b] p-1 rounded-xl border border-zinc-800 text-center">
+                        <button class="anim-speed-btn py-1.5 rounded-lg font-semibold hover:text-white" data-anim="anim-off">Kapalı</button>
+                        <button class="anim-speed-btn py-1.5 rounded-lg font-semibold hover:text-white" data-anim="anim-slow">Yavaş</button>
+                        <button class="anim-speed-btn py-1.5 rounded-lg font-semibold bg-blue-600 text-white font-bold" data-anim="anim-normal">Normal</button>
+                        <button class="anim-speed-btn py-1.5 rounded-lg font-semibold hover:text-white" data-anim="anim-fast">Hızlı</button>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-2 pt-2 border-t border-zinc-800">
+                    <label class="flex items-center justify-between cursor-pointer py-1">
+                        <span>🔊 Ses Efektleri</span>
+                        <input type="checkbox" id="toggleSoundEffects" checked class="rounded bg-zinc-900 border-zinc-700 text-blue-600 focus:ring-0">
+                    </label>
+                    <label class="flex items-center justify-between cursor-pointer py-1">
+                        <span>👑 Şah Çekildiğinde Efekt</span>
+                        <input type="checkbox" id="toggleKingCheckEffect" checked class="rounded bg-zinc-900 border-zinc-700 text-blue-600 focus:ring-0">
+                    </label>
+                </div>
+            </div>
+
+            <button class="close-modal-btn w-full py-2.5 bg-zinc-800 hover:bg-zinc-700 text-white font-bold rounded-xl text-xs transition-all">
+                Kaydet & Kapat
+            </button>
+        </div>
+    </div>
+
+    <!-- ♟️ PIYON TERFİ MODALI -->
+    <div id="promotionModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-[#121215] border border-zinc-800 rounded-2xl p-5 max-w-xs w-full flex flex-col items-center gap-3 shadow-2xl">
+            <h4 class="font-extrabold text-sm text-white">Piyon Terfi Ettir</h4>
+            <div class="grid grid-cols-4 gap-2 w-full">
+                <button class="promo-choice p-2 bg-[#09090b] border border-zinc-800 rounded-xl hover:border-blue-500 flex items-center justify-center" data-piece="q">
+                    <img id="pImgQ" class="w-10 h-10 object-contain">
+                </button>
+                <button class="promo-choice p-2 bg-[#09090b] border border-zinc-800 rounded-xl hover:border-blue-500 flex items-center justify-center" data-piece="r">
+                    <img id="pImgR" class="w-10 h-10 object-contain">
+                </button>
+                <button class="promo-choice p-2 bg-[#09090b] border border-zinc-800 rounded-xl hover:border-blue-500 flex items-center justify-center" data-piece="b">
+                    <img id="pImgB" class="w-10 h-10 object-contain">
+                </button>
+                <button class="promo-choice p-2 bg-[#09090b] border border-zinc-800 rounded-xl hover:border-blue-500 flex items-center justify-center" data-piece="n">
+                    <img id="pImgN" class="w-10 h-10 object-contain">
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ana Uygulama Kodu -->
+    <script src="app.js?v=20261019-checkmate-summary-fix"></script>
+</body>
+
+</html>
