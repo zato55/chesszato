@@ -671,7 +671,7 @@ function renderBoard() {
                 $square.append($img);
             }
 
-            // Analizde seçili son hamlenin varış karesinde kalite sembolünü göster.
+            // Sembolü hedef karenin pseudo-element katmanına bağla; taşın flex düzeni etkilenmez.
             if (isAnalysisMode && lastMove && squareName === lastMove.to) {
                 const category = moveCategoryMap[analysisIdx];
                 const qualityBadges = {
@@ -685,12 +685,10 @@ function renderBoard() {
                 };
                 const badge = qualityBadges[category];
                 if (badge) {
-                    $('<span></span>')
-                        .addClass('analysis-move-quality-badge quality-' + category)
-                        .attr('title', badge.label)
-                        .attr('aria-label', badge.label)
-                        .text(badge.symbol)
-                        .appendTo($square);
+                    $square
+                        .addClass('analysis-quality-' + category)
+                        .attr('data-quality-symbol', badge.symbol)
+                        .attr('data-quality-label', badge.label);
                 }
             }
 
