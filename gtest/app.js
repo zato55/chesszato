@@ -549,7 +549,7 @@ function updatePlayerCards() {
         $('#bottomCapturedPieces').html(drawChessComCapturedPieces(blackCaptured, false));
 
         $('#topMaterialDiff').text(whiteScore > blackScore ? `+${whiteScore - blackScore}` : '');
-        $('#bottomMaterialDiff').text(blackScore > whiteScore ? `+${blackScore - blackScore}` : '');
+        $('#bottomMaterialDiff').text(blackScore > whiteScore ? `+${blackScore - whiteScore}` : '');
     }
 }
 
@@ -598,7 +598,7 @@ window.offerDraw = function(position) {
 };
 
 function renderBoard() {
-    const $board = $('#board');
+    const $board =$('#board');
     $board.empty();
 
     const activeGame = getDisplayedGame();
@@ -651,7 +651,7 @@ function renderBoard() {
             const piece = boardState[rowIdx][colIdx];
             const isLight = (rowIdx + colIdx) % 2 === 0;
 
-            const $square = $('<div></div>')
+            const $square =$('<div></div>')
                 .addClass('w-full h-full flex items-center justify-center select-none')
                 .addClass(isLight ? 'square-light' : 'square-dark')
                 .attr('data-square', squareName);
@@ -678,7 +678,7 @@ function renderBoard() {
 
             if (piece) {
                 const key = piece.color === 'w' ? piece.type.toUpperCase() : piece.type;
-                const $img = $('<img>').attr('src', getPieceSVG(key)).addClass('piece');
+                const $img =$('<img>').attr('src', getPieceSVG(key)).addClass('piece');
                 $square.append($img);
             }
 
@@ -797,8 +797,7 @@ function openPromotionModal(color) {
 }
 
 $('.promo-choice').on('click', function() {
-    const chosenPiece = $(this).attr('data-piece');
-    $('#promotionModal').addClass('hidden');
+    const chosenPiece = $(this).attr('data-piece');$('#promotionModal').addClass('hidden');
     if (pendingMove) {
         executeMove(pendingMove.from, pendingMove.to, chosenPiece);
         pendingMove = null;
@@ -906,8 +905,7 @@ $('#toggleAutoFlip').on('change', function() {
 });
 
 $('.side-choice-btn').on('click', function() {
-    $('.side-choice-btn').removeClass('bg-blue-600 text-white font-bold').addClass('text-zinc-400');
-    $(this).addClass('bg-blue-600 text-white font-bold').removeClass('text-zinc-400');
+    $('.side-choice-btn').removeClass('bg-blue-600 text-white font-bold').addClass('text-zinc-400');$(this).addClass('bg-blue-600 text-white font-bold').removeClass('text-zinc-400');
     
     userColorSelection = $(this).attr('data-color');
     resetGame();
@@ -1169,7 +1167,6 @@ function openPreAnalysisSummary() {
     history.forEach(move => {
         replay.move(move);
         positions.push(replay.fen());
-        // Şah matla biten son konumda yasal hamle olmadığından motoru çalıştırma.
         terminalScores.push(replay.in_checkmate()
             ? (replay.turn() === 'b' ? 10000 : -10000)
             : null);
@@ -1191,14 +1188,17 @@ function openPreAnalysisSummary() {
     let positionIndex = 0;
     let latestScore = 0;
     let currentFenTurn = 'w';
+
     const finishWithFallback = (message) => {
         if (runId !== summaryAnalysisRunId) return;
         if (summaryAnalysisTimeout) {
             clearTimeout(summaryAnalysisTimeout);
             summaryAnalysisTimeout = null;
         }
-        if (summaryWorker) summaryWorker.terminate();
-        summaryWorker = null;
+        if (summaryWorker) {
+            summaryWorker.terminate();
+            summaryWorker = null;
+        }
         $('#summaryProgressText').text(message);
         $('#summaryFootnote').text('Stockfish değerlendirmesi tamamlanamadı. Hamle ve tanımlı açılış bilgileri gösteriliyor; doğruluk ve hata istatistikleri hesaplanamadı.');
         $('#summaryContinueBtn').prop('disabled', false);
@@ -1212,9 +1212,53 @@ function openPreAnalysisSummary() {
         return;
     }
 
+    summaryWorker.onmessage = function(event) {
+        if (runId !== summaryAnalysisRunId) return;
+        const message = event.data;
+        if (typeof message !== 'string') return;
+
+        if (message.trim() === 'uciok') {
+            summaryWorker.postMessage('isready');
+            return;
+        }
+
+        if (message.trim() === 'readyok') {
+            if (summaryAnalysisTimeout) clearTimeout(summaryAnalysisTimeout);
+            evaluateNext();
+            return;
+        }
+
+        const parts = message.split(' ');
+        const cpIdx = parts.indexOf('cp');
+        const mateIdx = parts.indexOf('mate');
+
+        if (message.includes(' score cp ') && cpIdx !== -1 && parts[cpIdx + 1]) {
+            let cp = parseInt(parts[cpIdx + 1], 10);
+            latestScore = currentFenTurn === 'b' ? -cp : cp;
+        } else if (message.includes(' score mate ') && mateIdx !== -1 && parts[mateIdx + 1]) {
+            const mate = parseInt(parts[mateIdx + 1], 10);
+            let mateScore = mate > 0 ? 10000 : mate < 0 ? -10000 : 0;
+            latestScore = currentFenTurn === 'b' ? -mateScore : mateScore;
+        }
+
+        if (message.startsWith('bestmove')) {
+            if (summaryAnalysisTimeout) {
+                clearTimeout(summaryAnalysisTimeout);
+                summaryAnalysisTimeout = null;
+            }
+            evaluations[positionIndex] = latestScore;
+            positionIndex++;
+            $('#summaryProgressBar').css('width', Math.round(positionIndex / positions.length * 100) + '%');
+            $('#summaryProgressText').text('Konum ' + positionIndex + ' / ' + positions.length + ' değerlendirildi.');
+            evaluateNext();
+        }
+    };
+
+    summaryWorker.onerror = () => finishWithFallback('Stockfish yüklenirken hata oluştu.');
+
     const evaluateNext = () => {
         if (runId !== summaryAnalysisRunId || !summaryWorker) return;
-        // Mat son konumunun puanını satranç durumundan belirle; Stockfish'e gönderme.
+
         if (Number.isFinite(terminalScores[positionIndex])) {
             evaluations[positionIndex] = terminalScores[positionIndex];
             positionIndex++;
@@ -1223,38 +1267,51 @@ function openPreAnalysisSummary() {
             evaluateNext();
             return;
         }
+
         if (positionIndex >= positions.length) {
             const metrics = {
                 w: { losses: [], mistakes: 0, blunders: 0, missed: 0 },
                 b: { losses: [], mistakes: 0, blunders: 0, missed: 0 }
             };
+
             history.forEach((move, i) => {
                 const before = evaluations[i];
                 const after = evaluations[i + 1];
                 if (!Number.isFinite(before) || !Number.isFinite(after)) return;
+
                 const lossCp = Math.max(0, move.color === 'w' ? before - after : after - before);
                 const player = metrics[move.color];
                 player.losses.push(lossCp);
+
                 if (lossCp >= 100 && lossCp < 300) player.mistakes++;
                 if (lossCp >= 300) player.blunders++;
+
                 const beforeForMover = move.color === 'w' ? before : -before;
                 const afterForMover = move.color === 'w' ? after : -after;
-                if (beforeForMover >= 300 && afterForMover < 100) player.missed++;
+
+                if (beforeForMover >= 200 && afterForMover < 50) {
+                    player.missed++;
+                }
             });
+
             const accuracy = (player) => player.losses.length
                 ? Math.round(player.losses.reduce((sum, loss) => sum + 100 * Math.exp(-loss / 400), 0) / player.losses.length) + '%'
                 : '—';
+
             $('#summaryWhiteAccuracy').text(accuracy(metrics.w));
             $('#summaryWhiteMistakes').text(metrics.w.mistakes);
             $('#summaryWhiteBlunders').text(metrics.w.blunders);
             $('#summaryWhiteMissed').text(metrics.w.missed);
+
             $('#summaryBlackAccuracy').text(accuracy(metrics.b));
             $('#summaryBlackMistakes').text(metrics.b.mistakes);
             $('#summaryBlackBlunders').text(metrics.b.blunders);
             $('#summaryBlackMissed').text(metrics.b.missed);
+
             $('#summaryProgressBar').css('width', '100%');
             $('#summaryProgressText').text('Değerlendirme tamamlandı.');
-            $('#summaryFootnote').text('Tahmini doğruluk ve hata sınıfları, Stockfish 10 derinlik 8 değerlendirmelerindeki hamle öncesi/sonrası farklardan hesaplanır; Chess.com puanlamasıyla aynı değildir. “Tanımlı açılış hamleleri” yalnızca uygulamadaki sınırlı açılış listesini ifade eder.');
+            $('#summaryFootnote').text('Tahmini doğruluk ve hata sınıfları, Stockfish 10 derinlik 6 değerlendirmelerindeki hamle öncesi/sonrası farklardan hesaplanır.');
+
             if (summaryAnalysisTimeout) {
                 clearTimeout(summaryAnalysisTimeout);
                 summaryAnalysisTimeout = null;
@@ -1264,53 +1321,18 @@ function openPreAnalysisSummary() {
             $('#summaryContinueBtn').prop('disabled', false);
             return;
         }
+
         if (summaryAnalysisTimeout) clearTimeout(summaryAnalysisTimeout);
         summaryAnalysisTimeout = setTimeout(() => {
             finishWithFallback('Stockfish bir konumu zamanında değerlendiremedi.');
         }, 20000);
+
         currentFenTurn = positions[positionIndex].split(' ')[1] || 'w';
         latestScore = 0;
         summaryWorker.postMessage('position fen ' + positions[positionIndex]);
         summaryWorker.postMessage('go depth 6');
     };
 
-    summaryWorker.onmessage = function(event) {
-        if (runId !== summaryAnalysisRunId) return;
-        const message = event.data;
-        if (typeof message !== 'string') return;
-        if (message.trim() === 'uciok') {
-            summaryWorker.postMessage('isready');
-            return;
-        }
-        if (message.trim() === 'readyok') {
-            if (summaryAnalysisTimeout) clearTimeout(summaryAnalysisTimeout);
-            evaluateNext();
-            return;
-        }
-        const parts = message.split(' ');
-        const cpIdx = parts.indexOf('cp');
-        const mateIdx = parts.indexOf('mate');
-        if (message.includes(' score cp ') && cpIdx !== -1 && parts[cpIdx + 1]) {
-            latestScore = parseInt(parts[cpIdx + 1], 10);
-        } else if (message.includes(' score mate ') && mateIdx !== -1 && parts[mateIdx + 1]) {
-            const mate = parseInt(parts[mateIdx + 1], 10);
-            latestScore = mate > 0 ? 10000 : mate < 0 ? -10000 : 0;
-        }
-        if (message.startsWith('bestmove')) {
-            if (summaryAnalysisTimeout) {
-                clearTimeout(summaryAnalysisTimeout);
-                summaryAnalysisTimeout = null;
-            }
-            evaluations[positionIndex] = currentFenTurn === 'w' ? latestScore : -latestScore;
-            positionIndex++;
-            $('#summaryProgressBar').css('width', Math.round(positionIndex / positions.length * 100) + '%');
-            $('#summaryProgressText').text('Konum ' + positionIndex + ' / ' + positions.length + ' değerlendirildi.');
-            evaluateNext();
-        }
-    };
-    summaryWorker.onerror = () => finishWithFallback('Stockfish yüklenirken hata oluştu.');
-
-    // Önce UCI el sıkışmasını tamamla; motor hazır olmadan analiz komutu gönderme.
     summaryAnalysisTimeout = setTimeout(() => {
         finishWithFallback('Stockfish başlatma yanıtı vermedi; analiz süresi aşıldı.');
     }, 20000);
