@@ -224,7 +224,6 @@ function initStockfish() {
                     const to = moveStr.substring(2, 4);
                     const promotion = moveStr.length > 4 ? moveStr.substring(4, 5) : 'q';
 
-                    const targetPiece = game.get(to);
                     const moveObj = game.move({ from: from, to: to, promotion: promotion });
                     if (moveObj) returnToLivePosition();
                     if (moveObj && botTurnColor === 'w' && !clockStarted) {
@@ -238,7 +237,7 @@ function initStockfish() {
                         updateTimerDisplay();
                     }
 
-                    playMoveSound(moveObj, targetPiece !== null);
+                    playMoveSound(moveObj, Boolean(moveObj && moveObj.captured));
                     renderBoard();
                     updateStatus();
                 }
@@ -538,6 +537,17 @@ function updatePlayerCards() {
             .toggleClass('bg-zinc-900 text-white', bottomColor === 'b');
     }
 
+    const openingForWhite = detectOpening('w');
+    const openingForBlack = detectOpening('b');
+
+    if (!isFlipped) {
+        $('#topOpeningText').text(openingForBlack);
+        $('#bottomOpeningText').text(openingForWhite);
+    } else {
+        $('#topOpeningText').text(openingForWhite);
+        $('#bottomOpeningText').text(openingForBlack);
+    }
+
     if (!isFlipped) {
         $('#topCapturedPieces').html(drawChessComCapturedPieces(blackCaptured, false));
         $('#bottomCapturedPieces').html(drawChessComCapturedPieces(whiteCaptured, true));
@@ -749,7 +759,6 @@ function executeMove(from, to, promoPiece) {
     if (isGameOver && !isReviewing && !isAnalysisMode) return;
 
     const activeGame = isAnalysisMode ? analysisGame : game;
-    const targetPiece = activeGame.get(to);
     const movingColor = activeGame.turn();
 
     const moveObj = activeGame.move({ from: from, to: to, promotion: promoPiece });
@@ -763,7 +772,7 @@ function executeMove(from, to, promoPiece) {
             updateTimerDisplay();
         }
 
-        playMoveSound(moveObj, targetPiece !== null);
+        playMoveSound(moveObj, Boolean(moveObj && moveObj.captured));
         selectedSquare = null;
 
         if (isAnalysisMode) {
