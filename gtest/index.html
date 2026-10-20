@@ -14,7 +14,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
     
     <!-- Özel CSS -->
-    <link rel="stylesheet" href="style.css?v=20261020-chesscom-review">
+    <link rel="stylesheet" href="style.css?v=20261020-jump-to-mistakes">
 </head>
 
 <body class="bg-[#09090b] text-zinc-100 font-sans antialiased h-screen overflow-hidden flex flex-col md:flex-row select-none">
@@ -305,7 +305,7 @@
                 <div class="summary-stat"><span>Açılış Hamleleri</span><strong id="summaryBookMoves">—</strong></div>
             </div>
 
-            <!-- CHESS.COM DETAYLI HAMLE SINIFLANDIRMA TABLOSU -->
+            <!-- CHESS.COM DETAYLI HAMLE SINIFLANDIRMA TABLOSU (TIKLANABİLİR SAYILAR) -->
             <div class="overflow-x-auto rounded-xl border border-zinc-800 bg-[#09090b]">
                 <table class="w-full text-xs md:text-sm text-left">
                     <thead class="bg-zinc-900 text-zinc-400 text-[11px] uppercase tracking-wider">
@@ -323,38 +323,38 @@
                         </tr>
                         <tr>
                             <td class="px-3 py-2 text-cyan-400 font-semibold flex items-center gap-1.5"><span>‼️</span> Mükemmel (Brilliant)</td>
-                            <td id="summaryWhiteBrilliant" class="px-3 py-2 text-center">—</td>
-                            <td id="summaryBlackBrilliant" class="px-3 py-2 text-center">—</td>
+                            <td id="summaryWhiteBrilliant" class="summary-click-cell px-3 py-2 text-center text-cyan-400 font-bold cursor-pointer hover:bg-cyan-950/40 rounded transition" data-color="w" data-cat="brilliant">—</td>
+                            <td id="summaryBlackBrilliant" class="summary-click-cell px-3 py-2 text-center text-cyan-400 font-bold cursor-pointer hover:bg-cyan-950/40 rounded transition" data-color="b" data-cat="brilliant">—</td>
                         </tr>
                         <tr>
                             <td class="px-3 py-2 text-emerald-400 font-semibold flex items-center gap-1.5"><span>⭐</span> En İyi (Best)</td>
-                            <td id="summaryWhiteBest" class="px-3 py-2 text-center">—</td>
-                            <td id="summaryBlackBest" class="px-3 py-2 text-center">—</td>
+                            <td id="summaryWhiteBest" class="summary-click-cell px-3 py-2 text-center text-emerald-400 font-bold cursor-pointer hover:bg-emerald-950/40 rounded transition" data-color="w" data-cat="best">—</td>
+                            <td id="summaryBlackBest" class="summary-click-cell px-3 py-2 text-center text-emerald-400 font-bold cursor-pointer hover:bg-emerald-950/40 rounded transition" data-color="b" data-cat="best">—</td>
                         </tr>
                         <tr>
                             <td class="px-3 py-2 text-green-500 flex items-center gap-1.5"><span>👍</span> İyi (Good)</td>
-                            <td id="summaryWhiteGood" class="px-3 py-2 text-center">—</td>
-                            <td id="summaryBlackGood" class="px-3 py-2 text-center">—</td>
+                            <td id="summaryWhiteGood" class="summary-click-cell px-3 py-2 text-center text-green-400 font-bold cursor-pointer hover:bg-green-950/40 rounded transition" data-color="w" data-cat="good">—</td>
+                            <td id="summaryBlackGood" class="summary-click-cell px-3 py-2 text-center text-green-400 font-bold cursor-pointer hover:bg-green-950/40 rounded transition" data-color="b" data-cat="good">—</td>
                         </tr>
                         <tr>
                             <td class="px-3 py-2 text-amber-400 flex items-center gap-1.5"><span>?!</span> Kaçırma (Inaccuracy)</td>
-                            <td id="summaryWhiteInaccuracy" class="px-3 py-2 text-center">—</td>
-                            <td id="summaryBlackInaccuracy" class="px-3 py-2 text-center">—</td>
+                            <td id="summaryWhiteInaccuracy" class="summary-click-cell px-3 py-2 text-center text-amber-400 font-bold cursor-pointer hover:bg-amber-950/40 rounded transition" data-color="w" data-cat="inaccuracy">—</td>
+                            <td id="summaryBlackInaccuracy" class="summary-click-cell px-3 py-2 text-center text-amber-400 font-bold cursor-pointer hover:bg-amber-950/40 rounded transition" data-color="b" data-cat="inaccuracy">—</td>
                         </tr>
                         <tr>
                             <td class="px-3 py-2 text-orange-400 flex items-center gap-1.5"><span>?</span> Hata (Mistake)</td>
-                            <td id="summaryWhiteMistakes" class="px-3 py-2 text-center">—</td>
-                            <td id="summaryBlackMistakes" class="px-3 py-2 text-center">—</td>
+                            <td id="summaryWhiteMistakes" class="summary-click-cell px-3 py-2 text-center text-orange-400 font-bold cursor-pointer hover:bg-orange-950/40 rounded transition" data-color="w" data-cat="mistakes">—</td>
+                            <td id="summaryBlackMistakes" class="summary-click-cell px-3 py-2 text-center text-orange-400 font-bold cursor-pointer hover:bg-orange-950/40 rounded transition" data-color="b" data-cat="mistakes">—</td>
                         </tr>
                         <tr>
                             <td class="px-3 py-2 text-red-500 font-semibold flex items-center gap-1.5"><span>??</span> Büyük Hata (Blunder)</td>
-                            <td id="summaryWhiteBlunders" class="px-3 py-2 text-center">—</td>
-                            <td id="summaryBlackBlunders" class="px-3 py-2 text-center">—</td>
+                            <td id="summaryWhiteBlunders" class="summary-click-cell px-3 py-2 text-center text-red-400 font-bold cursor-pointer hover:bg-red-950/40 rounded transition" data-color="w" data-cat="blunders">—</td>
+                            <td id="summaryBlackBlunders" class="summary-click-cell px-3 py-2 text-center text-red-400 font-bold cursor-pointer hover:bg-red-950/40 rounded transition" data-color="b" data-cat="blunders">—</td>
                         </tr>
                         <tr>
                             <td class="px-3 py-2 text-purple-400 flex items-center gap-1.5"><span>❌</span> Kaçan Kazanma (Missed Win)</td>
-                            <td id="summaryWhiteMissed" class="px-3 py-2 text-center">—</td>
-                            <td id="summaryBlackMissed" class="px-3 py-2 text-center">—</td>
+                            <td id="summaryWhiteMissed" class="summary-click-cell px-3 py-2 text-center text-purple-400 font-bold cursor-pointer hover:bg-purple-950/40 rounded transition" data-color="w" data-cat="missed">—</td>
+                            <td id="summaryBlackMissed" class="summary-click-cell px-3 py-2 text-center text-purple-400 font-bold cursor-pointer hover:bg-purple-950/40 rounded transition" data-color="b" data-cat="missed">—</td>
                         </tr>
                         <tr class="bg-zinc-900/50">
                             <td class="px-3 py-2 text-zinc-400">📉 Ort. CP Kaybı (ACPL)</td>
@@ -366,7 +366,7 @@
             </div>
 
             <p id="summaryFootnote" class="text-[11px] leading-relaxed text-zinc-500 mt-2.5">
-                Chess.com tarzı analiz algoritması: Hamleler Stockfish 10 motoru ile derinlemesine taranır; Mükemmel, En İyi, İyi, Kaçırma, Hata ve Büyük Hata sınıfları pozisyon kayıplarına göre hesaplanır.
+                💡 Tablodaki bir sayıya tıklayarak doğrudan ilgili hamleye gidebilirsiniz. Hamle şeridinde rozetler gösterilir.
             </p>
 
             <div class="flex flex-col-reverse sm:flex-row gap-2 mt-4">
@@ -582,7 +582,7 @@
     </div>
 
     <!-- Ana Uygulama Kodu -->
-    <script src="app.js?v=20261020-chesscom-review"></script>
+    <script src="app.js?v=20261020-jump-to-mistakes"></script>
 </body>
 
 </html>
