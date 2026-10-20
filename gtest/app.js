@@ -73,6 +73,7 @@ function returnToLivePosition() {
 }
 
 let playSoundsEnabled = true;
+let moveSoundVolume = 1;
 let kingCheckEffectEnabled = true;
 let moveAudioContext = null;
 let currentPieceSet = 'neo';
@@ -413,7 +414,7 @@ function playMoveSound(moveObj, isCapture) {
                 filter.frequency.setValueAtTime(isCapture ? 400 : 800, ctx.currentTime);
 
                 const gain = ctx.createGain();
-                gain.gain.setValueAtTime(isCapture ? 0.8 : 0.5, ctx.currentTime);
+                gain.gain.setValueAtTime((isCapture ? 0.8 : 0.5) * moveSoundVolume, ctx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
 
                 noise.connect(filter);
@@ -1810,6 +1811,12 @@ $('#toggleSoundEffects').on('change', function() {
     localStorage.setItem('zato_sound', playSoundsEnabled);
 });
 
+$('#soundVolume').on('input change', function() {
+    moveSoundVolume = Number($(this).val()) / 100;
+    $('#soundVolumeValue').text($(this).val() + '%');
+    localStorage.setItem('zato_sound_volume', $(this).val());
+});
+
 $('#toggleKingCheckEffect').on('change', function() {
     kingCheckEffectEnabled = $(this).is(':checked');
     localStorage.setItem('zato_king_check', kingCheckEffectEnabled);
@@ -1834,6 +1841,11 @@ function loadSavedSettings() {
         playSoundsEnabled = localStorage.getItem('zato_sound') === 'true';
         $('#toggleSoundEffects').prop('checked', playSoundsEnabled);
     }
+
+    const savedSoundVolume = localStorage.getItem('zato_sound_volume') || '100';
+    moveSoundVolume = Number(savedSoundVolume) / 100;
+    $('#soundVolume').val(savedSoundVolume);
+    $('#soundVolumeValue').text(savedSoundVolume + '%');
 
     if (localStorage.getItem('zato_king_check') !== null) {
         kingCheckEffectEnabled = localStorage.getItem('zato_king_check') === 'true';
