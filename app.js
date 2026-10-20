@@ -1269,7 +1269,8 @@ function openPreAnalysisSummary() {
             finishWithFallback('Stockfish bir konumu zamanında değerlendiremedi.');
         }, 20000);
         currentFenTurn = positions[positionIndex].split(' ')[1] || 'w';
-        latestScore = 0;
+        // Geçerli bir motor skoru gelmediyse bu konumu 0 cp varsayma.
+        latestScore = null;
         summaryWorker.postMessage('position fen ' + positions[positionIndex]);
         summaryWorker.postMessage('go depth 6');
     };
@@ -1293,17 +1294,20 @@ function openPreAnalysisSummary() {
         // UCI upperbound/lowerbound skorları kesin değerlendirme değildir; son kesin skoru koru.
         const isBoundScore = message.includes(' upperbound') || message.includes(' lowerbound');
         if (!isBoundScore && message.includes(' score cp ') && cpIdx !== -1 && parts[cpIdx + 1]) {
-            latestScore = parseInt(parts[cpIdx + 1], 10);
+            const score = parseInt(parts[cpIdx + 1], 10);
+            if (Number.isFinite(score)) latestScore = score;
         } else if (!isBoundScore && message.includes(' score mate ') && mateIdx !== -1 && parts[mateIdx + 1]) {
             const mate = parseInt(parts[mateIdx + 1], 10);
-            latestScore = mate > 0 ? 10000 : mate < 0 ? -10000 : 0;
+            if (Number.isFinite(mate)) latestScore = mate > 0 ? 10000 : mate < 0 ? -10000 : 0;
         }
         if (message.startsWith('bestmove')) {
             if (summaryAnalysisTimeout) {
                 clearTimeout(summaryAnalysisTimeout);
                 summaryAnalysisTimeout = null;
             }
-            evaluations[positionIndex] = currentFenTurn === 'w' ? latestScore : -latestScore;
+            evaluations[positionIndex] = Number.isFinite(latestScore)
+                ? (currentFenTurn === 'w' ? latestScore : -latestScore)
+                : null;
             positionIndex++;
             $('#summaryProgressBar').css('width', Math.round(positionIndex / positions.length * 100) + '%');
             $('#summaryProgressText').text('Konum ' + positionIndex + ' / ' + positions.length + ' değerlendirildi.');
