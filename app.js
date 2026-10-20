@@ -85,6 +85,31 @@ function returnToLivePosition() {
     liveReviewPly = null;
 }
 
+function updateLiveNavigationButtons() {
+    if (isAnalysisMode) return;
+
+    const moveCount = game.history({ verbose: true }).length;
+    const currentPly = liveReviewPly === null ? moveCount : liveReviewPly;
+    const atStart = currentPly <= 0;
+    const atEnd = currentPly >= moveCount;
+
+    const setDisabled = (selector, disabled) => {
+        $(selector)
+            .prop('disabled', disabled)
+            .attr('aria-disabled', String(disabled))
+            .toggleClass('opacity-40 cursor-not-allowed', disabled)
+            .toggleClass('hover:bg-zinc-800', !disabled)
+            .css({
+                opacity: disabled ? '0.35' : '1',
+                filter: disabled ? 'grayscale(1)' : 'none',
+                pointerEvents: disabled ? 'none' : ''
+            });
+    };
+
+    setDisabled('#liveNavStart, #liveNavPrev', atStart);
+    setDisabled('#liveNavNext, #liveNavEnd', atEnd);
+}
+
 function updateUndoButtons() {
     const moveCount = game.history().length;
     const canUndo = !isAnalysisMode && moveCount > 0 && (!isGameOver || isReviewing);
@@ -923,14 +948,13 @@ function renderBoard() {
     }
 
     updatePlayerCards();
+    updateLiveNavigationButtons();
     updateUndoButtons();
+    updateAnalysisNavigationButtons();
 }
 
 function handleMove(from, to) {
-    if (!isAnalysisMode && liveReviewPly !== null) {
-        returnToLivePosition();
-        renderBoard();
-    }
+    if (!isAnalysisMode && liveReviewPly !== null) return;
     if (isGameOver && !isReviewing && !isAnalysisMode) return;
 
     if (!isAnalysisMode && !isReviewing) {
@@ -958,6 +982,7 @@ function handleMove(from, to) {
 }
 
 function executeMove(from, to, promoPiece) {
+    if (!isAnalysisMode && liveReviewPly !== null) return;
     if (isGameOver && !isReviewing && !isAnalysisMode) return;
 
     const activeGame = isAnalysisMode ? analysisGame : game;
@@ -1086,6 +1111,7 @@ function triggerStockfishMove() {
 }
 
 $('#board').on('click', 'div[data-square]', function () {
+    if (!isAnalysisMode && liveReviewPly !== null) return;
     if (isGameOver && !isReviewing && !isAnalysisMode) return;
 
     if (!isAnalysisMode && !isReviewing) {
@@ -1708,9 +1734,7 @@ function startAnalysisMode() {
     analysisMainlineHistory = game.history({ verbose: true });
     analysisMoveHistory = analysisMainlineHistory.slice();
     analysisBranchStartIdx = null;
-    if (analysisIdx < 0) {
-        analysisIdx = analysisMoveHistory.length - 1;
-    }
+    analysisIdx = analysisMoveHistory.length - 1;
 
     updateAnalysisBoard();
 }
@@ -1758,13 +1782,8 @@ function exitAnalysisMode() {
     if (!isGameOver && !game.game_over()) startTimer();
 }
 
-function updateAnalysisBoard() {
-    analysisGame.reset();
-    for (let i = 0; i <= analysisIdx; i++) {
-        if (analysisMoveHistory[i]) {
-            analysisGame.move(analysisMoveHistory[i]);
-        }
-    }
+function updateAnalysisNavigationButtons() {
+    if (!isAnalysisMode) return;
 
     const atStart = analysisIdx <= -1;
     const atEnd = analysisIdx >= analysisMoveHistory.length - 1;
@@ -1782,6 +1801,17 @@ function updateAnalysisBoard() {
     };
     setNavigationDisabled('#navStart, #navPrev, #mNavStart, #mNavPrev', atStart);
     setNavigationDisabled('#navNext, #navEnd, #mNavNext, #mNavEnd', atEnd);
+}
+
+function updateAnalysisBoard() {
+    analysisGame.reset();
+    for (let i = 0; i <= analysisIdx; i++) {
+        if (analysisMoveHistory[i]) {
+            analysisGame.move(analysisMoveHistory[i]);
+        }
+    }
+
+    updateAnalysisNavigationButtons();
 
     selectedSquare = null;
     clearArrow();
