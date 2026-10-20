@@ -856,3 +856,49 @@ aside.collapsed #logoToggleBtn {
         border-radius: 3px;
     }
 }
+
+
+/* GTEST mobil analiz değerlendirmesi: tam ekran tabloyla aynı hizalı, kompakt satır. */
+@media (max-width: 767px) {
+    body.analysis-mode #mobileAnalysisPanel {
+        width: 100% !important;
+        max-width: 620px !important;
+        margin: 0 !important;
+        gap: 0 !important;
+        align-self: stretch !important;
+    }
+
+    body.analysis-mode #mobileAnalysisPanel .mobile-analysis-eval-row {
+        display: grid !important;
+        grid-template-columns: max-content auto minmax(0, 1fr) !important;
+        align-items: center !important;
+        gap: 7px !important;
+        width: 100% !important;
+        min-height: 36px !important;
+        padding: 5px 8px !important;
+        box-sizing: border-box !important;
+        border-radius: 10px !important;
+        background: #121215 !important;
+        border-color: rgba(63, 63, 70, 0.9) !important;
+    }
+
+    body.analysis-mode .mobile-analysis-eval-label {
+        white-space: nowrap !important;
+        font-size: 9px !important;
+        letter-spacing: 0.04em !important;
+    }
+
+    body.analysis-mode #mEvalScoreText {
+        justify-self: start !important;
+        white-space: nowrap !important;
+        font-size: 12px !important;
+        padding: 3px 6px !important;
+    }
+
+    body.analysis-mode #mEvalDescription {
+        min-width: 0 !important;
+        overflow-wrap: anywhere !important;
+        font-size: 11px !important;
+        line-height: 1.2 !important;
+    }
+}
