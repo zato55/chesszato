@@ -163,6 +163,33 @@
     -webkit-tap-highlight-color: transparent;
 }
 
+/* Tahta koordinatları: kare ölçüsünü etkilemez ve taşlarla birlikte dönük tahtada da doğru kalır. */
+#board .board-coordinate {
+    position: absolute;
+    z-index: 5;
+    font-size: clamp(8px, 1.4vw, 12px);
+    font-weight: 800;
+    line-height: 1;
+    opacity: 0.9;
+    pointer-events: none;
+    user-select: none;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.18);
+}
+#board .board-coordinate-rank {
+    top: 2px;
+    left: 3px;
+}
+#board .board-coordinate-file {
+    right: 3px;
+    bottom: 2px;
+}
+#board .square-light .board-coordinate {
+    color: #374151;
+}
+#board .square-dark .board-coordinate {
+    color: #f8fafc;
+}
+
 #board > div.selected {
     box-shadow: inset 0 0 0 3px #2563eb !important;
     background-color: rgba(37, 99, 235, 0.12) !important;
