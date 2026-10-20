@@ -598,7 +598,7 @@ window.offerDraw = function(position) {
 };
 
 function renderBoard() {
-    const $board =$('#board');
+    const $board = $('#board');
     $board.empty();
 
     const activeGame = getDisplayedGame();
@@ -651,7 +651,7 @@ function renderBoard() {
             const piece = boardState[rowIdx][colIdx];
             const isLight = (rowIdx + colIdx) % 2 === 0;
 
-            const $square =$('<div></div>')
+            const $square = $('<div></div>')
                 .addClass('w-full h-full flex items-center justify-center select-none')
                 .addClass(isLight ? 'square-light' : 'square-dark')
                 .attr('data-square', squareName);
@@ -678,7 +678,7 @@ function renderBoard() {
 
             if (piece) {
                 const key = piece.color === 'w' ? piece.type.toUpperCase() : piece.type;
-                const $img =$('<img>').attr('src', getPieceSVG(key)).addClass('piece');
+                const $img = $('<img>').attr('src', getPieceSVG(key)).addClass('piece');
                 $square.append($img);
             }
 
@@ -797,7 +797,8 @@ function openPromotionModal(color) {
 }
 
 $('.promo-choice').on('click', function() {
-    const chosenPiece = $(this).attr('data-piece');$('#promotionModal').addClass('hidden');
+    const chosenPiece = $(this).attr('data-piece');
+    $('#promotionModal').addClass('hidden');
     if (pendingMove) {
         executeMove(pendingMove.from, pendingMove.to, chosenPiece);
         pendingMove = null;
@@ -905,7 +906,8 @@ $('#toggleAutoFlip').on('change', function() {
 });
 
 $('.side-choice-btn').on('click', function() {
-    $('.side-choice-btn').removeClass('bg-blue-600 text-white font-bold').addClass('text-zinc-400');$(this).addClass('bg-blue-600 text-white font-bold').removeClass('text-zinc-400');
+    $('.side-choice-btn').removeClass('bg-blue-600 text-white font-bold').addClass('text-zinc-400');
+    $(this).addClass('bg-blue-600 text-white font-bold').removeClass('text-zinc-400');
     
     userColorSelection = $(this).attr('data-color');
     resetGame();
@@ -1137,6 +1139,7 @@ function closePreAnalysisSummary() {
     $('#preAnalysisSummary').addClass('hidden');
 }
 
+// ♟️ CHESS.COM TARZI GELİŞMİŞ ANALİZ ÖZETİ HESAPLAMA
 function openPreAnalysisSummary() {
     const history = game.history({ verbose: true });
     if (!history.length) {
@@ -1157,13 +1160,16 @@ function openPreAnalysisSummary() {
     $('#summaryProgressBar').css('width', '0%');
     $('#summaryProgressText').text('Konumlar Stockfish ile değerlendiriliyor…');
     $('#summaryContinueBtn').prop('disabled', true);
-    $('#summaryWhiteAccuracy, #summaryBlackAccuracy, #summaryWhiteMistakes, #summaryBlackMistakes, #summaryWhiteBlunders, #summaryBlackBlunders, #summaryWhiteMissed, #summaryBlackMissed').text('—');
+
+    // Tabloyu sıfırla
+    $('#summaryWhiteAccuracy, #summaryBlackAccuracy, #summaryWhiteBrilliant, #summaryBlackBrilliant, #summaryWhiteBest, #summaryBlackBest, #summaryWhiteGood, #summaryBlackGood, #summaryWhiteInaccuracy, #summaryBlackInaccuracy, #summaryWhiteMistakes, #summaryBlackMistakes, #summaryWhiteBlunders, #summaryBlackBlunders, #summaryWhiteMissed, #summaryBlackMissed, #summaryWhiteAcpl, #summaryBlackAcpl').text('—');
 
     const positions = [];
     const terminalScores = [];
     const replay = new Chess();
     positions.push(replay.fen());
     terminalScores.push(null);
+
     history.forEach(move => {
         replay.move(move);
         positions.push(replay.fen());
@@ -1200,7 +1206,7 @@ function openPreAnalysisSummary() {
             summaryWorker = null;
         }
         $('#summaryProgressText').text(message);
-        $('#summaryFootnote').text('Stockfish değerlendirmesi tamamlanamadı. Hamle ve tanımlı açılış bilgileri gösteriliyor; doğruluk ve hata istatistikleri hesaplanamadı.');
+        $('#summaryFootnote').text('Stockfish değerlendirmesi tamamlanamadı. Hamle ve tanımlı açılış bilgileri gösteriliyor; detaylı metrikler hesaplanamadı.');
         $('#summaryContinueBtn').prop('disabled', false);
     };
 
@@ -1270,8 +1276,8 @@ function openPreAnalysisSummary() {
 
         if (positionIndex >= positions.length) {
             const metrics = {
-                w: { losses: [], mistakes: 0, blunders: 0, missed: 0 },
-                b: { losses: [], mistakes: 0, blunders: 0, missed: 0 }
+                w: { losses: [], brilliant: 0, best: 0, good: 0, inaccuracy: 0, mistakes: 0, blunders: 0, missed: 0 },
+                b: { losses: [], brilliant: 0, best: 0, good: 0, inaccuracy: 0, mistakes: 0, blunders: 0, missed: 0 }
             };
 
             history.forEach((move, i) => {
@@ -1283,35 +1289,62 @@ function openPreAnalysisSummary() {
                 const player = metrics[move.color];
                 player.losses.push(lossCp);
 
-                if (lossCp >= 100 && lossCp < 300) player.mistakes++;
-                if (lossCp >= 300) player.blunders++;
-
                 const beforeForMover = move.color === 'w' ? before : -before;
                 const afterForMover = move.color === 'w' ? after : -after;
 
-                if (beforeForMover >= 200 && afterForMover < 50) {
+                // CHESS.COM HAMLE SINIFLANDIRMA SİSTEMİ
+                if (move.captured && lossCp <= 10 && beforeForMover <= -100 && afterForMover >= 150) {
+                    player.brilliant++; // Mükemmel (Fedalı / Pozisyon Değiştiren)
+                } else if (lossCp <= 12) {
+                    player.best++; // En İyi Hamle
+                } else if (lossCp <= 40) {
+                    player.good++; // İyi Hamle
+                } else if (lossCp <= 100) {
+                    player.inaccuracy++; // Kaçırma / İhmal
+                } else if (lossCp < 300) {
+                    player.mistakes++; // Hata
+                } else {
+                    player.blunders++; // Büyük Hata
+                }
+
+                // Kaçan Kazanma
+                if (beforeForMover >= 250 && afterForMover < 80) {
                     player.missed++;
                 }
             });
 
+            // Doğruluk Yüzdesi
             const accuracy = (player) => player.losses.length
                 ? Math.round(player.losses.reduce((sum, loss) => sum + 100 * Math.exp(-loss / 400), 0) / player.losses.length) + '%'
                 : '—';
 
+            // ACPL (Ortalama CP Kaybı)
+            const acpl = (player) => player.losses.length
+                ? Math.round(player.losses.reduce((a, b) => a + b, 0) / player.losses.length)
+                : '—';
+
             $('#summaryWhiteAccuracy').text(accuracy(metrics.w));
+            $('#summaryWhiteBrilliant').text(metrics.w.brilliant);
+            $('#summaryWhiteBest').text(metrics.w.best);
+            $('#summaryWhiteGood').text(metrics.w.good);
+            $('#summaryWhiteInaccuracy').text(metrics.w.inaccuracy);
             $('#summaryWhiteMistakes').text(metrics.w.mistakes);
             $('#summaryWhiteBlunders').text(metrics.w.blunders);
             $('#summaryWhiteMissed').text(metrics.w.missed);
+            $('#summaryWhiteAcpl').text(acpl(metrics.w));
 
             $('#summaryBlackAccuracy').text(accuracy(metrics.b));
+            $('#summaryBlackBrilliant').text(metrics.b.brilliant);
+            $('#summaryBlackBest').text(metrics.b.best);
+            $('#summaryBlackGood').text(metrics.b.good);
+            $('#summaryBlackInaccuracy').text(metrics.b.inaccuracy);
             $('#summaryBlackMistakes').text(metrics.b.mistakes);
             $('#summaryBlackBlunders').text(metrics.b.blunders);
             $('#summaryBlackMissed').text(metrics.b.missed);
+            $('#summaryBlackAcpl').text(acpl(metrics.b));
 
             $('#summaryProgressBar').css('width', '100%');
             $('#summaryProgressText').text('Değerlendirme tamamlandı.');
-            $('#summaryFootnote').text('Tahmini doğruluk ve hata sınıfları, Stockfish 10 derinlik 6 değerlendirmelerindeki hamle öncesi/sonrası farklardan hesaplanır.');
-
             if (summaryAnalysisTimeout) {
                 clearTimeout(summaryAnalysisTimeout);
                 summaryAnalysisTimeout = null;
