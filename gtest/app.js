@@ -1147,11 +1147,26 @@ function updateTimerDisplay() {
     const applyTimerStyle = (selector, isActive, remaining) => {
         const timer = $(selector);
         timer.removeClass('text-emerald-400 bg-emerald-950 border-emerald-600 shadow-[0_0_10px_rgba(52,211,153,0.35)] text-red-100 bg-red-950 border-red-500 shadow-[0_0_14px_rgba(248,113,113,0.65)] animate-pulse');
+
+        const elements = timer.get();
         if (remaining < 60) {
-            timer.addClass('text-red-100 bg-red-950 border-red-500 shadow-[0_0_14px_rgba(248,113,113,0.65)]');
-            if (isActive) timer.addClass('animate-pulse');
-        } else if (isActive) {
-            timer.addClass('text-emerald-400 bg-emerald-950 border-emerald-600 shadow-[0_0_10px_rgba(52,211,153,0.35)]');
+            timer.addClass('animate-pulse');
+            elements.forEach(element => {
+                element.style.setProperty('color', '#ffffff', 'important');
+                element.style.setProperty('background-color', '#b91c1c', 'important');
+                element.style.setProperty('border', '2px solid #f87171', 'important');
+                element.style.setProperty('box-shadow', '0 0 14px rgba(248, 113, 113, 0.85)', 'important');
+            });
+        } else {
+            elements.forEach(element => {
+                element.style.removeProperty('color');
+                element.style.removeProperty('background-color');
+                element.style.removeProperty('border');
+                element.style.removeProperty('box-shadow');
+            });
+            if (isActive) {
+                timer.addClass('text-emerald-400 bg-emerald-950 border-emerald-600 shadow-[0_0_10px_rgba(52,211,153,0.35)]');
+            }
         }
     };
 
