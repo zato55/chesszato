@@ -341,6 +341,17 @@
                     </tbody>
                 </table>
             </div>
+            <div class="mt-4 rounded-xl border border-blue-900/60 bg-blue-950/20 p-3">
+                <p class="text-xs font-bold text-blue-300 mb-2">Derinlik tutarlılık testi (yalnızca test sayfası)</p>
+                <button id="summaryDepthCompareBtn" class="w-full py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-sm font-bold">Derinlik 6 / 12 / 18 karşılaştır</button>
+                <p id="summaryDepthCompareProgress" class="text-xs text-zinc-400 mt-2">Aynı oyun, üç farklı motor derinliğinde tekrar değerlendirilir.</p>
+                <div id="summaryDepthCompareResults" class="hidden mt-3 overflow-x-auto rounded-lg border border-zinc-800">
+                    <table class="w-full text-xs text-left whitespace-nowrap">
+                        <thead class="bg-zinc-900 text-zinc-400"><tr><th class="px-2 py-2">Derinlik</th><th class="px-2 py-2">Beyaz hata</th><th class="px-2 py-2">Beyaz büyük hata</th><th class="px-2 py-2">Beyaz fırsat</th><th class="px-2 py-2">Siyah hata</th><th class="px-2 py-2">Siyah büyük hata</th><th class="px-2 py-2">Siyah fırsat</th></tr></thead>
+                        <tbody id="summaryDepthCompareRows"></tbody>
+                    </table>
+                </div>
+            </div>
             <p id="summaryFootnote" class="text-[11px] leading-relaxed text-zinc-500 mt-3">Değerler Stockfish'in hızlı değerlendirmesine dayalı tahminlerdir; resmi bir puanlama değildir.</p>
             <div class="flex flex-col-reverse sm:flex-row gap-2 mt-5">
                 <button id="summaryCloseBackBtn" class="flex-1 py-3 rounded-xl border border-zinc-700 bg-zinc-900 text-zinc-300 font-bold text-sm">Geri dön</button>
@@ -556,7 +567,7 @@
 
     <div style="position:fixed;top:8px;right:8px;z-index:9999;pointer-events:none;background:#7f1d1d;color:#fff;border:1px solid #f87171;border-radius:8px;padding:5px 8px;font:700 11px/1.2 system-ui;box-shadow:0 2px 8px #0008">ÖZET SÜRE TESTİ</div>
     <!-- İzole test uygulaması: canlı app.js kullanılmaz -->
-    <script src="analysis-summary-speed-test-app.js?v=442b8729139d687d5692024e079bbd8dbdbf88ef"></script>
+    <script src="analysis-summary-speed-test-app.js?v=23715e13fd9f855baa209e2c7c0d06fa9718265d"></script>
 </body>
 
 </html>
