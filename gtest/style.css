@@ -902,3 +902,18 @@ aside.collapsed #logoToggleBtn {
         line-height: 1.2 !important;
     }
 }
+
+
+/* GTEST mobil analiz değerlendirme alt boşluğu: kutu sabit alt menüden ayrı kalsın. */
+@media (max-width: 767px) {
+    body.analysis-mode #mobileAnalysisPanel {
+        margin-bottom: 8px !important;
+        padding-bottom: 4px !important;
+        position: relative !important;
+        z-index: 2 !important;
+    }
+
+    body.analysis-mode main {
+        padding-bottom: calc(116px + env(safe-area-inset-bottom)) !important;
+    }
+}
