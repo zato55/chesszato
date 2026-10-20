@@ -705,6 +705,17 @@ function updatePlayerCards() {
         $('#topCapturedPieces').html(drawChessComCapturedPieces(whiteCaptured, true));
         $('#bottomCapturedPieces').html(drawChessComCapturedPieces(blackCaptured, false));
     }
+
+    const whiteMaterial = whiteCaptured.reduce((sum, piece) => sum + (pieceValues[piece.toLowerCase()] || 0), 0);
+    const blackMaterial = blackCaptured.reduce((sum, piece) => sum + (pieceValues[piece.toLowerCase()] || 0), 0);
+    const materialDiff = whiteMaterial - blackMaterial;
+
+    const topIsWhite = isFlipped;
+    const topDiff = topIsWhite ? materialDiff : -materialDiff;
+    const bottomDiff = -topDiff;
+
+    $('#topMaterialDiff').text(topDiff > 0 ? `+${topDiff}` : '');
+    $('#bottomMaterialDiff').text(bottomDiff > 0 ? `+${bottomDiff}` : '');
 }
 
 function updateBotEloUI(selectedElo) {
