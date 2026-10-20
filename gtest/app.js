@@ -1749,6 +1749,12 @@ function updateAnalysisBoard() {
         }
     }
 
+    const atStart = analysisIdx <= -1;
+    $('#navStart, #navPrev, #mNavStart, #mNavPrev')
+        .prop('disabled', atStart)
+        .toggleClass('opacity-40 cursor-not-allowed', atStart)
+        .toggleClass('hover:bg-zinc-800', !atStart);
+
     selectedSquare = null;
     clearArrow();
     currentBestMove = null;
