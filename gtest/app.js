@@ -122,6 +122,14 @@ const openingDatabase = [
     { moves: ['e4', 'e5', 'Nf3', 'Nc6', 'Bc4'], name: 'İtalyan Açılışı' }
 ];
 
+// The full, CC0-licensed Lichess opening dataset is loaded before this file.
+if (Array.isArray(window.zatoOpeningDatabase)) {
+    for (const [eco, name, moveLine] of window.zatoOpeningDatabase) {
+        openingDatabase.push({ eco, name, moves: moveLine.split(' ') });
+    }
+}
+
+
 $(document).off('click', '#logoToggleBtn').on('click', '#logoToggleBtn', function(e) {
     e.preventDefault();
     e.stopPropagation();
@@ -428,6 +436,44 @@ function playMoveSound(moveObj, isCapture) {
     } catch (e) {}
 }
 
+
+function localizeOpeningName(name) {
+    const translations = [
+        ["Nimzowitsch Defense", "Nimzowitsch Savunması"],
+        ["Sicilian Defense", "Sicilya Savunması"],
+        ["French Defense", "Fransız Savunması"],
+        ["Caro-Kann Defense", "Caro-Kann Savunması"],
+        ["Alekhine Defense", "Alekhine Savunması"],
+        ["Scandinavian Defense", "İskandinav Savunması"],
+        ["Pirc Defense", "Pirc Savunması"],
+        ["Modern Defense", "Modern Savunma"],
+        ["Dutch Defense", "Hollanda Savunması"],
+        ["King's Indian Defense", "Şah-Hint Savunması"],
+        ["Queen's Indian Defense", "Vezir-Hint Savunması"],
+        ["Indian Defense", "Hint Savunması"],
+        ["Queen's Gambit", "Vezir Gambiti"],
+        ["King's Gambit", "Şah Gambiti"],
+        ["Italian Game", "İtalyan Açılışı"],
+        ["English Opening", "İngiliz Açılışı"],
+        ["Réti Opening", "Réti Açılışı"],
+        ["Reti Opening", "Réti Açılışı"],
+        ["King's Pawn Opening", "Şah Piyonu Açılışı"],
+        ["Queen's Pawn Opening", "Vezir Piyonu Açılışı"],
+        ["Four Knights Game", "Dört At Oyunu"],
+        ["Petrov's Defense", "Petrov Savunması"],
+        ["Petrov Defense", "Petrov Savunması"],
+        ["Bishop's Opening", "Fil Açılışı"],
+        ["Vienna Game", "Viyana Oyunu"],
+        ["Ruy Lopez", "Ruy Lopez (İspanyol Açılışı)"]
+    ];
+    for (const [english, turkish] of translations) {
+        if (name === english || name.startsWith(english + ":")) {
+            return turkish + name.slice(english.length);
+        }
+    }
+    return name;
+}
+
 function findOpeningForSide(historySAN, side) {
     let bestMatch = null;
 
@@ -447,7 +493,7 @@ function findOpeningForSide(historySAN, side) {
 function detectOpening(side) {
     const historySAN = getDisplayedGame().history();
     const opening = findOpeningForSide(historySAN, side);
-    return opening ? '📖 ' + opening.name : '📖 ...';
+    return opening ? '📖 ' + localizeOpeningName(opening.name) : '📖 ...';
 }
 
 function drawChessComCapturedPieces(capturedArr, isWhiteCaptures) {
@@ -1212,8 +1258,8 @@ function openPreAnalysisSummary() {
     const summaryHistorySAN = history.map(move => move.san);
     const summaryWhiteOpening = findOpeningForSide(summaryHistorySAN, 'w');
     const summaryBlackOpening = findOpeningForSide(summaryHistorySAN, 'b');
-    $('#summaryWhiteOpening').text(summaryWhiteOpening ? '📖 ' + summaryWhiteOpening.name : 'Tanımlanamadı');
-    $('#summaryBlackOpening').text(summaryBlackOpening ? '📖 ' + summaryBlackOpening.name : 'Tanımlanamadı');
+    $('#summaryWhiteOpening').text(summaryWhiteOpening ? '📖 ' + localizeOpeningName(summaryWhiteOpening.name) : 'Tanımlanamadı');
+    $('#summaryBlackOpening').text(summaryBlackOpening ? '📖 ' + localizeOpeningName(summaryBlackOpening.name) : 'Tanımlanamadı');
     $('#summaryBookMoves').text('Hesaplanıyor…');
     $('#summaryProgressBar').css('width', '0%');
     $('#summaryProgressText').text('Konumlar Stockfish ile değerlendiriliyor…');
