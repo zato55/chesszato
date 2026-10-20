@@ -26,6 +26,7 @@ let analysisBranchStartIdx = null;
 let analysisIdx = -1;
 let pendingEvalScore = null;
 let currentEvalScore = 0;
+let activeEngineTurn = 'w';
 let analysisSearchStopPending = false;
 let queuedAnalysisFen = null;
 
@@ -167,7 +168,7 @@ function initStockfish() {
                 const cpIdx = parts.indexOf('cp');
                 if (cpIdx !== -1 && parts[cpIdx + 1]) {
                     let score = parseInt(parts[cpIdx + 1]);
-                    const engineSide = isAnalysisMode ? analysisGame.turn() : game.turn();
+                    const engineSide = activeEngineTurn;
                     if (engineSide === 'b') score = -score;
                     pendingEvalScore = { score: score, isMate: false };
                 }
@@ -176,7 +177,7 @@ function initStockfish() {
                 const mateIdx = parts.indexOf('mate');
                 if (mateIdx !== -1 && parts[mateIdx + 1]) {
                     let mateIn = parseInt(parts[mateIdx + 1]);
-                    const engineSide = isAnalysisMode ? analysisGame.turn() : game.turn();
+                    const engineSide = activeEngineTurn;
                     if (engineSide === 'b') mateIn = -mateIn;
                     pendingEvalScore = { score: mateIn, isMate: true };
                 }
@@ -195,6 +196,7 @@ function initStockfish() {
                     const nextFen = queuedAnalysisFen;
                     queuedAnalysisFen = null;
                     if (nextFen && (isAnalysisMode || isReviewing)) {
+                        activeEngineTurn = nextFen.split(' ')[1] || 'w';
                         stockfishWorker.postMessage('position fen ' + nextFen);
                         stockfishWorker.postMessage('go depth 8');
                         isEngineThinking = true;
@@ -210,6 +212,7 @@ function initStockfish() {
                     const nextFen = queuedAnalysisFen;
                     queuedAnalysisFen = null;
                     if (nextFen && (isAnalysisMode || isReviewing)) {
+                        activeEngineTurn = nextFen.split(' ')[1] || 'w';
                         stockfishWorker.postMessage('position fen ' + nextFen);
                         stockfishWorker.postMessage('go depth 8');
                         isEngineThinking = true;
@@ -388,6 +391,7 @@ function requestEngineAnalysis() {
     }
 
     queuedAnalysisFen = null;
+    activeEngineTurn = targetFen.split(' ')[1] || 'w';
     stockfishWorker.postMessage('position fen ' + targetFen);
     stockfishWorker.postMessage('go depth 8');
     isEngineThinking = true;
