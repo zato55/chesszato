@@ -256,8 +256,8 @@ function initStockfish() {
                         analysisBestMoveByFen.set(activeAnalysisFen, moveStr);
                     }
                     currentBestMove = analysisBestMoveByFen.get(activeAnalysisFen);
-                    const from = moveStr.substring(0, 2);
-                    const to = moveStr.substring(2, 4);
+                    const from = currentBestMove.substring(0, 2);
+                    const to = currentBestMove.substring(2, 4);
                     drawBestMoveArrow(from, to);
                     return;
                 }
