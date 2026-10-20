@@ -1254,7 +1254,7 @@ function openPreAnalysisSummary() {
             $('#summaryBlackMissed').text(metrics.b.missed);
             $('#summaryProgressBar').css('width', '100%');
             $('#summaryProgressText').text('Değerlendirme tamamlandı.');
-            $('#summaryFootnote').text('Tahmini doğruluk ve hata sınıfları, Stockfish 10 derinlik 8 değerlendirmelerindeki hamle öncesi/sonrası farklardan hesaplanır; Chess.com puanlamasıyla aynı değildir. “Tanımlı açılış hamleleri” yalnızca uygulamadaki sınırlı açılış listesini ifade eder.');
+            $('#summaryFootnote').text('Tahmini doğruluk ve hata sınıfları, Stockfish 10 derinlik 6 değerlendirmelerindeki hamle öncesi/sonrası farklardan hesaplanır; Chess.com puanlamasıyla aynı değildir. “Tanımlı açılış hamleleri” yalnızca uygulamadaki sınırlı açılış listesini ifade eder.');
             if (summaryAnalysisTimeout) {
                 clearTimeout(summaryAnalysisTimeout);
                 summaryAnalysisTimeout = null;
@@ -1290,9 +1290,11 @@ function openPreAnalysisSummary() {
         const parts = message.split(' ');
         const cpIdx = parts.indexOf('cp');
         const mateIdx = parts.indexOf('mate');
-        if (message.includes(' score cp ') && cpIdx !== -1 && parts[cpIdx + 1]) {
+        // UCI upperbound/lowerbound skorları kesin değerlendirme değildir; son kesin skoru koru.
+        const isBoundScore = message.includes(' upperbound') || message.includes(' lowerbound');
+        if (!isBoundScore && message.includes(' score cp ') && cpIdx !== -1 && parts[cpIdx + 1]) {
             latestScore = parseInt(parts[cpIdx + 1], 10);
-        } else if (message.includes(' score mate ') && mateIdx !== -1 && parts[mateIdx + 1]) {
+        } else if (!isBoundScore && message.includes(' score mate ') && mateIdx !== -1 && parts[mateIdx + 1]) {
             const mate = parseInt(parts[mateIdx + 1], 10);
             latestScore = mate > 0 ? 10000 : mate < 0 ? -10000 : 0;
         }
