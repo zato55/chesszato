@@ -202,7 +202,7 @@ function initStockfish() {
                         activeEngineTurn = nextFen.split(' ')[1] || 'w';
                         stockfishWorker.postMessage('ucinewgame');
                         stockfishWorker.postMessage('position fen ' + nextFen);
-                        stockfishWorker.postMessage('go depth 12');
+                        stockfishWorker.postMessage('go depth 6');
                         isEngineThinking = true;
                     } else if (nextFen && !isGameOver && vsBot && game.turn() !== actualPlayerColor) {
                         triggerStockfishMove();
@@ -220,7 +220,7 @@ function initStockfish() {
                         activeEngineTurn = nextFen.split(' ')[1] || 'w';
                         stockfishWorker.postMessage('ucinewgame');
                         stockfishWorker.postMessage('position fen ' + nextFen);
-                        stockfishWorker.postMessage('go depth 12');
+                        stockfishWorker.postMessage('go depth 6');
                         isEngineThinking = true;
                     }
                     return;
@@ -418,7 +418,7 @@ function requestEngineAnalysis() {
     activeEngineTurn = targetFen.split(' ')[1] || 'w';
     stockfishWorker.postMessage('ucinewgame');
     stockfishWorker.postMessage('position fen ' + targetFen);
-    stockfishWorker.postMessage('go depth 12');
+    stockfishWorker.postMessage('go depth 6');
     isEngineThinking = true;
 }
 
