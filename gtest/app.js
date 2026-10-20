@@ -1691,9 +1691,7 @@ function startAnalysisMode() {
     analysisMainlineHistory = game.history({ verbose: true });
     analysisMoveHistory = analysisMainlineHistory.slice();
     analysisBranchStartIdx = null;
-    if (analysisIdx < 0) {
-        analysisIdx = analysisMoveHistory.length - 1;
-    }
+    analysisIdx = analysisMoveHistory.length - 1;
 
     updateAnalysisBoard();
 }
