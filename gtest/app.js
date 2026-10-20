@@ -28,6 +28,7 @@ let pendingEvalScore = null;
 let currentEvalScore = 0;
 let activeEngineTurn = 'w';
 let activeAnalysisFen = null;
+let analysisBestMoveByFen = new Map();
 let analysisSearchStopPending = false;
 let queuedAnalysisFen = null;
 
@@ -251,7 +252,10 @@ function initStockfish() {
                 const moveStr = message.split(' ')[1];
 
                 if (isAnalysisMode && moveStr && moveStr !== '(none)') {
-                    currentBestMove = moveStr;
+                    if (!analysisBestMoveByFen.has(activeAnalysisFen)) {
+                        analysisBestMoveByFen.set(activeAnalysisFen, moveStr);
+                    }
+                    currentBestMove = analysisBestMoveByFen.get(activeAnalysisFen);
                     const from = moveStr.substring(0, 2);
                     const to = moveStr.substring(2, 4);
                     drawBestMoveArrow(from, to);
@@ -384,6 +388,11 @@ function requestEngineAnalysis() {
     const targetGame = isAnalysisMode ? analysisGame : game;
     const targetFen = targetGame.fen();
     pendingEvalScore = null;
+
+    if (isAnalysisMode && analysisBestMoveByFen.has(targetFen)) {
+        currentBestMove = analysisBestMoveByFen.get(targetFen);
+        drawBestMoveArrow(currentBestMove.substring(0, 2), currentBestMove.substring(2, 4));
+    }
 
     if (targetGame.in_checkmate()) {
         queuedAnalysisFen = null;
@@ -2053,6 +2062,7 @@ function resetGame() {
     pendingEvalScore = null;
     currentEvalScore = 0;
     currentBestMove = null;
+    analysisBestMoveByFen.clear();
     moveCategoryMap = {};
     clearArrow();
 
