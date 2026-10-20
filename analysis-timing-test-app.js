@@ -1172,7 +1172,7 @@ function openPreAnalysisSummary() {
     const timingDetails = [];
     let moveStartedAt = null;
     let phaseStartedAt = null;
-    const phaseTimings = { best: null, bestForced: null, played: null };
+    const phaseTimings = { best: null, played: null };
     let moveIndex = 0;
     let phase = 'best';
     let bestScore = null;
@@ -1220,7 +1220,7 @@ function openPreAnalysisSummary() {
         if (summaryAnalysisTimeout) clearTimeout(summaryAnalysisTimeout);
         summaryAnalysisTimeout = setTimeout(() => finishWithFallback('Stockfish bir hamleyi zamanında değerlendiremedi.'), 25000);
         moveStartedAt = performance.now();
-        phaseTimings.best = null; phaseTimings.bestForced = null; phaseTimings.played = null;
+        phaseTimings.best = null; phaseTimings.played = null;
         latestScore = null; latestKind = null; latestDepth = null; reportedDepth = null; hasScore = false;
         waitingForReady = true;
         summaryWorker.postMessage('ucinewgame'); summaryWorker.postMessage('isready');
@@ -1265,13 +1265,8 @@ function openPreAnalysisSummary() {
         if (phase === 'best') {
             bestMove = bestmoveNow;
             if (!bestMove) { finishWithFallback('Stockfish en iyi hamleyi döndürmedi; istatistikler tamamlanamadı.'); return; }
-            phase = 'bestForced';
-            latestScore = null; latestKind = null; latestDepth = null; reportedDepth = null; hasScore = false;
-            summaryWorker.postMessage('position fen ' + rootFens[moveIndex]);
-            sendTimedSearch('go depth 14 searchmoves ' + bestMove);
-            return;
-        }
-        if (phase === 'bestForced') {
+            // The unrestricted search already supplies the root-position score for its best move.
+            // Re-searching that same move with searchmoves duplicates work.
             bestScore = latestScore; bestKind = latestKind; bestDepth = latestDepth;
             phase = 'played';
             latestScore = null; latestKind = null; latestDepth = null; reportedDepth = null; hasScore = false;
@@ -1297,9 +1292,9 @@ function openPreAnalysisSummary() {
             ? (latestKind === 'mate' && latestScore < 0 ? ' — Mat tehdidine izin verdi' : bestKind === 'mate' && bestScore > 0 ? ' — Kazandıran matı kaçırdı' : ' — Mat durumu değişti')
             : '';
         moveDetails.push(label + ': kayıp ' + lossText + ' | en iyi hamle ' + (bestMove || '?') + ' (' + bestScore + ' ' + bestKind + ', derinlik ' + (bestDepth ?? '?') + ')' + ' | oynanan hamle ' + move.from + move.to + (move.promotion || '') + ' (' + latestScore + ' ' + latestKind + ', derinlik ' + (latestDepth ?? '?') + ')' + ' — ' + moveClass + mateNote);
-        const phaseTotal = (phaseTimings.best || 0) + (phaseTimings.bestForced || 0) + (phaseTimings.played || 0);
+        const phaseTotal = (phaseTimings.best || 0) + (phaseTimings.played || 0);
         const elapsedTotal = moveStartedAt === null ? phaseTotal : Math.round(performance.now() - moveStartedAt);
-        timingDetails.push(label + ': en iyi ' + phaseTimings.best + ' ms | zorlanmış en iyi ' + phaseTimings.bestForced + ' ms | oynanan ' + phaseTimings.played + ' ms | 3 arama ' + phaseTotal + ' ms | hamle toplamı (hazırlık dâhil) ' + elapsedTotal + ' ms');
+        timingDetails.push(label + ': en iyi hamle araması ' + phaseTimings.best + ' ms | oynanan hamle araması ' + phaseTimings.played + ' ms | 2 arama ' + phaseTotal + ' ms | hamle toplamı (hazırlık dâhil) ' + elapsedTotal + ' ms');
         $('#summaryTimingDetails').text(timingDetails.join('\n'));
         moveIndex++; phase = 'best'; bestScore = null; bestKind = null; bestDepth = null; bestMove = '';
         $('#summaryProgressBar').css('width', Math.round(moveIndex / history.length * 100) + '%');
