@@ -966,3 +966,76 @@ aside.collapsed #logoToggleBtn {
 #mobileAnalysisBottomNav button {
     border-color: var(--player-card-theme-bg, #769656) !important;
 }
+
+/* GTEST maç raporu: mobilde daha okunaklı metin ve rahat dokunma alanları. */
+@media (max-width: 767px) {
+    #preAnalysisSummary {
+        padding: 6px !important;
+        align-items: center !important;
+    }
+
+    #preAnalysisSummary > .pre-analysis-card {
+        width: 100% !important;
+        max-width: 620px !important;
+        max-height: 96dvh !important;
+        padding: 12px !important;
+        border-radius: 14px !important;
+    }
+
+    #preAnalysisSummary table {
+        font-size: 13px !important;
+    }
+
+    #preAnalysisSummary thead th {
+        padding-top: 8px !important;
+        padding-bottom: 8px !important;
+        font-size: 11px !important;
+    }
+
+    #preAnalysisSummary tbody td {
+        padding-top: 8px !important;
+        padding-bottom: 8px !important;
+        font-size: 12px !important;
+        line-height: 1.25 !important;
+    }
+
+    #preAnalysisSummary tbody td:first-child {
+        padding-left: 6px !important;
+        padding-right: 3px !important;
+    }
+
+    #preAnalysisSummary .summary-click-cell {
+        min-height: 38px !important;
+        padding-left: 4px !important;
+        padding-right: 4px !important;
+        font-size: 13px !important;
+        font-weight: 800 !important;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    #preAnalysisSummary #summaryFootnote {
+        font-size: 11px !important;
+        line-height: 1.35 !important;
+    }
+
+    #preAnalysisSummary #summaryCloseBackBtn,
+    #preAnalysisSummary #summaryContinueBtn {
+        min-height: 44px !important;
+        padding-top: 9px !important;
+        padding-bottom: 9px !important;
+        font-size: 13px !important;
+        touch-action: manipulation;
+    }
+}
+
+@media (max-width: 400px) {
+    #preAnalysisSummary tbody td {
+        font-size: 11.5px !important;
+    }
+
+    #preAnalysisSummary .summary-click-cell {
+        font-size: 12px !important;
+    }
+}
+
