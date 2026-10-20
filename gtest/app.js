@@ -585,7 +585,9 @@ function findOpeningForSide(historySAN, side) {
 function detectOpening(side) {
     const historySAN = getDisplayedGame().history();
     const opening = findOpeningForSide(historySAN, side);
-    return opening ? '📖 ' + localizeOpeningName(opening.name) : '📖 ...';
+    if (opening) return '📖 ' + localizeOpeningName(opening.name);
+    if (side === 'b' && historySAN.length >= 2 && findOpeningForSide(historySAN, 'w')) return '📖 Özel savunma adı yok';
+    return '📖 ...';
 }
 
 function drawChessComCapturedPieces(capturedArr, isWhiteCaptures) {
