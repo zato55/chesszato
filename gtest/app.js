@@ -464,11 +464,11 @@ function drawChessComCapturedPieces(capturedArr, isWhiteCaptures) {
     order.forEach(type => {
         const count = counts[type];
         if (count > 0) {
-            html += `<div class="captured-group">`;
+            html += `<div class="captured-group flex items-center shrink-0">`;
             for (let i = 0; i < count; i++) {
                 const imgKey = isWhiteCaptures ? type : type.toUpperCase();
-                const stackedClass = i > 0 ? 'captured-stacked' : '';
-                html += `<img src="${getPieceSVG(imgKey)}" class="captured-icon ${stackedClass}">`;
+                const stackedClass = i > 0 ? '-ml-1.5' : '';
+                html += `<img src="${getPieceSVG(imgKey)}" class="w-3.5 h-3.5 object-contain ${stackedClass}">`;
             }
             html += `</div>`;
         }
@@ -483,17 +483,13 @@ function updatePlayerCards() {
 
     let whiteCaptured = [];
     let blackCaptured = [];
-    let whiteScore = 0;
-    let blackScore = 0;
 
     history.forEach(m => {
         if (m.captured) {
             if (m.color === 'w') {
                 whiteCaptured.push(m.captured);
-                whiteScore += pieceValues[m.captured] || 0;
             } else {
                 blackCaptured.push(m.captured);
-                blackScore += pieceValues[m.captured] || 0;
             }
         }
     });
@@ -540,15 +536,9 @@ function updatePlayerCards() {
     if (!isFlipped) {
         $('#topCapturedPieces').html(drawChessComCapturedPieces(blackCaptured, false));
         $('#bottomCapturedPieces').html(drawChessComCapturedPieces(whiteCaptured, true));
-
-        $('#topMaterialDiff').text(blackScore > whiteScore ? `+${blackScore - whiteScore}` : '');
-        $('#bottomMaterialDiff').text(whiteScore > blackScore ? `+${whiteScore - blackScore}` : '');
     } else {
         $('#topCapturedPieces').html(drawChessComCapturedPieces(whiteCaptured, true));
         $('#bottomCapturedPieces').html(drawChessComCapturedPieces(blackCaptured, false));
-
-        $('#topMaterialDiff').text(whiteScore > blackScore ? `+${whiteScore - blackScore}` : '');
-        $('#bottomMaterialDiff').text(blackScore > whiteScore ? `+${blackScore - whiteScore}` : '');
     }
 }
 
@@ -1001,17 +991,6 @@ function showGameOverModal(title, reason, icon = '🏆') {
 function updateStatus() {
     const activeGame = isAnalysisMode ? analysisGame : game;
     const moveColor = activeGame.turn() === 'b' ? 'Siyah' : 'Beyaz';
-
-    const openingForWhite = detectOpening('w');
-    const openingForBlack = detectOpening('b');
-
-    if (!isFlipped) {
-        $('#topOpeningText').text(openingForBlack);
-        $('#bottomOpeningText').text(openingForWhite);
-    } else {
-        $('#topOpeningText').text(openingForWhite);
-        $('#bottomOpeningText').text(openingForBlack);
-    }
 
     if (activeGame.in_checkmate()) {
         if (isAnalysisMode) {
