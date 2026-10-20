@@ -520,6 +520,14 @@
                         <span>🔊 Ses Efektleri</span>
                         <input type="checkbox" id="toggleSoundEffects" checked class="rounded bg-zinc-900 border-zinc-700 text-blue-600 focus:ring-0">
                     </label>
+                    <div class="flex flex-col gap-2 pt-1">
+                        <label for="soundVolume" class="flex items-center justify-between text-sm text-zinc-400">
+                            <span>Ses Seviyesi</span>
+                            <span id="soundVolumeValue" class="font-bold text-white">100%</span>
+                        </label>
+                        <input type="range" id="soundVolume" min="0" max="300" step="10" value="100" class="w-full accent-blue-500">
+                        <div class="flex justify-between text-[10px] text-zinc-500"><span>Kapalı</span><span>300%</span></div>
+                    </div>
                     <label class="flex items-center justify-between cursor-pointer py-1">
                         <span>👑 Şah Çekildiğinde Efekt</span>
                         <input type="checkbox" id="toggleKingCheckEffect" checked class="rounded bg-zinc-900 border-zinc-700 text-blue-600 focus:ring-0">
