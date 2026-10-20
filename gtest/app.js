@@ -2072,7 +2072,12 @@ $('#reviewBoardBtn').on('click', function() {
     openPreAnalysisSummary();
 });
 
-$('#closeSummaryBtn, #summaryCloseBackBtn').on('click', closePreAnalysisSummary);
+$('#closeSummaryBtn, #summaryCloseBackBtn').on('click', function() {
+    closePreAnalysisSummary();
+    if (isGameOver && !isAnalysisMode) {
+        $('#gameOverModal').removeClass('hidden');
+    }
+});
 
 $('#summaryContinueBtn').on('click', function() {
     if ($(this).prop('disabled')) return;
