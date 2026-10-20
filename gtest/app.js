@@ -110,6 +110,22 @@ function updateLiveNavigationButtons() {
     setDisabled('#liveNavNext, #liveNavEnd', atEnd);
 }
 
+function updateUndoButtons() {
+    const moveCount = game.history().length;
+    const canUndo = !isAnalysisMode && moveCount > 0 && (!isGameOver || isReviewing);
+
+    $('#quickUndoBtn, #undoBtn')
+        .prop('disabled', !canUndo)
+        .attr('aria-disabled', String(!canUndo))
+        .toggleClass('opacity-40 cursor-not-allowed', !canUndo)
+        .toggleClass('hover:bg-zinc-800', canUndo)
+        .css({
+            opacity: canUndo ? '1' : '0.35',
+            filter: canUndo ? 'none' : 'grayscale(1)',
+            pointerEvents: canUndo ? '' : 'none'
+        });
+}
+
 let playSoundsEnabled = true;
 let moveSoundVolume = 1;
 let kingCheckEffectEnabled = true;
@@ -933,6 +949,7 @@ function renderBoard() {
 
     updatePlayerCards();
     updateLiveNavigationButtons();
+    updateUndoButtons();
     updateAnalysisNavigationButtons();
 }
 
