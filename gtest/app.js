@@ -428,33 +428,26 @@ function playMoveSound(moveObj, isCapture) {
     } catch (e) {}
 }
 
-function detectOpening(side) {
-    const activeGame = getDisplayedGame();
-    const historySAN = activeGame.history();
-    if (historySAN.length === 0) return '📖 ...';
-
-    let bestMatch = '📖 ...';
-    let maxMatchedMoves = 0;
+function findOpeningForSide(historySAN, side) {
+    let bestMatch = null;
 
     for (const opening of openingDatabase) {
         const owner = (opening.moves.length % 2 === 1) ? 'w' : 'b';
-        if (owner !== side) continue;
+        if (owner !== side || opening.moves.length > historySAN.length) continue;
 
-        if (opening.moves.length <= historySAN.length) {
-            let match = true;
-            for (let i = 0; i < opening.moves.length; i++) {
-                if (historySAN[i] !== opening.moves[i]) {
-                    match = false;
-                    break;
-                }
-            }
-            if (match && opening.moves.length > maxMatchedMoves) {
-                maxMatchedMoves = opening.moves.length;
-                bestMatch = '📖 ' + opening.name;
-            }
+        const matches = opening.moves.every((move, index) => historySAN[index] === move);
+        if (matches && (!bestMatch || opening.moves.length > bestMatch.moves.length)) {
+            bestMatch = opening;
         }
     }
+
     return bestMatch;
+}
+
+function detectOpening(side) {
+    const historySAN = getDisplayedGame().history();
+    const opening = findOpeningForSide(historySAN, side);
+    return opening ? '📖 ' + opening.name : '📖 ...';
 }
 
 function drawChessComCapturedPieces(capturedArr, isWhiteCaptures) {
@@ -1216,10 +1209,11 @@ function openPreAnalysisSummary() {
         ? (game.turn() === 'b' ? 'Beyaz kazandı · Şah mat' : 'Siyah kazandı · Şah mat')
         : game.in_draw() ? 'Berabere' : 'Maç özeti');
     $('#summaryMoveCount').text(history.length);
-    const summaryOpening = openingDatabase
-        .filter(opening => opening.moves.length <= history.length && opening.moves.every((move, index) => history[index].san === move))
-        .sort((a, b) => b.moves.length - a.moves.length)[0];
-    $('#summaryOpening').text(summaryOpening ? '📖 ' + summaryOpening.name : 'Tanımlanamadı');
+    const summaryHistorySAN = history.map(move => move.san);
+    const summaryWhiteOpening = findOpeningForSide(summaryHistorySAN, 'w');
+    const summaryBlackOpening = findOpeningForSide(summaryHistorySAN, 'b');
+    $('#summaryWhiteOpening').text(summaryWhiteOpening ? '📖 ' + summaryWhiteOpening.name : 'Tanımlanamadı');
+    $('#summaryBlackOpening').text(summaryBlackOpening ? '📖 ' + summaryBlackOpening.name : 'Tanımlanamadı');
     $('#summaryBookMoves').text('Hesaplanıyor…');
     $('#summaryProgressBar').css('width', '0%');
     $('#summaryProgressText').text('Konumlar Stockfish ile değerlendiriliyor…');
