@@ -1789,6 +1789,37 @@ $(document).on('click', '#copySummaryMoveDetailsBtn', async function() {
     }
 });
 
+$(document).on('click', '#copySummaryTimingDetailsBtn', async function() {
+    const textToCopy = $('#summaryTimingDetails').text().trim();
+    const button = $(this);
+    if (!textToCopy || textToCopy === 'Süreler ölçülüyor…' || textToCopy === 'Süre ölçümü oluşmadı.') {
+        button.text('Henüz hazır değil');
+        setTimeout(() => button.text('Süreleri kopyala'), 1800);
+        return;
+    }
+    try {
+        if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(textToCopy);
+        } else {
+            const temp = document.createElement('textarea');
+            temp.value = textToCopy;
+            temp.setAttribute('readonly', '');
+            temp.style.position = 'fixed';
+            temp.style.opacity = '0';
+            document.body.appendChild(temp);
+            temp.select();
+            const copied = document.execCommand('copy');
+            temp.remove();
+            if (!copied) throw new Error('copy failed');
+        }
+        button.text('Kopyalandı ✓');
+        setTimeout(() => button.text('Süreleri kopyala'), 1800);
+    } catch (error) {
+        button.text('Kopyalanamadı');
+        setTimeout(() => button.text('Süreleri kopyala'), 1800);
+    }
+});
+
 $('#summaryContinueBtn').on('click', function() {
     if ($(this).prop('disabled')) return;
     closePreAnalysisSummary();
