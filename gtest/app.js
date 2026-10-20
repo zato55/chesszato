@@ -937,10 +937,7 @@ function renderBoard() {
 }
 
 function handleMove(from, to) {
-    if (!isAnalysisMode && liveReviewPly !== null) {
-        returnToLivePosition();
-        renderBoard();
-    }
+    if (!isAnalysisMode && liveReviewPly !== null) return;
     if (isGameOver && !isReviewing && !isAnalysisMode) return;
 
     if (!isAnalysisMode && !isReviewing) {
@@ -968,6 +965,7 @@ function handleMove(from, to) {
 }
 
 function executeMove(from, to, promoPiece) {
+    if (!isAnalysisMode && liveReviewPly !== null) return;
     if (isGameOver && !isReviewing && !isAnalysisMode) return;
 
     const activeGame = isAnalysisMode ? analysisGame : game;
@@ -1096,6 +1094,7 @@ function triggerStockfishMove() {
 }
 
 $('#board').on('click', 'div[data-square]', function () {
+    if (!isAnalysisMode && liveReviewPly !== null) return;
     if (isGameOver && !isReviewing && !isAnalysisMode) return;
 
     if (!isAnalysisMode && !isReviewing) {
