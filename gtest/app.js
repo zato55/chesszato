@@ -39,6 +39,9 @@ let actualPlayerColor = 'w';
 let showLegalMoves = true;
 let autoFlipPvP = false;
 
+// Hamlelerin kategorilendirilmiş dizin tutucuları (Tıklayıp zıplamak için)
+let moveCategoryMap = {};
+
 // Canlı maç geçmişi yalnızca görüntüleme içindir; gerçek game ve saatler değişmez.
 let liveReviewPly = null;
 const liveReviewGame = new Chess();
@@ -1089,13 +1092,35 @@ function renderLivePGN() {
     if (mobileStrip) mobileStrip.scrollLeft = mobileStrip.scrollWidth;
 }
 
+// 🎯 KATEGORİ ROZETİ ÜRETİCİ
+function getBadgeHtml(catKey) {
+    if (!catKey) return '';
+    const badges = {
+        brilliant: '<span class="ml-1 px-1 rounded bg-cyan-950 text-cyan-400 text-[10px] font-black border border-cyan-800">‼️</span>',
+        best: '<span class="ml-1 px-1 rounded bg-emerald-950 text-emerald-400 text-[10px] font-black border border-emerald-800">⭐</span>',
+        good: '<span class="ml-1 px-1 rounded bg-green-950 text-green-400 text-[10px] font-black border border-green-800">👍</span>',
+        inaccuracy: '<span class="ml-1 px-1 rounded bg-amber-950 text-amber-400 text-[10px] font-black border border-amber-800">?!</span>',
+        mistakes: '<span class="ml-1 px-1 rounded bg-orange-950 text-orange-400 text-[10px] font-black border border-orange-800">?</span>',
+        blunders: '<span class="ml-1 px-1 rounded bg-red-950 text-red-400 text-[10px] font-black border border-red-800">??</span>',
+        missed: '<span class="ml-1 px-1 rounded bg-purple-950 text-purple-400 text-[10px] font-black border border-purple-800">❌</span>'
+    };
+    return badges[catKey] || '';
+}
+
 function renderAnalysisPGN() {
     let pgnHtml = '';
+    let mobilePgnHtml = '';
 
     for (let i = 0; i < analysisMoveHistory.length; i += 2) {
         const round = Math.floor(i / 2) + 1;
         const whiteActive = (i === analysisIdx) ? 'pgn-move-active' : '';
         const blackActive = (i + 1 === analysisIdx) ? 'pgn-move-active' : '';
+
+        const whiteCat = moveCategoryMap[i];
+        const blackCat = moveCategoryMap[i + 1];
+
+        const whiteBadge = getBadgeHtml(whiteCat);
+        const blackBadge = getBadgeHtml(blackCat);
 
         const whiteMove = analysisMoveHistory[i].from + '→' + analysisMoveHistory[i].to;
         const blackMove = analysisMoveHistory[i + 1] ? analysisMoveHistory[i + 1].from + '→' + analysisMoveHistory[i + 1].to : '';
@@ -1103,15 +1128,23 @@ function renderAnalysisPGN() {
         pgnHtml += `
             <div class="py-1 border-b border-zinc-800/50 flex justify-between gap-2 items-center">
                 <span class="text-zinc-600 font-semibold">${round}.</span>
-                <span class="pgn-move text-zinc-300 font-medium ${whiteActive}" onclick="jumpToMove(${i})">${whiteMove}</span>
-                <span class="pgn-move text-blue-400 font-medium ${blackActive}" onclick="jumpToMove(${i + 1})">${blackMove}</span>
+                <span class="pgn-move text-zinc-300 font-medium ${whiteActive}" onclick="jumpToMove(${i})">${whiteMove}${whiteBadge}</span>
+                <span class="pgn-move text-blue-400 font-medium ${blackActive}" onclick="jumpToMove(${i + 1})">${blackMove}${blackBadge}</span>
             </div>`;
+
+        mobilePgnHtml += `
+            <span class="bg-zinc-900 px-2 py-1 rounded border border-zinc-800 text-zinc-300 flex items-center gap-1">
+                <span class="text-zinc-500 font-bold">${round}.</span>
+                <span class="cursor-pointer ${whiteActive}" onclick="jumpToMove(${i})">${whiteMove}${whiteBadge}</span>
+                ${blackMove ? `<span class="cursor-pointer ${blackActive}" onclick="jumpToMove(${i + 1})">${blackMove}${blackBadge}</span>` : ''}
+            </span>`;
     }
 
     $('#pgn').html(pgnHtml || '<span class="text-zinc-600 italic">Analiz için hamle yok</span>');
+    $('#mobilePgnList').html(mobilePgnHtml || '<span class="text-zinc-600 italic">Analiz için hamle yok</span>');
 
     const activeEl = document.querySelector('.pgn-move-active');
-    if (activeEl) activeEl.scrollIntoView({ block: 'nearest' });
+    if (activeEl) activeEl.scrollIntoView({ block: 'nearest', inline: 'center' });
 }
 
 window.jumpToMove = function(idx) {
@@ -1148,6 +1181,7 @@ function openPreAnalysisSummary() {
     }
 
     closePreAnalysisSummary();
+    moveCategoryMap = {}; // Temizle
     const runId = ++summaryAnalysisRunId;
     $('#gameOverModal').addClass('hidden');
     $('#preAnalysisSummary').removeClass('hidden');
@@ -1161,7 +1195,6 @@ function openPreAnalysisSummary() {
     $('#summaryProgressText').text('Konumlar Stockfish ile değerlendiriliyor…');
     $('#summaryContinueBtn').prop('disabled', true);
 
-    // Tabloyu sıfırla
     $('#summaryWhiteAccuracy, #summaryBlackAccuracy, #summaryWhiteBrilliant, #summaryBlackBrilliant, #summaryWhiteBest, #summaryBlackBest, #summaryWhiteGood, #summaryBlackGood, #summaryWhiteInaccuracy, #summaryBlackInaccuracy, #summaryWhiteMistakes, #summaryBlackMistakes, #summaryWhiteBlunders, #summaryBlackBlunders, #summaryWhiteMissed, #summaryBlackMissed, #summaryWhiteAcpl, #summaryBlackAcpl').text('—');
 
     const positions = [];
@@ -1276,8 +1309,8 @@ function openPreAnalysisSummary() {
 
         if (positionIndex >= positions.length) {
             const metrics = {
-                w: { losses: [], brilliant: 0, best: 0, good: 0, inaccuracy: 0, mistakes: 0, blunders: 0, missed: 0 },
-                b: { losses: [], brilliant: 0, best: 0, good: 0, inaccuracy: 0, mistakes: 0, blunders: 0, missed: 0 }
+                w: { losses: [], brilliant: [], best: [], good: [], inaccuracy: [], mistakes: [], blunders: [], missed: [] },
+                b: { losses: [], brilliant: [], best: [], good: [], inaccuracy: [], mistakes: [], blunders: [], missed: [] }
             };
 
             history.forEach((move, i) => {
@@ -1292,55 +1325,62 @@ function openPreAnalysisSummary() {
                 const beforeForMover = move.color === 'w' ? before : -before;
                 const afterForMover = move.color === 'w' ? after : -after;
 
-                // CHESS.COM HAMLE SINIFLANDIRMA SİSTEMİ
+                let catKey = 'good';
+
                 if (move.captured && lossCp <= 10 && beforeForMover <= -100 && afterForMover >= 150) {
-                    player.brilliant++; // Mükemmel (Fedalı / Pozisyon Değiştiren)
+                    player.brilliant.push(i);
+                    catKey = 'brilliant';
                 } else if (lossCp <= 12) {
-                    player.best++; // En İyi Hamle
+                    player.best.push(i);
+                    catKey = 'best';
                 } else if (lossCp <= 40) {
-                    player.good++; // İyi Hamle
+                    player.good.push(i);
+                    catKey = 'good';
                 } else if (lossCp <= 100) {
-                    player.inaccuracy++; // Kaçırma / İhmal
+                    player.inaccuracy.push(i);
+                    catKey = 'inaccuracy';
                 } else if (lossCp < 300) {
-                    player.mistakes++; // Hata
+                    player.mistakes.push(i);
+                    catKey = 'mistakes';
                 } else {
-                    player.blunders++; // Büyük Hata
+                    player.blunders.push(i);
+                    catKey = 'blunders';
                 }
 
-                // Kaçan Kazanma
                 if (beforeForMover >= 250 && afterForMover < 80) {
-                    player.missed++;
+                    player.missed.push(i);
+                    catKey = 'missed';
                 }
+
+                moveCategoryMap[i] = catKey;
             });
 
-            // Doğruluk Yüzdesi
             const accuracy = (player) => player.losses.length
                 ? Math.round(player.losses.reduce((sum, loss) => sum + 100 * Math.exp(-loss / 400), 0) / player.losses.length) + '%'
                 : '—';
 
-            // ACPL (Ortalama CP Kaybı)
             const acpl = (player) => player.losses.length
                 ? Math.round(player.losses.reduce((a, b) => a + b, 0) / player.losses.length)
                 : '—';
 
             $('#summaryWhiteAccuracy').text(accuracy(metrics.w));
-            $('#summaryWhiteBrilliant').text(metrics.w.brilliant);
-            $('#summaryWhiteBest').text(metrics.w.best);
-            $('#summaryWhiteGood').text(metrics.w.good);
-            $('#summaryWhiteInaccuracy').text(metrics.w.inaccuracy);
-            $('#summaryWhiteMistakes').text(metrics.w.mistakes);
-            $('#summaryWhiteBlunders').text(metrics.w.blunders);
-            $('#summaryWhiteMissed').text(metrics.w.missed);
+            $('#summaryWhiteBrilliant').text(metrics.w.brilliant.length).data('indices', metrics.w.brilliant);
+            $('#summaryWhiteBest').text(metrics.w.best.length).data('indices', metrics.w.best);
+            $('#summaryWhiteGood').text(metrics.w.good.length).data('indices', metrics.w.good);
+            $('#summaryWhiteInaccuracy').text(metrics.w.inaccuracy.length).data('indices', metrics.w.inaccuracy);
+            $('#summaryWhiteMistakes').text(metrics.w.mistakes.length).data('indices', metrics.w.mistakes);
+            $('#summaryWhiteBlunders').text(metrics.w.blunders.length).data('indices', metrics.w.blunders);
+            $('#summaryWhiteMissed').text(metrics.w.missed.length).data('indices', metrics.w.missed);
             $('#summaryWhiteAcpl').text(acpl(metrics.w));
 
             $('#summaryBlackAccuracy').text(accuracy(metrics.b));
-            $('#summaryBlackBrilliant').text(metrics.b.brilliant);
-            $('#summaryBlackBest').text(metrics.b.best);
-            $('#summaryBlackGood').text(metrics.b.good);
-            $('#summaryBlackInaccuracy').text(metrics.b.inaccuracy);
-            $('#summaryBlackMistakes').text(metrics.b.mistakes);
-            $('#summaryBlackBlunders').text(metrics.b.blunders);
-            $('#summaryBlackMissed').text(metrics.b.missed);
+            $('#summaryBlackBrilliant').text(metrics.b.brilliant.length).data('indices', metrics.b.brilliant);
+            $('#summaryBlackBest').text(metrics.b.best.length).data('indices', metrics.b.best);
+            $('#summaryBlackGood').text(metrics.b.good.length).data('indices', metrics.b.good);
+            $('#summaryBlackInaccuracy').text(metrics.b.inaccuracy.length).data('indices', metrics.b.inaccuracy);
+            $('#summaryBlackMistakes').text(metrics.b.mistakes.length).data('indices', metrics.b.mistakes);
+            $('#summaryBlackBlunders').text(metrics.b.blunders.length).data('indices', metrics.b.blunders);
+            $('#summaryBlackMissed').text(metrics.b.missed.length).data('indices', metrics.b.missed);
             $('#summaryBlackAcpl').text(acpl(metrics.b));
 
             $('#summaryProgressBar').css('width', '100%');
@@ -1372,6 +1412,17 @@ function openPreAnalysisSummary() {
     summaryWorker.postMessage('uci');
 }
 
+// 🎯 TABLODAKİ SAYILARA TIKLADIĞINDA O HAMLEYE ZIPLAMA
+$(document).on('click', '.summary-click-cell', function() {
+    const indices = $(this).data('indices');
+    if (indices && indices.length > 0) {
+        const targetMoveIdx = indices[0];
+        closePreAnalysisSummary();
+        startAnalysisMode();
+        jumpToMove(targetMoveIdx);
+    }
+});
+
 function startAnalysisMode() {
     returnToLivePosition();
     isAnalysisMode = true;
@@ -1384,8 +1435,6 @@ function startAnalysisMode() {
     $('#evalScoreWrapper').removeClass('hidden');
     
     $('#gameplayConfigGroup').addClass('hidden');
-    
-    /* 🎯 CANLI OYUN KONTROLLERİNİ TAMAMEN GİZLİYORUZ */
     $('#liveGameControls').addClass('hidden');
     $('#analysisNav').removeClass('hidden');
 
@@ -1405,7 +1454,9 @@ function startAnalysisMode() {
     analysisMainlineHistory = game.history({ verbose: true });
     analysisMoveHistory = analysisMainlineHistory.slice();
     analysisBranchStartIdx = null;
-    analysisIdx = analysisMoveHistory.length - 1;
+    if (analysisIdx < 0) {
+        analysisIdx = analysisMoveHistory.length - 1;
+    }
 
     updateAnalysisBoard();
 }
@@ -1423,8 +1474,6 @@ function exitAnalysisMode() {
 
     $('#gameplayConfigGroup').removeClass('hidden');
     $('#analysisNav').addClass('hidden');
-    
-    /* 🎯 CANLI OYUN KONTROLLERİNİ GERİ GETİRİYORUZ */
     $('#liveGameControls').removeClass('hidden');
 
     $('#mobileAnalysisPanel').addClass('hidden');
@@ -1765,6 +1814,7 @@ function resetGame() {
     pendingEvalScore = null;
     currentEvalScore = 0;
     currentBestMove = null;
+    moveCategoryMap = {};
     clearArrow();
 
     if (userColorSelection === 'r') {
