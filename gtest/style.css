@@ -741,5 +741,36 @@ aside.collapsed #logoToggleBtn {
 .summary-stat strong {
     color: #fafafa; font-size: 16px; line-height: 1.35; overflow-wrap: anywhere;
 }
-#preAnalysisSummary table { border-collapse: collapse; min-width: 510px; }
-#preAnalysisSummary th, #preAnalysisSummary td { white-space: nowrap; }
+/* Maç raporu tablosu: tüm telefon genişliklerine sığar, yatay kaydırma oluşturmaz. */
+#preAnalysisSummary .overflow-x-auto { overflow-x: hidden !important; }
+#preAnalysisSummary table {
+    width: 100%;
+    min-width: 0;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+#preAnalysisSummary th,
+#preAnalysisSummary td {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: normal;
+}
+#preAnalysisSummary th:first-child,
+#preAnalysisSummary td:first-child {
+    width: 56%;
+}
+#preAnalysisSummary th:not(:first-child),
+#preAnalysisSummary td:not(:first-child) {
+    width: 22%;
+}
+#preAnalysisSummary tbody td:first-child {
+    display: table-cell !important;
+}
+@media (max-width: 400px) {
+    #preAnalysisSummary th,
+    #preAnalysisSummary td {
+        padding-left: 4px !important;
+        padding-right: 4px !important;
+        font-size: 10px;
+    }
+}
