@@ -1207,9 +1207,8 @@ function openPreAnalysisSummary() {
     $('#summaryBookMoves').text(matchedOpeningPlies + ' tanımlı');
 
     const evaluations = [];
-    // Test: toplam sürenin çoğunu motor aramalarına ayır; hamle sayısına göre arama süresini azalt.
-    const summarySearchBudgetMs = 24000;
-    const summaryMoveTimeMs = Math.max(100, Math.min(700, Math.floor(summarySearchBudgetMs / positions.length)));
+    // Test: maç özeti, karşılaştırmadaki D6 ile aynı yöntemi kullansın.
+    const summaryDepth = 6;
     let positionIndex = 0;
     let latestScore = 0;
     let currentFenTurn = 'w';
@@ -1280,7 +1279,7 @@ function openPreAnalysisSummary() {
             $('#summaryBlackMissed').text(metrics.b.missed);
             $('#summaryProgressBar').css('width', '100%');
             $('#summaryProgressText').text('Tamamlandı · toplam ' + ((Date.now() - summaryAnalysisStartedAt) / 1000).toFixed(1) + ' saniye');
-            $('#summaryFootnote').text('HIZ TESTİ: Stockfish 10, konum başına ' + summaryMoveTimeMs + ' ms süre sınırıyla çalıştı. Bu hızlı taramanın hata sınıflandırma kalitesi ayrıca kontrol edilmelidir; Chess.com puanlamasıyla aynı değildir.');
+            $('#summaryFootnote').text('TEST: Stockfish 10, sabit derinlik ' + summaryDepth + ' ile çalıştı. Bu nedenle hata ve büyük hata sayıları, aşağıdaki D6 karşılaştırmasıyla aynı yöntem üzerinden hesaplanır. Chess.com puanlamasıyla aynı değildir.');
             if (summaryAnalysisTimeout) {
                 clearTimeout(summaryAnalysisTimeout);
                 summaryAnalysisTimeout = null;
@@ -1297,11 +1296,11 @@ function openPreAnalysisSummary() {
         if (summaryAnalysisTimeout) clearTimeout(summaryAnalysisTimeout);
         summaryAnalysisTimeout = setTimeout(() => {
             finishWithFallback('Stockfish bir konumu zamanında değerlendiremedi.');
-        }, Math.max(1500, summaryMoveTimeMs * 3));
+        }, 20000);
         currentFenTurn = positions[positionIndex].split(' ')[1] || 'w';
         latestScore = 0;
         summaryWorker.postMessage('position fen ' + positions[positionIndex]);
-        summaryWorker.postMessage('go movetime ' + summaryMoveTimeMs);
+        summaryWorker.postMessage('go depth ' + summaryDepth);
     };
 
     summaryWorker.onmessage = function(event) {
@@ -1336,7 +1335,7 @@ function openPreAnalysisSummary() {
             evaluations[positionIndex] = currentFenTurn === 'w' ? latestScore : -latestScore;
             positionIndex++;
             $('#summaryProgressBar').css('width', Math.round(positionIndex / positions.length * 100) + '%');
-            $('#summaryProgressText').text('Konum ' + positionIndex + ' / ' + positions.length + ' · ' + summaryMoveTimeMs + ' ms/arama · ' + ((Date.now() - summaryAnalysisStartedAt) / 1000).toFixed(1) + ' sn');
+            $('#summaryProgressText').text('Konum ' + positionIndex + ' / ' + positions.length + ' · derinlik ' + summaryDepth + ' · ' + ((Date.now() - summaryAnalysisStartedAt) / 1000).toFixed(1) + ' sn');
             evaluateNext();
         }
     };
