@@ -27,6 +27,7 @@ let analysisIdx = -1;
 let pendingEvalScore = null;
 let currentEvalScore = 0;
 let activeEngineTurn = 'w';
+let activeAnalysisFen = null;
 let analysisSearchStopPending = false;
 let queuedAnalysisFen = null;
 
@@ -196,6 +197,7 @@ function initStockfish() {
                     const nextFen = queuedAnalysisFen;
                     queuedAnalysisFen = null;
                     if (nextFen && (isAnalysisMode || isReviewing)) {
+                        activeAnalysisFen = nextFen;
                         activeEngineTurn = nextFen.split(' ')[1] || 'w';
                         stockfishWorker.postMessage('position fen ' + nextFen);
                         stockfishWorker.postMessage('go depth 8');
@@ -212,6 +214,7 @@ function initStockfish() {
                     const nextFen = queuedAnalysisFen;
                     queuedAnalysisFen = null;
                     if (nextFen && (isAnalysisMode || isReviewing)) {
+                        activeAnalysisFen = nextFen;
                         activeEngineTurn = nextFen.split(' ')[1] || 'w';
                         stockfishWorker.postMessage('position fen ' + nextFen);
                         stockfishWorker.postMessage('go depth 8');
@@ -220,6 +223,15 @@ function initStockfish() {
                     return;
                 }
                 isEngineThinking = false;
+
+                if ((isAnalysisMode || isReviewing) && activeAnalysisFen) {
+                    const activeGame = isAnalysisMode ? analysisGame : game;
+                    if (activeGame.fen() !== activeAnalysisFen) {
+                        pendingEvalScore = null;
+                        requestEngineAnalysis();
+                        return;
+                    }
+                }
 
                 if (isAnalysisMode || isReviewing) {
                     const activeGame = isAnalysisMode ? analysisGame : game;
@@ -391,6 +403,7 @@ function requestEngineAnalysis() {
     }
 
     queuedAnalysisFen = null;
+    activeAnalysisFen = targetFen;
     activeEngineTurn = targetFen.split(' ')[1] || 'w';
     stockfishWorker.postMessage('position fen ' + targetFen);
     stockfishWorker.postMessage('go depth 8');
