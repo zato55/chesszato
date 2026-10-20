@@ -671,6 +671,29 @@ function renderBoard() {
                 $square.append($img);
             }
 
+            // Analizde seçili son hamlenin varış karesinde kalite sembolünü göster.
+            if (isAnalysisMode && lastMove && squareName === lastMove.to) {
+                const category = moveCategoryMap[analysisIdx];
+                const qualityBadges = {
+                    brilliant: { symbol: '‼', label: 'Harika hamle' },
+                    best: { symbol: '★', label: 'En iyi hamle' },
+                    good: { symbol: '👍', label: 'İyi hamle' },
+                    inaccuracy: { symbol: '?!', label: 'Hatalı hamle' },
+                    mistakes: { symbol: '?', label: 'Hata' },
+                    blunders: { symbol: '??', label: 'Büyük hata' },
+                    missed: { symbol: '✕', label: 'Kaçan kazanma fırsatı' }
+                };
+                const badge = qualityBadges[category];
+                if (badge) {
+                    $('<span></span>')
+                        .addClass('analysis-move-quality-badge quality-' + category)
+                        .attr('title', badge.label)
+                        .attr('aria-label', badge.label)
+                        .text(badge.symbol)
+                        .appendTo($square);
+                }
+            }
+
             $board.append($square);
         }
     }
