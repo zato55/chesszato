@@ -1146,9 +1146,10 @@ function updateTimerDisplay() {
 
     const applyTimerStyle = (selector, isActive, remaining) => {
         const timer = $(selector);
-        timer.removeClass('text-emerald-400 bg-emerald-950 border-emerald-600 shadow-[0_0_10px_rgba(52,211,153,0.35)] text-red-300 bg-red-950 border-red-600 animate-pulse');
-        if (isActive && remaining <= 30) {
-            timer.addClass('text-red-300 bg-red-950 border-red-600 animate-pulse');
+        timer.removeClass('text-emerald-400 bg-emerald-950 border-emerald-600 shadow-[0_0_10px_rgba(52,211,153,0.35)] text-red-100 bg-red-950 border-red-500 shadow-[0_0_14px_rgba(248,113,113,0.65)] animate-pulse');
+        if (remaining < 60) {
+            timer.addClass('text-red-100 bg-red-950 border-red-500 shadow-[0_0_14px_rgba(248,113,113,0.65)]');
+            if (isActive) timer.addClass('animate-pulse');
         } else if (isActive) {
             timer.addClass('text-emerald-400 bg-emerald-950 border-emerald-600 shadow-[0_0_10px_rgba(52,211,153,0.35)]');
         }
