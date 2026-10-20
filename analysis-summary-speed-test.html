@@ -351,6 +351,13 @@
                         <tbody id="summaryDepthCompareRows"></tbody>
                     </table>
                 </div>
+                <div id="summaryDepthMoveDetails" class="hidden mt-3 overflow-x-auto rounded-lg border border-zinc-800">
+                    <p class="px-2 py-2 text-xs font-bold text-zinc-300">Beyaz hamleleri: hamle kaybı karşılaştırması</p>
+                    <table class="w-full text-xs text-left whitespace-nowrap">
+                        <thead class="bg-zinc-900 text-zinc-400"><tr><th class="px-2 py-2">Hamle</th><th class="px-2 py-2">D6</th><th class="px-2 py-2">D12</th><th class="px-2 py-2">D18</th></tr></thead>
+                        <tbody id="summaryDepthMoveRows"></tbody>
+                    </table>
+                </div>
             </div>
             <p id="summaryFootnote" class="text-[11px] leading-relaxed text-zinc-500 mt-3">Değerler Stockfish'in hızlı değerlendirmesine dayalı tahminlerdir; resmi bir puanlama değildir.</p>
             <div class="flex flex-col-reverse sm:flex-row gap-2 mt-5">
@@ -567,7 +574,7 @@
 
     <div style="position:fixed;top:8px;right:8px;z-index:9999;pointer-events:none;background:#7f1d1d;color:#fff;border:1px solid #f87171;border-radius:8px;padding:5px 8px;font:700 11px/1.2 system-ui;box-shadow:0 2px 8px #0008">ÖZET SÜRE TESTİ</div>
     <!-- İzole test uygulaması: canlı app.js kullanılmaz -->
-    <script src="analysis-summary-speed-test-app.js?v=9ce11f3d38455b96918a483a655da2a9856befed"></script>
+    <script src="analysis-summary-speed-test-app.js?v=014422f2bd5293585411c47151e1892ac4d00738"></script>
 </body>
 
 </html>
