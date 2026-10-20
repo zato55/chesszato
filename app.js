@@ -705,6 +705,17 @@ function updatePlayerCards() {
         $('#topCapturedPieces').html(drawChessComCapturedPieces(whiteCaptured, true));
         $('#bottomCapturedPieces').html(drawChessComCapturedPieces(blackCaptured, false));
     }
+
+    const whiteMaterial = whiteCaptured.reduce((sum, piece) => sum + (pieceValues[piece.toLowerCase()] || 0), 0);
+    const blackMaterial = blackCaptured.reduce((sum, piece) => sum + (pieceValues[piece.toLowerCase()] || 0), 0);
+    const materialDiff = whiteMaterial - blackMaterial;
+
+    const topIsWhite = isFlipped;
+    const topDiff = topIsWhite ? materialDiff : -materialDiff;
+    const bottomDiff = -topDiff;
+
+    $('#topMaterialDiff').text(topDiff > 0 ? `+${topDiff}` : '');
+    $('#bottomMaterialDiff').text(bottomDiff > 0 ? `+${bottomDiff}` : '');
 }
 
 function updateBotEloUI(selectedElo) {
@@ -2061,7 +2072,12 @@ $('#reviewBoardBtn').on('click', function() {
     openPreAnalysisSummary();
 });
 
-$('#closeSummaryBtn, #summaryCloseBackBtn').on('click', closePreAnalysisSummary);
+$('#closeSummaryBtn, #summaryCloseBackBtn').on('click', function() {
+    closePreAnalysisSummary();
+    if (isGameOver && !isAnalysisMode) {
+        $('#gameOverModal').removeClass('hidden');
+    }
+});
 
 $('#summaryContinueBtn').on('click', function() {
     if ($(this).prop('disabled')) return;
@@ -2069,7 +2085,13 @@ $('#summaryContinueBtn').on('click', function() {
     startAnalysisMode();
 });
 
-$('#closeModalBtn').on('click', () => $('#gameOverModal').addClass('hidden'));
+$('#gameOverModal').on('click', function(e) {
+    if (e.target === this) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).removeClass('hidden');
+    }
+});
 
 initStockfish();
 loadSavedSettings();
