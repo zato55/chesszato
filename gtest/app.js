@@ -1750,16 +1750,21 @@ function updateAnalysisBoard() {
     }
 
     const atStart = analysisIdx <= -1;
-    $('#navStart, #navPrev, #mNavStart, #mNavPrev')
-        .prop('disabled', atStart)
-        .attr('aria-disabled', String(atStart))
-        .toggleClass('opacity-40 cursor-not-allowed', atStart)
-        .toggleClass('hover:bg-zinc-800', !atStart)
-        .css({
-            opacity: atStart ? '0.35' : '1',
-            filter: atStart ? 'grayscale(1)' : 'none',
-            pointerEvents: atStart ? 'none' : ''
-        });
+    const atEnd = analysisIdx >= analysisMoveHistory.length - 1;
+    const setNavigationDisabled = (selector, disabled) => {
+        $(selector)
+            .prop('disabled', disabled)
+            .attr('aria-disabled', String(disabled))
+            .toggleClass('opacity-40 cursor-not-allowed', disabled)
+            .toggleClass('hover:bg-zinc-800', !disabled)
+            .css({
+                opacity: disabled ? '0.35' : '1',
+                filter: disabled ? 'grayscale(1)' : 'none',
+                pointerEvents: disabled ? 'none' : ''
+            });
+    };
+    setNavigationDisabled('#navStart, #navPrev, #mNavStart, #mNavPrev', atStart);
+    setNavigationDisabled('#navNext, #navEnd, #mNavNext, #mNavEnd', atEnd);
 
     selectedSquare = null;
     clearArrow();
