@@ -423,10 +423,11 @@ aside.collapsed #logoToggleBtn {
     color: #c4c4cc !important;
 }
 
+/* ELO etiketi: mavi yerine nötr koyu gri. */
 #topPlayerElo, #bottomPlayerElo {
     color: #ffffff !important;
-    background-color: #1e3a8a !important;
-    border-color: #1d4ed8 !important;
+    background-color: #27272a !important;
+    border-color: #52525b !important;
     font-weight: 900 !important;
 }
 
@@ -436,13 +437,27 @@ aside.collapsed #logoToggleBtn {
     font-size: 13px !important;
 }
 
+/* Varsayılan saat görünümü; aşağıdaki oyuncu rengi seçicileri bunu belirler. */
 #topTimerDesktop, #bottomTimerDesktop,
 #topTimerMobile, #bottomTimerMobile {
+    font-weight: 900 !important;
+    box-shadow: none !important;
+}
+
+/* Siyah taşları temsil eden kart: siyah saat, beyaz yazı. */
+#topPlayerCard:has(#topAvatar.bg-zinc-900) #topTimerDesktop,
+#bottomPlayerCard:has(#bottomAvatar.bg-zinc-900) #bottomTimerDesktop {
     color: #ffffff !important;
     background-color: #09090b !important;
     border: 1.5px solid #27272a !important;
-    font-weight: 900 !important;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.8);
+}
+
+/* Beyaz taşları temsil eden kart: beyaz saat, siyah yazı. */
+#topPlayerCard:has(#topAvatar.bg-zinc-100) #topTimerDesktop,
+#bottomPlayerCard:has(#bottomAvatar.bg-zinc-100) #bottomTimerDesktop {
+    color: #111111 !important;
+    background-color: #ffffff !important;
+    border: 1.5px solid #d4d4d8 !important;
 }
 
 /* Mobil yerleşim kuralları tek blokta, dosyanın altındaki tam ekran düzeninde tutulur. */
