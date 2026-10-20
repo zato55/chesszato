@@ -1237,9 +1237,7 @@ function openPreAnalysisSummary() {
                 if (phase === 'best') sendTimedSearch('go depth 14');
                 else {
                     const move = history[moveIndex];
-                    const uciMove = phase === 'bestForced'
-                        ? bestMove
-                        : move.from + move.to + (move.promotion || '');
+                    const uciMove = move.from + move.to + (move.promotion || '');
                     sendTimedSearch('go depth 14 searchmoves ' + uciMove);
                 }
             } else startSearch();
