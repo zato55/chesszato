@@ -2077,11 +2077,13 @@ function loadSavedSettings() {
 function setMobileNavActive(activeBtnId) {
     const btns = ['#mobileNavPlayBtn', '#mobileNavBotBtn', '#mobileNavTempoBtn', '#mobileNavSettingsBtn'];
     btns.forEach(id => {
-        const $btn =$(id);
-        if (id === activeBtnId) {
-            $btn.removeClass('text-zinc-400 font-medium').addClass('text-blue-500 font-bold');
+        const $btn = $(id);
+        const isActive = id === activeBtnId;
+        $btn.toggleClass('mobile-nav-active', isActive);
+        if (isActive) {
+            $btn.attr('aria-current', 'page');
         } else {
-            $btn.removeClass('text-blue-500 font-bold').addClass('text-zinc-400 font-medium');
+            $btn.removeAttr('aria-current');
         }
     });
 }
@@ -2090,7 +2092,7 @@ $(document).on('click', '#mobileNavPlayBtn', function(e) {
     e.preventDefault();
     setMobileNavActive('#mobileNavPlayBtn');
     $('#tempoModal, #botModal, #settingsModal').addClass('hidden');
-    resetGame();
+    // Menüde Oyna seçimi mevcut maçı sıfırlamaz; yalnızca oyun ekranına döner.
 });
 
 $(document).on('click', '#mobileNavBotBtn, #mobileBotModalBtn', function(e) {
