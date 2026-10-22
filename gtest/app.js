@@ -1193,8 +1193,6 @@ $('.promo-choice').on('click', function() {
     if (pendingMove) {
         requestMoveExecution(pendingMove.from, pendingMove.to, chosenPiece);
         pendingMove = null;
-    pendingConfirmedMove = null;
-    $('#moveConfirmationModal').addClass('hidden');
     }
 });
 
@@ -2328,6 +2326,8 @@ function resetGame() {
     analysisIdx = -1;
     isAnalysisMode = false;
     pendingMove = null;
+    pendingConfirmedMove = null;
+    $('#moveConfirmationModal').addClass('hidden');
     isGameOver = false;
     isReviewing = false;
     queuedAnalysisFen = null;
