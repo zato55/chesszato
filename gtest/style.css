@@ -1047,3 +1047,122 @@ aside.collapsed #logoToggleBtn {
     }
 }
 
+
+
+/* GTEST mobil menü yenilemesi: daha geniş dokunma alanı, net seçili durum ve güvenli alt boşluk. */
+@media (max-width: 767px) {
+    #mobileTopBar {
+        min-height: 48px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
+    }
+
+    #mobileQuickLogin,
+    #mobileQuickRegister {
+        min-height: 36px;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    #mobileBottomNav {
+        min-height: 64px;
+        box-sizing: border-box;
+        padding-left: 8px;
+        padding-right: 8px;
+        padding-top: 6px;
+        padding-bottom: max(6px, env(safe-area-inset-bottom));
+        gap: 4px;
+        background: rgba(18, 18, 21, 0.98);
+        border-top: 1px solid #303036;
+        box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.28);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
+
+    #mobileBottomNav .mobile-nav-item {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+        min-width: 0;
+        min-height: 50px;
+        padding: 5px 2px 4px;
+        border: 1px solid transparent;
+        border-radius: 12px;
+        color: #a1a1aa;
+        background: transparent;
+        font-size: 10px;
+        font-weight: 650;
+        line-height: 1.15;
+        white-space: nowrap;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+        transition: color 140ms ease, background-color 140ms ease, border-color 140ms ease;
+    }
+
+    #mobileBottomNav .mobile-nav-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 24px;
+        font-size: 22px;
+        line-height: 1;
+        font-weight: 800;
+    }
+
+    #mobileBottomNav .mobile-nav-item.mobile-nav-active {
+        color: #ffffff;
+        background: rgba(37, 99, 235, 0.19);
+        border-color: rgba(59, 130, 246, 0.58);
+    }
+
+    #mobileBottomNav .mobile-nav-item.mobile-nav-active::before {
+        content: "";
+        position: absolute;
+        top: -1px;
+        left: 50%;
+        width: 22px;
+        height: 3px;
+        border-radius: 0 0 4px 4px;
+        background: #dc2626;
+        transform: translateX(-50%);
+    }
+
+    #mobileBottomNav .mobile-nav-item:focus-visible,
+    #mobileQuickLogin:focus-visible,
+    #mobileQuickRegister:focus-visible {
+        outline: 2px solid #60a5fa;
+        outline-offset: 2px;
+    }
+
+    body:not(.analysis-mode) main {
+        padding-bottom: calc(72px + env(safe-area-inset-bottom)) !important;
+    }
+}
+
+@media (max-width: 360px) {
+    #mobileTopBar {
+        padding-left: 9px;
+        padding-right: 9px;
+    }
+
+    #mobileTopBar > div:first-child {
+        gap: 6px;
+    }
+
+    #mobileTopBar > div:last-child {
+        gap: 5px;
+    }
+
+    #mobileQuickLogin,
+    #mobileQuickRegister {
+        padding-left: 8px;
+        padding-right: 8px;
+        font-size: 11px;
+    }
+
+    #mobileBottomNav .mobile-nav-item {
+        font-size: 9px;
+    }
+}
