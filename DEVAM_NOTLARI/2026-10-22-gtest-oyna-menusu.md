@@ -53,3 +53,13 @@ Telefonda GTEST sayfasını açıp Oyna menüsünü, beş seçeneği ve mevcut o
 - Cache etiketi `20261022-gtest-menu-style-v3` yapıldı.
 - Statik kontroller: üç panel sınıfı bulundu, CSS parantez dengesi geçti, `app.js` sözdizimi geçti. Telefon üzerinde görsel/dokunmatik test henüz yapılmadı.
 - Commitler: HTML `b6b4e10820fa1ae397ba179a7cc67d3555e1c893`; CSS `3f5fc2ea5a8a79898cc9e366815cb0233a5f11fe`.
+
+
+## Son düzenleme — bota karşı oyunda önce ayarlar (2026-10-22)
+- Yedek dalı: `yedek-2026-10-22-gtest-bot-ayarlari-oncesi`.
+- GTEST'te Oyna > Bota karşı oyna seçilince Oyna menüsü kapanır, Stockfish ayar paneli açılır; oyun hemen sıfırlanıp başlatılmaz.
+- Kullanıcı tarafını (Beyaz/Rastgele/Siyah) ve bot seviyesini seçebilir. Bu seçimler paneli kapatıp oyunu başlatmaz.
+- Yeni `Oyuna Başla` düğmesi paneli kapatır ve seçilen ayarlarla oyunu başlatır.
+- Yalnızca `gtest/index.html` ve `gtest/app.js` değişti; cache etiketi `20261022-gtest-bot-setup-v4`.
+- Statik kontroller: JavaScript sözdizimi geçti; buton/handler, geciktirilmiş reset ve cache etiketi kontrolleri geçti. Telefon üzerinde test bekliyor.
+- Commitler: HTML `643ae968328ec0c2a8c2af84a066620ce5926ca4`; JS `6179b166c31abe4795394b9a24567def7201ce73`.
