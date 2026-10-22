@@ -2091,6 +2091,7 @@ function setMobileNavActive(activeBtnId) {
 function closeMobilePlayMenu() {
     $('#mobilePlayMenu').addClass('hidden');
     $('#mobilePlayMenuNotice').addClass('hidden').text('');
+    setMobileNavActive(null);
 }
 
 $(document).on('click', '#mobileNavPlayBtn', function(e) {
@@ -2170,13 +2171,13 @@ $(document).on('click', '.close-modal-btn', function(e) {
     e.preventDefault();
     closeMobilePlayMenu();
     $('#tempoModal, #botModal, #settingsModal').addClass('hidden');
-    setMobileNavActive('#mobileNavPlayBtn');
+    setMobileNavActive(null);
 });
 
 $('#tempoModal, #botModal, #settingsModal').on('click', function(e) {
     if (e.target === this) {
         $(this).addClass('hidden');
-        setMobileNavActive('#mobileNavPlayBtn');
+        setMobileNavActive(null);
     }
 });
 
@@ -2185,7 +2186,7 @@ $('.tempo-option-btn').on('click', function() {
     parseTimeControl(timeVal);
     syncTempoSelection(timeVal);
     $('#tempoModal').addClass('hidden');
-    setMobileNavActive('#mobileNavPlayBtn');
+    setMobileNavActive(null);
     resetGame();
 });
 
@@ -2194,7 +2195,7 @@ $('.bot-level-btn').on('click', function() {
     updateBotEloUI(eloVal);
     updatePlayerCards();
     $('#botModal').addClass('hidden');
-    setMobileNavActive('#mobileNavPlayBtn');
+    setMobileNavActive(null);
 });
 
 $('#liveNavStart').on('click', () => showLiveReviewPosition(0));
