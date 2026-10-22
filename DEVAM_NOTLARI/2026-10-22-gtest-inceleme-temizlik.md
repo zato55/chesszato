@@ -44,3 +44,10 @@ Yalnızca ana `index.html` GTEST ile eşitlendi. Ana `app.js` ve `style.css` dos
 - Son statik incelemede genel `Variation` çevirisinin `Classical Variation` kuralından önce çalıştığı görüldü. Kural sırası GTEST `app.js` içinde düzeltildi; özel varyant adı artık genel kurala takılmadan çevriliyor.
 - Yedek dal: `yedek-2026-10-22-gtest-kapsamli-inceleme-oncesi`.
 - Bu kontrol statiktir; tarayıcıda gerçek oyun akışı testi henüz yapılmadı.
+
+## Statik kontrol sonuçları
+- `gtest/index.html` ve ana `index.html` SHA değerleri aynı; içerikler birebir eşit.
+- HTML içinde yinelenen `id` ve `app.js` içinde yinelenen fonksiyon tanımı bulunmadı.
+- CSS açılan/kapanan blok sayısı eşit (179/179).
+- `Classical Variation` çeviri kuralı artık genel `Variation` kuralından önce; örnek çıktı `Klasik Varyant`.
+- Bu kontroller statiktir. Tarayıcı otomasyonu, telefon testi ve Stockfish ile gerçek oyun senaryoları henüz çalıştırılmadı.
