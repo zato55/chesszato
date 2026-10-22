@@ -469,7 +469,6 @@ function playMoveSound(moveObj, isCapture) {
     try {
         const AudioContextClass = window.AudioContext || window.webkitAudioContext;
         if (!AudioContextClass) return;
-
         if (!moveAudioContext || moveAudioContext.state === 'closed') {
             moveAudioContext = new AudioContextClass();
         }
@@ -477,47 +476,50 @@ function playMoveSound(moveObj, isCapture) {
 
         const playSound = () => {
             if (!playSoundsEnabled || ctx.state !== 'running') return;
-
             try {
                 const now = ctx.currentTime;
-                const volume = moveSoundVolume;
-                const style = localStorage.getItem('zato_sound_style') || 'wood';
+                const volume = Math.min(moveSoundVolume, 2.5);
+                const style = $('#soundStyle').val() || localStorage.getItem('zato_sound_style') || 'wood';
                 const profiles = {
-                    wood:    { wave: 'triangle', base: isCapture ? 155 : 215, end: isCapture ? 75 : 105, duration: isCapture ? 0.13 : 0.09, tone: isCapture ? 0.42 : 0.32, click: isCapture ? 0.14 : 0.09, filter: 1100 },
-                    classic: { wave: 'sine',     base: isCapture ? 260 : 340, end: isCapture ? 145 : 190, duration: isCapture ? 0.10 : 0.07, tone: isCapture ? 0.36 : 0.28, click: isCapture ? 0.10 : 0.07, filter: 1800 },
-                    soft:    { wave: 'sine',     base: isCapture ? 190 : 245, end: isCapture ? 100 : 130, duration: isCapture ? 0.15 : 0.11, tone: isCapture ? 0.26 : 0.20, click: isCapture ? 0.05 : 0.035, filter: 650 },
-                    deep:    { wave: 'triangle', base: isCapture ? 115 : 155, end: isCapture ? 55 : 75, duration: isCapture ? 0.16 : 0.12, tone: isCapture ? 0.48 : 0.38, click: isCapture ? 0.16 : 0.11, filter: 850 }
+                    wood:    { wave: 'triangle', base: isCapture ? 145 : 195, end: isCapture ? 68 : 92, duration: isCapture ? 0.15 : 0.105, tone: 0.48, noise: 0.22, cutoff: 900 },
+                    classic: { wave: 'square',   base: isCapture ? 420 : 520, end: isCapture ? 240 : 310, duration: isCapture ? 0.075 : 0.05, tone: 0.16, noise: 0.30, cutoff: 3200 },
+                    soft:    { wave: 'sine',     base: isCapture ? 220 : 280, end: isCapture ? 150 : 185, duration: isCapture ? 0.18 : 0.14, tone: 0.22, noise: 0.025, cutoff: 500 },
+                    deep:    { wave: 'sawtooth', base: isCapture ? 92 : 125, end: isCapture ? 42 : 58, duration: isCapture ? 0.21 : 0.16, tone: 0.36, noise: 0.12, cutoff: 600 }
                 };
-                const profile = profiles[style] || profiles.wood;
-                const duration = profile.duration;
+                const p = profiles[style] || profiles.wood;
+                const duration = p.duration;
 
-                const tone = ctx.createOscillator();
-                const toneGain = ctx.createGain();
-                tone.type = profile.wave;
-                tone.frequency.setValueAtTime(profile.base, now);
-                tone.frequency.exponentialRampToValueAtTime(profile.end, now + duration);
-                toneGain.gain.setValueAtTime(profile.tone * volume, now);
-                toneGain.gain.exponentialRampToValueAtTime(0.001, now + duration);
-                tone.connect(toneGain);
-                toneGain.connect(ctx.destination);
-                tone.start(now);
-                tone.stop(now + duration);
+                const osc = ctx.createOscillator();
+                const oscGain = ctx.createGain();
+                const toneFilter = ctx.createBiquadFilter();
+                toneFilter.type = 'lowpass';
+                toneFilter.frequency.setValueAtTime(p.cutoff, now);
+                osc.type = p.wave;
+                osc.frequency.setValueAtTime(p.base, now);
+                osc.frequency.exponentialRampToValueAtTime(p.end, now + duration);
+                oscGain.gain.setValueAtTime(p.tone * volume, now);
+                oscGain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+                osc.connect(toneFilter);
+                toneFilter.connect(oscGain);
+                oscGain.connect(ctx.destination);
+                osc.start(now);
+                osc.stop(now + duration);
 
-                const clickDuration = style === 'soft' ? 0.018 : 0.028;
-                const bufferSize = Math.floor(ctx.sampleRate * clickDuration);
-                const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+                const clickDuration = style === 'soft' ? 0.018 : (style === 'deep' ? 0.045 : 0.03);
+                const count = Math.max(1, Math.floor(ctx.sampleRate * clickDuration));
+                const buffer = ctx.createBuffer(1, count, ctx.sampleRate);
                 const data = buffer.getChannelData(0);
-                for (let i = 0; i < bufferSize; i++) {
-                    data[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
+                for (let i = 0; i < count; i++) {
+                    const fade = 1 - i / count;
+                    data[i] = (Math.random() * 2 - 1) * fade;
                 }
-
                 const click = ctx.createBufferSource();
                 click.buffer = buffer;
                 const filter = ctx.createBiquadFilter();
                 filter.type = 'lowpass';
-                filter.frequency.setValueAtTime(profile.filter, now);
+                filter.frequency.setValueAtTime(p.cutoff, now);
                 const clickGain = ctx.createGain();
-                clickGain.gain.setValueAtTime(profile.click * volume, now);
+                clickGain.gain.setValueAtTime(p.noise * volume, now);
                 clickGain.gain.exponentialRampToValueAtTime(0.001, now + clickDuration);
                 click.connect(filter);
                 filter.connect(clickGain);
@@ -528,10 +530,10 @@ function playMoveSound(moveObj, isCapture) {
                     clickGain.disconnect();
                 };
                 click.start(now);
-
-                tone.onended = () => {
-                    tone.disconnect();
-                    toneGain.disconnect();
+                osc.onended = () => {
+                    osc.disconnect();
+                    toneFilter.disconnect();
+                    oscGain.disconnect();
                 };
             } catch (e) {}
         };
@@ -1962,6 +1964,7 @@ $('#toggleSoundEffects').on('change', function() {
 
 $('#soundStyle').on('change', function() {
     localStorage.setItem('zato_sound_style', $(this).val());
+    playMoveSound(null, false);
 });
 
 $('#soundVolume').on('input change', function() {
