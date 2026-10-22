@@ -1264,7 +1264,7 @@ $('.side-choice-btn').on('click', function() {
     $(this).addClass('bg-blue-600 text-white font-bold').removeClass('text-zinc-400');
     
     userColorSelection = $(this).attr('data-color');
-    resetGame();
+    if ($('#botModal').hasClass('hidden')) resetGame();
 });
 
 function startTimer() {
@@ -2122,7 +2122,9 @@ $(document).on('click', '#mobileMenuBotBtn', function() {
     $('#modePvP, #mModePvP').removeClass('bg-blue-600 text-white').addClass('text-zinc-400');
     $('#mobileModeText').text('Stockfish');
     updatePlayerCards();
-    resetGame();
+    $('#tempoModal, #settingsModal').addClass('hidden');
+    setMobileNavActive('#mobileNavBotBtn');
+    $('#botModal').removeClass('hidden');
 });
 
 $(document).on('click', '#mobileMenuLocalBtn', function() {
@@ -2194,8 +2196,16 @@ $('.bot-level-btn').on('click', function() {
     const eloVal = $(this).attr('data-elo');$('#botElo').val(eloVal);
     updateBotEloUI(eloVal);
     updatePlayerCards();
+    if ($('#botModal').hasClass('hidden')) {
+        $('#botModal').addClass('hidden');
+        setMobileNavActive(null);
+    }
+});
+
+$(document).on('click', '#mobileBotStartBtn', function() {
     $('#botModal').addClass('hidden');
     setMobileNavActive(null);
+    resetGame();
 });
 
 $('#liveNavStart').on('click', () => showLiveReviewPosition(0));
