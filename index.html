@@ -571,13 +571,24 @@
                         <span>🔊 Ses Efektleri</span>
                         <input type="checkbox" id="toggleSoundEffects" checked class="rounded bg-zinc-900 border-zinc-700 text-blue-600 focus:ring-0">
                     </label>
+                    <div class="flex flex-col gap-1 pt-1">
+                        <label for="soundStyle" class="text-sm text-zinc-400">Hamle Sesi Türü</label>
+                        <select id="soundStyle" class="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+                            <option value="wood">Ahşap — tahta taşı</option>
+                            <option value="classic">Klasik — satranç tıkırtısı</option>
+                            <option value="soft">Yumuşak — hafif tık</option>
+                            <option value="deep">Tok — kalın vuruş</option>
+                            <option value="natural">Doğal taş sesi — gerçek kayıt (CC0)</option>
+                            <option value="custom">Gerçek Taş Sesi</option>
+                        </select>
+                    </div>
                     <div class="flex flex-col gap-2 pt-1">
                         <label for="soundVolume" class="flex items-center justify-between text-sm text-zinc-400">
                             <span>Ses Seviyesi</span>
                             <span id="soundVolumeValue" class="font-bold text-white">100%</span>
                         </label>
-                        <input type="range" id="soundVolume" min="0" max="300" step="10" value="100" class="w-full accent-blue-500">
-                        <div class="flex justify-between text-[10px] text-zinc-500"><span>Kapalı</span><span>300%</span></div>
+                        <input type="range" id="soundVolume" min="0" max="500" step="10" value="100" class="w-full accent-blue-500">
+                        <div class="flex justify-between text-[10px] text-zinc-500"><span>Kapalı</span><span>500%</span></div>
                     </div>
                     <label class="flex items-center justify-between cursor-pointer py-1">
                         <span>👑 Şah Çekildiğinde Efekt</span>
@@ -615,7 +626,7 @@
 
     <!-- Ana Uygulama Kodu -->
     <script src="openings.js?v=20261020-lichess-openings-3865"></script>
-    <script src="app.js?v=20261022-gtest-cleanup-v1"></script>
+    <script src="app.js?v=20261022-normal-sound-v1"></script>
 </body>
 
 </html>

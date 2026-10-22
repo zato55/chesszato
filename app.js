@@ -128,6 +128,8 @@ function updateUndoButtons() {
 
 let playSoundsEnabled = true;
 let moveSoundVolume = 1;
+let naturalMoveBufferPromise = null;
+let userMoveBufferPromise = null;
 let kingCheckEffectEnabled = true;
 let moveAudioContext = null;
 let currentPieceSet = 'neo';
@@ -469,44 +471,132 @@ function playMoveSound(moveObj, isCapture) {
     try {
         const AudioContextClass = window.AudioContext || window.webkitAudioContext;
         if (!AudioContextClass) return;
-
         if (!moveAudioContext || moveAudioContext.state === 'closed') {
             moveAudioContext = new AudioContextClass();
         }
         const ctx = moveAudioContext;
 
+        const playNaturalMoveSound = () => {
+            // Original real chess-piece recording: mh2o, Freesound 351518, CC0 1.0.
+            // Hosted as a public CC0 copy by ShareChess; no Chess.com assets are used.
+            if (!naturalMoveBufferPromise) {
+                naturalMoveBufferPromise = fetch('https://raw.githubusercontent.com/sharechess/sharechess/main/public/sfx/move.mp3')
+                    .then(response => {
+                        if (!response.ok) throw new Error('Natural sound unavailable');
+                        return response.arrayBuffer();
+                    })
+                    .then(data => ctx.decodeAudioData(data))
+                    .catch(() => {
+                        naturalMoveBufferPromise = null;
+                        return null;
+                    });
+            }
+            naturalMoveBufferPromise.then(buffer => {
+                if (!buffer || !playSoundsEnabled || ctx.state !== 'running') return;
+                const source = ctx.createBufferSource();
+                const gain = ctx.createGain();
+                source.buffer = buffer;
+                gain.gain.value = Math.min(moveSoundVolume, 2.5);
+                source.connect(gain);
+                gain.connect(ctx.destination);
+                source.start(0);
+            });
+        };
+
+        const playUserRecordedMoveSound = () => {
+            if (!userMoveBufferPromise) {
+                userMoveBufferPromise = fetch('sounds/mesut-move.mp3')
+                    .then(response => {
+                        if (!response.ok) throw new Error('User recorded sound unavailable');
+                        return response.arrayBuffer();
+                    })
+                    .then(data => ctx.decodeAudioData(data))
+                    .catch(() => {
+                        userMoveBufferPromise = null;
+                        return null;
+                    });
+            }
+            userMoveBufferPromise.then(buffer => {
+                if (!buffer || !playSoundsEnabled || ctx.state !== 'running') return;
+                const source = ctx.createBufferSource();
+                const gain = ctx.createGain();
+                source.buffer = buffer;
+                gain.gain.value = Math.min(moveSoundVolume, 2.5);
+                source.connect(gain);
+                gain.connect(ctx.destination);
+                source.start(0);
+            });
+        };
+
         const playSound = () => {
             if (!playSoundsEnabled || ctx.state !== 'running') return;
-
             try {
-                const bufferSize = Math.floor(ctx.sampleRate * 0.08);
-                const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-                const data = buffer.getChannelData(0);
-                for (let i = 0; i < bufferSize; i++) {
-                    data[i] = Math.random() * 2 - 1;
+                const style = $('#soundStyle').val() || localStorage.getItem('zato_sound_style') || 'wood';
+                if (style === 'natural') {
+                    playNaturalMoveSound();
+                    return;
                 }
+                if (style === 'custom') {
+                    playUserRecordedMoveSound();
+                    return;
+                }
+                const now = ctx.currentTime;
+                const volume = Math.min(moveSoundVolume, 2.5);
+                const profiles = {
+                    wood:    { wave: 'triangle', base: isCapture ? 145 : 195, end: isCapture ? 68 : 92, duration: isCapture ? 0.15 : 0.105, tone: 0.48, noise: 0.22, cutoff: 900 },
+                    classic: { wave: 'square',   base: isCapture ? 420 : 520, end: isCapture ? 240 : 310, duration: isCapture ? 0.075 : 0.05, tone: 0.16, noise: 0.30, cutoff: 3200 },
+                    soft:    { wave: 'sine',     base: isCapture ? 220 : 280, end: isCapture ? 150 : 185, duration: isCapture ? 0.18 : 0.14, tone: 0.22, noise: 0.025, cutoff: 500 },
+                    deep:    { wave: 'sawtooth', base: isCapture ? 92 : 125, end: isCapture ? 42 : 58, duration: isCapture ? 0.21 : 0.16, tone: 0.36, noise: 0.12, cutoff: 600 }
+                };
+                const p = profiles[style] || profiles.wood;
+                const duration = p.duration;
 
-                const noise = ctx.createBufferSource();
-                noise.buffer = buffer;
+                const osc = ctx.createOscillator();
+                const oscGain = ctx.createGain();
+                const toneFilter = ctx.createBiquadFilter();
+                toneFilter.type = 'lowpass';
+                toneFilter.frequency.setValueAtTime(p.cutoff, now);
+                osc.type = p.wave;
+                osc.frequency.setValueAtTime(p.base, now);
+                osc.frequency.exponentialRampToValueAtTime(p.end, now + duration);
+                oscGain.gain.setValueAtTime(p.tone * volume, now);
+                oscGain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+                osc.connect(toneFilter);
+                toneFilter.connect(oscGain);
+                oscGain.connect(ctx.destination);
+                osc.start(now);
+                osc.stop(now + duration);
 
+                const clickDuration = style === 'soft' ? 0.018 : (style === 'deep' ? 0.045 : 0.03);
+                const count = Math.max(1, Math.floor(ctx.sampleRate * clickDuration));
+                const buffer = ctx.createBuffer(1, count, ctx.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < count; i++) {
+                    const fade = 1 - i / count;
+                    data[i] = (Math.random() * 2 - 1) * fade;
+                }
+                const click = ctx.createBufferSource();
+                click.buffer = buffer;
                 const filter = ctx.createBiquadFilter();
                 filter.type = 'lowpass';
-                filter.frequency.setValueAtTime(isCapture ? 400 : 800, ctx.currentTime);
-
-                const gain = ctx.createGain();
-                gain.gain.setValueAtTime((isCapture ? 0.8 : 0.5) * moveSoundVolume, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
-
-                noise.connect(filter);
-                filter.connect(gain);
-                gain.connect(ctx.destination);
-
-                noise.onended = () => {
-                    noise.disconnect();
+                filter.frequency.setValueAtTime(p.cutoff, now);
+                const clickGain = ctx.createGain();
+                clickGain.gain.setValueAtTime(p.noise * volume, now);
+                clickGain.gain.exponentialRampToValueAtTime(0.001, now + clickDuration);
+                click.connect(filter);
+                filter.connect(clickGain);
+                clickGain.connect(ctx.destination);
+                click.onended = () => {
+                    click.disconnect();
                     filter.disconnect();
-                    gain.disconnect();
+                    clickGain.disconnect();
                 };
-                noise.start();
+                click.start(now);
+                osc.onended = () => {
+                    osc.disconnect();
+                    toneFilter.disconnect();
+                    oscGain.disconnect();
+                };
             } catch (e) {}
         };
 
@@ -517,7 +607,6 @@ function playMoveSound(moveObj, isCapture) {
         }
     } catch (e) {}
 }
-
 
 function localizeOpeningName(name) {
     const exactTranslations = [
@@ -1936,6 +2025,11 @@ $('#toggleSoundEffects').on('change', function() {
     localStorage.setItem('zato_sound', playSoundsEnabled);
 });
 
+$('#soundStyle').on('change', function() {
+    localStorage.setItem('zato_sound_style', $(this).val());
+    playMoveSound(null, false);
+});
+
 $('#soundVolume').on('input change', function() {
     moveSoundVolume = Number($(this).val()) / 100;
     $('#soundVolumeValue').text($(this).val() + '%');
@@ -1966,6 +2060,9 @@ function loadSavedSettings() {
         playSoundsEnabled = localStorage.getItem('zato_sound') === 'true';
         $('#toggleSoundEffects').prop('checked', playSoundsEnabled);
     }
+
+    const savedSoundStyle = localStorage.getItem('zato_sound_style') || 'wood';
+    $('#soundStyle').val(savedSoundStyle);
 
     const savedSoundVolume = localStorage.getItem('zato_sound_volume') || '100';
     moveSoundVolume = Number(savedSoundVolume) / 100;
