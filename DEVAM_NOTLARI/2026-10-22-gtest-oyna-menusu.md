@@ -14,7 +14,7 @@ Mobil alt menüde Oyna'ya dokununca doğrudan oyuna dönmek yerine genişletileb
 - **Yeni oyun:** Mevcut oyun modunu koruyarak oyunu sıfırlar ve yeni oyunu başlatır.
 - **Hızlı eşleştirme:** Menüde görünür; eşleştirme altyapısı henüz olmadığı için açıkça henüz kullanıma açık olmadığı bildirilir.
 - **Bota karşı oyna:** Stockfish modunu seçer ve yeni oyunu başlatır.
-- **Turnuvalar:** Menüde görünür; turnuva altyapısı henüz olmadığı için açıkça henüz kullanıma açık olduğu bildirilir.
+- **Turnuvalar:** Menüde görünür; turnuva altyapısı henüz olmadığı için açıkça henüz kullanıma açık olmadığı bildirilir.
 - **Yerel oyun:** Aynı cihazda iki kişilik modu seçer ve yeni oyunu başlatır.
 
 ## Uygulama
