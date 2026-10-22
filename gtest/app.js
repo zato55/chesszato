@@ -481,38 +481,43 @@ function playMoveSound(moveObj, isCapture) {
             try {
                 const now = ctx.currentTime;
                 const volume = moveSoundVolume;
-                const duration = isCapture ? 0.12 : 0.085;
+                const style = localStorage.getItem('zato_sound_style') || 'wood';
+                const profiles = {
+                    wood:    { wave: 'triangle', base: isCapture ? 155 : 215, end: isCapture ? 75 : 105, duration: isCapture ? 0.13 : 0.09, tone: isCapture ? 0.42 : 0.32, click: isCapture ? 0.14 : 0.09, filter: 1100 },
+                    classic: { wave: 'sine',     base: isCapture ? 260 : 340, end: isCapture ? 145 : 190, duration: isCapture ? 0.10 : 0.07, tone: isCapture ? 0.36 : 0.28, click: isCapture ? 0.10 : 0.07, filter: 1800 },
+                    soft:    { wave: 'sine',     base: isCapture ? 190 : 245, end: isCapture ? 100 : 130, duration: isCapture ? 0.15 : 0.11, tone: isCapture ? 0.26 : 0.20, click: isCapture ? 0.05 : 0.035, filter: 650 },
+                    deep:    { wave: 'triangle', base: isCapture ? 115 : 155, end: isCapture ? 55 : 75, duration: isCapture ? 0.16 : 0.12, tone: isCapture ? 0.48 : 0.38, click: isCapture ? 0.16 : 0.11, filter: 850 }
+                };
+                const profile = profiles[style] || profiles.wood;
+                const duration = profile.duration;
 
-                // Kısa, aşağı doğru kayan üçgen dalga: ahşap taşın tok vuruşu.
                 const tone = ctx.createOscillator();
                 const toneGain = ctx.createGain();
-                tone.type = 'triangle';
-                tone.frequency.setValueAtTime(isCapture ? 175 : 235, now);
-                tone.frequency.exponentialRampToValueAtTime(isCapture ? 82 : 115, now + duration);
-                toneGain.gain.setValueAtTime((isCapture ? 0.34 : 0.25) * volume, now);
+                tone.type = profile.wave;
+                tone.frequency.setValueAtTime(profile.base, now);
+                tone.frequency.exponentialRampToValueAtTime(profile.end, now + duration);
+                toneGain.gain.setValueAtTime(profile.tone * volume, now);
                 toneGain.gain.exponentialRampToValueAtTime(0.001, now + duration);
                 tone.connect(toneGain);
                 toneGain.connect(ctx.destination);
                 tone.start(now);
                 tone.stop(now + duration);
 
-                // Çok kısa, alçak filtreli tık; metalik çınlamayı önler.
-                const clickDuration = 0.025;
+                const clickDuration = style === 'soft' ? 0.018 : 0.028;
                 const bufferSize = Math.floor(ctx.sampleRate * clickDuration);
                 const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
                 const data = buffer.getChannelData(0);
                 for (let i = 0; i < bufferSize; i++) {
-                    const fade = 1 - i / bufferSize;
-                    data[i] = (Math.random() * 2 - 1) * fade;
+                    data[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
                 }
 
                 const click = ctx.createBufferSource();
                 click.buffer = buffer;
                 const filter = ctx.createBiquadFilter();
                 filter.type = 'lowpass';
-                filter.frequency.setValueAtTime(isCapture ? 950 : 1250, now);
+                filter.frequency.setValueAtTime(profile.filter, now);
                 const clickGain = ctx.createGain();
-                clickGain.gain.setValueAtTime((isCapture ? 0.12 : 0.075) * volume, now);
+                clickGain.gain.setValueAtTime(profile.click * volume, now);
                 clickGain.gain.exponentialRampToValueAtTime(0.001, now + clickDuration);
                 click.connect(filter);
                 filter.connect(clickGain);
@@ -1955,6 +1960,10 @@ $('#toggleSoundEffects').on('change', function() {
     localStorage.setItem('zato_sound', playSoundsEnabled);
 });
 
+$('#soundStyle').on('change', function() {
+    localStorage.setItem('zato_sound_style', $(this).val());
+});
+
 $('#soundVolume').on('input change', function() {
     moveSoundVolume = Number($(this).val()) / 100;
     $('#soundVolumeValue').text($(this).val() + '%');
@@ -1985,6 +1994,9 @@ function loadSavedSettings() {
         playSoundsEnabled = localStorage.getItem('zato_sound') === 'true';
         $('#toggleSoundEffects').prop('checked', playSoundsEnabled);
     }
+
+    const savedSoundStyle = localStorage.getItem('zato_sound_style') || 'wood';
+    $('#soundStyle').val(savedSoundStyle);
 
     const savedSoundVolume = localStorage.getItem('zato_sound_volume') || '100';
     moveSoundVolume = Number(savedSoundVolume) / 100;
