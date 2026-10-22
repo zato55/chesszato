@@ -130,6 +130,7 @@ let playSoundsEnabled = true;
 let moveSoundVolume = 1;
 let kingCheckEffectEnabled = true;
 let moveAudioContext = null;
+let naturalMoveBufferPromise = null;
 let currentPieceSet = 'neo';
 
 const pieceThemeURLs = {
@@ -474,12 +475,43 @@ function playMoveSound(moveObj, isCapture) {
         }
         const ctx = moveAudioContext;
 
+        const playNaturalMoveSound = () => {
+            // Original real chess-piece recording: mh2o, Freesound 351518, CC0 1.0.
+            // Hosted as a public CC0 copy by ShareChess; no Chess.com assets are used.
+            if (!naturalMoveBufferPromise) {
+                naturalMoveBufferPromise = fetch('https://raw.githubusercontent.com/sharechess/sharechess/main/public/sfx/move.mp3')
+                    .then(response => {
+                        if (!response.ok) throw new Error('Natural sound unavailable');
+                        return response.arrayBuffer();
+                    })
+                    .then(data => ctx.decodeAudioData(data))
+                    .catch(() => {
+                        naturalMoveBufferPromise = null;
+                        return null;
+                    });
+            }
+            naturalMoveBufferPromise.then(buffer => {
+                if (!buffer || !playSoundsEnabled || ctx.state !== 'running') return;
+                const source = ctx.createBufferSource();
+                const gain = ctx.createGain();
+                source.buffer = buffer;
+                gain.gain.value = Math.min(moveSoundVolume, 2.5);
+                source.connect(gain);
+                gain.connect(ctx.destination);
+                source.start(0);
+            });
+        };
+
         const playSound = () => {
             if (!playSoundsEnabled || ctx.state !== 'running') return;
             try {
+                const style = $('#soundStyle').val() || localStorage.getItem('zato_sound_style') || 'wood';
+                if (style === 'natural') {
+                    playNaturalMoveSound();
+                    return;
+                }
                 const now = ctx.currentTime;
                 const volume = Math.min(moveSoundVolume, 2.5);
-                const style = $('#soundStyle').val() || localStorage.getItem('zato_sound_style') || 'wood';
                 const profiles = {
                     wood:    { wave: 'triangle', base: isCapture ? 145 : 195, end: isCapture ? 68 : 92, duration: isCapture ? 0.15 : 0.105, tone: 0.48, noise: 0.22, cutoff: 900 },
                     classic: { wave: 'square',   base: isCapture ? 420 : 520, end: isCapture ? 240 : 310, duration: isCapture ? 0.075 : 0.05, tone: 0.16, noise: 0.30, cutoff: 3200 },
