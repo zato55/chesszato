@@ -3,6 +3,8 @@ const analysisGame = new Chess();
 
 let selectedSquare = null;
 let pendingMove = null;
+let pendingConfirmedMove = null;
+let moveConfirmationEnabled = false;
 let isFlipped = false;
 let vsBot = true;
 let timerInterval = null;
@@ -1066,8 +1068,44 @@ function handleMove(from, to) {
         }
     }
 
-    executeMove(from, to, 'q');
+    requestMoveExecution(from, to, 'q');
 }
+
+function requestMoveExecution(from, to, promoPiece) {
+    const activeGame = isAnalysisMode ? analysisGame : game;
+    const legalMove = activeGame.moves({ square: from, verbose: true })
+        .find(move => move.to === to && (!move.promotion || move.promotion === promoPiece));
+
+    if (moveConfirmationEnabled && !isAnalysisMode && !isReviewing && legalMove) {
+        pendingConfirmedMove = { from, to, promotion: promoPiece };
+        selectedSquare = from;
+        $('#moveConfirmationModal').removeClass('hidden');
+        return;
+    }
+
+    executeMove(from, to, promoPiece);
+}
+
+$('#confirmMoveConfirmationBtn').on('click', function() {
+    if (!pendingConfirmedMove) return;
+    const move = pendingConfirmedMove;
+    pendingConfirmedMove = null;
+    $('#moveConfirmationModal').addClass('hidden');
+    executeMove(move.from, move.to, move.promotion);
+});
+
+$('#cancelMoveConfirmationBtn').on('click', function() {
+    const from = pendingConfirmedMove ? pendingConfirmedMove.from : null;
+    pendingConfirmedMove = null;
+    $('#moveConfirmationModal').addClass('hidden');
+    selectedSquare = from;
+    renderBoard();
+});
+
+$('#moveConfirmationModal').on('click', function(e) {
+    if (e.target !== this) return;
+    $('#cancelMoveConfirmationBtn').trigger('click');
+});
 
 function executeMove(from, to, promoPiece) {
     if (!isAnalysisMode && liveReviewPly !== null) return;
@@ -1153,8 +1191,10 @@ $('.promo-choice').on('click', function() {
     const chosenPiece = $(this).attr('data-piece');
     $('#promotionModal').addClass('hidden');
     if (pendingMove) {
-        executeMove(pendingMove.from, pendingMove.to, chosenPiece);
+        requestMoveExecution(pendingMove.from, pendingMove.to, chosenPiece);
         pendingMove = null;
+    pendingConfirmedMove = null;
+    $('#moveConfirmationModal').addClass('hidden');
     }
 });
 
@@ -2035,6 +2075,11 @@ $('#soundVolume').on('input change', function() {
     localStorage.setItem('zato_sound_volume', $(this).val());
 });
 
+$('#toggleMoveConfirmation').on('change', function() {
+    moveConfirmationEnabled = $(this).is(':checked');
+    localStorage.setItem('zato_move_confirmation', moveConfirmationEnabled);
+});
+
 $('#toggleKingCheckEffect').on('change', function() {
     kingCheckEffectEnabled = $(this).is(':checked');
     localStorage.setItem('zato_king_check', kingCheckEffectEnabled);
@@ -2067,6 +2112,9 @@ function loadSavedSettings() {
     moveSoundVolume = Number(savedSoundVolume) / 100;
     $('#soundVolume').val(savedSoundVolume);
     $('#soundVolumeValue').text(savedSoundVolume + '%');
+
+    moveConfirmationEnabled = localStorage.getItem('zato_move_confirmation') === 'true';
+    $('#toggleMoveConfirmation').prop('checked', moveConfirmationEnabled);
 
     if (localStorage.getItem('zato_king_check') !== null) {
         kingCheckEffectEnabled = localStorage.getItem('zato_king_check') === 'true';
