@@ -1274,3 +1274,84 @@ aside.collapsed #logoToggleBtn {
 @media (prefers-reduced-motion: reduce) {
     .mobile-play-menu-card { animation: none; }
 }
+
+
+/* GTEST: mobil alt menülerde Oyna menüsüyle ortak kart ve dokunma dili. */
+@media (max-width: 767px) {
+    #tempoModal,
+    #botModal,
+    #settingsModal {
+        align-items: flex-end;
+        justify-content: center;
+        padding: 0 12px calc(12px + env(safe-area-inset-bottom));
+    }
+
+    .mobile-menu-sheet {
+        width: 100%;
+        max-width: 520px;
+        max-height: min(86dvh, 720px);
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        border: 1px solid #3f3f46;
+        border-radius: 20px;
+        background: #121215;
+        box-shadow: 0 20px 55px rgba(0, 0, 0, 0.48);
+        animation: mobile-play-menu-in 160ms ease-out;
+    }
+
+    .mobile-menu-sheet > div:first-child {
+        border-color: #303036;
+        padding-bottom: 12px;
+    }
+
+    .mobile-menu-sheet .tempo-option-btn {
+        min-height: 54px;
+        padding: 10px 12px;
+        border-color: #303036;
+        border-radius: 12px;
+        background: #09090b;
+        gap: 10px;
+        text-align: left;
+    }
+
+    .mobile-menu-sheet .tempo-option-btn:active,
+    .mobile-menu-sheet .bot-level-btn:active,
+    .mobile-menu-sheet .side-choice-btn:active,
+    .mobile-menu-sheet .theme-option-btn:active,
+    .mobile-menu-sheet .piece-style-btn:active,
+    .mobile-menu-sheet .anim-speed-btn:active {
+        transform: scale(0.99);
+    }
+
+    .mobile-menu-sheet .bot-level-btn {
+        min-height: 46px;
+        border-color: #303036;
+        border-radius: 12px;
+        background: #09090b;
+    }
+
+    .mobile-menu-sheet .theme-option-btn,
+    .mobile-menu-sheet .piece-style-btn {
+        min-height: 46px;
+        border-color: #303036;
+        border-radius: 12px;
+        background: #09090b;
+    }
+
+    .mobile-menu-sheet .close-modal-btn:focus-visible,
+    .mobile-menu-sheet button:focus-visible,
+    .mobile-menu-sheet select:focus-visible,
+    .mobile-menu-sheet input:focus-visible {
+        outline: 2px solid #60a5fa;
+        outline-offset: 2px;
+    }
+
+    #settingsModal .mobile-menu-sheet {
+        padding: 16px;
+        gap: 16px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mobile-menu-sheet { animation: none; }
+}
