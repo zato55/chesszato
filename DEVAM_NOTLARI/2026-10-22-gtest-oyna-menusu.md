@@ -63,3 +63,13 @@ Telefonda GTEST sayfasını açıp Oyna menüsünü, beş seçeneği ve mevcut o
 - Yalnızca `gtest/index.html` ve `gtest/app.js` değişti; cache etiketi `20261022-gtest-bot-setup-v4`.
 - Statik kontroller: JavaScript sözdizimi geçti; buton/handler, geciktirilmiş reset ve cache etiketi kontrolleri geçti. Telefon üzerinde test bekliyor.
 - Commitler: HTML `643ae968328ec0c2a8c2af84a066620ce5926ca4`; JS `6179b166c31abe4795394b9a24567def7201ce73`.
+
+
+## Son düzenleme — isteğe bağlı hamle onayı (2026-10-22)
+- Yedek dalı: `yedek-2026-10-22-gtest-hamle-onayi-oncesi`.
+- Ayarlara `Hamle Onayı İste` seçeneği eklendi; varsayılan kapalı, böylece mevcut oynama davranışı korunuyor.
+- Açıkken yasal hedef kare seçildikten sonra hamle uygulanmadan `Onayla / Vazgeç` paneli gösteriliyor.
+- Piyon terfisinde de terfi taşı seçildikten sonra onay isteniyor.
+- Tercih `localStorage` ile `zato_move_confirmation` anahtarında saklanıyor.
+- Yalnızca `gtest/index.html` ve `gtest/app.js` değiştirildi; cache etiketi `20261022-gtest-move-confirm-v5`.
+- Statik doğrulama ve gerçek oyun davranışı testleri tamamlanmadan telefon üzerinde test sonucu varsayılmamalı.
