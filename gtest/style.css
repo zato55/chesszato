@@ -860,9 +860,6 @@ aside.collapsed #logoToggleBtn {
         border-radius: 10px !important;
     }
 
-    body.analysis-mode main {
-        padding-bottom: calc(104px + env(safe-area-inset-bottom)) !important;
-    }
 }
 
 
