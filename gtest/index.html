@@ -14,7 +14,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
     
     <!-- Özel CSS -->
-    <link rel="stylesheet" href="style.css?v=20261022-gtest-bot-setup-v4">
+    <link rel="stylesheet" href="style.css?v=20261022-gtest-move-confirm-v5">
 </head>
 
 <body class="bg-[#09090b] text-zinc-100 font-sans antialiased h-screen h-[100dvh] overflow-hidden flex flex-col md:flex-row select-none">
@@ -616,12 +616,29 @@
                         <span>👑 Şah Çekildiğinde Efekt</span>
                         <input type="checkbox" id="toggleKingCheckEffect" checked class="rounded bg-zinc-900 border-zinc-700 text-blue-600 focus:ring-0">
                     </label>
+
+                    <label class="flex items-center justify-between cursor-pointer py-1 border-t border-zinc-800 pt-3">
+                        <span>♟️ Hamle Onayı İste</span>
+                        <input type="checkbox" id="toggleMoveConfirmation" class="rounded bg-zinc-900 border-zinc-700 text-blue-600 focus:ring-0">
+                    </label>
                 </div>
             </div>
 
             <button class="close-modal-btn w-full py-2.5 bg-zinc-800 hover:bg-zinc-700 text-white font-bold rounded-xl text-xs transition-all">
                 Kaydet & Kapat
             </button>
+        </div>
+    </div>
+
+    <!-- ♟️ HAMLE ONAY MODALI -->
+    <div id="moveConfirmationModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-[70] flex items-center justify-center p-4">
+        <div class="bg-[#121215] border border-zinc-800 rounded-2xl p-5 max-w-xs w-full flex flex-col gap-4 shadow-2xl">
+            <h3 class="font-extrabold text-lg text-white text-center">Hamleyi onayla</h3>
+            <p class="text-sm text-zinc-400 text-center">Bu hamleyi yapmak istiyor musun?</p>
+            <div class="grid grid-cols-2 gap-2">
+                <button id="cancelMoveConfirmationBtn" class="py-2.5 bg-zinc-800 hover:bg-zinc-700 text-white font-bold rounded-xl text-sm">Vazgeç</button>
+                <button id="confirmMoveConfirmationBtn" class="py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-sm">Onayla</button>
+            </div>
         </div>
     </div>
 
@@ -648,7 +665,7 @@
 
     <!-- Ana Uygulama Kodu -->
     <script src="openings.js?v=20261020-lichess-openings-3865"></script>
-    <script src="app.js?v=20261022-gtest-bot-setup-v4"></script>
+    <script src="app.js?v=20261022-gtest-move-confirm-v5"></script>
 </body>
 
 </html>
