@@ -598,8 +598,8 @@ function localizeOpeningName(name) {
         [/\bAccepted\b/g, "Kabul Edildi"],
         [/\bDeclined\b/g, "Reddedildi"],
         [/\bExchange\b/g, "Değişim"],
-        [/\bClassical\b/g, "Klasik"],
         [/\bClassical Variation\b/g, "Klasik Varyant"],
+        [/\bClassical\b/g, "Klasik"],
         [/\bModern\b/g, "Modern"],
         [/\bIndian\b/g, "Hint"],
         [/\bSicilian\b/g, "Sicilya"],
@@ -616,7 +616,6 @@ function localizeOpeningName(name) {
         [/\bRussian\b/g, "Rus"],
         [/\bGerman\b/g, "Alman"],
         [/\bDanish\b/g, "Danimarka"],
-        [/\bDutch\b/g, "Hollanda"],
         [/\bQueen's\b/g, "Vezir"],
         [/\bKing's\b/g, "Şah"],
         [/\bPawn\b/g, "Piyonu"],
@@ -631,7 +630,6 @@ function localizeOpeningName(name) {
         [/\bSide\b/g, "Kanat"],
         [/\bFianchetto\b/g, "Fianchetto"],
         [/\bTarrasch\b/g, "Tarrasch"],
-        [/\bClassical\b/g, "Klasik"],
         [/\bSymmetrical\b/g, "Simetrik"],
         [/\bAccelerated\b/g, "Hızlandırılmış"],
         [/\bHyperaccelerated\b/g, "Aşırı Hızlandırılmış"],
@@ -1607,7 +1605,12 @@ function openPreAnalysisSummary() {
 
                 let catKey = 'good';
 
-                if (move.captured && lossCp <= 10 && beforeForMover <= -100 && afterForMover >= 150) {
+                // "Kaçan kazanç" ayrı bir kategoridir; aynı hamleyi hata/blunder
+                // sayaçlarına da eklemeyerek özet tablosundaki sayıları çakıştırmayız.
+                if (beforeForMover >= 250 && afterForMover < 80) {
+                    player.missed.push(i);
+                    catKey = 'missed';
+                } else if (move.captured && lossCp <= 10 && beforeForMover <= -100 && afterForMover >= 150) {
                     player.brilliant.push(i);
                     catKey = 'brilliant';
                 } else if (lossCp <= 12) {
@@ -1625,11 +1628,6 @@ function openPreAnalysisSummary() {
                 } else {
                     player.blunders.push(i);
                     catKey = 'blunders';
-                }
-
-                if (beforeForMover >= 250 && afterForMover < 80) {
-                    player.missed.push(i);
-                    catKey = 'missed';
                 }
 
                 moveCategoryMap[i] = catKey;
