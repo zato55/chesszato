@@ -1166,3 +1166,111 @@ aside.collapsed #logoToggleBtn {
         font-size: 9px;
     }
 }
+
+
+/* GTEST: mobil Oyna menüsü; yeni oyun türleri kolayca eklenebilir. */
+@media (max-width: 767px) {
+    #mobilePlayMenu {
+        padding-bottom: calc(12px + env(safe-area-inset-bottom));
+        align-items: flex-end;
+    }
+
+    .mobile-play-menu-card {
+        max-height: min(86dvh, 680px);
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        animation: mobile-play-menu-in 160ms ease-out;
+    }
+
+    .mobile-play-option {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        width: 100%;
+        min-height: 60px;
+        padding: 10px 11px;
+        text-align: left;
+        border: 1px solid #303036;
+        border-radius: 12px;
+        background: #09090b;
+        color: #f4f4f5;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+        transition: border-color 140ms ease, background-color 140ms ease, transform 140ms ease;
+    }
+
+    .mobile-play-option:active {
+        transform: scale(0.99);
+        background: #18181b;
+    }
+
+    .mobile-play-option:focus-visible,
+    #mobilePlayMenuCloseBtn:focus-visible {
+        outline: 2px solid #60a5fa;
+        outline-offset: 2px;
+    }
+
+    .mobile-play-option-primary {
+        border-color: #2563eb;
+        background: linear-gradient(110deg, rgba(37, 99, 235, 0.24), #09090b 75%);
+    }
+
+    .mobile-play-option-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 38px;
+        width: 38px;
+        height: 38px;
+        border: 1px solid #3f3f46;
+        border-radius: 10px;
+        background: #18181b;
+        font-size: 20px;
+    }
+
+    .mobile-play-option-copy {
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+        gap: 3px;
+        min-width: 0;
+    }
+
+    .mobile-play-option-copy strong {
+        font-size: 14px;
+        font-weight: 800;
+        line-height: 1.2;
+    }
+
+    .mobile-play-option-copy small {
+        color: #a1a1aa;
+        font-size: 11px;
+        line-height: 1.25;
+    }
+
+    .mobile-play-option-arrow {
+        color: #a1a1aa;
+        font-size: 24px;
+        line-height: 1;
+    }
+
+    .mobile-play-option-tag {
+        padding: 4px 6px;
+        border: 1px solid #52525b;
+        border-radius: 6px;
+        color: #d4d4d8;
+        font-size: 9px;
+        font-weight: 800;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+}
+
+@keyframes mobile-play-menu-in {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mobile-play-menu-card { animation: none; }
+}
