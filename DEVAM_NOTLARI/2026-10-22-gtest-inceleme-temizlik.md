@@ -38,3 +38,9 @@ Yalnızca ana `index.html` GTEST ile eşitlendi. Ana `app.js` ve `style.css` dos
 2. Sorun çıkarsa önce ilgili küçük düzeltmeyi GTEST'te yap.
 3. CSS temizliğini yalnızca gerçek kullanım analizi ve ekran testleriyle güvenle kaldırılabilen kurallarla sürdür.
 4. GTEST testleri onaylanmadan `gtest/app.js` veya `gtest/style.css` dosyalarını ana dosyalara aktarma.
+
+
+## Ek kontrol — açılış çevirisi
+- Son statik incelemede genel `Variation` çevirisinin `Classical Variation` kuralından önce çalıştığı görüldü. Kural sırası GTEST `app.js` içinde düzeltildi; özel varyant adı artık genel kurala takılmadan çevriliyor.
+- Yedek dal: `yedek-2026-10-22-gtest-kapsamli-inceleme-oncesi`.
+- Bu kontrol statiktir; tarayıcıda gerçek oyun akışı testi henüz yapılmadı.
