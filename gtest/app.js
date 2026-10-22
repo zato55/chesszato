@@ -479,7 +479,7 @@ function playMoveSound(moveObj, isCapture) {
             if (!playSoundsEnabled || ctx.state !== 'running') return;
 
             try {
-                const bufferSize = Math.floor(ctx.sampleRate * 0.08);
+                const bufferSize = Math.floor(ctx.sampleRate * 0.12);
                 const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
                 const data = buffer.getChannelData(0);
                 for (let i = 0; i < bufferSize; i++) {
@@ -491,11 +491,11 @@ function playMoveSound(moveObj, isCapture) {
 
                 const filter = ctx.createBiquadFilter();
                 filter.type = 'lowpass';
-                filter.frequency.setValueAtTime(isCapture ? 400 : 800, ctx.currentTime);
+                filter.frequency.setValueAtTime(isCapture ? 700 : 1600, ctx.currentTime);
 
                 const gain = ctx.createGain();
-                gain.gain.setValueAtTime((isCapture ? 0.8 : 0.5) * moveSoundVolume, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+                gain.gain.setValueAtTime((isCapture ? 1.0 : 0.75) * moveSoundVolume, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
 
                 noise.connect(filter);
                 filter.connect(gain);
