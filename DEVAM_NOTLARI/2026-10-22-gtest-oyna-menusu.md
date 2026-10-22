@@ -42,3 +42,14 @@ Telefonda GTEST sayfasını açıp Oyna menüsünü, beş seçeneği ve mevcut o
 - `app.js` ve HTML cache-busting etiketi `20261022-gtest-play-menu-v2` olarak güncellendi.
 - JavaScript sözdizimi ve durum geçişleri statik olarak kontrol edildi; telefon üzerinde tekrar görsel test bekleniyor.
 - Düzeltme commitleri: `49a881ee12fea263edcf4c5c916ccac428c9e606` (JS), `a6a3b97812ec6613345e9b89474cac0c17c369a1` (HTML).
+
+
+## Son düzenleme — diğer mobil menüler Oyna tasarımına yaklaştırıldı (2026-10-22)
+- Yedek dalı: `yedek-2026-10-22-gtest-menu-tasarim-oncesi`.
+- Yalnızca `gtest/index.html` ve `gtest/style.css` değiştirildi; normal oyun dosyalarına dokunulmadı.
+- Tempo, Stockfish ve Ayarlar panellerine ortak `mobile-menu-sheet` sınıfı eklendi.
+- Telefonda üç menü de Oyna menüsü gibi alttan açılan, koyu kart, yuvarlatılmış köşe, kenarlık, gölge ve kısa açılış animasyonu kullanıyor.
+- Tempo seçenekleri ve bot seviyesi düğmelerinin dokunma alanları büyütüldü; ayarlar paneli mobilde alttan açılıyor ve uzun içerik gerektiğinde kendi içinde kayıyor.
+- Cache etiketi `20261022-gtest-menu-style-v3` yapıldı.
+- Statik kontroller: üç panel sınıfı bulundu, CSS parantez dengesi geçti, `app.js` sözdizimi geçti. Telefon üzerinde görsel/dokunmatik test henüz yapılmadı.
+- Commitler: HTML `b6b4e10820fa1ae397ba179a7cc67d3555e1c893`; CSS `3f5fc2ea5a8a79898cc9e366815cb0233a5f11fe`.
