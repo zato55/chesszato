@@ -131,6 +131,7 @@ let moveSoundVolume = 1;
 let kingCheckEffectEnabled = true;
 let moveAudioContext = null;
 let naturalMoveBufferPromise = null;
+let userMoveBufferPromise = null;
 let currentPieceSet = 'neo';
 
 const pieceThemeURLs = {
@@ -502,12 +503,41 @@ function playMoveSound(moveObj, isCapture) {
             });
         };
 
+        const playUserRecordedMoveSound = () => {
+            if (!userMoveBufferPromise) {
+                userMoveBufferPromise = fetch('sounds/mesut-move.mp3')
+                    .then(response => {
+                        if (!response.ok) throw new Error('User recorded sound unavailable');
+                        return response.arrayBuffer();
+                    })
+                    .then(data => ctx.decodeAudioData(data))
+                    .catch(() => {
+                        userMoveBufferPromise = null;
+                        return null;
+                    });
+            }
+            userMoveBufferPromise.then(buffer => {
+                if (!buffer || !playSoundsEnabled || ctx.state !== 'running') return;
+                const source = ctx.createBufferSource();
+                const gain = ctx.createGain();
+                source.buffer = buffer;
+                gain.gain.value = Math.min(moveSoundVolume, 2.5);
+                source.connect(gain);
+                gain.connect(ctx.destination);
+                source.start(0);
+            });
+        };
+
         const playSound = () => {
             if (!playSoundsEnabled || ctx.state !== 'running') return;
             try {
                 const style = $('#soundStyle').val() || localStorage.getItem('zato_sound_style') || 'wood';
                 if (style === 'natural') {
                     playNaturalMoveSound();
+                    return;
+                }
+                if (style === 'custom') {
+                    playUserRecordedMoveSound();
                     return;
                 }
                 const now = ctx.currentTime;
