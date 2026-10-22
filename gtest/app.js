@@ -930,7 +930,8 @@ function renderBoard() {
             }
 
             // Sembolü hedef karenin pseudo-element katmanına bağla; taşın flex düzeni etkilenmez.
-            if (isAnalysisMode && lastMove && squareName === lastMove.to) {
+            if (isAnalysisMode && lastMove && squareName === lastMove.to &&
+                (analysisBranchStartIdx === null || analysisIdx <= analysisBranchStartIdx)) {
                 const category = moveCategoryMap[analysisIdx];
                 const badge = moveQualityBadges[category];
                 if (badge) {
