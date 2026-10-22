@@ -72,4 +72,5 @@ Telefonda GTEST sayfasını açıp Oyna menüsünü, beş seçeneği ve mevcut o
 - Piyon terfisinde de terfi taşı seçildikten sonra onay isteniyor.
 - Tercih `localStorage` ile `zato_move_confirmation` anahtarında saklanıyor.
 - Yalnızca `gtest/index.html` ve `gtest/app.js` değiştirildi; cache etiketi `20261022-gtest-move-confirm-v5`.
-- Statik doğrulama ve gerçek oyun davranışı testleri tamamlanmadan telefon üzerinde test sonucu varsayılmamalı.
+- Statik doğrulama geçti: JavaScript sözdizimi, ayar anahtarı ve kalıcılığı, onay/vazgeç olayları, terfi hamlesinin onay akışına bağlanması, reset temizliği ve HTML kimliklerinin tekilliği kontrol edildi.
+- Telefon üzerinde normal hamle, vazgeçme, onaylama ve piyon terfisi senaryoları henüz kullanıcı tarafından test edilmeli.
