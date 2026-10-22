@@ -20,15 +20,15 @@
 <body class="bg-[#09090b] text-zinc-100 font-sans antialiased h-screen h-[100dvh] overflow-hidden flex flex-col md:flex-row select-none">
 
     <!-- 📱 MOBİL ÜST BAR -->
-    <header class="md:hidden bg-[#121215] border-b border-zinc-800/80 px-3 flex items-center justify-between z-30 shrink-0 h-10">
-        <div class="flex items-center gap-2">
-            <img src="logo.png" alt="ZATOI" class="w-6 h-6 object-contain rounded-lg border border-red-900/50" onerror="this.style.display='none'; $('#mobileLogoFallback').removeClass('hidden');">
-            <div id="mobileLogoFallback" class="hidden w-6 h-6 bg-red-700 rounded-lg flex items-center justify-center font-black text-xs text-white">Z</div>
-            <span class="font-extrabold text-xs text-red-600 tracking-wider">ZATO<span class="text-white">CHESS</span></span>
+    <header id="mobileTopBar" class="md:hidden bg-[#121215] border-b border-zinc-800/80 px-3.5 flex items-center justify-between gap-2 z-30 shrink-0 h-12">
+        <div class="flex items-center gap-2 min-w-0">
+            <img src="logo.png" alt="ZATOI" class="w-7 h-7 shrink-0 object-contain rounded-lg border border-red-900/50" onerror="this.style.display='none'; $('#mobileLogoFallback').removeClass('hidden');">
+            <div id="mobileLogoFallback" class="hidden w-7 h-7 shrink-0 bg-red-700 rounded-lg flex items-center justify-center font-black text-sm text-white">Z</div>
+            <span class="font-extrabold text-sm text-red-600 tracking-wider whitespace-nowrap">ZATO<span class="text-white">CHESS</span></span>
         </div>
-        <div class="flex items-center gap-1.5">
-            <a href="giris.html" id="mobileQuickLogin" class="text-[11px] bg-blue-600 hover:bg-blue-500 font-bold px-2 py-1 rounded-lg text-white transition active:scale-95 shadow-sm">Giriş Yap</a>
-            <a href="uye-ol.html" id="mobileQuickRegister" class="text-[11px] bg-red-700 hover:bg-red-600 font-bold px-2 py-1 rounded-lg text-white transition active:scale-95 shadow-sm">Kayıt Ol</a>
+        <div class="flex items-center gap-1.5 shrink-0">
+            <a href="giris.html" id="mobileQuickLogin" class="min-h-9 inline-flex items-center justify-center text-xs bg-blue-600 hover:bg-blue-500 font-bold px-3 rounded-lg text-white transition active:scale-95 shadow-sm">Giriş Yap</a>
+            <a href="uye-ol.html" id="mobileQuickRegister" class="min-h-9 inline-flex items-center justify-center text-xs bg-red-700 hover:bg-red-600 font-bold px-3 rounded-lg text-white transition active:scale-95 shadow-sm">Kayıt Ol</a>
         </div>
     </header>
 
@@ -272,18 +272,18 @@
     </aside>
 
     <!-- 📱 MOBİL ALT NAVİGASYON BAR -->
-    <nav id="mobileBottomNav" class="md:hidden fixed bottom-0 left-0 right-0 bg-[#121215] border-t border-zinc-800 flex justify-around items-center py-2 px-3 z-30">
-        <button id="mobileNavPlayBtn" class="flex flex-col items-center gap-1 text-blue-500 font-bold text-[10px]">
-            <span class="text-base">♟</span><span>Oyna</span>
+    <nav id="mobileBottomNav" aria-label="Mobil oyun menüsü" class="md:hidden fixed bottom-0 left-0 right-0 bg-[#121215] border-t border-zinc-800 grid grid-cols-4 items-center gap-1 px-2 pt-1.5 pb-[max(0.375rem,env(safe-area-inset-bottom))] z-30">
+        <button id="mobileNavPlayBtn" aria-label="Oyun ekranı" aria-current="page" class="mobile-nav-item mobile-nav-active">
+            <span class="mobile-nav-icon" aria-hidden="true">♟</span><span>Oyna</span>
         </button>
-        <button id="mobileNavBotBtn" class="flex flex-col items-center gap-1 text-zinc-400 font-medium text-[10px]">
-            <span class="text-base">🤖</span><span>Stockfish</span>
+        <button id="mobileNavBotBtn" aria-label="Stockfish bot seviyesi" class="mobile-nav-item">
+            <span class="mobile-nav-icon" aria-hidden="true">♞</span><span>Stockfish</span>
         </button>
-        <button id="mobileNavTempoBtn" class="flex flex-col items-center gap-1 text-zinc-400 font-medium text-[10px]">
-            <span class="text-base">⏱️</span><span>Tempo</span>
+        <button id="mobileNavTempoBtn" aria-label="Oyun temposu" class="mobile-nav-item">
+            <span class="mobile-nav-icon" aria-hidden="true">◷</span><span>Tempo</span>
         </button>
-        <button id="mobileNavSettingsBtn" class="flex flex-col items-center gap-1 text-zinc-400 font-medium text-[10px]">
-            <span class="text-base">⚙️</span><span>Ayarlar</span>
+        <button id="mobileNavSettingsBtn" aria-label="Oyun ayarları" class="mobile-nav-item">
+            <span class="mobile-nav-icon" aria-hidden="true">⚙</span><span>Ayarlar</span>
         </button>
     </nav>
 
