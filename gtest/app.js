@@ -479,34 +479,55 @@ function playMoveSound(moveObj, isCapture) {
             if (!playSoundsEnabled || ctx.state !== 'running') return;
 
             try {
-                const bufferSize = Math.floor(ctx.sampleRate * 0.12);
+                const now = ctx.currentTime;
+                const volume = moveSoundVolume;
+                const duration = isCapture ? 0.12 : 0.085;
+
+                // Kısa, aşağı doğru kayan üçgen dalga: ahşap taşın tok vuruşu.
+                const tone = ctx.createOscillator();
+                const toneGain = ctx.createGain();
+                tone.type = 'triangle';
+                tone.frequency.setValueAtTime(isCapture ? 175 : 235, now);
+                tone.frequency.exponentialRampToValueAtTime(isCapture ? 82 : 115, now + duration);
+                toneGain.gain.setValueAtTime((isCapture ? 0.34 : 0.25) * volume, now);
+                toneGain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+                tone.connect(toneGain);
+                toneGain.connect(ctx.destination);
+                tone.start(now);
+                tone.stop(now + duration);
+
+                // Çok kısa, alçak filtreli tık; metalik çınlamayı önler.
+                const clickDuration = 0.025;
+                const bufferSize = Math.floor(ctx.sampleRate * clickDuration);
                 const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
                 const data = buffer.getChannelData(0);
                 for (let i = 0; i < bufferSize; i++) {
-                    data[i] = Math.random() * 2 - 1;
+                    const fade = 1 - i / bufferSize;
+                    data[i] = (Math.random() * 2 - 1) * fade;
                 }
 
-                const noise = ctx.createBufferSource();
-                noise.buffer = buffer;
-
+                const click = ctx.createBufferSource();
+                click.buffer = buffer;
                 const filter = ctx.createBiquadFilter();
                 filter.type = 'lowpass';
-                filter.frequency.setValueAtTime(isCapture ? 700 : 1600, ctx.currentTime);
-
-                const gain = ctx.createGain();
-                gain.gain.setValueAtTime((isCapture ? 1.0 : 0.75) * moveSoundVolume, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
-
-                noise.connect(filter);
-                filter.connect(gain);
-                gain.connect(ctx.destination);
-
-                noise.onended = () => {
-                    noise.disconnect();
+                filter.frequency.setValueAtTime(isCapture ? 950 : 1250, now);
+                const clickGain = ctx.createGain();
+                clickGain.gain.setValueAtTime((isCapture ? 0.12 : 0.075) * volume, now);
+                clickGain.gain.exponentialRampToValueAtTime(0.001, now + clickDuration);
+                click.connect(filter);
+                filter.connect(clickGain);
+                clickGain.connect(ctx.destination);
+                click.onended = () => {
+                    click.disconnect();
                     filter.disconnect();
-                    gain.disconnect();
+                    clickGain.disconnect();
                 };
-                noise.start();
+                click.start(now);
+
+                tone.onended = () => {
+                    tone.disconnect();
+                    toneGain.disconnect();
+                };
             } catch (e) {}
         };
 
@@ -517,7 +538,6 @@ function playMoveSound(moveObj, isCapture) {
         }
     } catch (e) {}
 }
-
 
 function localizeOpeningName(name) {
     const exactTranslations = [
