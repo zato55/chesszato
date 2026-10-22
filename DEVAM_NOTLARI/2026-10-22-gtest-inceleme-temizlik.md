@@ -51,3 +51,6 @@ Yalnızca ana `index.html` GTEST ile eşitlendi. Ana `app.js` ve `style.css` dos
 - CSS açılan/kapanan blok sayısı eşit (179/179).
 - `Classical Variation` çeviri kuralı artık genel `Variation` kuralından önce; örnek çıktı `Klasik Varyant`.
 - Bu kontroller statiktir. Tarayıcı otomasyonu, telefon testi ve Stockfish ile gerçek oyun senaryoları henüz çalıştırılmadı.
+
+## Ek analiz kontrolü — varyant hamle işaretleri
+- Analiz varyantında yeni oynanan hamleler, ana oyundaki aynı indeksin eski kalite sembolünü yanlışlıkla devralabiliyordu. `gtest/app.js` koşulu daraltıldı: kalite sembolleri yalnızca değerlendirilmiş ana hat hamlelerinde gösteriliyor; yeni varyant hamleleri değerlendirilmeden yanlış etiket almıyor.
