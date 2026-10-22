@@ -14,7 +14,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
     
     <!-- Özel CSS -->
-    <link rel="stylesheet" href="style.css?v=20261022-gtest-mobile-menu-v1">
+    <link rel="stylesheet" href="style.css?v=20261022-gtest-play-menu-v1">
 </head>
 
 <body class="bg-[#09090b] text-zinc-100 font-sans antialiased h-screen h-[100dvh] overflow-hidden flex flex-col md:flex-row select-none">
@@ -270,6 +270,27 @@
             </div>
         </div>
     </aside>
+
+    <!-- 📱 MOBİL OYNA MENÜSÜ -->
+    <div id="mobilePlayMenu" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-end justify-center p-3 md:hidden" role="dialog" aria-modal="true" aria-labelledby="mobilePlayMenuTitle">
+        <div class="mobile-play-menu-card w-full max-w-md rounded-2xl border border-zinc-700 bg-[#121215] p-4 shadow-2xl">
+            <div class="flex items-center justify-between gap-3 border-b border-zinc-800 pb-3 mb-3">
+                <div>
+                    <h2 id="mobilePlayMenuTitle" class="text-lg font-extrabold text-white">♟ Oyna</h2>
+                    <p class="text-xs text-zinc-400 mt-1">Nasıl oynamak istersin?</p>
+                </div>
+                <button id="mobilePlayMenuCloseBtn" class="rounded-lg px-3 py-2 text-zinc-400 hover:text-white hover:bg-zinc-800" aria-label="Menüyü kapat">✕</button>
+            </div>
+            <div class="grid grid-cols-1 gap-2">
+                <button id="mobileMenuNewGameBtn" class="mobile-play-option mobile-play-option-primary"><span class="mobile-play-option-icon">♟</span><span class="mobile-play-option-copy"><strong>Yeni oyun</strong><small>Yeni bir satranç oyunu başlat</small></span><span class="mobile-play-option-arrow">›</span></button>
+                <button id="mobileMenuQuickMatchBtn" class="mobile-play-option"><span class="mobile-play-option-icon">⚡</span><span class="mobile-play-option-copy"><strong>Hızlı eşleştirme</strong><small>Bir rakiple eşleş</small></span><span class="mobile-play-option-tag">Yakında</span></button>
+                <button id="mobileMenuBotBtn" class="mobile-play-option"><span class="mobile-play-option-icon">🤖</span><span class="mobile-play-option-copy"><strong>Bota karşı oyna</strong><small>Stockfish ile karşılaş</small></span><span class="mobile-play-option-arrow">›</span></button>
+                <button id="mobileMenuTournamentsBtn" class="mobile-play-option"><span class="mobile-play-option-icon">🏆</span><span class="mobile-play-option-copy"><strong>Turnuvalar</strong><small>Turnuvalara katıl veya oluştur</small></span><span class="mobile-play-option-tag">Yakında</span></button>
+                <button id="mobileMenuLocalBtn" class="mobile-play-option"><span class="mobile-play-option-icon">♙</span><span class="mobile-play-option-copy"><strong>Yerel oyun</strong><small>Aynı cihazda iki kişi oyna</small></span><span class="mobile-play-option-arrow">›</span></button>
+            </div>
+            <p id="mobilePlayMenuNotice" class="hidden mt-3 rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-zinc-300" role="status" aria-live="polite"></p>
+        </div>
+    </div>
 
     <!-- 📱 MOBİL ALT NAVİGASYON BAR -->
     <nav id="mobileBottomNav" aria-label="Mobil oyun menüsü" class="md:hidden fixed bottom-0 left-0 right-0 bg-[#121215] border-t border-zinc-800 grid grid-cols-4 items-center gap-1 px-2 pt-1.5 pb-[max(0.375rem,env(safe-area-inset-bottom))] z-30">
@@ -626,7 +647,7 @@
 
     <!-- Ana Uygulama Kodu -->
     <script src="openings.js?v=20261020-lichess-openings-3865"></script>
-    <script src="app.js?v=20261022-gtest-mobile-menu-v1"></script>
+    <script src="app.js?v=20261022-gtest-play-menu-v1"></script>
 </body>
 
 </html>
