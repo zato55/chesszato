@@ -2213,6 +2213,9 @@ $(document).on('click', '#mobileNavSettingsBtn, #openSettingsBtn, #mobileSetting
     setMobileNavActive('#mobileNavSettingsBtn');
     $('#tempoModal, #botModal').addClass('hidden');
     $('#settingsModal').removeClass('hidden');
+
+    // Ayarlar her açıldığında en başa dön; üstteki hamle onayı seçeneği görünür kalsın.
+    $('#settingsModal .mobile-menu-sheet').scrollTop(0);
 });
 
 $(document).on('click', '.close-modal-btn', function(e) {
