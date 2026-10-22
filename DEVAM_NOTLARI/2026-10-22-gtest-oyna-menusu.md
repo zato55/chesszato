@@ -32,3 +32,13 @@ Mobil alt menüde Oyna'ya dokununca doğrudan oyuna dönmek yerine genişletileb
 
 ## Sonraki adım
 Telefonda GTEST sayfasını açıp Oyna menüsünü, beş seçeneği ve mevcut oyunun yalnızca ilgili oyun türü seçildiğinde sıfırlandığını kontrol et. Hızlı eşleştirme ve turnuva altyapısı sonraki ayrı işlerdir. Normal oyun dosyalarına ancak kullanıcı açıkça onay verirse aktar.
+
+
+## Son düzeltme — yalnızca açık menü aktif görünür
+- Kullanıcı geri bildirimi: oyun ekranındayken Oyna sekmesi sürekli aktif görünüyordu.
+- Alt menüde başlangıçtaki aktif sınıf ve `aria-current` kaldırıldı.
+- Oyna yalnızca Oyna menüsü açıldığında aktif olur; menü kapatıldığında aktiflik temizlenir.
+- Stockfish, Tempo ve Ayarlar da yalnızca kendi menüleri açıkken aktif görünür; kapatılınca hiçbir alt menü öğesi aktif kalmaz.
+- `app.js` ve HTML cache-busting etiketi `20261022-gtest-play-menu-v2` olarak güncellendi.
+- JavaScript sözdizimi ve durum geçişleri statik olarak kontrol edildi; telefon üzerinde tekrar görsel test bekleniyor.
+- Düzeltme commitleri: `49a881ee12fea263edcf4c5c916ccac428c9e606` (JS), `a6a3b97812ec6613345e9b89474cac0c17c369a1` (HTML).
