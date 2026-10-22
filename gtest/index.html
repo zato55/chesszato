@@ -14,7 +14,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
     
     <!-- Özel CSS -->
-    <link rel="stylesheet" href="style.css?v=20261022-gtest-move-confirm-v5">
+    <link rel="stylesheet" href="style.css?v=20261022-gtest-move-confirm-v6">
 </head>
 
 <body class="bg-[#09090b] text-zinc-100 font-sans antialiased h-screen h-[100dvh] overflow-hidden flex flex-col md:flex-row select-none">
@@ -546,6 +546,11 @@
             </div>
 
             <div class="flex flex-col gap-4 text-xs font-medium text-zinc-300">
+
+                <label class="flex items-center justify-between cursor-pointer py-3 px-3 rounded-xl border border-zinc-700 bg-[#09090b] text-sm">
+                    <span>♟️ Hamle Onayı İste</span>
+                    <input type="checkbox" id="toggleMoveConfirmation" class="rounded bg-zinc-900 border-zinc-700 text-blue-600 focus:ring-0">
+                </label>
                 <div class="flex flex-col gap-2">
                     <span class="text-zinc-400 font-bold">🎨 Tahta Teması</span>
                     <div class="grid grid-cols-2 gap-2">
@@ -617,10 +622,7 @@
                         <input type="checkbox" id="toggleKingCheckEffect" checked class="rounded bg-zinc-900 border-zinc-700 text-blue-600 focus:ring-0">
                     </label>
 
-                    <label class="flex items-center justify-between cursor-pointer py-1 border-t border-zinc-800 pt-3">
-                        <span>♟️ Hamle Onayı İste</span>
-                        <input type="checkbox" id="toggleMoveConfirmation" class="rounded bg-zinc-900 border-zinc-700 text-blue-600 focus:ring-0">
-                    </label>
+
                 </div>
             </div>
 
@@ -665,7 +667,7 @@
 
     <!-- Ana Uygulama Kodu -->
     <script src="openings.js?v=20261020-lichess-openings-3865"></script>
-    <script src="app.js?v=20261022-gtest-move-confirm-v5"></script>
+    <script src="app.js?v=20261022-gtest-move-confirm-v6"></script>
 </body>
 
 </html>
