@@ -2088,15 +2088,63 @@ function setMobileNavActive(activeBtnId) {
     });
 }
 
+function closeMobilePlayMenu() {
+    $('#mobilePlayMenu').addClass('hidden');
+    $('#mobilePlayMenuNotice').addClass('hidden').text('');
+}
+
 $(document).on('click', '#mobileNavPlayBtn', function(e) {
     e.preventDefault();
     setMobileNavActive('#mobileNavPlayBtn');
     $('#tempoModal, #botModal, #settingsModal').addClass('hidden');
-    // Menüde Oyna seçimi mevcut maçı sıfırlamaz; yalnızca oyun ekranına döner.
+    $('#mobilePlayMenu').removeClass('hidden');
+});
+
+$(document).on('click', '#mobilePlayMenuCloseBtn', function() {
+    closeMobilePlayMenu();
+});
+
+$('#mobilePlayMenu').on('click', function(e) {
+    if (e.target === this) closeMobilePlayMenu();
+});
+
+$(document).on('click', '#mobileMenuNewGameBtn', function() {
+    closeMobilePlayMenu();
+    resetGame();
+});
+
+$(document).on('click', '#mobileMenuBotBtn', function() {
+    closeMobilePlayMenu();
+    vsBot = true;
+    $('#botEloWrapper, #mBotLevelWrapper').removeClass('hidden');
+    $('#modeBot, #mModeBot').addClass('bg-blue-600 text-white').removeClass('text-zinc-400');
+    $('#modePvP, #mModePvP').removeClass('bg-blue-600 text-white').addClass('text-zinc-400');
+    $('#mobileModeText').text('Stockfish');
+    updatePlayerCards();
+    resetGame();
+});
+
+$(document).on('click', '#mobileMenuLocalBtn', function() {
+    closeMobilePlayMenu();
+    vsBot = false;
+    $('#botEloWrapper, #mBotLevelWrapper').addClass('hidden');
+    $('#modePvP, #mModePvP').addClass('bg-blue-600 text-white').removeClass('text-zinc-400');
+    $('#modeBot, #mModeBot').removeClass('bg-blue-600 text-white').addClass('text-zinc-400');
+    $('#mobileModeText').text('2 Kişilik');
+    updatePlayerCards();
+    resetGame();
+});
+
+$(document).on('click', '#mobileMenuQuickMatchBtn, #mobileMenuTournamentsBtn', function() {
+    const message = this.id === 'mobileMenuQuickMatchBtn'
+        ? 'Hızlı eşleştirme henüz kullanıma açık değil.'
+        : 'Turnuvalar bölümü henüz kullanıma açık değil.';
+    $('#mobilePlayMenuNotice').text(message).removeClass('hidden');
 });
 
 $(document).on('click', '#mobileNavBotBtn, #mobileBotModalBtn', function(e) {
     e.preventDefault();
+    closeMobilePlayMenu();
     setMobileNavActive('#mobileNavBotBtn');
     $('#tempoModal, #settingsModal').addClass('hidden');
     $('#botModal').removeClass('hidden');
@@ -2104,6 +2152,7 @@ $(document).on('click', '#mobileNavBotBtn, #mobileBotModalBtn', function(e) {
 
 $(document).on('click', '#mobileNavTempoBtn, #mobileTempoModalBtn', function(e) {
     e.preventDefault();
+    closeMobilePlayMenu();
     setMobileNavActive('#mobileNavTempoBtn');
     $('#botModal, #settingsModal').addClass('hidden');
     $('#tempoModal').removeClass('hidden');
@@ -2111,6 +2160,7 @@ $(document).on('click', '#mobileNavTempoBtn, #mobileTempoModalBtn', function(e) 
 
 $(document).on('click', '#mobileNavSettingsBtn, #openSettingsBtn, #mobileSettingsModalBtn', function(e) {
     e.preventDefault();
+    closeMobilePlayMenu();
     setMobileNavActive('#mobileNavSettingsBtn');
     $('#tempoModal, #botModal').addClass('hidden');
     $('#settingsModal').removeClass('hidden');
@@ -2118,6 +2168,7 @@ $(document).on('click', '#mobileNavSettingsBtn, #openSettingsBtn, #mobileSetting
 
 $(document).on('click', '.close-modal-btn', function(e) {
     e.preventDefault();
+    closeMobilePlayMenu();
     $('#tempoModal, #botModal, #settingsModal').addClass('hidden');
     setMobileNavActive('#mobileNavPlayBtn');
 });
