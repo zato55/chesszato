@@ -8,6 +8,8 @@ let pendingMovePreviewGame = null;
 let moveConfirmationEnabled = false;
 let isFlipped = false;
 let vsBot = true;
+let quickMatchMode = false;
+let quickMatchBot = null;
 let timerInterval = null;
 
 let selectedTimeInSeconds = 300;
@@ -817,9 +819,10 @@ function updatePlayerCards() {
         const topIsUser = actualPlayerColor === topColor;
         const bottomIsUser = actualPlayerColor === bottomColor;
 
-        $('#topPlayerName').text(topIsUser ? 'Siz' : 'Stockfish Bot');
+        const botDisplayName = quickMatchMode && quickMatchBot ? `${quickMatchBot.name} · Bot` : 'Stockfish Bot';
+        $('#topPlayerName').text(topIsUser ? 'Siz' : botDisplayName);
         $('#topPlayerElo').text(topIsUser ? '(1500)' : `(${elo})`);
-        $('#bottomPlayerName').text(bottomIsUser ? 'Siz' : 'Stockfish Bot');
+        $('#bottomPlayerName').text(bottomIsUser ? 'Siz' : botDisplayName);
         $('#bottomPlayerElo').text(bottomIsUser ? '(1500)' : `(${elo})`);
 
         $('#topAvatar')
@@ -2007,6 +2010,8 @@ function playBestMove() {
 }
 
 $('#modePvP, #mModePvP').on('click', function() {
+    quickMatchMode = false;
+    quickMatchBot = null;
     vsBot = false;
     $('#botEloWrapper, #mBotLevelWrapper').addClass('hidden');
     $('#modePvP, #mModePvP').addClass('bg-blue-600 text-white').removeClass('text-zinc-400');
@@ -2017,6 +2022,8 @@ $('#modePvP, #mModePvP').on('click', function() {
 });
 
 $('#modeBot, #mModeBot').on('click', function() {
+    quickMatchMode = false;
+    quickMatchBot = null;
     vsBot = true;
     $('#botEloWrapper, #mBotLevelWrapper').removeClass('hidden');
     $('#modeBot, #mModeBot').addClass('bg-blue-600 text-white').removeClass('text-zinc-400');
@@ -2174,6 +2181,8 @@ $(document).on('click', '#mobileMenuNewGameBtn', function() {
 
 $(document).on('click', '#mobileMenuBotBtn', function() {
     closeMobilePlayMenu();
+    quickMatchMode = false;
+    quickMatchBot = null;
     vsBot = true;
     $('#botEloWrapper, #mBotLevelWrapper').removeClass('hidden');
     $('#modeBot, #mModeBot').addClass('bg-blue-600 text-white').removeClass('text-zinc-400');
@@ -2187,6 +2196,8 @@ $(document).on('click', '#mobileMenuBotBtn', function() {
 
 $(document).on('click', '#mobileMenuLocalBtn', function() {
     closeMobilePlayMenu();
+    quickMatchMode = false;
+    quickMatchBot = null;
     vsBot = false;
     $('#botEloWrapper, #mBotLevelWrapper').addClass('hidden');
     $('#modePvP, #mModePvP').addClass('bg-blue-600 text-white').removeClass('text-zinc-400');
@@ -2196,11 +2207,27 @@ $(document).on('click', '#mobileMenuLocalBtn', function() {
     resetGame();
 });
 
-$(document).on('click', '#mobileMenuQuickMatchBtn, #mobileMenuTournamentsBtn', function() {
-    const message = this.id === 'mobileMenuQuickMatchBtn'
-        ? 'Hızlı eşleştirme henüz kullanıma açık değil.'
-        : 'Turnuvalar bölümü henüz kullanıma açık değil.';
-    $('#mobilePlayMenuNotice').text(message).removeClass('hidden');
+$(document).on('click', '#mobileMenuQuickMatchBtn', function() {
+    const chooseBot = window.chooseZatoQuickMatchBot;
+    if (typeof chooseBot !== 'function') {
+        $('#mobilePlayMenuNotice').text('Bot listesi yüklenemedi. Sayfayı yenileyip tekrar dene.').removeClass('hidden');
+        return;
+    }
+
+    quickMatchBot = chooseBot();
+    quickMatchMode = true;
+    vsBot = true;
+    userColorSelection = 'r';
+    $('#botElo').val(String(quickMatchBot.elo));
+    updateBotEloUI(quickMatchBot.elo);
+    $('#mobileModeText').text('Hızlı Eşleşme');
+    $('#botModal, #tempoModal, #settingsModal').addClass('hidden');
+    closeMobilePlayMenu();
+    resetGame();
+});
+
+$(document).on('click', '#mobileMenuTournamentsBtn', function() {
+    $('#mobilePlayMenuNotice').text('Turnuvalar bölümü henüz kullanıma açık değil.').removeClass('hidden');
 });
 
 $(document).on('click', '#mobileNavBotBtn, #mobileBotModalBtn', function(e) {
