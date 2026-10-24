@@ -2233,6 +2233,9 @@ $(document).on('click', '#mobileMenuTournamentsBtn', function() {
 $(document).on('click', '#mobileNavBotBtn, #mobileBotModalBtn', function(e) {
     e.preventDefault();
     closeMobilePlayMenu();
+    quickMatchMode = false;
+    quickMatchBot = null;
+    $('#mobileModeText').text('Stockfish');
     setMobileNavActive('#mobileNavBotBtn');
     $('#tempoModal, #settingsModal').addClass('hidden');
     $('#botModal').removeClass('hidden');
