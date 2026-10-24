@@ -94,3 +94,14 @@ Telefonda GTEST sayfasını açıp Oyna menüsünü, beş seçeneği ve mevcut o
 - Yalnızca `gtest/index.html` ve bu devam notu güncellendi; normal oyun dosyalarına dokunulmadı.
 - Telefon üzerinde görsel kontrol kullanıcı tarafından yapılmalı.
 - HTML commit: `b1cd387c062692cb2b6a901f2cd32693a0570f92`.
+
+
+## Son düzenleme — rastgele botlarla hızlı eşleştirme (2026-10-24)
+- Yedek dalı: `yedek-2026-10-24-gtest-hizli-eslesme-botlari-oncesi` (main başlangıç SHA: `5f60a157305216fb7dd2e70d72c4f1539bd78649`).
+- Yeni `gtest/bots.js` dosyası eklendi: kurgusal insan isimli 30 bot profili ve profil aralığına göre rastgele seçilen Elo seviyesi.
+- GTEST Hızlı Eşleştirme seçeneği artık “yakında” bildirimi yerine rastgele bot ve zorluk seçiyor; oyuncu rengi rastgele belirleniyor ve mevcut Stockfish motoru rakip olarak kullanılıyor.
+- Oyuncu kartında botun adı ve Elo'su görünür; isim yanında “Bot” ibaresi bulunur. Bu profiller gerçek kullanıcı hesapları değildir.
+- Hızlı eşleştirme için `bots.js`, ardından `app.js` yükleniyor. Normal oyun dosyalarına dokunulmadı.
+- İlk sürümde bot veritabanı profil adı ve zorluk aralığını yönetir; özel açılış repertuvarı/oyun tarzlarının hamlelere gerçek etkisi sonraki aşamadır.
+- Değişiklikler: `gtest/bots.js` commit `70db18df3003cfe1f506f964e5fec3d6f5279426`; `gtest/app.js` commits `6fe8d4c07bcdceacc93448356cad565bc6e18928`, `9d53ec0d13597154479881b0c07022c8747957f2`; `gtest/index.html` commit `c950c1d53e0a91193c296f1531eb5c5ef90b1db7`.
+- Henüz telefon üzerinde gerçek oyun testi yapılmadı; bot seçimi, rastgele taraf, ilk hamlede motorun başlaması ve maç sırasında isim/Elo gösterimi test edilmeli.
