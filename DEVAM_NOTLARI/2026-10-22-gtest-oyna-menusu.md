@@ -74,3 +74,15 @@ Telefonda GTEST sayfasını açıp Oyna menüsünü, beş seçeneği ve mevcut o
 - Yalnızca `gtest/index.html` ve `gtest/app.js` değiştirildi; cache etiketi `20261022-gtest-move-confirm-v5`.
 - Statik doğrulama geçti: JavaScript sözdizimi, ayar anahtarı ve kalıcılığı, onay/vazgeç olayları, terfi hamlesinin onay akışına bağlanması, reset temizliği ve HTML kimliklerinin tekilliği kontrol edildi.
 - Telefon üzerinde normal hamle, vazgeçme, onaylama ve piyon terfisi senaryoları henüz kullanıcı tarafından test edilmeli.
+
+
+## Son düzenleme — hamle onayında tahta önizlemesi (2026-10-24)
+- Yedek dalı: `yedek-2026-10-24-gtest-hamle-onayi-gorsel-duzenleme-oncesi`.
+- Hamle Onayı açıkken yasal hamle, asıl oyun durumuna işlenmeden ayrı bir geçici `Chess` konumunda önizleniyor; taş hedef karesinde görünür.
+- Tahta karartan tam ekran modal kaldırıldı. Ekranın altında küçük, yarı saydam `Bu konum uygun mu?` alanı ve `Vazgeç / Onayla` düğmeleri gösteriliyor.
+- Onaylama asıl hamleyi uygular; vazgeçme önizlemeyi siler ve taşın ilk karesine döndürür. Beklerken tahta tıklamaları engellenir; asıl oyun sırası/hamle durumu onaylanana kadar değişmez.
+- Piyon terfisi seçildikten sonra da seçilen terfi taşı tahtada önizlenir.
+- Yalnızca `gtest/app.js` ve `gtest/index.html` değiştirildi; normal oyun dosyalarına dokunulmadı.
+- JS sözdizimi kontrolü geçti; gerçek telefon/tıklama senaryoları henüz kullanıcı tarafından doğrulanmalı.
+- Güncel JS önbellek etiketi: `20261024-gtest-move-preview-v8`.
+- JS commit: `1f5bfbc7bc9f6e237b669d830c7af622dbdec425`; HTML commit: `bc6be53dd771467bfaf0c7e2a071535c574cd99e`.
