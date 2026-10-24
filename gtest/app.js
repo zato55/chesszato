@@ -4,6 +4,7 @@ const analysisGame = new Chess();
 let selectedSquare = null;
 let pendingMove = null;
 let pendingConfirmedMove = null;
+let pendingMovePreviewGame = null;
 let moveConfirmationEnabled = false;
 let isFlipped = false;
 let vsBot = true;
@@ -925,7 +926,7 @@ function renderBoard() {
     const $board = $('#board');
     $board.empty();
 
-    const activeGame = getDisplayedGame();
+    const activeGame = pendingMovePreviewGame || getDisplayedGame();
     const historyVerbose = activeGame.history({ verbose: true });
     let lastMove = null;
     if (isAnalysisMode) {
@@ -1078,8 +1079,16 @@ function requestMoveExecution(from, to, promoPiece) {
 
     if (moveConfirmationEnabled && !isAnalysisMode && !isReviewing && legalMove) {
         pendingConfirmedMove = { from, to, promotion: promoPiece };
-        selectedSquare = from;
+        pendingMovePreviewGame = new Chess(game.fen());
+        const previewMove = pendingMovePreviewGame.move({ from, to, promotion: promoPiece });
+        if (!previewMove) {
+            pendingConfirmedMove = null;
+            pendingMovePreviewGame = null;
+            return;
+        }
+        selectedSquare = null;
         $('#moveConfirmationModal').removeClass('hidden');
+        renderBoard();
         return;
     }
 
@@ -1090,6 +1099,7 @@ $('#confirmMoveConfirmationBtn').on('click', function() {
     if (!pendingConfirmedMove) return;
     const move = pendingConfirmedMove;
     pendingConfirmedMove = null;
+    pendingMovePreviewGame = null;
     $('#moveConfirmationModal').addClass('hidden');
     executeMove(move.from, move.to, move.promotion);
 });
@@ -1097,6 +1107,7 @@ $('#confirmMoveConfirmationBtn').on('click', function() {
 $('#cancelMoveConfirmationBtn').on('click', function() {
     const from = pendingConfirmedMove ? pendingConfirmedMove.from : null;
     pendingConfirmedMove = null;
+    pendingMovePreviewGame = null;
     $('#moveConfirmationModal').addClass('hidden');
     selectedSquare = from;
     renderBoard();
@@ -1237,6 +1248,7 @@ function triggerStockfishMove() {
 }
 
 $('#board').on('click', 'div[data-square]', function () {
+    if (pendingConfirmedMove) return;
     if (!isAnalysisMode && liveReviewPly !== null) return;
     if (isGameOver && !isReviewing && !isAnalysisMode) return;
 
@@ -2330,6 +2342,7 @@ function resetGame() {
     isAnalysisMode = false;
     pendingMove = null;
     pendingConfirmedMove = null;
+    pendingMovePreviewGame = null;
     $('#moveConfirmationModal').addClass('hidden');
     isGameOver = false;
     isReviewing = false;
