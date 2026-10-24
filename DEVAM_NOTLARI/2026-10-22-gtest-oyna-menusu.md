@@ -105,3 +105,11 @@ Telefonda GTEST sayfasını açıp Oyna menüsünü, beş seçeneği ve mevcut o
 - İlk sürümde bot veritabanı profil adı ve zorluk aralığını yönetir; özel açılış repertuvarı/oyun tarzlarının hamlelere gerçek etkisi sonraki aşamadır.
 - Değişiklikler: `gtest/bots.js` commit `70db18df3003cfe1f506f964e5fec3d6f5279426`; `gtest/app.js` commits `6fe8d4c07bcdceacc93448356cad565bc6e18928`, `9d53ec0d13597154479881b0c07022c8747957f2`; `gtest/index.html` commit `c950c1d53e0a91193c296f1531eb5c5ef90b1db7`.
 - Henüz telefon üzerinde gerçek oyun testi yapılmadı; bot seçimi, rastgele taraf, ilk hamlede motorun başlaması ve maç sırasında isim/Elo gösterimi test edilmeli.
+
+
+## Son düzeltme — varyant hamlesinde eski en iyi hamle okunu temizle (2026-10-25)
+- Yedek dalı: `yedek-2026-10-25-gtest-varyant-ok-duzeltme-oncesi` (düzeltme öncesi main SHA: `d268ed7f8d8aa7a3de4d245e774c41c8fe5f1119`).
+- `gtest/app.js` içinde analiz varyantına yeni hamle eklendiğinde `currentBestMove` sıfırlanıp eski ok temizleniyor.
+- Ardından mevcut `requestEngineAnalysis()` akışı yeni konumun FEN'i için analizi başlatıyor; aynı FEN önbellekteyse kayıtlı ok tekrar çiziliyor. FEN önbelleğinin sabit tutma davranışı korunuyor.
+- Dosyanın JavaScript sözdizimi kontrolü geçti. Telefon üzerinde varyantlı oyun testi henüz yapılmadı.
+- Commit: `e85eb82994f5ffe0c0ae434468781d6559e07b1d`.
