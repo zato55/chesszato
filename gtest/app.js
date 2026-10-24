@@ -1151,6 +1151,11 @@ function executeMove(from, to, promoPiece) {
             }
             analysisMoveHistory.push(moveObj);
             analysisIdx = analysisMoveHistory.length - 1;
+
+            // Yeni varyant konumuna geçildi: önceki konumun oku bu arada görünmesin.
+            // requestEngineAnalysis aynı FEN için kayıtlı oku varsa tekrar gösterecek.
+            currentBestMove = null;
+            clearArrow();
         }
 
         if (!vsBot && autoFlipPvP && !isReviewing && !isAnalysisMode) {
