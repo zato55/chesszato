@@ -86,3 +86,11 @@ Telefonda GTEST sayfasını açıp Oyna menüsünü, beş seçeneği ve mevcut o
 - JS sözdizimi kontrolü geçti; gerçek telefon/tıklama senaryoları henüz kullanıcı tarafından doğrulanmalı.
 - Güncel JS önbellek etiketi: `20261024-gtest-move-preview-v8`.
 - JS commit: `1f5bfbc7bc9f6e237b669d830c7af622dbdec425`; HTML commit: `bc6be53dd771467bfaf0c7e2a071535c574cd99e`.
+
+
+## Son düzenleme — hamle onayı paneli yukarı alındı (2026-10-24)
+- Yedek dalı: `yedek-2026-10-24-gtest-hamle-onayi-panel-konumu-oncesi`.
+- GTEST mobilinde hamle onayı paneli `bottom-20` yerine `bottom-36` konumuna alındı; böylece alt oyuncu kartının üstüne yaklaşır. Masaüstü konumu değişmedi.
+- Yalnızca `gtest/index.html` ve bu devam notu güncellendi; normal oyun dosyalarına dokunulmadı.
+- Telefon üzerinde görsel kontrol kullanıcı tarafından yapılmalı.
+- HTML commit: `b1cd387c062692cb2b6a901f2cd32693a0570f92`.
