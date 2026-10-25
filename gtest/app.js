@@ -872,6 +872,7 @@ function setPlayerAvatar(selector, color, botProfile) {
 
 let quickMatchFlowTimer = null;
 let quickMatchFlowToken = 0;
+let quickMatchReturnToGameOver = false;
 
 function hideQuickMatchFlow() {
     quickMatchFlowToken++;
@@ -885,6 +886,7 @@ function hideQuickMatchFlow() {
 }
 
 function beginQuickMatchFlow() {
+    quickMatchReturnToGameOver = isGameOver || game.game_over();
     const chooseBot = window.chooseZatoQuickMatchBot;
     if (typeof chooseBot !== 'function') {
         $('#mobilePlayMenuNotice').text('Bot listesi yüklenemedi. Sayfayı yenileyip tekrar dene.').removeClass('hidden');
@@ -917,6 +919,7 @@ function beginQuickMatchFlow() {
         updateBotEloUI(quickMatchBot.elo);
 
         const userIsWhite = Math.random() < 0.5;
+        userColorSelection = userIsWhite ? 'w' : 'b';
         $('#quickMatchUserAvatar').text(userIsWhite ? '♙' : '♟');
         $('#quickMatchUserColor').text(userIsWhite ? 'Beyaz' : 'Siyah');
         $('#quickMatchOpponentAvatar').html(getBotAvatarMarkup(quickMatchBot));
@@ -940,9 +943,13 @@ $(document).on('click', '#cancelQuickMatchBtn', function() {
     hideQuickMatchFlow();
     quickMatchMode = false;
     quickMatchBot = null;
-    isGameOver = false;
+    isGameOver = quickMatchReturnToGameOver;
+    if (quickMatchReturnToGameOver) {
+        $('#gameOverModal').removeClass('hidden');
+    } else {
+        startTimer();
+    }
     updateQuickMatchLockUI();
-    startTimer();
 });
 
 function isQuickMatchLocked() {
