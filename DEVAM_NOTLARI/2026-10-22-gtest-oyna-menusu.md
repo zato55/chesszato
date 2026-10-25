@@ -161,3 +161,13 @@ Telefonda GTEST sayfasını açıp Oyna menüsünü, beş seçeneği ve mevcut o
 - Böylece Oyna menüsü sadeleştirmesi, hızlı eşleşme/sanal rakipler, rakip düşünme gecikmesi, hızlı eşleşmede geri almanın kapatılması ve diğer GTEST arayüz/analiz güncellemeleri normal oyuna da taşındı.
 - Normal oyun dosyaları aktarım öncesi yedek dalında korunuyor. GitHub değişiklikleri `main` dalına yazıldı; dağıtım/deploy için ayrıca işlem yapılmadı.
 - Sonraki adım: kök normal oyun sayfasında mobil Oyna menüsü, normal Stockfish oyunu, hızlı eşleşme, geri alma düğmesi, analiz gezinmesi ve ayarlar test edilmeli.
+
+
+## Son düzenleme — hızlı eşleşme havuzu 1.000 sanal rakibe çıkarıldı (2026-10-25)
+- Önceki main durumu için yedek dalı: `yedek-2026-10-25-bot-1000-profil-oncesi`.
+- Hem kök `bots.js` hem de `gtest/bots.js` aynı mantıkla güncellendi.
+- Var olan 30 profil korundu; toplamı 1.000'e tamamlamak için 970 benzersiz kullanıcı adı/kimlik profili çalışma anında üretilecek şekilde eklendi. Böylece 1.000 profilin tamamını elle dosyaya yazmak gerekmiyor.
+- Yeni profiller Elo aralığı ve kişilik parametreleri (oyun tarzı, risk, tolerans ve aday hamle ağırlıkları) alıyor; ayrı Stockfish motoru açılmıyor.
+- Normal ve GTEST HTML dosyalarında bot dosyası önbellek etiketi `20261025-bot-1000-v1` olarak güncellendi.
+- Bu profiller sanal rakiptir, gerçek kullanıcı hesabı değildir. Gerçek telefon testi henüz yapılmadı.
+- Bot dosyaları commitleri: kök `bots.js` `e0a8645dcacd1e7ab896f164742ac89691b8511e`; `gtest/bots.js` `ff16eba91c10fc020f225c5c8df1163471cb830e`.
