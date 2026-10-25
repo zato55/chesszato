@@ -358,11 +358,38 @@ aside.collapsed #logoToggleBtn {
 
 .player-card-main {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 68px;
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
     column-gap: 8px;
     padding: 8px 12px;
     min-width: 0;
+}
+
+.player-clock-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 3px;
+    min-width: 0;
+}
+
+.player-clock-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 25px;
+    height: 30px;
+    padding: 0;
+    flex: 0 0 25px;
+    border: 1px solid rgba(113, 113, 122, 0.35);
+    border-radius: 6px;
+    background: rgba(9, 9, 11, 0.55);
+    font-size: 13px;
+    line-height: 1;
+}
+
+.player-clock-action:active {
+    transform: scale(0.94);
 }
 
 .player-card-clock {
