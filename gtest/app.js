@@ -20,6 +20,8 @@ let clockStarted = false;
 let stockfishWorker = null;
 
 let isEngineThinking = false;
+let botSearchActive = false;
+let botCandidateMoves = {};
 let discardEngineBestMove = false;
 let isGameOver = false;
 let isReviewing = false;
@@ -210,6 +212,23 @@ function initStockfish() {
             if (typeof message !== 'string') return;
             if (analysisSearchStopPending && !message.startsWith('bestmove')) return;
 
+            if (botSearchActive && message.startsWith('info ')) {
+                const candidateMatch = message.match(/\bdepth (\d+)\b.*\bmultipv (\d+)\b.*\bscore (cp|mate) (-?\d+)\b.*\bpv ([a-h][1-8][a-h][1-8][qrbn]?)/);
+                if (candidateMatch) {
+                    const depth = parseInt(candidateMatch[1], 10);
+                    const index = parseInt(candidateMatch[2], 10);
+                    const scoreType = candidateMatch[3];
+                    const rawScore = parseInt(candidateMatch[4], 10);
+                    const score = scoreType === 'mate'
+                        ? (rawScore > 0 ? 100000 - rawScore : -100000 - rawScore)
+                        : rawScore;
+                    const previous = botCandidateMoves[index];
+                    if (!previous || depth >= previous.depth) {
+                        botCandidateMoves[index] = { depth, index, score, move: candidateMatch[5] };
+                    }
+                }
+            }
+
             const depthMatch = message.match(/depth (\d+)/);
             const currentDepth = depthMatch ? parseInt(depthMatch[1]) : 0;
 
@@ -239,6 +258,8 @@ function initStockfish() {
 
             if (message.startsWith('bestmove')) {
                 if (discardEngineBestMove) {
+                    botSearchActive = false;
+                    botCandidateMoves = {};
                     discardEngineBestMove = false;
                     analysisSearchStopPending = false;
                     pendingEvalScore = null;
@@ -250,7 +271,8 @@ function initStockfish() {
                         activeEngineTurn = nextFen.split(' ')[1] || 'w';
                         stockfishWorker.postMessage('ucinewgame');
                         stockfishWorker.postMessage('position fen ' + nextFen);
-                        stockfishWorker.postMessage('go depth 6');
+                        stockfishWorker.postMessage('setoption name MultiPV value 1');
+        stockfishWorker.postMessage('go depth 6');
                         isEngineThinking = true;
                     } else if (nextFen && !isGameOver && vsBot && game.turn() !== actualPlayerColor) {
                         triggerStockfishMove();
@@ -258,6 +280,8 @@ function initStockfish() {
                     return;
                 }
                 if (analysisSearchStopPending) {
+                    botSearchActive = false;
+                    botCandidateMoves = {};
                     analysisSearchStopPending = false;
                     isEngineThinking = false;
                     pendingEvalScore = null;
@@ -268,7 +292,8 @@ function initStockfish() {
                         activeEngineTurn = nextFen.split(' ')[1] || 'w';
                         stockfishWorker.postMessage('ucinewgame');
                         stockfishWorker.postMessage('position fen ' + nextFen);
-                        stockfishWorker.postMessage('go depth 6');
+                        stockfishWorker.postMessage('setoption name MultiPV value 1');
+        stockfishWorker.postMessage('go depth 6');
                         isEngineThinking = true;
                     }
                     return;
@@ -297,7 +322,12 @@ function initStockfish() {
                     pendingEvalScore = null;
                 }
 
-                const moveStr = message.split(' ')[1];
+                let moveStr = message.split(' ')[1];
+                if (botSearchActive) {
+                    moveStr = chooseQuickMatchMove(moveStr);
+                    botSearchActive = false;
+                    botCandidateMoves = {};
+                }
 
                 if (isAnalysisMode && moveStr && moveStr !== '(none)') {
                     if (!analysisBestMoveByFen.has(activeAnalysisFen)) {
@@ -1215,6 +1245,47 @@ $('.promo-choice').on('click', function() {
     }
 });
 
+function chooseQuickMatchMove(engineBestMove) {
+    if (!quickMatchMode || !quickMatchBot || !quickMatchBot.personality) return engineBestMove;
+
+    const candidates = Object.values(botCandidateMoves);
+    if (!candidates.length) return engineBestMove;
+    const deepest = Math.max(...candidates.map(candidate => candidate.depth));
+    const atDepth = candidates
+        .filter(candidate => candidate.depth === deepest)
+        .sort((a, b) => a.index - b.index);
+    if (!atDepth.length) return engineBestMove;
+
+    const personality = quickMatchBot.personality;
+    const bestScore = atDepth[0].score;
+    const tolerance = Number(personality.tolerance) || 0;
+    const eligible = atDepth.filter(candidate => candidate.score >= bestScore - tolerance);
+    if (!eligible.length) return engineBestMove;
+
+    const weights = Array.isArray(personality.weights) ? personality.weights : [1, 0, 0];
+    const weighted = eligible.map(candidate => ({
+        ...candidate,
+        weight: Math.max(0, Number(weights[candidate.index - 1]) || 0)
+    })).filter(candidate => candidate.weight > 0);
+    if (!weighted.length) return eligible[0].move || engineBestMove;
+
+    const total = weighted.reduce((sum, candidate) => sum + candidate.weight, 0);
+    let roll = Math.random() * total;
+    for (const candidate of weighted) {
+        roll -= candidate.weight;
+        if (roll < 0) {
+            const move = candidate.move;
+            const from = move.slice(0, 2);
+            const to = move.slice(2, 4);
+            const promotion = move.length > 4 ? move.slice(4, 5) : 'q';
+            const testGame = new Chess(game.fen());
+            if (testGame.move({ from, to, promotion })) return move;
+            return engineBestMove;
+        }
+    }
+    return engineBestMove;
+}
+
 function triggerStockfishMove() {
     if (!stockfishWorker || isGameOver || isReviewing || isAnalysisMode) return;
     if (discardEngineBestMove || analysisSearchStopPending) {
@@ -1249,8 +1320,11 @@ function triggerStockfishMove() {
     };
     const skillLevel = skillLevelByElo[elo] ?? 10;
 
+    botSearchActive = quickMatchMode && Boolean(quickMatchBot && quickMatchBot.personality);
+    botCandidateMoves = {};
     stockfishWorker.postMessage('stop');
     stockfishWorker.postMessage('setoption name Skill Level value ' + skillLevel);
+    stockfishWorker.postMessage('setoption name MultiPV value ' + (botSearchActive ? 3 : 1));
     stockfishWorker.postMessage('position fen ' + fen);
     stockfishWorker.postMessage('go depth ' + depth);
 }
