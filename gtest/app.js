@@ -344,26 +344,39 @@ function initStockfish() {
 
                 const botTurnColor = actualPlayerColor === 'w' ? 'b' : 'w';
                 if (!isGameOver && moveStr && moveStr !== '(none)' && vsBot && game.turn() === botTurnColor && !game.game_over()) {
-                    const from = moveStr.substring(0, 2);
-                    const to = moveStr.substring(2, 4);
-                    const promotion = moveStr.length > 4 ? moveStr.substring(4, 5) : 'q';
+                    const applyBotMove = () => {
+                        const from = moveStr.substring(0, 2);
+                        const to = moveStr.substring(2, 4);
+                        const promotion = moveStr.length > 4 ? moveStr.substring(4, 5) : 'q';
 
-                    const moveObj = game.move({ from: from, to: to, promotion: promotion });
-                    if (moveObj) returnToLivePosition();
-                    if (moveObj && botTurnColor === 'w' && !clockStarted) {
-                        clockStarted = true;
-                        startTimer();
+                        const moveObj = game.move({ from: from, to: to, promotion: promotion });
+                        if (moveObj) returnToLivePosition();
+                        if (moveObj && botTurnColor === 'w' && !clockStarted) {
+                            clockStarted = true;
+                            startTimer();
+                        }
+
+                        if (timeIncrementInSeconds > 0) {
+                            if (botTurnColor === 'w') whiteTime += timeIncrementInSeconds;
+                            else blackTime += timeIncrementInSeconds;
+                            updateTimerDisplay();
+                        }
+
+                        playMoveSound(moveObj, Boolean(moveObj && moveObj.captured));
+                        renderBoard();
+                        updateStatus();
+                        isEngineThinking = false;
+                    };
+
+                    if (quickMatchMode) {
+                        // Sanal rakiplerin hamleleri anlık gelmesin; konuma göre değişen düşünme süresi.
+                        const complexPosition = game.in_check() || game.moves({ verbose: true }).some(move => move.captured);
+                        const thinkingDelay = (complexPosition ? 2200 : 1100) + Math.random() * (complexPosition ? 3800 : 2600);
+                        isEngineThinking = true;
+                        setTimeout(applyBotMove, thinkingDelay);
+                        return;
                     }
-
-                    if (timeIncrementInSeconds > 0) {
-                        if (botTurnColor === 'w') whiteTime += timeIncrementInSeconds;
-                        else blackTime += timeIncrementInSeconds;
-                        updateTimerDisplay();
-                    }
-
-                    playMoveSound(moveObj, Boolean(moveObj && moveObj.captured));
-                    renderBoard();
-                    updateStatus();
+                    applyBotMove();
                 }
             }
         };
@@ -850,7 +863,7 @@ function updatePlayerCards() {
         const topIsUser = actualPlayerColor === topColor;
         const bottomIsUser = actualPlayerColor === bottomColor;
 
-        const botDisplayName = quickMatchMode && quickMatchBot ? `${quickMatchBot.name} · Bot` : 'Stockfish Bot';
+        const botDisplayName = quickMatchMode && quickMatchBot ? quickMatchBot.name : 'Stockfish Bot';
         $('#topPlayerName').text(topIsUser ? 'Siz' : botDisplayName);
         $('#topPlayerElo').text(topIsUser ? '(1500)' : `(${elo})`);
         $('#bottomPlayerName').text(bottomIsUser ? 'Siz' : botDisplayName);
@@ -2300,7 +2313,7 @@ $(document).on('click', '#mobileMenuQuickMatchBtn', function() {
     userColorSelection = 'r';
     $('#botElo').val(String(quickMatchBot.elo));
     updateBotEloUI(quickMatchBot.elo);
-    $('#mobileModeText').text('Hızlı Eşleşme');
+    $('#mobileModeText').text('Hızlı Eşleşme · Sanal Rakip');
     $('#botModal, #tempoModal, #settingsModal').addClass('hidden');
     closeMobilePlayMenu();
     resetGame();
