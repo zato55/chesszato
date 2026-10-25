@@ -2752,11 +2752,7 @@ $(document).on('click', '#quickMatchFindAnotherBtn', function() {
 
 $(document).on('click', '#quickMatchHomeBtn', function() {
     stopQuickMatchFirstMoveTimer();
-    $('#quickMatchCancelledModal').addClass('hidden');
-    quickMatchMode = false;
-    quickMatchBot = null;
-    quickMatchReturnToGameOver = false;
-    resetGame();
+    window.location.reload();
 });
 
 $('#reviewBoardBtn').on('click', function() {
