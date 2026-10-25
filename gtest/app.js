@@ -888,8 +888,8 @@ function updateQuickMatchLockUI() {
         '#modePvP', '#mModePvP', '#modeBot', '#mModeBot',
         '#mobileMenuQuickMatchBtn', '#mobileMenuBotBtn', '#mobileMenuLocalBtn',
         '#mobileNavBotBtn', '#mobileBotModalBtn', '#mobileBotStartBtn',
-        '#resetBtn', '#modalResetBtn', '#quickResetBtn',
-        '.tempo-option-btn'
+        '#resetBtn', '#modalResetBtn', '#quickResetBtn', '#timeSelect',
+        '.tempo-option-btn', '.side-choice-btn'
     ].join(', ');
 
     $(matchStartControls)
@@ -1447,6 +1447,7 @@ function parseTimeControl(valStr) {
 }
 
 $('#timeSelect').on('change', function() {
+    if (blockNewMatchDuringQuickMatch()) return;
     const timeVal = $(this).val();
     parseTimeControl(timeVal);
     syncTempoSelection(timeVal);
@@ -1463,6 +1464,7 @@ $('#toggleAutoFlip').on('change', function() {
 });
 
 $('.side-choice-btn').on('click', function() {
+    if (blockNewMatchDuringQuickMatch()) return;
     $('.side-choice-btn').removeClass('bg-blue-600 text-white font-bold').addClass('text-zinc-400');
     $(this).addClass('bg-blue-600 text-white font-bold').removeClass('text-zinc-400');
     
