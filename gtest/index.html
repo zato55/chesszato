@@ -464,6 +464,22 @@
         </div>
     </div>
 
+    <div id="quickMatchFirstMoveNotice" class="hidden fixed top-3 left-1/2 -translate-x-1/2 z-[75] rounded-xl border border-amber-500/50 bg-[#18120a]/95 px-4 py-2 text-center text-sm font-bold text-amber-200 shadow-xl pointer-events-none">
+        İlk hamle için <span id="quickMatchFirstMoveCountdown" class="font-mono text-white">20</span> saniye
+    </div>
+
+    <div id="quickMatchCancelledModal" class="hidden fixed inset-0 bg-black/85 backdrop-blur-sm z-[90] flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="quickMatchCancelledTitle">
+        <div class="quick-match-flow-card w-full max-w-sm rounded-2xl border border-red-500/30 bg-[#121215] p-6 text-center shadow-2xl">
+            <div class="mb-3 text-5xl" aria-hidden="true">⏱️</div>
+            <h2 id="quickMatchCancelledTitle" class="text-xl font-extrabold text-white">Maç iptal edildi</h2>
+            <p class="mt-2 text-sm leading-relaxed text-zinc-400">İlk hamle 20 saniye içinde yapılmadığı için eşleşme sonlandırıldı.</p>
+            <div class="mt-5 flex flex-col gap-2">
+                <button id="quickMatchFindAnotherBtn" class="w-full rounded-xl bg-red-700 px-4 py-3 text-sm font-extrabold text-white transition hover:bg-red-600">Başka Rakip Ara</button>
+                <button id="quickMatchHomeBtn" class="w-full rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-3 text-sm font-bold text-zinc-200 transition hover:bg-zinc-800">Ana Ekran</button>
+            </div>
+        </div>
+    </div>
+
     <!-- 🏆 OYUN BİTTİ MODALI -->
     <div id="gameOverModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-[#121215] border border-zinc-800 rounded-2xl p-6 max-w-sm w-full flex flex-col items-center text-center gap-4 shadow-2xl">
@@ -707,7 +723,7 @@
     <!-- Ana Uygulama Kodu -->
     <script src="openings.js?v=20261020-lichess-openings-3865"></script>
     <script src="bots.js?v=20261025-bot-1000-v1"></script>
-    <script src="app.js?v=20261025-matchmaking-input-fix-v1"></script>
+    <script src="app.js?v=20261026-quickmatch-firstmove-timeout-v1"></script>
 </body>
 
 </html>
