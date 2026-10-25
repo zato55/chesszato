@@ -1,7 +1,7 @@
-// Chesszato Hızlı Eşleştirme bot profilleri.
-// İsimler kurgusal profillerdir; arayüzde rakibin bot olduğu açıkça belirtilir.
+// Chesszato hızlı eşleşme için kurgusal sanal rakip profilleri.
+// Kullanıcı adları farklı çevrimiçi satranç oyuncularının takma adlarından esinlenir.
 window.ZATO_BOT_DATABASE = [
-  { id: "ahmet-01", name: "Ahmet", minElo: 250, maxElo: 800 },
+  { id: "ahmet-01", name: "qxMira", minElo: 250, maxElo: 800 },
   { id: "emir-02", name: "Emir", minElo: 250, maxElo: 1200 },
   { id: "kerem-03", name: "Kerem", minElo: 400, maxElo: 1400 },
   { id: "deniz-04", name: "Deniz", minElo: 400, maxElo: 1800 },
