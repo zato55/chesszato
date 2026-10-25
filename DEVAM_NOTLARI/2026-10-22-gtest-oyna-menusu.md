@@ -216,3 +216,10 @@ Telefonda GTEST sayfasını açıp Oyna menüsünü, beş seçeneği ve mevcut o
 - Yalnızca GTEST'te pes etme onayı `Pes etmek istediğine emin misin?` olarak sadeleştirildi.
 - GTEST `app.js` önbellek etiketi `20261025-quickmatch-lock-v4` yapıldı.
 - Statik kaynak kontrolü yapılacak; telefon testi henüz yapılmadı.
+
+
+## Pes/beraberlik bayrakları yalnızca aktif maçta (2026-10-25)
+- GTEST'te kart ve yan paneldeki pes/beraberlik butonları yalnızca hamle yapılmış, devam eden canlı maçta görünür.
+- Yeni oyun/hamle öncesinde, maç bittikten sonra ve analiz modunda gizlenir; bot maçında alt karttaki rakip kontrolleri de gizli kalır.
+- JS önbellek etiketi `20261025-quickmatch-lock-v5` olarak yenilendi.
+- Statik kaynak kontrolü yapılacak; telefon testi henüz yapılmadı.
