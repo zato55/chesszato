@@ -496,6 +496,7 @@ function requestEngineAnalysis() {
     activeEngineTurn = targetFen.split(' ')[1] || 'w';
     stockfishWorker.postMessage('ucinewgame');
     stockfishWorker.postMessage('position fen ' + targetFen);
+    stockfishWorker.postMessage('setoption name MultiPV value 1');
     stockfishWorker.postMessage('go depth 6');
     isEngineThinking = true;
 }
