@@ -1559,7 +1559,7 @@ function updateTimerDisplay() {
 
 function showGameOverModal(title, reason, icon = '🏆') {
     isGameOver = true;
-                updateQuickMatchLockUI();
+    updateQuickMatchLockUI();
     if (timerInterval) {
         clearInterval(timerInterval);
         timerInterval = null;
@@ -1589,7 +1589,7 @@ function updateStatus() {
             $('#status').text('🔍 Geçmiş Konum (Şah Mat)');
         } else if (!isReviewing) {
             isGameOver = true;
-                updateQuickMatchLockUI();
+            updateQuickMatchLockUI();
             $('#status').text('Şah Mat!');
             if (vsBot) {
                 const userWon = game.turn() !== actualPlayerColor;
@@ -1612,7 +1612,7 @@ function updateStatus() {
             $('#status').text('🔍 Geçmiş Konum (Berabere)');
         } else if (!isReviewing) {
             isGameOver = true;
-                updateQuickMatchLockUI();
+            updateQuickMatchLockUI();
             $('#status').text('Berabere');
             showGameOverModal('Berabere!', 'Oyun beraberlik ile sonuçlandı.', '🤝');
         } else {
