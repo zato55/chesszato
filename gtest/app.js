@@ -11,6 +11,8 @@ let vsBot = true;
 let quickMatchMode = false;
 let quickMatchBot = null;
 let timerInterval = null;
+let quickMatchFirstMoveInterval = null;
+let quickMatchFirstMoveDeadline = 0;
 
 let selectedTimeInSeconds = 300;
 let timeIncrementInSeconds = 0;
@@ -350,7 +352,13 @@ function initStockfish() {
                         const promotion = moveStr.length > 4 ? moveStr.substring(4, 5) : 'q';
 
                         const moveObj = game.move({ from: from, to: to, promotion: promotion });
-                        if (moveObj) returnToLivePosition();
+                        if (moveObj) {
+                            returnToLivePosition();
+                            if (quickMatchMode) {
+                                stopQuickMatchFirstMoveTimer();
+                                startQuickMatchFirstMoveTimer();
+                            }
+                        }
                         if (moveObj && botTurnColor === 'w' && !clockStarted) {
                             clockStarted = true;
                             startTimer();
@@ -874,6 +882,52 @@ let quickMatchFlowTimer = null;
 let quickMatchFlowToken = 0;
 let quickMatchReturnToGameOver = false;
 
+function stopQuickMatchFirstMoveTimer() {
+    if (quickMatchFirstMoveInterval) {
+        clearInterval(quickMatchFirstMoveInterval);
+        quickMatchFirstMoveInterval = null;
+    }
+    quickMatchFirstMoveDeadline = 0;
+    $('#quickMatchFirstMoveNotice').addClass('hidden');
+}
+
+function hasMadeFirstMove(color) {
+    return game.history({ verbose: true }).some(move => move.color === color);
+}
+
+function startQuickMatchFirstMoveTimer() {
+    if (!quickMatchMode || isGameOver || game.game_over()) {
+        stopQuickMatchFirstMoveTimer();
+        return;
+    }
+
+    const sideToMove = game.turn();
+    if (hasMadeFirstMove(sideToMove)) {
+        stopQuickMatchFirstMoveTimer();
+        return;
+    }
+
+    if (quickMatchFirstMoveInterval) clearInterval(quickMatchFirstMoveInterval);
+    quickMatchFirstMoveDeadline = Date.now() + 20000;
+    $('#quickMatchFirstMoveNotice').removeClass('hidden');
+    const updateCountdown = () => {
+        const remaining = Math.max(0, Math.ceil((quickMatchFirstMoveDeadline - Date.now()) / 1000));
+        $('#quickMatchFirstMoveCountdown').text(remaining);
+        if (remaining <= 0) {
+            stopQuickMatchFirstMoveTimer();
+            isGameOver = true;
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+            updateQuickMatchLockUI();
+            $('#quickMatchCancelledModal').removeClass('hidden');
+        }
+    };
+    updateCountdown();
+    quickMatchFirstMoveInterval = setInterval(updateCountdown, 200);
+}
+
 function hideQuickMatchFlow() {
     quickMatchFlowToken++;
     if (quickMatchFlowTimer) {
@@ -886,6 +940,8 @@ function hideQuickMatchFlow() {
 }
 
 function beginQuickMatchFlow() {
+    stopQuickMatchFirstMoveTimer();
+    $('#quickMatchCancelledModal').addClass('hidden');
     quickMatchReturnToGameOver = isGameOver || game.game_over();
     const chooseBot = window.chooseZatoQuickMatchBot;
     if (typeof chooseBot !== 'function') {
@@ -940,6 +996,7 @@ function beginQuickMatchFlow() {
 }
 
 $(document).on('click', '#cancelQuickMatchBtn', function() {
+    stopQuickMatchFirstMoveTimer();
     hideQuickMatchFlow();
     quickMatchMode = false;
     quickMatchBot = null;
@@ -1320,7 +1377,13 @@ function executeMove(from, to, promoPiece) {
 
     if (moveObj !== null) {
         if (!isAnalysisMode && !isReviewing && movingColor === 'w') clockStarted = true;
-        if (!isAnalysisMode && activeGame === game) returnToLivePosition();
+        if (!isAnalysisMode && activeGame === game) {
+            returnToLivePosition();
+            if (quickMatchMode) {
+                stopQuickMatchFirstMoveTimer();
+                startQuickMatchFirstMoveTimer();
+            }
+        }
         if (!isAnalysisMode && !isReviewing && timeIncrementInSeconds > 0) {
             if (movingColor === 'w') whiteTime += timeIncrementInSeconds;
             else blackTime += timeIncrementInSeconds;
@@ -2590,6 +2653,8 @@ $('#botElo').on('change', function() {
 });
 
 function resetGame() {
+    stopQuickMatchFirstMoveTimer();
+    $('#quickMatchCancelledModal').addClass('hidden');
     closePreAnalysisSummary();
     const engineSearchPending = Boolean(stockfishWorker && (isEngineThinking || discardEngineBestMove));
     if (engineSearchPending) {
@@ -2663,6 +2728,7 @@ function resetGame() {
     renderBoard();
     updateStatus();
     startTimer();
+    if (quickMatchMode) startQuickMatchFirstMoveTimer();
 
     if (vsBot && actualPlayerColor === 'b') {
         triggerStockfishMove();
@@ -2676,6 +2742,20 @@ $('#resetBtn, #modalResetBtn, #quickResetBtn').on('click', function(e) {
         return;
     }
     if (blockNewMatchDuringQuickMatch()) return;
+    resetGame();
+});
+
+$(document).on('click', '#quickMatchFindAnotherBtn', function() {
+    $('#quickMatchCancelledModal').addClass('hidden');
+    beginQuickMatchFlow();
+});
+
+$(document).on('click', '#quickMatchHomeBtn', function() {
+    stopQuickMatchFirstMoveTimer();
+    $('#quickMatchCancelledModal').addClass('hidden');
+    quickMatchMode = false;
+    quickMatchBot = null;
+    quickMatchReturnToGameOver = false;
     resetGame();
 });
 
