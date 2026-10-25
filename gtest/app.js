@@ -1601,7 +1601,8 @@ function updateStatus() {
                 if (userWon) {
                     showGameOverModal('Tebrikler, Kazandın!', 'Stockfish botunu şah mat ettin!', '🎉');
                 } else {
-                    showGameOverModal('Kaybettin!', 'Stockfish botu seni şah mat etti.', '💀');
+                    const opponentName = quickMatchMode && quickMatchBot ? quickMatchBot.name : 'Stockfish botu';
+                    showGameOverModal('Kaybettin!', `${opponentName} seni şah mat etti.`, '💀');
                 }
             } else {
                 const winner = game.turn() === 'b' ? 'Beyaz' : 'Siyah';
