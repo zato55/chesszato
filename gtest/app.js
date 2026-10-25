@@ -870,7 +870,36 @@ function setPlayerAvatar(selector, color, botProfile) {
         .toggleClass('bg-zinc-900 text-white', color === 'b');
 }
 
+function isQuickMatchLocked() {
+    return quickMatchMode && !isGameOver && !game.game_over();
+}
+
+function blockNewMatchDuringQuickMatch() {
+    if (!isQuickMatchLocked()) return false;
+    $('#mobilePlayMenuNotice')
+        .text('Hızlı maç bitmeden başka maç başlatamazsın.')
+        .removeClass('hidden');
+    return true;
+}
+
+function updateQuickMatchLockUI() {
+    const locked = isQuickMatchLocked();
+    const matchStartControls = [
+        '#modePvP', '#mModePvP', '#modeBot', '#mModeBot',
+        '#mobileMenuQuickMatchBtn', '#mobileMenuBotBtn', '#mobileMenuLocalBtn',
+        '#mobileNavBotBtn', '#mobileBotModalBtn', '#mobileBotStartBtn',
+        '#resetBtn', '#modalResetBtn', '#quickResetBtn',
+        '.tempo-option-btn'
+    ].join(', ');
+
+    $(matchStartControls)
+        .prop('disabled', locked)
+        .attr('aria-disabled', String(locked))
+        .toggleClass('opacity-50 cursor-not-allowed', locked);
+}
+
 function updatePlayerCards() {
+    updateQuickMatchLockUI();
     // Her oyuncunun beraberlik/pes etme kontrolleri rakibin kartında görünür.
     // Bot maçında yalnızca kullanıcının kontrolleri gösterilir (üst kartta).
     $('#bottomPlayerCard .player-clock-action').toggleClass('hidden', vsBot);
@@ -1452,6 +1481,7 @@ function startTimer() {
                 whiteTime--;
             } else {
                 isGameOver = true;
+                updateQuickMatchLockUI();
                 showGameOverModal('Siyah Kazandı!', 'Beyaz oyuncunun süresi bitti.', '⏳');
                 clearInterval(timerInterval);
             }
@@ -1460,6 +1490,7 @@ function startTimer() {
                 blackTime--;
             } else {
                 isGameOver = true;
+                updateQuickMatchLockUI();
                 showGameOverModal('Beyaz Kazandı!', 'Siyah oyuncunun süresi bitti.', '⏳');
                 clearInterval(timerInterval);
             }
@@ -1526,6 +1557,7 @@ function updateTimerDisplay() {
 
 function showGameOverModal(title, reason, icon = '🏆') {
     isGameOver = true;
+                updateQuickMatchLockUI();
     if (timerInterval) {
         clearInterval(timerInterval);
         timerInterval = null;
@@ -1555,6 +1587,7 @@ function updateStatus() {
             $('#status').text('🔍 Geçmiş Konum (Şah Mat)');
         } else if (!isReviewing) {
             isGameOver = true;
+                updateQuickMatchLockUI();
             $('#status').text('Şah Mat!');
             if (vsBot) {
                 const userWon = game.turn() !== actualPlayerColor;
@@ -1577,6 +1610,7 @@ function updateStatus() {
             $('#status').text('🔍 Geçmiş Konum (Berabere)');
         } else if (!isReviewing) {
             isGameOver = true;
+                updateQuickMatchLockUI();
             $('#status').text('Berabere');
             showGameOverModal('Berabere!', 'Oyun beraberlik ile sonuçlandı.', '🤝');
         } else {
@@ -2131,6 +2165,7 @@ function playBestMove() {
 }
 
 $('#modePvP, #mModePvP').on('click', function() {
+    if (blockNewMatchDuringQuickMatch()) return;
     quickMatchMode = false;
     quickMatchBot = null;
     vsBot = false;
@@ -2143,6 +2178,7 @@ $('#modePvP, #mModePvP').on('click', function() {
 });
 
 $('#modeBot, #mModeBot').on('click', function() {
+    if (blockNewMatchDuringQuickMatch()) return;
     quickMatchMode = false;
     quickMatchBot = null;
     vsBot = true;
@@ -2296,6 +2332,7 @@ $('#mobilePlayMenu').on('click', function(e) {
 });
 
 $(document).on('click', '#mobileMenuBotBtn', function() {
+    if (blockNewMatchDuringQuickMatch()) return;
     closeMobilePlayMenu();
     quickMatchMode = false;
     quickMatchBot = null;
@@ -2311,6 +2348,7 @@ $(document).on('click', '#mobileMenuBotBtn', function() {
 });
 
 $(document).on('click', '#mobileMenuLocalBtn', function() {
+    if (blockNewMatchDuringQuickMatch()) return;
     closeMobilePlayMenu();
     quickMatchMode = false;
     quickMatchBot = null;
@@ -2324,10 +2362,7 @@ $(document).on('click', '#mobileMenuLocalBtn', function() {
 });
 
 $(document).on('click', '#mobileMenuQuickMatchBtn', function() {
-    if (quickMatchMode && !isGameOver && !game.game_over()) {
-        $('#mobilePlayMenuNotice').text('Maçın devam ediyor. Yeni rakip bulmak için önce maçı bitir.').removeClass('hidden');
-        return;
-    }
+    if (blockNewMatchDuringQuickMatch()) return;
 
     const chooseBot = window.chooseZatoQuickMatchBot;
     if (typeof chooseBot !== 'function') {
@@ -2352,6 +2387,7 @@ $(document).on('click', '#mobileMenuTournamentsBtn', function() {
 });
 
 $(document).on('click', '#mobileNavBotBtn, #mobileBotModalBtn', function(e) {
+    if (blockNewMatchDuringQuickMatch()) { e.preventDefault(); return; }
     e.preventDefault();
     closeMobilePlayMenu();
     quickMatchMode = false;
@@ -2396,6 +2432,7 @@ $('#tempoModal, #botModal, #settingsModal').on('click', function(e) {
 });
 
 $('.tempo-option-btn').on('click', function() {
+    if (blockNewMatchDuringQuickMatch()) return;
     const timeVal = $(this).attr('data-time');
     parseTimeControl(timeVal);
     syncTempoSelection(timeVal);
@@ -2415,6 +2452,7 @@ $('.bot-level-btn').on('click', function() {
 });
 
 $(document).on('click', '#mobileBotStartBtn', function() {
+    if (blockNewMatchDuringQuickMatch()) return;
     $('#botModal').addClass('hidden');
     setMobileNavActive(null);
     resetGame();
@@ -2550,6 +2588,7 @@ function resetGame() {
 
 $('#resetBtn, #modalResetBtn, #quickResetBtn').on('click', function(e) {
     e.preventDefault();
+    if (blockNewMatchDuringQuickMatch()) return;
     resetGame();
 });
 
