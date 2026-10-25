@@ -998,8 +998,9 @@ function updateBotEloUI(selectedElo) {
 }
 
 window.surrenderGame = function(position) {
-    if (isGameOver) return;
-    const surrenderingColor = (position === 'bottom' && !isFlipped) || (position === 'top' && isFlipped) ? 'Beyaz' : 'Siyah';
+    if (isGameOver || game.game_over()) return;
+    // Kontrol rakibin kartında bulunduğundan, basan oyuncu kartın karşı tarafındaki oyuncudur.
+    const surrenderingColor = (position === 'top' && !isFlipped) || (position === 'bottom' && isFlipped) ? 'Beyaz' : 'Siyah';
     const winner = surrenderingColor === 'Beyaz' ? 'Siyah' : 'Beyaz';
 
     if (confirm(`${surrenderingColor} oyuncusu oyunu terk etmek istiyor. Onaylıyor musunuz?`)) {
@@ -1011,12 +1012,12 @@ window.surrenderGame = function(position) {
 };
 
 window.offerDraw = function(position) {
-    if (isGameOver) return;
+    if (isGameOver || game.game_over()) return;
     
     if (vsBot) {
         alert("Stockfish Bot: Beraberlik teklifinizi reddediyorum!");
     } else {
-        const offeringPlayer = (position === 'bottom' && !isFlipped) || (position === 'top' && isFlipped) ? 'Beyaz' : 'Siyah';
+        const offeringPlayer = (position === 'top' && !isFlipped) || (position === 'bottom' && isFlipped) ? 'Beyaz' : 'Siyah';
         if (confirm(`${offeringPlayer} oyuncusu beraberlik teklif ediyor. Kabul ediyor musunuz?`)) {
             if (timerInterval) clearInterval(timerInterval);
             if (stockfishWorker) stockfishWorker.postMessage('stop');
