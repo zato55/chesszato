@@ -28,3 +28,11 @@ GTEST sayfasında mobilde hızlı eşleşme başlat, arama ekranını ve VS ekra
 - Her iki yerdeki kontrol, yalnızca botun sırasıysa giriş engellenecek şekilde daraltıldı.
 - `gtest/index.html` JS cache sürümü `20261025-matchmaking-input-fix-v1` olarak güncellendi.
 - Kaynak kontrolü: iki eski `isBotTurn || isEngineThinking` koşulu kalmadı; iki hamle kontrolü yalnızca `isBotTurn` ile yapılıyor. Gerçek tarayıcı doğrulaması kullanıcıdan bekleniyor.
+
+
+## 2026-10-26 — Hızlı eşleşmede ilk hamle süresi
+- Hızlı eşleşme tahtası açıldığında sıradaki tarafın ilk hamlesi için 20 saniyelik ayrı sayaç başlatıldı; normal satranç saatiyle karıştırılmıyor.
+- Her iki tarafın da kendi ilk hamlesi için ayrı 20 saniye uygulanır. Bir tarafın ilk hamlesi tamamlanınca sıradaki tarafın ilk hamle sayacı başlar; iki taraf da ilk hamlesini yaptıktan sonra sayaç kalmaz.
+- Süre dolarsa oyun kilitlenir ve yalnızca “Başka Rakip Ara” / “Ana Ekran” seçenekli maç iptal modalı gösterilir.
+- Hızlı eşleşme akışı yeniden başlatılırken ve oyun sıfırlanırken sayaç temizlenir.
+- Yalnızca GTEST dosyaları değiştirildi; normal oyun dosyalarına ve Firebase/üyelik altyapısına dokunulmadı. Tarayıcıda gerçek zamanlama testi henüz yapılmadı.
