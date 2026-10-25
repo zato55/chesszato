@@ -151,3 +151,13 @@ Telefonda GTEST sayfasını açıp Oyna menüsünü, beş seçeneği ve mevcut o
 - Yalnızca `gtest/index.html`, `gtest/app.js` ve bu devam notu güncellendi. Normal oyun dosyalarına dokunulmadı.
 - JS önbellek etiketi `20261025-play-menu-cleanup-v1` olarak güncellendi.
 - Statik kontrol ve telefon üzerinde görsel test sonucu bu notun sonraki güncellemesinde kaydedilecek.
+
+
+## Son düzenleme — GTEST güncellemeleri normal oyuna aktarıldı (2026-10-25)
+- Önceki durum için yedek dalı oluşturuldu: `yedek-2026-10-25-gtest-normal-oyuna-aktarim-oncesi`.
+- Kullanıcının isteğiyle GTEST'in güncel ana dosyaları normal oyuna kopyalandı: `gtest/index.html` → `index.html`, `gtest/app.js` → `app.js`, `gtest/style.css` → `style.css`.
+- Hızlı eşleşme profillerini çalıştırmak için `gtest/bots.js` içeriği yeni kök `bots.js` dosyası olarak eklendi. `openings.js` iki yerde aynı olduğundan değiştirilmedi.
+- Normal oyunun HTML'sinde CSS, bot ve uygulama JS önbellek sürümleri `20261025-normal-sync-v1` olarak yenilendi.
+- Böylece Oyna menüsü sadeleştirmesi, hızlı eşleşme/sanal rakipler, rakip düşünme gecikmesi, hızlı eşleşmede geri almanın kapatılması ve diğer GTEST arayüz/analiz güncellemeleri normal oyuna da taşındı.
+- Normal oyun dosyaları aktarım öncesi yedek dalında korunuyor. GitHub değişiklikleri `main` dalına yazıldı; dağıtım/deploy için ayrıca işlem yapılmadı.
+- Sonraki adım: kök normal oyun sayfasında mobil Oyna menüsü, normal Stockfish oyunu, hızlı eşleşme, geri alma düğmesi, analiz gezinmesi ve ayarlar test edilmeli.
