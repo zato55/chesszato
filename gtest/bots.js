@@ -74,6 +74,49 @@ window.ZATO_BOT_PERSONALITIES = {
   "kaan-30": { style: "Esnek", risk: 0.39, tolerance: 68, weights: [68, 23, 9] }
 };
 
+// Ek profiller, dosyaya 1.000 satır kopyalamadan benzersiz biçimde üretilir.
+const zatoBotNameStarts = [
+  "Amber", "Arctic", "Astra", "Blitz", "Blue", "Calm", "Clever", "Cloud",
+  "Copper", "Crimson", "Crystal", "Daring", "Dawn", "Deep", "Echo", "Electric",
+  "Emerald", "Frost", "Golden", "Hidden", "Ivory", "Jade", "Lunar", "Midnight",
+  "Misty", "Neon", "Noble", "Quiet", "Rapid", "Raven", "Royal", "Shadow",
+  "Silver", "Silent", "Solar", "Swift", "Velvet", "Wild", "Winter", "Zen"
+];
+const zatoBotNameEnds = [
+  "Bishop", "Castle", "Comet", "Falcon", "Fox", "Knight", "Lion", "Meteor",
+  "Owl", "Panther", "Phoenix", "Pioneer", "Rook", "Sparrow", "Storm", "Tiger",
+  "Voyager", "Wolf", "Warden", "Wizard", "Gambit", "Tempo", "Tactician", "Pawn",
+  "Dragon"
+];
+const zatoBotStyles = [
+  "Temkinli", "Taktikçi", "Konumsal", "Saldırgan", "Savunmacı",
+  "Sürprizci", "Dinamik", "Pratik", "Hesapçı", "Esnek"
+];
+
+for (let number = window.ZATO_BOT_DATABASE.length + 1; number <= 1000; number++) {
+  const index = number - 1;
+  const id = "zato-" + String(number).padStart(4, "0");
+  const start = zatoBotNameStarts[index % zatoBotNameStarts.length];
+  const end = zatoBotNameEnds[Math.floor(index / zatoBotNameStarts.length) % zatoBotNameEnds.length];
+  const name = start + end + String(number);
+  const tier = index % 10;
+  const minElo = [250, 400, 800, 1200, 1400, 1600, 1800, 2000, 400, 800][tier];
+  const maxElo = [800, 1200, 1400, 1600, 1800, 2000, 2200, 2200, 1800, 2000][tier];
+  const risk = 0.06 + ((index * 17) % 78) / 100;
+  const tolerance = 20 + ((index * 23) % 121);
+  const secondWeight = 3 + ((index * 7) % 33);
+  const thirdWeight = 1 + ((index * 11) % 25);
+  const firstWeight = Math.max(10, 100 - secondWeight - thirdWeight);
+
+  window.ZATO_BOT_DATABASE.push({ id, name, minElo, maxElo });
+  window.ZATO_BOT_PERSONALITIES[id] = {
+    style: zatoBotStyles[index % zatoBotStyles.length],
+    risk,
+    tolerance,
+    weights: [firstWeight, secondWeight, 100 - firstWeight - secondWeight]
+  };
+}
+
 window.chooseZatoQuickMatchBot = function () {
   const profiles = window.ZATO_BOT_DATABASE;
   const levels = window.ZATO_BOT_ELO_LEVELS;
