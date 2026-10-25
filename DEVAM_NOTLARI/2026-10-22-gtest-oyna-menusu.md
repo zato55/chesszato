@@ -223,3 +223,11 @@ Telefonda GTEST sayfasını açıp Oyna menüsünü, beş seçeneği ve mevcut o
 - Yeni oyun/hamle öncesinde, maç bittikten sonra ve analiz modunda gizlenir; bot maçında alt karttaki rakip kontrolleri de gizli kalır.
 - JS önbellek etiketi `20261025-quickmatch-lock-v5` olarak yenilendi.
 - Statik kaynak kontrolü yapılacak; telefon testi henüz yapılmadı.
+
+## Analizden çıkınca bitmiş maç ekranını geri göster (2026-10-25)
+- Yedek dalı: `yedek-2026-10-25-gtest-analizden-donus-oncesi`.
+- GTEST `exitAnalysisMode()` içinde analizden çıkışta oyun bitmişse `gameOverModal` yeniden görünür yapılıyor. Bu, şah mat/beraberlik dışında pes etme ve süre dolması gibi satranç konumundan anlaşılmayan bitişlerde de sonuç ekranını geri getirir.
+- Sonuç ekranındaki mevcut `Tahtayı İncele` ve `Yeni Oyun Başlat` seçenekleri korunur; oyun devam ediyorsa saat yeniden başlatılır.
+- Yalnızca `gtest/app.js`, `gtest/index.html` ve bu not güncellendi; kök normal oyun dosyalarına dokunulmadı.
+- JS cache etiketi: `20261025-analysis-return-v1`.
+- Kaynak/sözdizimi kontrolü yapılacak; telefonda uçtan uca test henüz yapılmadı.
