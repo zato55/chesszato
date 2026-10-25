@@ -113,3 +113,13 @@ Telefonda GTEST sayfasını açıp Oyna menüsünü, beş seçeneği ve mevcut o
 - Ardından mevcut `requestEngineAnalysis()` akışı yeni konumun FEN'i için analizi başlatıyor; aynı FEN önbellekteyse kayıtlı ok tekrar çiziliyor. FEN önbelleğinin sabit tutma davranışı korunuyor.
 - Dosyanın JavaScript sözdizimi kontrolü geçti. Telefon üzerinde varyantlı oyun testi henüz yapılmadı.
 - Commit: `e85eb82994f5ffe0c0ae434468781d6559e07b1d`.
+
+
+## Son düzenleme — hızlı eşleşme botlarına farklı oyun karakterleri (2026-10-25)
+- Yedek dalı: `yedek-2026-10-25-gtest-bot-kisilikleri-oncesi`.
+- Yalnızca GTEST dosyaları değiştirildi; normal oyun dosyalarına dokunulmadı.
+- `gtest/bots.js`: 30 botun her birine kişilik profili eklendi. Profiller temkinli, taktikçi, konumsal, saldırgan, savunmacı, sürprizci ve benzeri farklı tercihler içeriyor; risk toleransı ve aday hamle ağırlıkları bot başına değişiyor.
+- `gtest/app.js`: Hızlı eşleşmede Stockfish'ten üç aday hamle isteniyor. Kişilik profili, değerlendirmesi en iyi hamleye yakın adaylar arasından seçim yapmayı etkiliyor. Elo seviyesine göre mevcut Skill Level ve arama derinliği korunuyor. Normal Stockfish modu tek aday hamle kullanıyor; analiz sırasında MultiPV yeniden 1'e ayarlanıyor.
+- `gtest/index.html`: yeni JS sürümü için önbellek etiketi `20261025-bot-personalities-v2` yapıldı.
+- Bu, gerçek hamle seçiminde kişilik farklılığı için ilk sürümdür; her botun bütünüyle ayrı açılış repertuvarı veya derin bir stratejik modeli olduğu anlamına gelmez. Çoklu aday desteği/performans ve gerçek oyun davranışı telefonda test edilmelidir.
+- Commitler: `gtest/bots.js` `5859a1103ef99416f567e3d8c0da49ec07caf950`; `gtest/app.js` `922fc622824b37fd5e8f313a2798a5057807ce6d` ve sağlamlaştırma `3f5fdc06faca37d295db28c7b168fcaf31d6074b`; `gtest/index.html` `f1476b7e438e35d8f5f925f632d53045b267890f`.
