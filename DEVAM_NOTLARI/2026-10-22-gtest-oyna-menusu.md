@@ -179,3 +179,11 @@ Telefonda GTEST sayfasını açıp Oyna menüsünü, beş seçeneği ve mevcut o
 - Avatarlar harici resim dosyası veya ağ isteği kullanmıyor. Oyuncu kartı boyutu ve taş rengine bağlı mevcut sınıflar korunuyor; kullanıcı ve yerel iki oyunculu modda eski ♙/♟ simgeleri gösteriliyor.
 - Kök ve GTEST HTML dosyalarında JS cache etiketi `20261025-bot-avatars-v1` olarak yenilendi.
 - Statik doğrulama ve telefon üzerinde görsel test yapılmalı.
+
+## Son düzenleme — saat yanındaki oyun işlemleri ve hızlı eşleşme koruması (2026-10-25)
+- Yedek dalı: `yedek-2026-10-25-oyun-saatleri-hizli-eslesme-oncesi`.
+- Yalnızca GTEST güncellendi; normal kök dosyalarına aktarılmadı.
+- Her iki oyuncu kartındaki saatlerin soluna beraberlik (`🤝`) ve pes etme (`🏳️`) simgeleri eklendi. Üst/alt oyuncu konumuna göre mevcut `offerDraw` ve `surrenderGame` işlevlerini çağırıyor.
+- Hızlı eşleşme açıkken oyun bitmeden hızlı eşleşme menü öğesine tekrar basılırsa yeni bot seçilmiyor ve oyun sıfırlanmıyor; kullanıcıya mevcut maçın bitmesini isteyen uyarı gösteriliyor.
+- GTEST CSS/JS önbellek etiketleri `20261025-clock-actions-v1` olarak yenilendi.
+- Telefon testi gerekli: simgelerin iki oyuncu kartında görünmesi, beraberlik/terk işlevleri, aktif hızlı eşleşmede rakibin değişmemesi ve oyun bittikten sonra yeni rakip seçilebilmesi.
