@@ -202,3 +202,11 @@ Telefonda GTEST sayfasını açıp Oyna menüsünü, beş seçeneği ve mevcut o
 - Maç bittiğinde kilit kalkıyor ve yeni maç başlatılabiliyor.
 - GTEST uygulama JS önbellek etiketi `20261025-quickmatch-lock-v2` olarak yenilendi.
 - Statik kontrol yapıldı; telefon üzerinde uçtan uca test henüz yapılmadı.
+
+
+## Pes etme / beraberlik isteyen oyuncu düzeltmesi (2026-10-25)
+- GTEST'te pes etme ve beraberlik onayı, butona basan oyuncuyu doğru gösterecek şekilde düzeltildi.
+- Oyuncu kartlarındaki simgeler rakip kartında bulunduğu için işlemi kartın karşı tarafındaki oyuncu yapmış kabul ediliyor; yan paneldeki genel butonlar da aynı oyuncu eşlemesine getirildi.
+- Oyun zaten bittiyse pes etme/beraberlik penceresi açılmıyor.
+- JS önbellek etiketi `20261025-quickmatch-lock-v3` olarak yenilendi.
+- Statik kaynak kontrolü yapıldı; telefonda doğrulama bekleniyor.
