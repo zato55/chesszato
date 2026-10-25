@@ -431,6 +431,39 @@
         </section>
     </div>
 
+    <!-- ⚡ HIZLI EŞLEŞME AKIŞI (şimdilik arayüz demosu) -->
+    <div id="quickMatchFlowModal" class="hidden fixed inset-0 bg-[#09090b]/95 backdrop-blur-md z-[80] flex items-center justify-center p-5" role="dialog" aria-modal="true" aria-labelledby="quickMatchFlowTitle">
+        <div class="quick-match-flow-card w-full max-w-sm rounded-2xl border border-zinc-700/80 bg-[#121215] p-6 text-center shadow-2xl">
+            <div id="quickMatchSearchingView" class="flex flex-col items-center gap-4">
+                <div class="quick-match-search-icon" aria-hidden="true"><span>♞</span></div>
+                <div class="space-y-1">
+                    <h2 id="quickMatchFlowTitle" class="text-xl font-extrabold text-white">Rakip aranıyor<span class="quick-match-dots">...</span></h2>
+                    <p class="text-sm text-zinc-400">Sana uygun bir sanal rakip buluyoruz.</p>
+                </div>
+                <div class="quick-match-search-track"><span></span></div>
+                <p class="text-xs text-zinc-500">Eşleşme hazırlanıyor</p>
+                <button id="cancelQuickMatchBtn" class="w-full rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-2.5 text-sm font-bold text-zinc-300 transition hover:bg-zinc-800">İptal</button>
+            </div>
+            <div id="quickMatchVersusView" class="hidden flex-col items-center gap-4">
+                <p class="text-xs font-bold uppercase tracking-[0.25em] text-red-400">Eşleşme bulundu</p>
+                <div class="grid w-full grid-cols-[1fr_auto_1fr] items-center gap-2">
+                    <div class="quick-match-player-card">
+                        <div id="quickMatchUserAvatar" class="quick-match-player-avatar">♙</div>
+                        <strong>Siz</strong>
+                        <span id="quickMatchUserColor" class="text-zinc-400">Beyaz</span>
+                    </div>
+                    <span class="text-xl font-black italic text-zinc-500">VS</span>
+                    <div class="quick-match-player-card">
+                        <div id="quickMatchOpponentAvatar" class="quick-match-player-avatar">♟</div>
+                        <strong id="quickMatchOpponentName" class="break-all">Rakip</strong>
+                        <span id="quickMatchOpponentElo" class="text-zinc-400">1200 Elo</span>
+                    </div>
+                </div>
+                <p class="text-xs text-zinc-500">Maç başlamak üzere...</p>
+            </div>
+        </div>
+    </div>
+
     <!-- 🏆 OYUN BİTTİ MODALI -->
     <div id="gameOverModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-[#121215] border border-zinc-800 rounded-2xl p-6 max-w-sm w-full flex flex-col items-center text-center gap-4 shadow-2xl">
