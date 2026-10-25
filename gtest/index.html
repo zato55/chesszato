@@ -85,7 +85,11 @@
                             <span id="topOpeningText" class="text-[11px] text-zinc-400 font-medium truncate">📖 ...</span>
                         </div>
                     </div>
-                    <div id="topTimerDesktop" class="player-card-clock font-mono font-black text-sm px-2.5 py-1 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-200">05:00</div>
+                    <div class="player-clock-actions">
+                        <button type="button" onclick="offerDraw('top')" class="player-clock-action text-amber-400" aria-label="Üst oyuncu için beraberlik teklif et" title="Beraberlik teklif et">🤝</button>
+                        <button type="button" onclick="surrenderGame('top')" class="player-clock-action text-red-400" aria-label="Üst oyuncu için pes et" title="Pes et">🏳️</button>
+                        <div id="topTimerDesktop" class="player-card-clock font-mono font-black text-sm px-2.5 py-1 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-200">05:00</div>
+                    </div>
                 </div>
                 <div class="player-capture-row" aria-label="Üst oyuncunun yediği taşlar">
                     <div id="topCapturedPieces" class="flex items-center gap-1"></div>
@@ -131,7 +135,11 @@
                             <span id="bottomOpeningText" class="text-[11px] text-zinc-400 font-medium truncate">📖 ...</span>
                         </div>
                     </div>
-                    <div id="bottomTimerDesktop" class="player-card-clock font-mono font-black text-sm px-2.5 py-1 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-200">05:00</div>
+                    <div class="player-clock-actions">
+                        <button type="button" onclick="offerDraw('bottom')" class="player-clock-action text-amber-400" aria-label="Alt oyuncu için beraberlik teklif et" title="Beraberlik teklif et">🤝</button>
+                        <button type="button" onclick="surrenderGame('bottom')" class="player-clock-action text-red-400" aria-label="Alt oyuncu için pes et" title="Pes et">🏳️</button>
+                        <div id="bottomTimerDesktop" class="player-card-clock font-mono font-black text-sm px-2.5 py-1 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-200">05:00</div>
+                    </div>
                 </div>
             </div>
 
