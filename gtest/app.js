@@ -838,6 +838,10 @@ function drawChessComCapturedPieces(capturedArr, isWhiteCaptures) {
 }
 
 function updatePlayerCards() {
+    $('#quickUndoBtn, #undoBtn').toggleClass('hidden', quickMatchMode);
+    $('#mobileQuickControls').toggleClass('grid-cols-5', quickMatchMode).toggleClass('grid-cols-6', !quickMatchMode);
+    $('#actionButtons').toggleClass('grid-cols-3', quickMatchMode).toggleClass('grid-cols-2', !quickMatchMode);
+
     const activeGame = getDisplayedGame();
     const history = activeGame.history({ verbose: true });
 
@@ -2416,7 +2420,7 @@ $('#quickFlipBtn, #flipBtn').on('click', function (e) {
 });
 
 $('#quickUndoBtn, #undoBtn').on('click', function () {
-    if (isAnalysisMode) return;
+    if (isAnalysisMode || quickMatchMode) return;
     returnToLivePosition();
     if (isGameOver && !isReviewing) return;
     if (stockfishWorker && isEngineThinking) {
