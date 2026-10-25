@@ -42,3 +42,11 @@ GTEST sayfasında mobilde hızlı eşleşme başlat, arama ekranını ve VS ekra
 - Hızlı eşleşmenin 20 saniyelik ilk hamle sayacı, ekranın üstünde ayrı bir bildirim yerine aktif tarafın oyuncu kartındaki saat kutusunda gösterilir.
 - Geri sayım sırasında yalnızca o oyuncunun normal saat kutusu geçici olarak geri sayım kutusuyla yer değiştirir; sayaç durunca normal saat yeniden görünür.
 - Üst/alt kart seçimi tahtanın yönü ve beyaz/siyah tarafına göre yapılır. Yalnızca GTEST HTML/JS ve devam notu değiştirildi.
+
+## 2026-10-26 — Maç bitişinin kesin kilitlenmesi
+- Hızlı eşleşme botunun düşünme sonrası gecikmeli hamle zamanlayıcısı artık saklanıyor; maç biterse, yeni eşleşme başlarsa veya tahta sıfırlanırsa iptal ediliyor.
+- Gecikmeli bot hamlesi çalışacağı anda maçın bitmediğini ve tahtanın hâlâ arama başındaki aynı konumda olduğunu yeniden doğruluyor. Böylece iptal modalı açıkken eski maçtan ses/hamle gelmesi engelleniyor.
+- 20 saniyelik ilk hamle süresi dolduğunda gecikmeli hamle temizleniyor, Stockfish'e dur komutu gönderiliyor ve motorun maç hamlesi üretmesi devre dışı bırakılıyor.
+- Normal maç sonu penceresi açılırken de bekleyen bot zamanlayıcısı ve ilk hamle sayacı temizleniyor; bu ortak yol şah mat, beraberlik, süre ve terk sonuçlarında kullanılıyor.
+- GTEST JS önbellek sürümü: `20261026-game-end-lock-v1`.
+- Kontrol sınırı: GitHub kaynak kodu üzerinden statik kontrol yapılacak; gerçek cihazda tarayıcı testi ayrıca gerekli.
