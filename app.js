@@ -837,6 +837,39 @@ function drawChessComCapturedPieces(capturedArr, isWhiteCaptures) {
     return html;
 }
 
+function getBotAvatarMarkup(bot) {
+    const identity = String(bot && (bot.id || bot.name) || 'stockfish');
+    let hash = 2166136261;
+    for (let i = 0; i < identity.length; i++) {
+        hash ^= identity.charCodeAt(i);
+        hash = Math.imul(hash, 16777619);
+    }
+    const seed = hash >>> 0;
+    const hue = seed % 360;
+    const accentHue = (hue + 72 + ((seed >>> 8) % 120)) % 360;
+    const pattern = seed % 5;
+    const decorations = [
+        '<circle cx="32" cy="32" r="25" fill="none" stroke="hsl(' + accentHue + ' 85% 78%)" stroke-width="2" opacity=".65"/><circle cx="32" cy="32" r="18" fill="none" stroke="hsl(' + accentHue + ' 85% 78%)" stroke-width="1" opacity=".45"/>',
+        '<path d="M-8 18 L18 -8 M0 42 L42 0 M22 72 L72 22 M46 72 L72 46" stroke="hsl(' + accentHue + ' 85% 78%)" stroke-width="5" opacity=".28"/>',
+        '<path d="M32 5 L38 23 L57 23 L42 35 L48 54 L32 43 L16 54 L22 35 L7 23 L26 23 Z" fill="hsl(' + accentHue + ' 85% 78%)" opacity=".22"/>',
+        '<circle cx="12" cy="12" r="4" fill="hsl(' + accentHue + ' 85% 78%)" opacity=".75"/><circle cx="52" cy="13" r="3" fill="hsl(' + accentHue + ' 85% 78%)" opacity=".65"/><circle cx="13" cy="51" r="3" fill="hsl(' + accentHue + ' 85% 78%)" opacity=".65"/><circle cx="53" cy="52" r="5" fill="hsl(' + accentHue + ' 85% 78%)" opacity=".75"/>',
+        '<path d="M8 8 H56 V56 H8 Z M16 16 H48 V48 H16 Z" fill="none" stroke="hsl(' + accentHue + ' 85% 78%)" stroke-width="2" opacity=".45"/>'
+    ][pattern];
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="100%" height="100%" aria-hidden="true"><rect width="64" height="64" rx="11" fill="hsl(' + hue + ' 55% 27%)"/>' + decorations + '<text x="32" y="44" text-anchor="middle" font-size="34" font-family="Arial, sans-serif" fill="white" stroke="rgba(0,0,0,.22)" stroke-width=".6">♞</text></svg>';
+}
+
+function setPlayerAvatar(selector, color, botProfile) {
+    const avatar = $(selector);
+    if (quickMatchMode && botProfile) {
+        avatar.html(getBotAvatarMarkup(botProfile));
+    } else {
+        avatar.text(color === 'w' ? '♙' : '♟');
+    }
+    avatar
+        .toggleClass('bg-zinc-100 text-zinc-900', color === 'w')
+        .toggleClass('bg-zinc-900 text-white', color === 'b');
+}
+
 function updatePlayerCards() {
     $('#quickUndoBtn, #undoBtn').toggleClass('hidden', quickMatchMode);
     $('#mobileQuickControls').toggleClass('grid-cols-5', quickMatchMode).toggleClass('grid-cols-6', !quickMatchMode);
@@ -873,14 +906,8 @@ function updatePlayerCards() {
         $('#bottomPlayerName').text(bottomIsUser ? 'Siz' : botDisplayName);
         $('#bottomPlayerElo').text(bottomIsUser ? '(1500)' : `(${elo})`);
 
-        $('#topAvatar')
-            .text(topColor === 'w' ? '♙' : '♟')
-            .toggleClass('bg-zinc-100 text-zinc-900', topColor === 'w')
-            .toggleClass('bg-zinc-900 text-white', topColor === 'b');
-        $('#bottomAvatar')
-            .text(bottomColor === 'w' ? '♙' : '♟')
-            .toggleClass('bg-zinc-100 text-zinc-900', bottomColor === 'w')
-            .toggleClass('bg-zinc-900 text-white', bottomColor === 'b');
+        setPlayerAvatar('#topAvatar', topColor, topIsUser ? null : quickMatchBot);
+        setPlayerAvatar('#bottomAvatar', bottomColor, bottomIsUser ? null : quickMatchBot);
     } else {
         const topColor = isFlipped ? 'w' : 'b';
         const bottomColor = isFlipped ? 'b' : 'w';
@@ -888,14 +915,8 @@ function updatePlayerCards() {
         $('#bottomPlayerName').text(isFlipped ? 'Oyuncu 2 (Siyah)' : 'Oyuncu 1 (Beyaz)');
         $('#topPlayerElo').text('');
         $('#bottomPlayerElo').text('');
-        $('#topAvatar')
-            .text(topColor === 'w' ? '♙' : '♟')
-            .toggleClass('bg-zinc-100 text-zinc-900', topColor === 'w')
-            .toggleClass('bg-zinc-900 text-white', topColor === 'b');
-        $('#bottomAvatar')
-            .text(bottomColor === 'w' ? '♙' : '♟')
-            .toggleClass('bg-zinc-100 text-zinc-900', bottomColor === 'w')
-            .toggleClass('bg-zinc-900 text-white', bottomColor === 'b');
+        setPlayerAvatar('#topAvatar', topColor, null);
+        setPlayerAvatar('#bottomAvatar', bottomColor, null);
     }
 
     const openingForWhite = detectOpening('w');
