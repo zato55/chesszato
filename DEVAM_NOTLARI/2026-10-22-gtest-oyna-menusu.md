@@ -142,3 +142,12 @@ Telefonda GTEST sayfasını açıp Oyna menüsünü, beş seçeneği ve mevcut o
 - Mobil hızlı kontrol satırı 6 sütundan 5 sütuna, masaüstü eylem düğmeleri 2 sütundan 3 sütuna geçiyor; kalan düğmeler eşit genişlikte yerleşiyor. Diğer oyun modlarında eski düğme sayısı ve sütun düzeni korunuyor.
 - `gtest/app.js` JavaScript sözdizimi ve kontrol mantığı doğrulanacak; telefon testi henüz yapılmadı.
 - Commit: `4d2b0da885f93d993215b0d646ed9daeffe2f3c3`.
+
+
+## Son düzenleme — Oyna menüsü sadeleştirildi (2026-10-25)
+- Yedek dalı: `yedek-2026-10-25-gtest-oyna-menu-yeni-oyun-kaldirma-oncesi`.
+- GTEST Oyna menüsünden `Yeni oyun` seçeneği kaldırıldı; bu düğmeye özel, artık kullanılmayan tıklama işleyicisi de `gtest/app.js` içinden temizlendi.
+- `Hızlı eşleştirme` seçeneğinin sağındaki `Sanal rakip` etiketi kaldırıldı. Açıklama metni `Rastgele sanal rakiple oyna` olarak korundu.
+- Yalnızca `gtest/index.html`, `gtest/app.js` ve bu devam notu güncellendi. Normal oyun dosyalarına dokunulmadı.
+- JS önbellek etiketi `20261025-play-menu-cleanup-v1` olarak güncellendi.
+- Statik kontrol ve telefon üzerinde görsel test sonucu bu notun sonraki güncellemesinde kaydedilecek.
