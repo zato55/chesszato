@@ -870,6 +870,81 @@ function setPlayerAvatar(selector, color, botProfile) {
         .toggleClass('bg-zinc-900 text-white', color === 'b');
 }
 
+let quickMatchFlowTimer = null;
+let quickMatchFlowToken = 0;
+
+function hideQuickMatchFlow() {
+    quickMatchFlowToken++;
+    if (quickMatchFlowTimer) {
+        clearTimeout(quickMatchFlowTimer);
+        quickMatchFlowTimer = null;
+    }
+    $('#quickMatchFlowModal').addClass('hidden');
+    $('#quickMatchSearchingView').removeClass('hidden').addClass('flex');
+    $('#quickMatchVersusView').addClass('hidden').removeClass('flex');
+}
+
+function beginQuickMatchFlow() {
+    const chooseBot = window.chooseZatoQuickMatchBot;
+    if (typeof chooseBot !== 'function') {
+        $('#mobilePlayMenuNotice').text('Bot listesi yüklenemedi. Sayfayı yenileyip tekrar dene.').removeClass('hidden');
+        return;
+    }
+
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+    quickMatchFlowToken++;
+    const token = quickMatchFlowToken;
+    if (quickMatchFlowTimer) clearTimeout(quickMatchFlowTimer);
+
+    quickMatchMode = true;
+    quickMatchBot = null;
+    vsBot = true;
+    userColorSelection = 'r';
+    isGameOver = true;
+    $('#gameOverModal, #botModal, #tempoModal, #settingsModal').addClass('hidden');
+    $('#quickMatchSearchingView').removeClass('hidden').addClass('flex');
+    $('#quickMatchVersusView').addClass('hidden').removeClass('flex');
+    $('#quickMatchFlowModal').removeClass('hidden');
+    $('#mobileModeText').text('Hızlı Eşleşme · Sanal Rakip');
+
+    quickMatchFlowTimer = setTimeout(() => {
+        if (token !== quickMatchFlowToken) return;
+        quickMatchBot = chooseBot();
+        $('#botElo').val(String(quickMatchBot.elo));
+        updateBotEloUI(quickMatchBot.elo);
+
+        const userIsWhite = Math.random() < 0.5;
+        $('#quickMatchUserAvatar').text(userIsWhite ? '♙' : '♟');
+        $('#quickMatchUserColor').text(userIsWhite ? 'Beyaz' : 'Siyah');
+        $('#quickMatchOpponentAvatar').html(getBotAvatarMarkup(quickMatchBot));
+        $('#quickMatchOpponentName').text(quickMatchBot.name);
+        $('#quickMatchOpponentElo').text(quickMatchBot.elo + ' Elo');
+        $('#quickMatchSearchingView').addClass('hidden').removeClass('flex');
+        $('#quickMatchVersusView').removeClass('hidden').addClass('flex');
+
+        quickMatchFlowTimer = setTimeout(() => {
+            if (token !== quickMatchFlowToken) return;
+            quickMatchFlowTimer = null;
+            $('#quickMatchFlowModal').addClass('hidden');
+            $('#quickMatchSearchingView').removeClass('hidden').addClass('flex');
+            $('#quickMatchVersusView').addClass('hidden').removeClass('flex');
+            resetGame();
+        }, 1450);
+    }, 1250);
+}
+
+$(document).on('click', '#cancelQuickMatchBtn', function() {
+    hideQuickMatchFlow();
+    quickMatchMode = false;
+    quickMatchBot = null;
+    isGameOver = false;
+    updateQuickMatchLockUI();
+    startTimer();
+});
+
 function isQuickMatchLocked() {
     return quickMatchMode && !isGameOver && !game.game_over();
 }
@@ -2378,23 +2453,9 @@ $(document).on('click', '#mobileMenuLocalBtn', function() {
 
 $(document).on('click', '#mobileMenuQuickMatchBtn', function() {
     if (blockNewMatchDuringQuickMatch()) return;
-
-    const chooseBot = window.chooseZatoQuickMatchBot;
-    if (typeof chooseBot !== 'function') {
-        $('#mobilePlayMenuNotice').text('Bot listesi yüklenemedi. Sayfayı yenileyip tekrar dene.').removeClass('hidden');
-        return;
-    }
-
-    quickMatchBot = chooseBot();
-    quickMatchMode = true;
-    vsBot = true;
-    userColorSelection = 'r';
-    $('#botElo').val(String(quickMatchBot.elo));
-    updateBotEloUI(quickMatchBot.elo);
-    $('#mobileModeText').text('Hızlı Eşleşme · Sanal Rakip');
     $('#botModal, #tempoModal, #settingsModal').addClass('hidden');
     closeMobilePlayMenu();
-    resetGame();
+    beginQuickMatchFlow();
 });
 
 $(document).on('click', '#mobileMenuTournamentsBtn', function() {
@@ -2603,6 +2664,10 @@ function resetGame() {
 
 $('#resetBtn, #modalResetBtn, #quickResetBtn').on('click', function(e) {
     e.preventDefault();
+    if (quickMatchMode && isGameOver && !isAnalysisMode) {
+        beginQuickMatchFlow();
+        return;
+    }
     if (blockNewMatchDuringQuickMatch()) return;
     resetGame();
 });
