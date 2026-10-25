@@ -20,3 +20,11 @@ GitHub dosyaları yeniden okunarak modal, stiller, arama başlatıcısı, yeni o
 
 ## Devam adımı
 GTEST sayfasında mobilde hızlı eşleşme başlat, arama ekranını ve VS ekranını gözle kontrol et; sonra bir maçı bitirip “Yeni Oyun” akışını dene. İptal butonunu hem ilk aramada hem oyun sonundan başlatılan aramada test et. Görsel sorun varsa yalnızca ilgili UI alanını düzelt.
+
+
+## 2026-10-25 düzeltme — yeni oyunda hamle girişi
+- Kullanıcı testi: oyun sonrasında Yeni Oyun ile yeni rakip bulunuyor ancak oyuncu beyazken tahta hamleleri algılamıyordu.
+- `gtest/app.js` içindeki tahta tıklama ve hamle işleyicilerinde `isEngineThinking` bayrağı insan hamlelerini de engelliyordu. Eski Stockfish aramasından kalan bayrak yeni maçta insan sırası için kilit oluşturabiliyordu.
+- Her iki yerdeki kontrol, yalnızca botun sırasıysa giriş engellenecek şekilde daraltıldı.
+- `gtest/index.html` JS cache sürümü `20261025-matchmaking-input-fix-v1` olarak güncellendi.
+- Kaynak kontrolü: iki eski `isBotTurn || isEngineThinking` koşulu kalmadı; iki hamle kontrolü yalnızca `isBotTurn` ile yapılıyor. Gerçek tarayıcı doğrulaması kullanıcıdan bekleniyor.
