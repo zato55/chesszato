@@ -197,8 +197,8 @@ Telefonda GTEST sayfasını açıp Oyna menüsünü, beş seçeneği ve mevcut o
 
 ## Hızlı maç sırasında diğer maç başlatma yolları kilitlendi (2026-10-25)
 - Yalnızca GTEST güncellendi; normal oyun dosyalarına dokunulmadı.
-- Aktif hızlı maç sürerken Stockfish/yerel oyun moduna geçiş, hızlı eşleştirme tekrarı, bot başlatma, tempo seçerek oyunu sıfırlama ve yeni oyun düğmeleri engellendi.
+- Aktif hızlı maç sürerken Stockfish/yerel oyun moduna geçiş, hızlı eşleştirme tekrarı, bot başlatma, tempo açılır menüsü ve hızlı tempo seçenekleri, renk seçimi, yeni oyun düğmeleri engellendi.
 - İlgili arayüz düğmeleri kilit durumunda devre dışı ve görsel olarak pasif gösteriliyor; JavaScript tıklama korumaları da eklendi.
 - Maç bittiğinde kilit kalkıyor ve yeni maç başlatılabiliyor.
-- GTEST uygulama JS önbellek etiketi `20261025-quickmatch-lock-v1` olarak yenilendi.
+- GTEST uygulama JS önbellek etiketi `20261025-quickmatch-lock-v2` olarak yenilendi.
 - Statik kontrol yapıldı; telefon üzerinde uçtan uca test henüz yapılmadı.
