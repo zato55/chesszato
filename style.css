@@ -860,9 +860,6 @@ aside.collapsed #logoToggleBtn {
         border-radius: 10px !important;
     }
 
-    body.analysis-mode main {
-        padding-bottom: calc(104px + env(safe-area-inset-bottom)) !important;
-    }
 }
 
 
@@ -1048,4 +1045,313 @@ aside.collapsed #logoToggleBtn {
     #preAnalysisSummary .summary-click-cell {
         font-size: 12px !important;
     }
+}
+
+
+
+/* GTEST mobil menü yenilemesi: daha geniş dokunma alanı, net seçili durum ve güvenli alt boşluk. */
+@media (max-width: 767px) {
+    #mobileTopBar {
+        min-height: 48px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
+    }
+
+    #mobileQuickLogin,
+    #mobileQuickRegister {
+        min-height: 36px;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    #mobileBottomNav {
+        min-height: 64px;
+        box-sizing: border-box;
+        padding-left: 8px;
+        padding-right: 8px;
+        padding-top: 6px;
+        padding-bottom: max(6px, env(safe-area-inset-bottom));
+        gap: 4px;
+        background: rgba(18, 18, 21, 0.98);
+        border-top: 1px solid #303036;
+        box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.28);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
+
+    #mobileBottomNav .mobile-nav-item {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+        min-width: 0;
+        min-height: 50px;
+        padding: 5px 2px 4px;
+        border: 1px solid transparent;
+        border-radius: 12px;
+        color: #a1a1aa;
+        background: transparent;
+        font-size: 10px;
+        font-weight: 650;
+        line-height: 1.15;
+        white-space: nowrap;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+        transition: color 140ms ease, background-color 140ms ease, border-color 140ms ease;
+    }
+
+    #mobileBottomNav .mobile-nav-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 24px;
+        font-size: 22px;
+        line-height: 1;
+        font-weight: 800;
+    }
+
+    #mobileBottomNav .mobile-nav-item.mobile-nav-active {
+        color: #ffffff;
+        background: rgba(37, 99, 235, 0.19);
+        border-color: rgba(59, 130, 246, 0.58);
+    }
+
+    #mobileBottomNav .mobile-nav-item.mobile-nav-active::before {
+        content: "";
+        position: absolute;
+        top: -1px;
+        left: 50%;
+        width: 22px;
+        height: 3px;
+        border-radius: 0 0 4px 4px;
+        background: #dc2626;
+        transform: translateX(-50%);
+    }
+
+    #mobileBottomNav .mobile-nav-item:focus-visible,
+    #mobileQuickLogin:focus-visible,
+    #mobileQuickRegister:focus-visible {
+        outline: 2px solid #60a5fa;
+        outline-offset: 2px;
+    }
+
+    body:not(.analysis-mode) main {
+        padding-bottom: calc(72px + env(safe-area-inset-bottom)) !important;
+    }
+}
+
+@media (max-width: 360px) {
+    #mobileTopBar {
+        padding-left: 9px;
+        padding-right: 9px;
+    }
+
+    #mobileTopBar > div:first-child {
+        gap: 6px;
+    }
+
+    #mobileTopBar > div:last-child {
+        gap: 5px;
+    }
+
+    #mobileQuickLogin,
+    #mobileQuickRegister {
+        padding-left: 8px;
+        padding-right: 8px;
+        font-size: 11px;
+    }
+
+    #mobileBottomNav .mobile-nav-item {
+        font-size: 9px;
+    }
+}
+
+
+/* GTEST: mobil Oyna menüsü; yeni oyun türleri kolayca eklenebilir. */
+@media (max-width: 767px) {
+    #mobilePlayMenu {
+        padding-bottom: calc(12px + env(safe-area-inset-bottom));
+        align-items: flex-end;
+    }
+
+    .mobile-play-menu-card {
+        max-height: min(86dvh, 680px);
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        animation: mobile-play-menu-in 160ms ease-out;
+    }
+
+    .mobile-play-option {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        width: 100%;
+        min-height: 60px;
+        padding: 10px 11px;
+        text-align: left;
+        border: 1px solid #303036;
+        border-radius: 12px;
+        background: #09090b;
+        color: #f4f4f5;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+        transition: border-color 140ms ease, background-color 140ms ease, transform 140ms ease;
+    }
+
+    .mobile-play-option:active {
+        transform: scale(0.99);
+        background: #18181b;
+    }
+
+    .mobile-play-option:focus-visible,
+    #mobilePlayMenuCloseBtn:focus-visible {
+        outline: 2px solid #60a5fa;
+        outline-offset: 2px;
+    }
+
+    .mobile-play-option-primary {
+        border-color: #2563eb;
+        background: linear-gradient(110deg, rgba(37, 99, 235, 0.24), #09090b 75%);
+    }
+
+    .mobile-play-option-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 38px;
+        width: 38px;
+        height: 38px;
+        border: 1px solid #3f3f46;
+        border-radius: 10px;
+        background: #18181b;
+        font-size: 20px;
+    }
+
+    .mobile-play-option-copy {
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+        gap: 3px;
+        min-width: 0;
+    }
+
+    .mobile-play-option-copy strong {
+        font-size: 14px;
+        font-weight: 800;
+        line-height: 1.2;
+    }
+
+    .mobile-play-option-copy small {
+        color: #a1a1aa;
+        font-size: 11px;
+        line-height: 1.25;
+    }
+
+    .mobile-play-option-arrow {
+        color: #a1a1aa;
+        font-size: 24px;
+        line-height: 1;
+    }
+
+    .mobile-play-option-tag {
+        padding: 4px 6px;
+        border: 1px solid #52525b;
+        border-radius: 6px;
+        color: #d4d4d8;
+        font-size: 9px;
+        font-weight: 800;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+}
+
+@keyframes mobile-play-menu-in {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mobile-play-menu-card { animation: none; }
+}
+
+
+/* GTEST: mobil alt menülerde Oyna menüsüyle ortak kart ve dokunma dili. */
+@media (max-width: 767px) {
+    #tempoModal,
+    #botModal,
+    #settingsModal {
+        align-items: flex-end;
+        justify-content: center;
+        padding: 0 12px calc(12px + env(safe-area-inset-bottom));
+    }
+
+    .mobile-menu-sheet {
+        width: 100%;
+        max-width: 520px;
+        max-height: min(86dvh, 720px);
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        border: 1px solid #3f3f46;
+        border-radius: 20px;
+        background: #121215;
+        box-shadow: 0 20px 55px rgba(0, 0, 0, 0.48);
+        animation: mobile-play-menu-in 160ms ease-out;
+    }
+
+    .mobile-menu-sheet > div:first-child {
+        border-color: #303036;
+        padding-bottom: 12px;
+    }
+
+    .mobile-menu-sheet .tempo-option-btn {
+        min-height: 54px;
+        padding: 10px 12px;
+        border-color: #303036;
+        border-radius: 12px;
+        background: #09090b;
+        gap: 10px;
+        text-align: left;
+    }
+
+    .mobile-menu-sheet .tempo-option-btn:active,
+    .mobile-menu-sheet .bot-level-btn:active,
+    .mobile-menu-sheet .side-choice-btn:active,
+    .mobile-menu-sheet .theme-option-btn:active,
+    .mobile-menu-sheet .piece-style-btn:active,
+    .mobile-menu-sheet .anim-speed-btn:active {
+        transform: scale(0.99);
+    }
+
+    .mobile-menu-sheet .bot-level-btn {
+        min-height: 46px;
+        border-color: #303036;
+        border-radius: 12px;
+        background: #09090b;
+    }
+
+    .mobile-menu-sheet .theme-option-btn,
+    .mobile-menu-sheet .piece-style-btn {
+        min-height: 46px;
+        border-color: #303036;
+        border-radius: 12px;
+        background: #09090b;
+    }
+
+    .mobile-menu-sheet .close-modal-btn:focus-visible,
+    .mobile-menu-sheet button:focus-visible,
+    .mobile-menu-sheet select:focus-visible,
+    .mobile-menu-sheet input:focus-visible {
+        outline: 2px solid #60a5fa;
+        outline-offset: 2px;
+    }
+
+    #settingsModal .mobile-menu-sheet {
+        padding: 16px;
+        gap: 16px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mobile-menu-sheet { animation: none; }
 }
