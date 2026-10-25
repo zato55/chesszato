@@ -36,3 +36,9 @@ GTEST sayfasında mobilde hızlı eşleşme başlat, arama ekranını ve VS ekra
 - Süre dolarsa oyun kilitlenir ve yalnızca “Başka Rakip Ara” / “Ana Ekran” seçenekli maç iptal modalı gösterilir.
 - Hızlı eşleşme akışı yeniden başlatılırken ve oyun sıfırlanırken sayaç temizlenir.
 - Yalnızca GTEST dosyaları değiştirildi; normal oyun dosyalarına ve Firebase/üyelik altyapısına dokunulmadı. Tarayıcıda gerçek zamanlama testi henüz yapılmadı.
+
+
+## 2026-10-26 — İlk hamle sayacı oyuncu kartına taşındı
+- Hızlı eşleşmenin 20 saniyelik ilk hamle sayacı, ekranın üstünde ayrı bir bildirim yerine aktif tarafın oyuncu kartındaki saat kutusunda gösterilir.
+- Geri sayım sırasında yalnızca o oyuncunun normal saat kutusu geçici olarak geri sayım kutusuyla yer değiştirir; sayaç durunca normal saat yeniden görünür.
+- Üst/alt kart seçimi tahtanın yönü ve beyaz/siyah tarafına göre yapılır. Yalnızca GTEST HTML/JS ve devam notu değiştirildi.
