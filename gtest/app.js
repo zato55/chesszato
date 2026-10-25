@@ -2082,7 +2082,14 @@ function exitAnalysisMode() {
 
     renderBoard();
     updateStatus();
-    if (!isGameOver && !game.game_over()) startTimer();
+
+    // Analizden çıkınca, satranç motoru terminal konum olarak tanımayan
+    // pes etme/süre dolması gibi bitişlerde de sonuç ekranını geri getir.
+    if (isGameOver || game.game_over()) {
+        $('#gameOverModal').removeClass('hidden');
+    } else {
+        startTimer();
+    }
 }
 
 function updateAnalysisNavigationButtons() {
