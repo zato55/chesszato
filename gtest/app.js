@@ -2321,6 +2321,11 @@ $(document).on('click', '#mobileMenuLocalBtn', function() {
 });
 
 $(document).on('click', '#mobileMenuQuickMatchBtn', function() {
+    if (quickMatchMode && !isGameOver && !game.game_over()) {
+        $('#mobilePlayMenuNotice').text('Maçın devam ediyor. Yeni rakip bulmak için önce maçı bitir.').removeClass('hidden');
+        return;
+    }
+
     const chooseBot = window.chooseZatoQuickMatchBot;
     if (typeof chooseBot !== 'function') {
         $('#mobilePlayMenuNotice').text('Bot listesi yüklenemedi. Sayfayı yenileyip tekrar dene.').removeClass('hidden');
