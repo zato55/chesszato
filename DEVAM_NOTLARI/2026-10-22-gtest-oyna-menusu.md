@@ -171,3 +171,11 @@ Telefonda GTEST sayfasını açıp Oyna menüsünü, beş seçeneği ve mevcut o
 - Normal ve GTEST HTML dosyalarında bot dosyası önbellek etiketi `20261025-bot-1000-v1` olarak güncellendi.
 - Bu profiller sanal rakiptir, gerçek kullanıcı hesabı değildir. Gerçek telefon testi henüz yapılmadı.
 - Bot dosyaları commitleri: kök `bots.js` `e0a8645dcacd1e7ab896f164742ac89691b8511e`; `gtest/bots.js` `ff16eba91c10fc020f225c5c8df1163471cb830e`.
+
+
+## Son düzenleme — 1.000 sanal rakibe kalıcı avatarlar (2026-10-25)
+- Yedek dalı: `yedek-2026-10-25-avatar-oncesi`.
+- Kök `app.js` ve `gtest/app.js` içinde, hızlı eşleşmede sanal rakibin kimliğinden deterministik SVG avatar üretiliyor. Renk ve desen profil kimliğine göre belirleniyor; aynı bot her maçta aynı avatarı gösteriyor.
+- Avatarlar harici resim dosyası veya ağ isteği kullanmıyor. Oyuncu kartı boyutu ve taş rengine bağlı mevcut sınıflar korunuyor; kullanıcı ve yerel iki oyunculu modda eski ♙/♟ simgeleri gösteriliyor.
+- Kök ve GTEST HTML dosyalarında JS cache etiketi `20261025-bot-avatars-v1` olarak yenilendi.
+- Statik doğrulama ve telefon üzerinde görsel test yapılmalı.
