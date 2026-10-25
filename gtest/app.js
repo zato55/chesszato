@@ -2271,11 +2271,6 @@ $('#mobilePlayMenu').on('click', function(e) {
     if (e.target === this) closeMobilePlayMenu();
 });
 
-$(document).on('click', '#mobileMenuNewGameBtn', function() {
-    closeMobilePlayMenu();
-    resetGame();
-});
-
 $(document).on('click', '#mobileMenuBotBtn', function() {
     closeMobilePlayMenu();
     quickMatchMode = false;
