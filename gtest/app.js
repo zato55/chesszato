@@ -1003,7 +1003,7 @@ window.surrenderGame = function(position) {
     const surrenderingColor = (position === 'top' && !isFlipped) || (position === 'bottom' && isFlipped) ? 'Beyaz' : 'Siyah';
     const winner = surrenderingColor === 'Beyaz' ? 'Siyah' : 'Beyaz';
 
-    if (confirm(`${surrenderingColor} oyuncusu oyunu terk etmek istiyor. Onaylıyor musunuz?`)) {
+    if (confirm('Pes etmek istediğine emin misin?')) {
         if (timerInterval) clearInterval(timerInterval);
         if (stockfishWorker) stockfishWorker.postMessage('stop');
         isEngineThinking = false;
