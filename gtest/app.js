@@ -900,9 +900,13 @@ function updateQuickMatchLockUI() {
 
 function updatePlayerCards() {
     updateQuickMatchLockUI();
-    // Her oyuncunun beraberlik/pes etme kontrolleri rakibin kartında görünür.
+    // Pes/beraberlik bayrakları yalnızca devam eden, hamle yapılmış canlı maçta görünür.
+    const showGameActions = clockStarted && !isGameOver && !game.game_over() && !isAnalysisMode;
+    $('button[onclick^="offerDraw"], button[onclick^="surrenderGame"]')
+        .toggleClass('hidden', !showGameActions);
+    // Her oyuncunun kartındaki kontroller rakibin kartında görünür.
     // Bot maçında yalnızca kullanıcının kontrolleri gösterilir (üst kartta).
-    $('#bottomPlayerCard .player-clock-action').toggleClass('hidden', vsBot);
+    $('#bottomPlayerCard .player-clock-action').toggleClass('hidden', !showGameActions || vsBot);
     $('#quickUndoBtn, #undoBtn').toggleClass('hidden', quickMatchMode);
     $('#mobileQuickControls').toggleClass('grid-cols-5', quickMatchMode).toggleClass('grid-cols-6', !quickMatchMode);
     $('#actionButtons').toggleClass('grid-cols-3', quickMatchMode).toggleClass('grid-cols-2', !quickMatchMode);
