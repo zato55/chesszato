@@ -27,3 +27,7 @@ Ufak yazım düzeltmeleri, küçük görsel ayarlar ve tek başına önem taşı
 Kullanıcı “DEVAM_NOTLARI klasörünü oku” veya benzeri dediğinde önce bu klasördeki kayıtları GitHub'dan oku. En yeni nottan mevcut durumu çıkar; tahminde bulunma ve eski notların daha yeni kayıtlarla geçersiz kılınmış olabileceğini kontrol et.
 
 Her önemli değişiklik ve doğrulama tamamlandığında, kullanıcı ayrıca hatırlatmadan uygun bir not ekle. GitHub'a yazılan notların sonucunu doğrulamadan tamamlandı deme. Kod değişiklikleri için geçerli izin ve güvenlik sınırlarına aynen uy; not tutma izni deploy, canlı veritabanı işlemi veya ilgisiz değişiklikler için izin sayılmaz.
+
+
+## 2026-10-25
+- [GTEST hızlı eşleşme arama ve VS ekranı](2026-10-25-gtest-hizli-eslesme-arama-vs-ekrani.md) — arama/VS UI demo akışı; gerçek çoklu ziyaretçi eşleştirmesi ve sunucu kilidi daha sonra.
