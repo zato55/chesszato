@@ -888,7 +888,12 @@ function stopQuickMatchFirstMoveTimer() {
         quickMatchFirstMoveInterval = null;
     }
     quickMatchFirstMoveDeadline = 0;
-    $('#quickMatchFirstMoveNotice').addClass('hidden');
+    $('#topFirstMoveClock, #bottomFirstMoveClock').addClass('hidden');
+    $('#topTimerDesktop, #bottomTimerDesktop').removeClass('hidden');
+}
+
+function getQuickMatchCardForColor(color) {
+    return (isFlipped ? color === 'w' : color === 'b') ? 'top' : 'bottom';
 }
 
 function hasMadeFirstMove(color) {
@@ -909,10 +914,14 @@ function startQuickMatchFirstMoveTimer() {
 
     if (quickMatchFirstMoveInterval) clearInterval(quickMatchFirstMoveInterval);
     quickMatchFirstMoveDeadline = Date.now() + 20000;
-    $('#quickMatchFirstMoveNotice').removeClass('hidden');
+    const card = getQuickMatchCardForColor(sideToMove);
+    const $countdown = $('#' + card + 'FirstMoveClock');
+    const $gameClock = $('#' + card + 'TimerDesktop');
+    $countdown.removeClass('hidden');
+    $gameClock.addClass('hidden');
     const updateCountdown = () => {
         const remaining = Math.max(0, Math.ceil((quickMatchFirstMoveDeadline - Date.now()) / 1000));
-        $('#quickMatchFirstMoveCountdown').text(remaining);
+        $countdown.text(remaining + 's');
         if (remaining <= 0) {
             stopQuickMatchFirstMoveTimer();
             isGameOver = true;
