@@ -210,3 +210,9 @@ Telefonda GTEST sayfasını açıp Oyna menüsünü, beş seçeneği ve mevcut o
 - Oyun zaten bittiyse pes etme/beraberlik penceresi açılmıyor.
 - JS önbellek etiketi `20261025-quickmatch-lock-v3` olarak yenilendi.
 - Statik kaynak kontrolü yapıldı; telefonda doğrulama bekleniyor.
+
+
+## Pes bayrağı onay metni (2026-10-25)
+- Yalnızca GTEST'te pes etme onayı `Pes etmek istediğine emin misin?` olarak sadeleştirildi.
+- GTEST `app.js` önbellek etiketi `20261025-quickmatch-lock-v4` yapıldı.
+- Statik kaynak kontrolü yapılacak; telefon testi henüz yapılmadı.
