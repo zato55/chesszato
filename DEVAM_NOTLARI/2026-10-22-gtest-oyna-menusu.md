@@ -231,3 +231,12 @@ Telefonda GTEST sayfasını açıp Oyna menüsünü, beş seçeneği ve mevcut o
 - Yalnızca `gtest/app.js`, `gtest/index.html` ve bu not güncellendi; kök normal oyun dosyalarına dokunulmadı.
 - JS cache etiketi: `20261025-analysis-return-v1`.
 - Kaynak/sözdizimi kontrolü yapılacak; telefonda uçtan uca test henüz yapılmadı.
+
+
+## Hızlı eşleşmede kaybedince rakip kullanıcı adını göster (2026-10-25)
+- Yedek dalı: `yedek-2026-10-25-gtest-rakip-ismi-oncesi`.
+- Yalnızca GTEST güncellendi; normal oyun dosyalarına dokunulmadı.
+- Şah matla kaybedilen hızlı eşleşmede sonuç açıklaması artık `quickMatchBot.name` üzerinden rakibin kartında gösterilen kullanıcı adını kullanır (ör. “KnightOwl seni şah mat etti.”).
+- Normal Stockfish modunda “Stockfish botu seni şah mat etti.” mesajı korunur.
+- GTEST JS cache etiketi `20261025-quickmatch-opponent-name-v1` olarak yenilendi.
+- Kaynak doğrulaması yapılacak; telefon testi henüz yapılmadı.
