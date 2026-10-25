@@ -133,3 +133,12 @@ Telefonda GTEST sayfasını açıp Oyna menüsünü, beş seçeneği ve mevcut o
 - `gtest/index.html`: hızlı eşleşme açıklaması/etiketi ve JS önbellek sürümü güncellendi.
 - Bu gecikme daha doğal bir tempo hissi verir; gerçek insan davranışını garanti etmez. Telefon üzerinde gerçek oyun testi henüz yapılmadı.
 - Commitler: `gtest/bots.js` `8fcb84aa6d5573b74a82885293e0d375f8532c46`; `gtest/app.js` `fff9e5868f905d103520a4f79eba7a047c8c41e2`; `gtest/index.html` `3d832517600aac29c558c5d46bfb447401bea506`.
+
+
+## Son düzenleme — hızlı eşleşmede hamle geri alma kapatıldı (2026-10-25)
+- Yedek dalı: `yedek-2026-10-25-gtest-hizli-eslesme-geri-al-oncesi`.
+- Yalnızca `gtest/app.js` değiştirildi; normal oyun dosyalarına dokunulmadı.
+- Hızlı eşleşme modunda mobil `quickUndoBtn` ve masaüstü `undoBtn` gizleniyor; geri alma olay işleyicisi de bu modda hamleyi geri almıyor.
+- Mobil hızlı kontrol satırı 6 sütundan 5 sütuna, masaüstü eylem düğmeleri 2 sütundan 3 sütuna geçiyor; kalan düğmeler eşit genişlikte yerleşiyor. Diğer oyun modlarında eski düğme sayısı ve sütun düzeni korunuyor.
+- `gtest/app.js` JavaScript sözdizimi ve kontrol mantığı doğrulanacak; telefon testi henüz yapılmadı.
+- Commit: `4d2b0da885f93d993215b0d646ed9daeffe2f3c3`.
