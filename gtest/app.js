@@ -1241,7 +1241,7 @@ function handleMove(from, to) {
 
     if (!isAnalysisMode && !isReviewing) {
         const isBotTurn = vsBot && game.turn() !== actualPlayerColor;
-        if (isBotTurn || isEngineThinking) return;
+        if (isBotTurn) return;
     }
 
     const activeGame = isAnalysisMode ? analysisGame : game;
@@ -1494,7 +1494,7 @@ $('#board').on('click', 'div[data-square]', function () {
 
     if (!isAnalysisMode && !isReviewing) {
         const isBotTurn = vsBot && game.turn() !== actualPlayerColor;
-        if (isBotTurn || isEngineThinking) return;
+        if (isBotTurn) return;
     }
 
     const square = $(this).attr('data-square');
