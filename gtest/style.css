@@ -770,6 +770,16 @@ aside.collapsed #logoToggleBtn {
         min-width: 0;
     }
 
+    .player-clock-actions {
+        display: contents !important;
+    }
+
+    .player-clock-action,
+    #topTimerDesktop,
+    #bottomTimerDesktop {
+        order: 3;
+    }
+
     #topPlayerCard .player-capture-row,
     #bottomPlayerCard .player-capture-row {
         order: 2;
