@@ -873,7 +873,6 @@ function setPlayerAvatar(selector, color, botProfile) {
 function updatePlayerCards() {
     // Her oyuncunun beraberlik/pes etme kontrolleri rakibin kartında görünür.
     // Bot maçında yalnızca kullanıcının kontrolleri gösterilir (üst kartta).
-    $('#topPlayerCard .player-clock-action').toggleClass('hidden', !vsBot && false);
     $('#bottomPlayerCard .player-clock-action').toggleClass('hidden', vsBot);
     $('#quickUndoBtn, #undoBtn').toggleClass('hidden', quickMatchMode);
     $('#mobileQuickControls').toggleClass('grid-cols-5', quickMatchMode).toggleClass('grid-cols-6', !quickMatchMode);
