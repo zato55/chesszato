@@ -1257,7 +1257,7 @@ function chooseQuickMatchMove(engineBestMove) {
     if (!atDepth.length) return engineBestMove;
 
     const personality = quickMatchBot.personality;
-    const bestScore = atDepth[0].score;
+    const bestScore = Math.max(...atDepth.map(candidate => candidate.score));
     const tolerance = Number(personality.tolerance) || 0;
     const eligible = atDepth.filter(candidate => candidate.score >= bestScore - tolerance);
     if (!eligible.length) return engineBestMove;
