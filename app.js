@@ -3,8 +3,13 @@ const analysisGame = new Chess();
 
 let selectedSquare = null;
 let pendingMove = null;
+let pendingConfirmedMove = null;
+let pendingMovePreviewGame = null;
+let moveConfirmationEnabled = false;
 let isFlipped = false;
 let vsBot = true;
+let quickMatchMode = false;
+let quickMatchBot = null;
 let timerInterval = null;
 
 let selectedTimeInSeconds = 300;
@@ -15,6 +20,8 @@ let clockStarted = false;
 let stockfishWorker = null;
 
 let isEngineThinking = false;
+let botSearchActive = false;
+let botCandidateMoves = {};
 let discardEngineBestMove = false;
 let isGameOver = false;
 let isReviewing = false;
@@ -128,10 +135,10 @@ function updateUndoButtons() {
 
 let playSoundsEnabled = true;
 let moveSoundVolume = 1;
-let naturalMoveBufferPromise = null;
-let userMoveBufferPromise = null;
 let kingCheckEffectEnabled = true;
 let moveAudioContext = null;
+let naturalMoveBufferPromise = null;
+let userMoveBufferPromise = null;
 let currentPieceSet = 'neo';
 
 const pieceThemeURLs = {
@@ -205,6 +212,23 @@ function initStockfish() {
             if (typeof message !== 'string') return;
             if (analysisSearchStopPending && !message.startsWith('bestmove')) return;
 
+            if (botSearchActive && message.startsWith('info ')) {
+                const candidateMatch = message.match(/\bdepth (\d+)\b.*\bmultipv (\d+)\b.*\bscore (cp|mate) (-?\d+)\b.*\bpv ([a-h][1-8][a-h][1-8][qrbn]?)/);
+                if (candidateMatch) {
+                    const depth = parseInt(candidateMatch[1], 10);
+                    const index = parseInt(candidateMatch[2], 10);
+                    const scoreType = candidateMatch[3];
+                    const rawScore = parseInt(candidateMatch[4], 10);
+                    const score = scoreType === 'mate'
+                        ? (rawScore > 0 ? 100000 - rawScore : -100000 - rawScore)
+                        : rawScore;
+                    const previous = botCandidateMoves[index];
+                    if (!previous || depth >= previous.depth) {
+                        botCandidateMoves[index] = { depth, index, score, move: candidateMatch[5] };
+                    }
+                }
+            }
+
             const depthMatch = message.match(/depth (\d+)/);
             const currentDepth = depthMatch ? parseInt(depthMatch[1]) : 0;
 
@@ -234,6 +258,8 @@ function initStockfish() {
 
             if (message.startsWith('bestmove')) {
                 if (discardEngineBestMove) {
+                    botSearchActive = false;
+                    botCandidateMoves = {};
                     discardEngineBestMove = false;
                     analysisSearchStopPending = false;
                     pendingEvalScore = null;
@@ -245,7 +271,8 @@ function initStockfish() {
                         activeEngineTurn = nextFen.split(' ')[1] || 'w';
                         stockfishWorker.postMessage('ucinewgame');
                         stockfishWorker.postMessage('position fen ' + nextFen);
-                        stockfishWorker.postMessage('go depth 6');
+                        stockfishWorker.postMessage('setoption name MultiPV value 1');
+        stockfishWorker.postMessage('go depth 6');
                         isEngineThinking = true;
                     } else if (nextFen && !isGameOver && vsBot && game.turn() !== actualPlayerColor) {
                         triggerStockfishMove();
@@ -253,6 +280,8 @@ function initStockfish() {
                     return;
                 }
                 if (analysisSearchStopPending) {
+                    botSearchActive = false;
+                    botCandidateMoves = {};
                     analysisSearchStopPending = false;
                     isEngineThinking = false;
                     pendingEvalScore = null;
@@ -263,7 +292,8 @@ function initStockfish() {
                         activeEngineTurn = nextFen.split(' ')[1] || 'w';
                         stockfishWorker.postMessage('ucinewgame');
                         stockfishWorker.postMessage('position fen ' + nextFen);
-                        stockfishWorker.postMessage('go depth 6');
+                        stockfishWorker.postMessage('setoption name MultiPV value 1');
+        stockfishWorker.postMessage('go depth 6');
                         isEngineThinking = true;
                     }
                     return;
@@ -292,7 +322,12 @@ function initStockfish() {
                     pendingEvalScore = null;
                 }
 
-                const moveStr = message.split(' ')[1];
+                let moveStr = message.split(' ')[1];
+                if (botSearchActive) {
+                    moveStr = chooseQuickMatchMove(moveStr);
+                    botSearchActive = false;
+                    botCandidateMoves = {};
+                }
 
                 if (isAnalysisMode && moveStr && moveStr !== '(none)') {
                     if (!analysisBestMoveByFen.has(activeAnalysisFen)) {
@@ -309,26 +344,39 @@ function initStockfish() {
 
                 const botTurnColor = actualPlayerColor === 'w' ? 'b' : 'w';
                 if (!isGameOver && moveStr && moveStr !== '(none)' && vsBot && game.turn() === botTurnColor && !game.game_over()) {
-                    const from = moveStr.substring(0, 2);
-                    const to = moveStr.substring(2, 4);
-                    const promotion = moveStr.length > 4 ? moveStr.substring(4, 5) : 'q';
+                    const applyBotMove = () => {
+                        const from = moveStr.substring(0, 2);
+                        const to = moveStr.substring(2, 4);
+                        const promotion = moveStr.length > 4 ? moveStr.substring(4, 5) : 'q';
 
-                    const moveObj = game.move({ from: from, to: to, promotion: promotion });
-                    if (moveObj) returnToLivePosition();
-                    if (moveObj && botTurnColor === 'w' && !clockStarted) {
-                        clockStarted = true;
-                        startTimer();
+                        const moveObj = game.move({ from: from, to: to, promotion: promotion });
+                        if (moveObj) returnToLivePosition();
+                        if (moveObj && botTurnColor === 'w' && !clockStarted) {
+                            clockStarted = true;
+                            startTimer();
+                        }
+
+                        if (timeIncrementInSeconds > 0) {
+                            if (botTurnColor === 'w') whiteTime += timeIncrementInSeconds;
+                            else blackTime += timeIncrementInSeconds;
+                            updateTimerDisplay();
+                        }
+
+                        playMoveSound(moveObj, Boolean(moveObj && moveObj.captured));
+                        renderBoard();
+                        updateStatus();
+                        isEngineThinking = false;
+                    };
+
+                    if (quickMatchMode) {
+                        // Sanal rakiplerin hamleleri anlık gelmesin; konuma göre değişen düşünme süresi.
+                        const complexPosition = game.in_check() || game.moves({ verbose: true }).some(move => move.captured);
+                        const thinkingDelay = (complexPosition ? 2200 : 1100) + Math.random() * (complexPosition ? 3800 : 2600);
+                        isEngineThinking = true;
+                        setTimeout(applyBotMove, thinkingDelay);
+                        return;
                     }
-
-                    if (timeIncrementInSeconds > 0) {
-                        if (botTurnColor === 'w') whiteTime += timeIncrementInSeconds;
-                        else blackTime += timeIncrementInSeconds;
-                        updateTimerDisplay();
-                    }
-
-                    playMoveSound(moveObj, Boolean(moveObj && moveObj.captured));
-                    renderBoard();
-                    updateStatus();
+                    applyBotMove();
                 }
             }
         };
@@ -461,6 +509,7 @@ function requestEngineAnalysis() {
     activeEngineTurn = targetFen.split(' ')[1] || 'w';
     stockfishWorker.postMessage('ucinewgame');
     stockfishWorker.postMessage('position fen ' + targetFen);
+    stockfishWorker.postMessage('setoption name MultiPV value 1');
     stockfishWorker.postMessage('go depth 6');
     isEngineThinking = true;
 }
@@ -682,13 +731,13 @@ function localizeOpeningName(name) {
         [/\bAttack\b/g, "Atağı"],
         [/\bGame\b/g, "Oyunu"],
         [/\bSystem\b/g, "Sistemi"],
+        [/\bClassical Variation\b/g, "Klasik Varyant"],
         [/\bVariation\b/g, "Varyantı"],
         [/\bLine\b/g, "Hattı"],
         [/\bAccepted\b/g, "Kabul Edildi"],
         [/\bDeclined\b/g, "Reddedildi"],
         [/\bExchange\b/g, "Değişim"],
         [/\bClassical\b/g, "Klasik"],
-        [/\bClassical Variation\b/g, "Klasik Varyant"],
         [/\bModern\b/g, "Modern"],
         [/\bIndian\b/g, "Hint"],
         [/\bSicilian\b/g, "Sicilya"],
@@ -705,7 +754,6 @@ function localizeOpeningName(name) {
         [/\bRussian\b/g, "Rus"],
         [/\bGerman\b/g, "Alman"],
         [/\bDanish\b/g, "Danimarka"],
-        [/\bDutch\b/g, "Hollanda"],
         [/\bQueen's\b/g, "Vezir"],
         [/\bKing's\b/g, "Şah"],
         [/\bPawn\b/g, "Piyonu"],
@@ -720,7 +768,6 @@ function localizeOpeningName(name) {
         [/\bSide\b/g, "Kanat"],
         [/\bFianchetto\b/g, "Fianchetto"],
         [/\bTarrasch\b/g, "Tarrasch"],
-        [/\bClassical\b/g, "Klasik"],
         [/\bSymmetrical\b/g, "Simetrik"],
         [/\bAccelerated\b/g, "Hızlandırılmış"],
         [/\bHyperaccelerated\b/g, "Aşırı Hızlandırılmış"],
@@ -791,6 +838,10 @@ function drawChessComCapturedPieces(capturedArr, isWhiteCaptures) {
 }
 
 function updatePlayerCards() {
+    $('#quickUndoBtn, #undoBtn').toggleClass('hidden', quickMatchMode);
+    $('#mobileQuickControls').toggleClass('grid-cols-5', quickMatchMode).toggleClass('grid-cols-6', !quickMatchMode);
+    $('#actionButtons').toggleClass('grid-cols-3', quickMatchMode).toggleClass('grid-cols-2', !quickMatchMode);
+
     const activeGame = getDisplayedGame();
     const history = activeGame.history({ verbose: true });
 
@@ -816,9 +867,10 @@ function updatePlayerCards() {
         const topIsUser = actualPlayerColor === topColor;
         const bottomIsUser = actualPlayerColor === bottomColor;
 
-        $('#topPlayerName').text(topIsUser ? 'Siz' : 'Stockfish Bot');
+        const botDisplayName = quickMatchMode && quickMatchBot ? quickMatchBot.name : 'Stockfish Bot';
+        $('#topPlayerName').text(topIsUser ? 'Siz' : botDisplayName);
         $('#topPlayerElo').text(topIsUser ? '(1500)' : `(${elo})`);
-        $('#bottomPlayerName').text(bottomIsUser ? 'Siz' : 'Stockfish Bot');
+        $('#bottomPlayerName').text(bottomIsUser ? 'Siz' : botDisplayName);
         $('#bottomPlayerElo').text(bottomIsUser ? '(1500)' : `(${elo})`);
 
         $('#topAvatar')
@@ -925,7 +977,7 @@ function renderBoard() {
     const $board = $('#board');
     $board.empty();
 
-    const activeGame = getDisplayedGame();
+    const activeGame = pendingMovePreviewGame || getDisplayedGame();
     const historyVerbose = activeGame.history({ verbose: true });
     let lastMove = null;
     if (isAnalysisMode) {
@@ -1021,7 +1073,8 @@ function renderBoard() {
             }
 
             // Sembolü hedef karenin pseudo-element katmanına bağla; taşın flex düzeni etkilenmez.
-            if (isAnalysisMode && lastMove && squareName === lastMove.to) {
+            if (isAnalysisMode && lastMove && squareName === lastMove.to &&
+                (analysisBranchStartIdx === null || analysisIdx <= analysisBranchStartIdx)) {
                 const category = moveCategoryMap[analysisIdx];
                 const badge = moveQualityBadges[category];
                 if (badge) {
@@ -1067,8 +1120,54 @@ function handleMove(from, to) {
         }
     }
 
-    executeMove(from, to, 'q');
+    requestMoveExecution(from, to, 'q');
 }
+
+function requestMoveExecution(from, to, promoPiece) {
+    const activeGame = isAnalysisMode ? analysisGame : game;
+    const legalMove = activeGame.moves({ square: from, verbose: true })
+        .find(move => move.to === to && (!move.promotion || move.promotion === promoPiece));
+
+    if (moveConfirmationEnabled && !isAnalysisMode && !isReviewing && legalMove) {
+        pendingConfirmedMove = { from, to, promotion: promoPiece };
+        pendingMovePreviewGame = new Chess(game.fen());
+        const previewMove = pendingMovePreviewGame.move({ from, to, promotion: promoPiece });
+        if (!previewMove) {
+            pendingConfirmedMove = null;
+            pendingMovePreviewGame = null;
+            return;
+        }
+        selectedSquare = null;
+        $('#moveConfirmationModal').removeClass('hidden');
+        renderBoard();
+        return;
+    }
+
+    executeMove(from, to, promoPiece);
+}
+
+$('#confirmMoveConfirmationBtn').on('click', function() {
+    if (!pendingConfirmedMove) return;
+    const move = pendingConfirmedMove;
+    pendingConfirmedMove = null;
+    pendingMovePreviewGame = null;
+    $('#moveConfirmationModal').addClass('hidden');
+    executeMove(move.from, move.to, move.promotion);
+});
+
+$('#cancelMoveConfirmationBtn').on('click', function() {
+    const from = pendingConfirmedMove ? pendingConfirmedMove.from : null;
+    pendingConfirmedMove = null;
+    pendingMovePreviewGame = null;
+    $('#moveConfirmationModal').addClass('hidden');
+    selectedSquare = from;
+    renderBoard();
+});
+
+$('#moveConfirmationModal').on('click', function(e) {
+    if (e.target !== this) return;
+    $('#cancelMoveConfirmationBtn').trigger('click');
+});
 
 function executeMove(from, to, promoPiece) {
     if (!isAnalysisMode && liveReviewPly !== null) return;
@@ -1100,6 +1199,11 @@ function executeMove(from, to, promoPiece) {
             }
             analysisMoveHistory.push(moveObj);
             analysisIdx = analysisMoveHistory.length - 1;
+
+            // Yeni varyant konumuna geçildi: önceki konumun oku bu arada görünmesin.
+            // requestEngineAnalysis aynı FEN için kayıtlı oku varsa tekrar gösterecek.
+            currentBestMove = null;
+            clearArrow();
         }
 
         if (!vsBot && autoFlipPvP && !isReviewing && !isAnalysisMode) {
@@ -1154,10 +1258,51 @@ $('.promo-choice').on('click', function() {
     const chosenPiece = $(this).attr('data-piece');
     $('#promotionModal').addClass('hidden');
     if (pendingMove) {
-        executeMove(pendingMove.from, pendingMove.to, chosenPiece);
+        requestMoveExecution(pendingMove.from, pendingMove.to, chosenPiece);
         pendingMove = null;
     }
 });
+
+function chooseQuickMatchMove(engineBestMove) {
+    if (!quickMatchMode || !quickMatchBot || !quickMatchBot.personality) return engineBestMove;
+
+    const candidates = Object.values(botCandidateMoves);
+    if (!candidates.length) return engineBestMove;
+    const deepest = Math.max(...candidates.map(candidate => candidate.depth));
+    const atDepth = candidates
+        .filter(candidate => candidate.depth === deepest)
+        .sort((a, b) => a.index - b.index);
+    if (!atDepth.length) return engineBestMove;
+
+    const personality = quickMatchBot.personality;
+    const bestScore = Math.max(...atDepth.map(candidate => candidate.score));
+    const tolerance = Number(personality.tolerance) || 0;
+    const eligible = atDepth.filter(candidate => candidate.score >= bestScore - tolerance);
+    if (!eligible.length) return engineBestMove;
+
+    const weights = Array.isArray(personality.weights) ? personality.weights : [1, 0, 0];
+    const weighted = eligible.map(candidate => ({
+        ...candidate,
+        weight: Math.max(0, Number(weights[candidate.index - 1]) || 0)
+    })).filter(candidate => candidate.weight > 0);
+    if (!weighted.length) return eligible[0].move || engineBestMove;
+
+    const total = weighted.reduce((sum, candidate) => sum + candidate.weight, 0);
+    let roll = Math.random() * total;
+    for (const candidate of weighted) {
+        roll -= candidate.weight;
+        if (roll < 0) {
+            const move = candidate.move;
+            const from = move.slice(0, 2);
+            const to = move.slice(2, 4);
+            const promotion = move.length > 4 ? move.slice(4, 5) : 'q';
+            const testGame = new Chess(game.fen());
+            if (testGame.move({ from, to, promotion })) return move;
+            return engineBestMove;
+        }
+    }
+    return engineBestMove;
+}
 
 function triggerStockfishMove() {
     if (!stockfishWorker || isGameOver || isReviewing || isAnalysisMode) return;
@@ -1193,13 +1338,17 @@ function triggerStockfishMove() {
     };
     const skillLevel = skillLevelByElo[elo] ?? 10;
 
+    botSearchActive = quickMatchMode && Boolean(quickMatchBot && quickMatchBot.personality);
+    botCandidateMoves = {};
     stockfishWorker.postMessage('stop');
     stockfishWorker.postMessage('setoption name Skill Level value ' + skillLevel);
+    stockfishWorker.postMessage('setoption name MultiPV value ' + (botSearchActive ? 3 : 1));
     stockfishWorker.postMessage('position fen ' + fen);
     stockfishWorker.postMessage('go depth ' + depth);
 }
 
 $('#board').on('click', 'div[data-square]', function () {
+    if (pendingConfirmedMove) return;
     if (!isAnalysisMode && liveReviewPly !== null) return;
     if (isGameOver && !isReviewing && !isAnalysisMode) return;
 
@@ -1265,7 +1414,7 @@ $('.side-choice-btn').on('click', function() {
     $(this).addClass('bg-blue-600 text-white font-bold').removeClass('text-zinc-400');
     
     userColorSelection = $(this).attr('data-color');
-    resetGame();
+    if ($('#botModal').hasClass('hidden')) resetGame();
 });
 
 function startTimer() {
@@ -1696,7 +1845,12 @@ function openPreAnalysisSummary() {
 
                 let catKey = 'good';
 
-                if (move.captured && lossCp <= 10 && beforeForMover <= -100 && afterForMover >= 150) {
+                // "Kaçan kazanç" ayrı bir kategoridir; aynı hamleyi hata/blunder
+                // sayaçlarına da eklemeyerek özet tablosundaki sayıları çakıştırmayız.
+                if (beforeForMover >= 250 && afterForMover < 80) {
+                    player.missed.push(i);
+                    catKey = 'missed';
+                } else if (move.captured && lossCp <= 10 && beforeForMover <= -100 && afterForMover >= 150) {
                     player.brilliant.push(i);
                     catKey = 'brilliant';
                 } else if (lossCp <= 12) {
@@ -1714,11 +1868,6 @@ function openPreAnalysisSummary() {
                 } else {
                     player.blunders.push(i);
                     catKey = 'blunders';
-                }
-
-                if (beforeForMover >= 250 && afterForMover < 80) {
-                    player.missed.push(i);
-                    catKey = 'missed';
                 }
 
                 moveCategoryMap[i] = catKey;
@@ -1958,6 +2107,8 @@ function playBestMove() {
 }
 
 $('#modePvP, #mModePvP').on('click', function() {
+    quickMatchMode = false;
+    quickMatchBot = null;
     vsBot = false;
     $('#botEloWrapper, #mBotLevelWrapper').addClass('hidden');
     $('#modePvP, #mModePvP').addClass('bg-blue-600 text-white').removeClass('text-zinc-400');
@@ -1968,6 +2119,8 @@ $('#modePvP, #mModePvP').on('click', function() {
 });
 
 $('#modeBot, #mModeBot').on('click', function() {
+    quickMatchMode = false;
+    quickMatchBot = null;
     vsBot = true;
     $('#botEloWrapper, #mBotLevelWrapper').removeClass('hidden');
     $('#modeBot, #mModeBot').addClass('bg-blue-600 text-white').removeClass('text-zinc-400');
@@ -2036,6 +2189,11 @@ $('#soundVolume').on('input change', function() {
     localStorage.setItem('zato_sound_volume', $(this).val());
 });
 
+$('#toggleMoveConfirmation').on('change', function() {
+    moveConfirmationEnabled = $(this).is(':checked');
+    localStorage.setItem('zato_move_confirmation', moveConfirmationEnabled);
+});
+
 $('#toggleKingCheckEffect').on('change', function() {
     kingCheckEffectEnabled = $(this).is(':checked');
     localStorage.setItem('zato_king_check', kingCheckEffectEnabled);
@@ -2069,6 +2227,9 @@ function loadSavedSettings() {
     $('#soundVolume').val(savedSoundVolume);
     $('#soundVolumeValue').text(savedSoundVolume + '%');
 
+    moveConfirmationEnabled = localStorage.getItem('zato_move_confirmation') === 'true';
+    $('#toggleMoveConfirmation').prop('checked', moveConfirmationEnabled);
+
     if (localStorage.getItem('zato_king_check') !== null) {
         kingCheckEffectEnabled = localStorage.getItem('zato_king_check') === 'true';
         $('#toggleKingCheckEffect').prop('checked', kingCheckEffectEnabled);
@@ -2078,24 +2239,95 @@ function loadSavedSettings() {
 function setMobileNavActive(activeBtnId) {
     const btns = ['#mobileNavPlayBtn', '#mobileNavBotBtn', '#mobileNavTempoBtn', '#mobileNavSettingsBtn'];
     btns.forEach(id => {
-        const $btn =$(id);
-        if (id === activeBtnId) {
-            $btn.removeClass('text-zinc-400 font-medium').addClass('text-blue-500 font-bold');
+        const $btn = $(id);
+        const isActive = id === activeBtnId;
+        $btn.toggleClass('mobile-nav-active', isActive);
+        if (isActive) {
+            $btn.attr('aria-current', 'page');
         } else {
-            $btn.removeClass('text-blue-500 font-bold').addClass('text-zinc-400 font-medium');
+            $btn.removeAttr('aria-current');
         }
     });
+}
+
+function closeMobilePlayMenu() {
+    $('#mobilePlayMenu').addClass('hidden');
+    $('#mobilePlayMenuNotice').addClass('hidden').text('');
+    setMobileNavActive(null);
 }
 
 $(document).on('click', '#mobileNavPlayBtn', function(e) {
     e.preventDefault();
     setMobileNavActive('#mobileNavPlayBtn');
     $('#tempoModal, #botModal, #settingsModal').addClass('hidden');
+    $('#mobilePlayMenu').removeClass('hidden');
+});
+
+$(document).on('click', '#mobilePlayMenuCloseBtn', function() {
+    closeMobilePlayMenu();
+});
+
+$('#mobilePlayMenu').on('click', function(e) {
+    if (e.target === this) closeMobilePlayMenu();
+});
+
+$(document).on('click', '#mobileMenuBotBtn', function() {
+    closeMobilePlayMenu();
+    quickMatchMode = false;
+    quickMatchBot = null;
+    vsBot = true;
+    $('#botEloWrapper, #mBotLevelWrapper').removeClass('hidden');
+    $('#modeBot, #mModeBot').addClass('bg-blue-600 text-white').removeClass('text-zinc-400');
+    $('#modePvP, #mModePvP').removeClass('bg-blue-600 text-white').addClass('text-zinc-400');
+    $('#mobileModeText').text('Stockfish');
+    updatePlayerCards();
+    $('#tempoModal, #settingsModal').addClass('hidden');
+    setMobileNavActive('#mobileNavBotBtn');
+    $('#botModal').removeClass('hidden');
+});
+
+$(document).on('click', '#mobileMenuLocalBtn', function() {
+    closeMobilePlayMenu();
+    quickMatchMode = false;
+    quickMatchBot = null;
+    vsBot = false;
+    $('#botEloWrapper, #mBotLevelWrapper').addClass('hidden');
+    $('#modePvP, #mModePvP').addClass('bg-blue-600 text-white').removeClass('text-zinc-400');
+    $('#modeBot, #mModeBot').removeClass('bg-blue-600 text-white').addClass('text-zinc-400');
+    $('#mobileModeText').text('2 Kişilik');
+    updatePlayerCards();
     resetGame();
+});
+
+$(document).on('click', '#mobileMenuQuickMatchBtn', function() {
+    const chooseBot = window.chooseZatoQuickMatchBot;
+    if (typeof chooseBot !== 'function') {
+        $('#mobilePlayMenuNotice').text('Bot listesi yüklenemedi. Sayfayı yenileyip tekrar dene.').removeClass('hidden');
+        return;
+    }
+
+    quickMatchBot = chooseBot();
+    quickMatchMode = true;
+    vsBot = true;
+    userColorSelection = 'r';
+    $('#botElo').val(String(quickMatchBot.elo));
+    updateBotEloUI(quickMatchBot.elo);
+    $('#mobileModeText').text('Hızlı Eşleşme · Sanal Rakip');
+    $('#botModal, #tempoModal, #settingsModal').addClass('hidden');
+    closeMobilePlayMenu();
+    resetGame();
+});
+
+$(document).on('click', '#mobileMenuTournamentsBtn', function() {
+    $('#mobilePlayMenuNotice').text('Turnuvalar bölümü henüz kullanıma açık değil.').removeClass('hidden');
 });
 
 $(document).on('click', '#mobileNavBotBtn, #mobileBotModalBtn', function(e) {
     e.preventDefault();
+    closeMobilePlayMenu();
+    quickMatchMode = false;
+    quickMatchBot = null;
+    $('#mobileModeText').text('Stockfish');
     setMobileNavActive('#mobileNavBotBtn');
     $('#tempoModal, #settingsModal').addClass('hidden');
     $('#botModal').removeClass('hidden');
@@ -2103,6 +2335,7 @@ $(document).on('click', '#mobileNavBotBtn, #mobileBotModalBtn', function(e) {
 
 $(document).on('click', '#mobileNavTempoBtn, #mobileTempoModalBtn', function(e) {
     e.preventDefault();
+    closeMobilePlayMenu();
     setMobileNavActive('#mobileNavTempoBtn');
     $('#botModal, #settingsModal').addClass('hidden');
     $('#tempoModal').removeClass('hidden');
@@ -2110,21 +2343,26 @@ $(document).on('click', '#mobileNavTempoBtn, #mobileTempoModalBtn', function(e) 
 
 $(document).on('click', '#mobileNavSettingsBtn, #openSettingsBtn, #mobileSettingsModalBtn', function(e) {
     e.preventDefault();
+    closeMobilePlayMenu();
     setMobileNavActive('#mobileNavSettingsBtn');
     $('#tempoModal, #botModal').addClass('hidden');
     $('#settingsModal').removeClass('hidden');
+
+    // Ayarlar her açıldığında en başa dön; üstteki hamle onayı seçeneği görünür kalsın.
+    $('#settingsModal .mobile-menu-sheet').scrollTop(0);
 });
 
 $(document).on('click', '.close-modal-btn', function(e) {
     e.preventDefault();
+    closeMobilePlayMenu();
     $('#tempoModal, #botModal, #settingsModal').addClass('hidden');
-    setMobileNavActive('#mobileNavPlayBtn');
+    setMobileNavActive(null);
 });
 
 $('#tempoModal, #botModal, #settingsModal').on('click', function(e) {
     if (e.target === this) {
         $(this).addClass('hidden');
-        setMobileNavActive('#mobileNavPlayBtn');
+        setMobileNavActive(null);
     }
 });
 
@@ -2133,7 +2371,7 @@ $('.tempo-option-btn').on('click', function() {
     parseTimeControl(timeVal);
     syncTempoSelection(timeVal);
     $('#tempoModal').addClass('hidden');
-    setMobileNavActive('#mobileNavPlayBtn');
+    setMobileNavActive(null);
     resetGame();
 });
 
@@ -2141,8 +2379,16 @@ $('.bot-level-btn').on('click', function() {
     const eloVal = $(this).attr('data-elo');$('#botElo').val(eloVal);
     updateBotEloUI(eloVal);
     updatePlayerCards();
+    if ($('#botModal').hasClass('hidden')) {
+        $('#botModal').addClass('hidden');
+        setMobileNavActive(null);
+    }
+});
+
+$(document).on('click', '#mobileBotStartBtn', function() {
     $('#botModal').addClass('hidden');
-    setMobileNavActive('#mobileNavPlayBtn');
+    setMobileNavActive(null);
+    resetGame();
 });
 
 $('#liveNavStart').on('click', () => showLiveReviewPosition(0));
@@ -2169,7 +2415,7 @@ $('#quickFlipBtn, #flipBtn').on('click', function (e) {
 });
 
 $('#quickUndoBtn, #undoBtn').on('click', function () {
-    if (isAnalysisMode) return;
+    if (isAnalysisMode || quickMatchMode) return;
     returnToLivePosition();
     if (isGameOver && !isReviewing) return;
     if (stockfishWorker && isEngineThinking) {
@@ -2217,6 +2463,9 @@ function resetGame() {
     analysisIdx = -1;
     isAnalysisMode = false;
     pendingMove = null;
+    pendingConfirmedMove = null;
+    pendingMovePreviewGame = null;
+    $('#moveConfirmationModal').addClass('hidden');
     isGameOver = false;
     isReviewing = false;
     queuedAnalysisFen = null;
