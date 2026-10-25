@@ -123,3 +123,13 @@ Telefonda GTEST sayfasını açıp Oyna menüsünü, beş seçeneği ve mevcut o
 - `gtest/index.html`: yeni JS sürümü için önbellek etiketi `20261025-bot-personalities-v2` yapıldı.
 - Bu, gerçek hamle seçiminde kişilik farklılığı için ilk sürümdür; her botun bütünüyle ayrı açılış repertuvarı veya derin bir stratejik modeli olduğu anlamına gelmez. Çoklu aday desteği/performans ve gerçek oyun davranışı telefonda test edilmelidir.
 - Commitler: `gtest/bots.js` `5859a1103ef99416f567e3d8c0da49ec07caf950`; `gtest/app.js` `922fc622824b37fd5e8f313a2798a5057807ce6d` ve sağlamlaştırma `3f5fdc06faca37d295db28c7b168fcaf31d6074b` ve analizde MultiPV sıfırlama düzeltmesi `5c37cdee70b26ec3914296868ccc7cb74042557c`; `gtest/index.html` `f1476b7e438e35d8f5f925f632d53045b267890f`.
+
+
+## Son düzenleme — hızlı eşleşme sanal rakiplerinin kullanıcı adları ve düşünme süresi (2026-10-25)
+- Yedek dalı: `yedek-2026-10-25-gtest-insansi-rakip-duzenleme-oncesi`.
+- Yalnızca GTEST dosyaları değiştirildi; normal oyun dosyalarına dokunulmadı.
+- `gtest/bots.js`: 30 profilin görünen adları uluslararası/çevrimiçi satranç kullanıcı adı tarzında takma adlarla değiştirildi; profil kimlikleri ve Elo aralıkları korundu.
+- `gtest/app.js`: hızlı eşleşme oyuncu kartlarında adın yanındaki “· Bot” kaldırıldı. Hızlı eşleşme modu “Sanal Rakip” olarak açıkça adlandırılıyor; sanal rakip etiketi menüde de bulunuyor. Hızlı eşleşme hamlelerine konuma bağlı rastgele düşünme gecikmesi eklendi (yaklaşık 1,1–3,7 sn; şah tehdidi/taş alma olasılığı bulunan pozisyonlarda yaklaşık 2,2–6 sn). Normal Stockfish modu bu gecikmeden etkilenmiyor.
+- `gtest/index.html`: hızlı eşleşme açıklaması/etiketi ve JS önbellek sürümü güncellendi.
+- Bu gecikme daha doğal bir tempo hissi verir; gerçek insan davranışını garanti etmez. Telefon üzerinde gerçek oyun testi henüz yapılmadı.
+- Commitler: `gtest/bots.js` `8fcb84aa6d5573b74a82885293e0d375f8532c46`; `gtest/app.js` `fff9e5868f905d103520a4f79eba7a047c8c41e2`; `gtest/index.html` `3d832517600aac29c558c5d46bfb447401bea506`.
