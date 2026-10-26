@@ -2532,10 +2532,14 @@ $(document).on('click', '#mobileNavPlayBtn', function(e) {
 
 $(document).on('click', '#mobilePlayMenuCloseBtn', function() {
     closeMobilePlayMenu();
+    mtestRestoreHomeAfterModal();
 });
 
 $('#mobilePlayMenu').on('click', function(e) {
-    if (e.target === this) closeMobilePlayMenu();
+    if (e.target === this) {
+        closeMobilePlayMenu();
+        mtestRestoreHomeAfterModal();
+    }
 });
 
 $(document).on('click', '#mobileMenuBotBtn', function() {
@@ -2556,6 +2560,8 @@ $(document).on('click', '#mobileMenuBotBtn', function() {
 
 $(document).on('click', '#mobileMenuLocalBtn', function() {
     if (blockNewMatchDuringQuickMatch()) return;
+    window.mtestReturnHomeAfterModal = false;
+    $('#mtestHomeScreen').addClass('mtest-home-hidden').removeClass('mtest-home-modal-backdrop');
     closeMobilePlayMenu();
     quickMatchMode = false;
     quickMatchBot = null;
