@@ -1495,7 +1495,8 @@ aside.collapsed #logoToggleBtn {
 /* MTEST: menü açıldığında yeni ana ekran bulanık arka plan olarak korunur. */
 .mtest-home.mtest-home-modal-backdrop {
     z-index: 40 !important;
-    pointer-events: none;
+    /* Menü kapanınca ana sayfa tıklanabilir kalsın; açık menü kendi üst katmanında. */
+    pointer-events: auto;
 }
 
 /* MTEST: oyun içi alt menüyü ana sayfanın ince, sade gezinme çizgisine yaklaştır. */
