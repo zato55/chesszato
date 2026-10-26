@@ -3042,10 +3042,12 @@ $('#tempoModal, #botModal, #settingsModal').on('click', function (e) {
                 square.dataset.col = String(col);
                 square.setAttribute('aria-label', String.fromCharCode(97 + col) + (8 - row) + (piece ? ' ' + symbols[piece] : ' boş'));
                 if (piece) {
-                    const glyph = document.createElement('span');
-                    glyph.className = piece === piece.toUpperCase() ? 'is-white-piece' : 'is-black-piece';
-                    glyph.textContent = symbols[piece];
-                    square.appendChild(glyph);
+                    const image = document.createElement('img');
+                    image.className = 'mtest-freeboard-piece';
+                    image.alt = symbols[piece];
+                    image.draggable = false;
+                    image.src = getPieceSVG(piece);
+                    square.appendChild(image);
                 }
                 if (row === 7) {
                     const file = document.createElement('small');
