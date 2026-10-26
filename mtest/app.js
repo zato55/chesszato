@@ -2640,6 +2640,9 @@ $('.bot-level-btn').on('click', function() {
 
 $(document).on('click', '#mobileBotStartBtn', function() {
     if (blockNewMatchDuringQuickMatch()) return;
+    // Oyuncu başlatmayı onayladı; artık ana sayfaya geri dönüş değil, oyun ekranı gösterilmeli.
+    window.mtestReturnHomeAfterModal = false;
+    $('#mtestHomeScreen').addClass('mtest-home-hidden').removeClass('mtest-home-modal-backdrop');
     $('#botModal').addClass('hidden');
     setMobileNavActive(null);
     resetGame();
