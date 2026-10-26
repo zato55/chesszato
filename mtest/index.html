@@ -14,7 +14,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
     
     <!-- Özel CSS -->
-    <link rel="stylesheet" href="style.css?v=20261026-mtest-live-quotes-v1">
+    <link rel="stylesheet" href="style.css?v=20261026-mtest-fourth-options-v1">
 </head>
 
 <body class="bg-[#09090b] text-zinc-100 font-sans antialiased h-screen h-[100dvh] overflow-hidden flex flex-col md:flex-row select-none">
@@ -34,11 +34,13 @@
           <button class="mtest-mode-card" type="button" onclick="window.mtestReturnHomeAfterModal=true; document.getElementById('mtestHomeScreen').classList.remove('mtest-home-hidden'); document.getElementById('mtestHomeScreen').classList.add('mtest-home-modal-backdrop'); document.getElementById('mobileMenuBotBtn').click();"><span class="mtest-mode-icon">♟</span><strong>Bot ile Oyna</strong><small>Zorluk seviyeni seç ve kendini geliştir.</small><b>›</b></button>
           <button class="mtest-mode-card" type="button" onclick="window.mtestReturnHomeAfterModal=true; document.getElementById('mtestHomeScreen').classList.remove('mtest-home-hidden'); document.getElementById('mtestHomeScreen').classList.add('mtest-home-modal-backdrop'); document.getElementById('quickMatchTempoSelect').value=window.selectedQuickMatchTempo || '300'; document.getElementById('quickMatchSetupModal').classList.remove('hidden');"><span class="mtest-mode-icon">◎</span><strong>Hızlı Eşleşme</strong><small>Rakibini bul, hemen oyna.</small><b>›</b></button>
           <button class="mtest-mode-card" type="button" onclick="document.getElementById('mtestHomeScreen').classList.add('mtest-home-hidden'); document.getElementById('mobileMenuLocalBtn').click();"><span class="mtest-mode-icon">♙♟</span><strong>Arkadaşınla Oyna</strong><small>Aynı cihazda karşılaş.</small><b>›</b></button>
+          <button class="mtest-mode-card" type="button" onclick="window.mtestReturnHomeAfterModal=true; document.getElementById('mtestHomeScreen').classList.remove('mtest-home-hidden'); document.getElementById('mtestHomeScreen').classList.add('mtest-home-modal-backdrop'); document.getElementById('mobileNavTempoBtn').click();"><span class="mtest-mode-icon">◷</span><strong>Süre Seçimi</strong><small>Oyun temposunu belirle.</small><b>›</b></button>
         </div></section>
         <section class="mtest-section mtest-tools-section"><div class="mtest-section-heading"><h2>DİĞER SEÇENEKLER</h2><span></span></div><div class="mtest-tool-grid">
           <button id="mtestAnalysisBtn" class="mtest-tool-card" type="button"><span>⌕</span><strong>Analiz</strong><small>Oyununu incele.</small></button>
           <button id="mtestTournamentsBtn" class="mtest-tool-card" type="button"><span>♜</span><strong>Turnuvalar</strong><small>Yeni hedefler keşfet.</small></button>
           <button id="mtestSettingsBtn" class="mtest-tool-card" type="button" onclick="window.mtestReturnHomeAfterModal=true; document.getElementById('mtestHomeScreen').classList.remove('mtest-home-hidden'); document.getElementById('mtestHomeScreen').classList.add('mtest-home-modal-backdrop'); document.getElementById('mobileNavSettingsBtn').click();"><span>⚙</span><strong>Ayarlar</strong><small>Oyunu kişiselleştir.</small></button>
+          <button id="mtestPuzzlesBtn" class="mtest-tool-card" type="button" onclick="$('#mtestHomeNotice').text('Satranç bulmacaları bölümü hazırlanıyor.').removeClass('hidden');"><span>♞</span><strong>Bulmacalar</strong><small>Taktiklerini geliştir.</small></button>
         </div></section>
         <section id="mtestQuoteStage" class="mtest-quote-stage" aria-label="Satranç ustalarından günün sözü" aria-live="polite">
           <div class="mtest-quote-chess-mark" aria-hidden="true">♞</div>
