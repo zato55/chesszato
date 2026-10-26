@@ -91,7 +91,7 @@ header p{font-size:11px}
     ['R','N','B','Q','K','B','N','R']
   ];
   let position = initial.map(row => row.slice());
-  let selected = 'Q';
+  let selected = null;
 
   function pieceUrl(piece) {
     const color = piece === piece.toUpperCase() ? 'w' : 'b';
@@ -150,6 +150,10 @@ header p{font-size:11px}
           square.appendChild(rank);
         }
         square.addEventListener('click', function () {
+          if (selected === null) {
+            status.textContent = 'Önce taş paletinden bir taş seç. Tahtaya dokunmak tek başına taş yerleştirmez.';
+            return;
+          }
           position[row][col] = selected === 'erase' ? null : selected;
           render();
           refresh();
@@ -171,7 +175,7 @@ header p{font-size:11px}
   document.getElementById('start').addEventListener('click', function () {
     position = initial.map(row => row.slice());
     turn.value = 'w';
-    selected = 'Q';
+    selected = null;
     render();
     refresh();
   });
@@ -207,6 +211,7 @@ header p{font-size:11px}
 
   render();
   refresh();
+  status.textContent = 'Henüz taş seçilmedi. Yerleştirmek için önce taş paletinden bir taşa dokun.';
 })();
 </script>
 </body></html>
