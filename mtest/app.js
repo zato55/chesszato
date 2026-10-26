@@ -2852,7 +2852,7 @@ function mtestRestoreHomeAfterModal() {
     if (!window.mtestReturnHomeAfterModal) return;
     window.mtestReturnHomeAfterModal = false;
     $('#mtestHomeNotice').addClass('hidden').text('');
-    $('#mtestHomeScreen').removeClass('mtest-home-hidden');
+    $('#mtestHomeScreen').removeClass('mtest-home-hidden mtest-home-modal-backdrop');
 }
 
 $(document).on('click', '.close-modal-btn', function () {
