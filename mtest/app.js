@@ -2564,9 +2564,30 @@ $(document).on('click', '#mobileMenuLocalBtn', function() {
 
 $(document).on('click', '#mobileMenuQuickMatchBtn', function() {
     if (blockNewMatchDuringQuickMatch()) return;
-    $('#botModal, #tempoModal, #settingsModal').addClass('hidden');
+    $('#botModal, #tempoModal, #settingsModal, #quickMatchSetupModal').addClass('hidden');
     closeMobilePlayMenu();
     beginQuickMatchFlow();
+});
+
+$(document).on('click', '#quickMatchSearchBtn', function() {
+    const timeVal = String($('#quickMatchTempoSelect').val() || '300');
+    $('#timeSelect').val(timeVal);
+    parseTimeControl(timeVal);
+    syncTempoSelection(timeVal);
+    $('#quickMatchSetupModal').addClass('hidden');
+    beginQuickMatchFlow();
+});
+
+$(document).on('click', '#closeQuickMatchSetupBtn', function() {
+    $('#quickMatchSetupModal').addClass('hidden');
+    mtestRestoreHomeAfterModal();
+});
+
+$('#quickMatchSetupModal').on('click', function(e) {
+    if (e.target === this) {
+        $(this).addClass('hidden');
+        mtestRestoreHomeAfterModal();
+    }
 });
 
 $(document).on('click', '#mobileMenuTournamentsBtn', function() {
