@@ -2913,6 +2913,12 @@ $(document).on('click', '#mtestTournamentsBtn', function () {
 });
 
 $(document).on('click', '#mobileMenuHomeBtn', function () {
+    const activeMoves = game.history({ verbose: true }).length;
+    if (activeMoves > 0 && !isGameOver && !game.game_over()) {
+        const abandonMatch = window.confirm('Maçı terk etmek istiyor musun?');
+        if (!abandonMatch) return;
+    }
+
     window.mtestReturnHomeAfterModal = false;
     closeMobilePlayMenu();
     $('#tempoModal, #botModal, #settingsModal').addClass('hidden');
