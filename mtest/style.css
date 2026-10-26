@@ -1539,3 +1539,82 @@ aside.collapsed #logoToggleBtn {
   #mtestHomeScreen .mtest-mode-grid,
   #mtestHomeScreen .mtest-tool-grid { flex:0 0 auto !important; height:auto !important; min-height:0 !important; }
 }
+
+
+/* MTEST v5: koyu temada kart tabanlı, tek ekran ana menü */
+@media screen and (max-width: 767px) {
+  #mtestHomeScreen { overflow:hidden !important; }
+  #mtestHomeScreen .mtest-home-inner {
+    height:100% !important; min-height:0 !important;
+    padding:4px 10px calc(60px + env(safe-area-inset-bottom)) !important;
+    gap:5px !important; justify-content:flex-start !important;
+    overflow:hidden !important;
+  }
+  #mtestHomeScreen .mtest-home-header {
+    height:34px !important; min-height:34px !important; flex:0 0 34px !important;
+  }
+  #mtestHomeScreen .mtest-brand-mark { width:29px !important; height:29px !important; }
+  #mtestHomeScreen .mtest-hero {
+    height:70px !important; min-height:70px !important; flex:0 0 70px !important;
+    grid-template-columns:minmax(0,1fr) 72px !important;
+    border:1px solid #27364a; border-radius:12px; padding:5px 9px;
+    background:linear-gradient(110deg,rgba(18,34,54,.92),rgba(8,10,14,.72));
+  }
+  #mtestHomeScreen .mtest-eyebrow { margin-bottom:3px !important; font-size:7px !important; }
+  #mtestHomeScreen .mtest-hero h1 { font-size:clamp(14px,4.1vw,19px) !important; line-height:1.08 !important; }
+  #mtestHomeScreen .mtest-hero-sub { display:none !important; }
+  #mtestHomeScreen .mtest-king-art span { font-size:64px !important; }
+  #mtestHomeScreen .mtest-king-halo { width:55px !important; height:55px !important; }
+  #mtestHomeScreen .mtest-start {
+    height:38px !important; min-height:38px !important; flex:0 0 38px !important;
+    border-radius:9px !important; padding:3px 9px !important;
+    background:linear-gradient(100deg,#f0b429,#d88912) !important;
+    color:#111827 !important; box-shadow:none !important;
+  }
+  #mtestHomeScreen .mtest-play-icon { width:25px !important; height:25px !important; }
+  #mtestHomeScreen .mtest-start-copy strong { font-size:13px !important; }
+  #mtestHomeScreen .mtest-section,
+  #mtestHomeScreen .mtest-tools-section {
+    display:flex !important; flex:0 0 auto !important; height:auto !important;
+    min-height:0 !important; margin:0 !important; padding:0 !important; gap:4px !important;
+    overflow:visible !important;
+  }
+  #mtestHomeScreen .mtest-section-heading { gap:7px !important; }
+  #mtestHomeScreen .mtest-section-heading h2 { font-size:9px !important; letter-spacing:.1em !important; }
+  #mtestHomeScreen .mtest-mode-grid,
+  #mtestHomeScreen .mtest-tool-grid {
+    display:grid !important; grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    grid-auto-rows:42px !important; gap:5px !important; height:auto !important;
+    min-height:0 !important; flex:0 0 auto !important;
+  }
+  #mtestHomeScreen .mtest-mode-card,
+  #mtestHomeScreen .mtest-tool-card {
+    box-sizing:border-box !important; display:grid !important;
+    grid-template-columns:25px minmax(0,1fr) 12px !important;
+    grid-template-rows:1fr !important; align-items:center !important;
+    height:42px !important; min-height:42px !important; max-height:42px !important;
+    flex:0 0 42px !important; padding:4px 7px !important; margin:0 !important;
+    gap:5px !important; text-align:left !important; border-radius:9px !important;
+    overflow:hidden !important; background:#101c2b !important;
+    border:1px solid #26384d !important; box-shadow:none !important;
+  }
+  #mtestHomeScreen .mtest-mode-card:nth-child(2),
+  #mtestHomeScreen .mtest-tool-card:nth-child(2) { background:#10251f !important; border-color:#245447 !important; }
+  #mtestHomeScreen .mtest-mode-card:nth-child(3),
+  #mtestHomeScreen .mtest-tool-card:nth-child(3) { background:#211a30 !important; border-color:#44335f !important; }
+  #mtestHomeScreen .mtest-mode-card .mtest-mode-icon,
+  #mtestHomeScreen .mtest-tool-card > span {
+    display:flex !important; align-items:center !important; justify-content:center !important;
+    grid-column:1 !important; grid-row:1 !important; height:auto !important;
+    font-size:19px !important; line-height:1 !important;
+  }
+  #mtestHomeScreen .mtest-mode-card strong,
+  #mtestHomeScreen .mtest-tool-card strong {
+    grid-column:2 !important; grid-row:1 !important;
+    font-size:10px !important; line-height:1.1 !important; overflow-wrap:anywhere;
+  }
+  #mtestHomeScreen .mtest-mode-card b { grid-column:3 !important; grid-row:1 !important; font-size:17px !important; }
+  #mtestHomeScreen .mtest-mode-card small,
+  #mtestHomeScreen .mtest-tool-card small { display:none !important; }
+  #mtestHomeScreen .mtest-home-notice { padding:5px 8px !important; font-size:10px !important; }
+}
