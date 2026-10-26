@@ -2820,3 +2820,45 @@ updateTimerDisplay();
 renderBoard();
 updateStatus();
 startTimer();
+
+
+// MTEST ana ekranı: sekmelerin doğru hedefe gitmesi ve modal kapanışında geri dönüş.
+window.mtestReturnHomeAfterModal = false;
+
+$(document).on('click', '#mtestAnalysisBtn', function () {
+    const playedMoves = game.history({ verbose: true }).length;
+    if (!playedMoves || !(isGameOver || game.game_over())) {
+        $('#mtestHomeNotice').text('Analiz için önce bir maçı tamamlamalısın.').removeClass('hidden');
+        return;
+    }
+    $('#mtestHomeNotice').addClass('hidden').text('');
+    $('#mtestHomeScreen').addClass('mtest-home-hidden');
+    openPreAnalysisSummary();
+});
+
+$(document).on('click', '#mtestTournamentsBtn', function () {
+    $('#mtestHomeNotice').text('Turnuvalar bölümü henüz kullanıma açık değil.').removeClass('hidden');
+});
+
+$(document).on('click', '#mobileMenuHomeBtn', function () {
+    window.mtestReturnHomeAfterModal = false;
+    closeMobilePlayMenu();
+    $('#tempoModal, #botModal, #settingsModal').addClass('hidden');
+    $('#mtestHomeNotice').addClass('hidden').text('');
+    $('#mtestHomeScreen').removeClass('mtest-home-hidden');
+});
+
+function mtestRestoreHomeAfterModal() {
+    if (!window.mtestReturnHomeAfterModal) return;
+    window.mtestReturnHomeAfterModal = false;
+    $('#mtestHomeNotice').addClass('hidden').text('');
+    $('#mtestHomeScreen').removeClass('mtest-home-hidden');
+}
+
+$(document).on('click', '.close-modal-btn', function () {
+    mtestRestoreHomeAfterModal();
+});
+
+$('#tempoModal, #botModal, #settingsModal').on('click', function (e) {
+    if (e.target === this) mtestRestoreHomeAfterModal();
+});
