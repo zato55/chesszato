@@ -1031,7 +1031,16 @@ $(document).on('click', '#cancelQuickMatchBtn', function() {
     quickMatchMode = false;
     quickMatchBot = null;
     isGameOver = quickMatchReturnToGameOver;
-    if (quickMatchReturnToGameOver) {
+
+    if (window.mtestReturnHomeAfterModal) {
+        // Ana sayfadan açılan hızlı eşleşme iptal edilince eski tahta/oyun ekranına dönme.
+        if (timerInterval) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+        $('#gameOverModal, #botModal, #tempoModal, #settingsModal').addClass('hidden');
+        mtestRestoreHomeAfterModal();
+    } else if (quickMatchReturnToGameOver) {
         $('#gameOverModal').removeClass('hidden');
     } else {
         startTimer();
