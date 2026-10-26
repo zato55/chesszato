@@ -1017,6 +1017,9 @@ function beginQuickMatchFlow() {
         quickMatchFlowTimer = setTimeout(() => {
             if (token !== quickMatchFlowToken) return;
             quickMatchFlowTimer = null;
+            // Eşleşme tamamlandı: ana sayfa geri dönüş bayrağını kapat ve aktif oyun ekranını göster.
+            window.mtestReturnHomeAfterModal = false;
+            $('#mtestHomeScreen').addClass('mtest-home-hidden').removeClass('mtest-home-modal-backdrop');
             $('#quickMatchFlowModal').addClass('hidden');
             $('#quickMatchSearchingView').removeClass('hidden').addClass('flex');
             $('#quickMatchVersusView').addClass('hidden').removeClass('flex');
