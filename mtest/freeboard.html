@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#09090b">
+<title>Serbest Tahta — Chesszato</title>
+<style>
+:root{color-scheme:dark;--red:#a81c1c;--panel:#151518;--line:#34343a;--muted:#a1a1aa}
+*{box-sizing:border-box}
+body{margin:0;background:#09090b;color:#f4f4f5;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.page{width:min(1180px,100%);margin:auto;padding:18px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.eyebrow{font-size:10px;letter-spacing:.2em;font-weight:900;color:#fb7185}
+h1{font-size:clamp(24px,4vw,34px);margin:4px 0;font-weight:900}
+header p{margin:0;color:var(--muted);font-size:13px}
+a{color:#fda4af;text-decoration:none}
+.back{flex:0 0 auto;padding:10px 12px;border:1px solid var(--line);border-radius:10px;color:#fff;background:#18181b;font-weight:700}
+.layout{display:grid;grid-template-columns:minmax(0, min(68vh,650px)) minmax(240px,1fr);gap:clamp(14px,3vw,28px);align-items:start;justify-content:center}
+.board-wrap{width:100%;min-width:0}
+#board{width:100%;height:auto;aspect-ratio:1;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));grid-template-rows:repeat(8,minmax(0,1fr));gap:0;padding:0;border:2px solid #3f3f46;border-radius:3px;overflow:hidden;box-shadow:0 16px 42px #0008}
+.square{position:relative;min-width:0;min-height:0;width:100%;height:100%;margin:0;padding:0;border:0;border-radius:0;appearance:none;-webkit-appearance:none;display:flex;align-items:center;justify-content:center;overflow:hidden;line-height:1;box-shadow:none}
+.light{background:#fff}.dark{background:var(--red)}
+.square img{display:block;width:86%;height:86%;object-fit:contain;pointer-events:none;user-select:none}
+.coord{position:absolute;font-size:clamp(8px,1.3vw,12px);font-weight:900;line-height:1;pointer-events:none}
+.coord.file{right:3px;bottom:2px}.coord.rank{left:3px;top:2px}
+.light .coord{color:var(--red)}.dark .coord{color:#fff}
+.tools{padding:16px;border:1px solid #27272a;border-radius:16px;background:var(--panel);min-width:0}
+.tool-title{font-size:10px;letter-spacing:.16em;font-weight:900;color:var(--muted);margin-bottom:10px}
+.palette{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
+.palette button{min-width:0;min-height:44px;border:1px solid #3f3f46;border-radius:9px;background:#09090b;color:#fff;font-size:25px;line-height:1}
+.palette button.selected{border-color:#fb7185;background:#4c1723;box-shadow:inset 0 0 0 1px #fb7185}
+.palette .erase{grid-column:span 6;font-size:13px;font-weight:800}
+label{display:block;margin:16px 0 6px;color:#d4d4d8;font-size:12px;font-weight:800}
+select,textarea{width:100%;padding:10px;border:1px solid #3f3f46;border-radius:9px;background:#09090b;color:#fff}
+.actions{display:grid;gap:8px;margin-top:12px}
+.actions button{min-height:42px;padding:9px 12px;border:1px solid #3f3f46;border-radius:10px;background:#202024;color:#f4f4f5;font-size:12px;font-weight:800}
+#copy{background:#9f1239;border-color:#e11d48}
+#status{min-height:36px;margin:12px 0 8px;color:var(--muted);font-size:11px;line-height:1.45}
+textarea{min-height:58px;resize:vertical;font-size:10px;overflow-wrap:anywhere}
+@media(max-width:767px){
+.page{padding:12px}
+header{align-items:flex-start;margin-bottom:12px}
+header p{font-size:11px}
+.layout{grid-template-columns:minmax(0,1fr);gap:14px}
+.board-wrap{width:min(100%,calc(100vw - 24px));margin:auto}
+#board{width:100%;height:auto;aspect-ratio:1}
+.tools{padding:12px}
+.palette{gap:5px}
+.palette button{min-height:39px;font-size:23px}
+}
+</style>
+</head>
+<body>
+<main class="page">
+<header>
+<div><span class="eyebrow">CHESSZATO ATÖLYE</span><h1>Serbest Tahta</h1><p>Taş seç, kareye dokun ve kendi satranç konumunu oluştur.</p></div>
+<a class="back" href="./">‹ Ana sayfa</a>
+</header>
+<div class="layout">
+<div class="board-wrap"><div id="board" role="grid" aria-label="Serbest satranç tahtası"></div></div>
+<aside class="tools">
+<div class="tool-title">TAŞ SEÇ</div>
+<div class="palette" id="palette">
+<button type="button" data-piece="K" aria-label="Beyaz şah">♔</button><button type="button" data-piece="Q" aria-label="Beyaz vezir">♕</button><button type="button" data-piece="R" aria-label="Beyaz kale">♖</button><button type="button" data-piece="B" aria-label="Beyaz fil">♗</button><button type="button" data-piece="N" aria-label="Beyaz at">♘</button><button type="button" data-piece="P" aria-label="Beyaz piyon">♙</button>
+<button type="button" data-piece="k" aria-label="Siyah şah">♚</button><button type="button" data-piece="q" aria-label="Siyah vezir">♛</button><button type="button" data-piece="r" aria-label="Siyah kale">♜</button><button type="button" data-piece="b" aria-label="Siyah fil">♝</button><button type="button" data-piece="n" aria-label="Siyah at">♞</button><button type="button" data-piece="p" aria-label="Siyah piyon">♟</button>
+<button type="button" class="erase" data-piece="erase">⌫ Sil</button>
+</div>
+<label for="turn">Sıra kimde?</label><select id="turn"><option value="w">Beyaz</option><option value="b">Siyah</option></select>
+<div class="actions"><button id="start" type="button">Başlangıç konumu</button><button id="clear" type="button">Tahtayı temizle</button><button id="copy" type="button">FEN konumunu kopyala</button></div>
+<p id="status" role="status">Bir taş seçip kareye dokunarak yerleştir.</p><textarea id="fen" readonly aria-label="FEN konumu"></textarea>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+const board=document.getElementById('board'),palette=document.getElementById('palette'),turn=document.getElementById('turn'),fen=document.getElementById('fen'),status=document.getElementById('status');
+const symbols={K:'♔',Q:'♕',R:'♖',B:'♗',N:'♘',P:'♙',k:'♚',q:'♛',r:'♜',b:'♝',n:'♞',p:'♟'};
+const start=[['r','n','b','q','k','b','n','r'],['p','p','p','p','p','p','p','p'],[null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null],['P','P','P','P','P','P','P','P'],['R','N','B','Q','K','B','N','R']];
+let position=start.map(r=>r.slice()),selected='Q';
+function pieceUrl(p){return 'https://images.chesscomfiles.com/chess-themes/pieces/neo/300/'+(p===p.toUpperCase()?'w':'b')+p.toLowerCase()+'.png'}
+function makeFen(){const rows=position.map(row=>{let out='',empty=0;row.forEach(p=>{if(!p)empty++;else{if(empty)out+=empty;empty=0;out+=p}});if(empty)out+=empty;return out});return rows.join('/')+' '+turn.value+' - - 0 1'}
+function refresh(){fen.value=makeFen();const wk=position.flat().filter(p=>p==='K').length,bk=position.flat().filter(p=>p==='k').length;status.textContent=wk===1&&bk===1?'Konum hazır. FEN bilgisini kopyalayabilirsin.':'Analiz için konumda bir beyaz ve bir siyah şah bulunmalı.'}
+function render(){board.replaceChildren();for(let r=0;r<8;r++)for(let c=0;c<8;c++){const p=position[r][c],sq=document.createElement('button');sq.type='button';sq.className='square '+((r+c)%2?'dark':'light');sq.setAttribute('aria-label':String.fromCharCode(97+c)+(8-r)+(p?' '+symbols[p]:' boş'));if(p){const img=document.createElement('img');img.src=pieceUrl(p);img.alt=symbols[p];img.draggable=false;sq.appendChild(img)}if(r===7){const x=document.createElement('small');x.className='coord file';x.textContent=String.fromCharCode(97+c);sq.appendChild(x)}if(c===0){const x=document.createElement('small');x.className='coord rank';x.textContent=String(8-r);sq.appendChild(x)}sq.addEventListener('click',()=>{position[r][c]=selected==='erase'?null:selected;render();refresh()});board.appendChild(sq)}palette.querySelectorAll('[data-piece]').forEach(b=>b.classList.toggle('selected',b.dataset.piece===selected))}
+palette.addEventListener('click',e=>{const b=e.target.closest('[data-piece]');if(!b)return;selected=b.dataset.piece;render()});
+turn.addEventListener('change',refresh);
+document.getElementById('start').addEventListener('click',()=>{position=start.map(r=>r.slice());turn.value='w';selected='Q';render();refresh()});
+document.getElementById('clear').addEventListener('click',()=>{position=Array.from({length:8},()=>Array(8).fill(null));selected='erase';render();refresh()});
+document.getElementById('copy').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(makeFen());status.textContent='FEN panoya kopyalandı.'}catch(e){fen.focus();fen.select();status.textContent=document.execCommand('copy')?'FEN panoya kopyalandı.':'FEN satırını seçip kopyalayabilirsin.'}});
+render();refresh();
+})();
+</script>
+</body></html>
