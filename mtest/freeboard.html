@@ -73,21 +73,128 @@ header p{font-size:11px}
 </div>
 </main>
 <script>
-(function(){
-const board=document.getElementById('board'),palette=document.getElementById('palette'),turn=document.getElementById('turn'),fen=document.getElementById('fen'),status=document.getElementById('status');
-const symbols={K:'♔',Q:'♕',R:'♖',B:'♗',N:'♘',P:'♙',k:'♚',q:'♛',r:'♜',b:'♝',n:'♞',p:'♟'};
-const start=[['r','n','b','q','k','b','n','r'],['p','p','p','p','p','p','p','p'],[null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null],['P','P','P','P','P','P','P','P'],['R','N','B','Q','K','B','N','R']];
-let position=start.map(r=>r.slice()),selected='Q';
-function pieceUrl(p){return 'https://images.chesscomfiles.com/chess-themes/pieces/neo/300/'+(p===p.toUpperCase()?'w':'b')+p.toLowerCase()+'.png'}
-function makeFen(){const rows=position.map(row=>{let out='',empty=0;row.forEach(p=>{if(!p)empty++;else{if(empty)out+=empty;empty=0;out+=p}});if(empty)out+=empty;return out});return rows.join('/')+' '+turn.value+' - - 0 1'}
-function refresh(){fen.value=makeFen();const wk=position.flat().filter(p=>p==='K').length,bk=position.flat().filter(p=>p==='k').length;status.textContent=wk===1&&bk===1?'Konum hazır. FEN bilgisini kopyalayabilirsin.':'Analiz için konumda bir beyaz ve bir siyah şah bulunmalı.'}
-function render(){board.replaceChildren();for(let r=0;r<8;r++)for(let c=0;c<8;c++){const p=position[r][c],sq=document.createElement('button');sq.type='button';sq.className='square '+((r+c)%2?'dark':'light');sq.setAttribute('aria-label':String.fromCharCode(97+c)+(8-r)+(p?' '+symbols[p]:' boş'));if(p){const img=document.createElement('img');img.src=pieceUrl(p);img.alt=symbols[p];img.draggable=false;sq.appendChild(img)}if(r===7){const x=document.createElement('small');x.className='coord file';x.textContent=String.fromCharCode(97+c);sq.appendChild(x)}if(c===0){const x=document.createElement('small');x.className='coord rank';x.textContent=String(8-r);sq.appendChild(x)}sq.addEventListener('click',()=>{position[r][c]=selected==='erase'?null:selected;render();refresh()});board.appendChild(sq)}palette.querySelectorAll('[data-piece]').forEach(b=>b.classList.toggle('selected',b.dataset.piece===selected))}
-palette.addEventListener('click',e=>{const b=e.target.closest('[data-piece]');if(!b)return;selected=b.dataset.piece;render()});
-turn.addEventListener('change',refresh);
-document.getElementById('start').addEventListener('click',()=>{position=start.map(r=>r.slice());turn.value='w';selected='Q';render();refresh()});
-document.getElementById('clear').addEventListener('click',()=>{position=Array.from({length:8},()=>Array(8).fill(null));selected='erase';render();refresh()});
-document.getElementById('copy').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(makeFen());status.textContent='FEN panoya kopyalandı.'}catch(e){fen.focus();fen.select();status.textContent=document.execCommand('copy')?'FEN panoya kopyalandı.':'FEN satırını seçip kopyalayabilirsin.'}});
-render();refresh();
+(function () {
+  const board = document.getElementById('board');
+  const palette = document.getElementById('palette');
+  const turn = document.getElementById('turn');
+  const fen = document.getElementById('fen');
+  const status = document.getElementById('status');
+  const symbols = { K:'♔', Q:'♕', R:'♖', B:'♗', N:'♘', P:'♙', k:'♚', q:'♛', r:'♜', b:'♝', n:'♞', p:'♟' };
+  const initial = [
+    ['r','n','b','q','k','b','n','r'],
+    ['p','p','p','p','p','p','p','p'],
+    [null,null,null,null,null,null,null,null],
+    [null,null,null,null,null,null,null,null],
+    [null,null,null,null,null,null,null,null],
+    [null,null,null,null,null,null,null,null],
+    ['P','P','P','P','P','P','P','P'],
+    ['R','N','B','Q','K','B','N','R']
+  ];
+  let position = initial.map(row => row.slice());
+  let selected = 'Q';
+
+  function pieceUrl(piece) {
+    const color = piece === piece.toUpperCase() ? 'w' : 'b';
+    return 'https://images.chesscomfiles.com/chess-themes/pieces/neo/300/' + color + piece.toLowerCase() + '.png';
+  }
+  function makeFen() {
+    const rows = position.map(row => {
+      let result = '', empty = 0;
+      row.forEach(piece => {
+        if (!piece) empty++;
+        else {
+          if (empty) result += empty;
+          empty = 0;
+          result += piece;
+        }
+      });
+      if (empty) result += empty;
+      return result;
+    });
+    return rows.join('/') + ' ' + turn.value + ' - - 0 1';
+  }
+  function refresh() {
+    fen.value = makeFen();
+    const whiteKing = position.flat().filter(piece => piece === 'K').length;
+    const blackKing = position.flat().filter(piece => piece === 'k').length;
+    status.textContent = (whiteKing === 1 && blackKing === 1)
+      ? 'Konum hazır. FEN bilgisini kopyalayabilirsin.'
+      : 'Analiz için konumda bir beyaz ve bir siyah şah bulunmalı.';
+  }
+  function render() {
+    board.replaceChildren();
+    for (let row = 0; row < 8; row++) {
+      for (let col = 0; col < 8; col++) {
+        const piece = position[row][col];
+        const square = document.createElement('button');
+        square.type = 'button';
+        square.className = 'square ' + ((row + col) % 2 ? 'dark' : 'light');
+        square.setAttribute('aria-label', String.fromCharCode(97 + col) + (8 - row) + (piece ? ' ' + symbols[piece] : ' boş'));
+        if (piece) {
+          const image = document.createElement('img');
+          image.src = pieceUrl(piece);
+          image.alt = symbols[piece];
+          image.draggable = false;
+          square.appendChild(image);
+        }
+        if (row === 7) {
+          const file = document.createElement('small');
+          file.className = 'coord file';
+          file.textContent = String.fromCharCode(97 + col);
+          square.appendChild(file);
+        }
+        if (col === 0) {
+          const rank = document.createElement('small');
+          rank.className = 'coord rank';
+          rank.textContent = String(8 - row);
+          square.appendChild(rank);
+        }
+        square.addEventListener('click', function () {
+          position[row][col] = selected === 'erase' ? null : selected;
+          render();
+          refresh();
+        });
+        board.appendChild(square);
+      }
+    }
+    palette.querySelectorAll('[data-piece]').forEach(button => {
+      button.classList.toggle('selected', button.dataset.piece === selected);
+    });
+  }
+  palette.addEventListener('click', function (event) {
+    const button = event.target.closest('[data-piece]');
+    if (!button) return;
+    selected = button.dataset.piece;
+    render();
+  });
+  turn.addEventListener('change', refresh);
+  document.getElementById('start').addEventListener('click', function () {
+    position = initial.map(row => row.slice());
+    turn.value = 'w';
+    selected = 'Q';
+    render();
+    refresh();
+  });
+  document.getElementById('clear').addEventListener('click', function () {
+    position = Array.from({ length: 8 }, () => Array(8).fill(null));
+    selected = 'erase';
+    render();
+    refresh();
+  });
+  document.getElementById('copy').addEventListener('click', async function () {
+    try {
+      await navigator.clipboard.writeText(makeFen());
+      status.textContent = 'FEN panoya kopyalandı.';
+    } catch (error) {
+      fen.focus();
+      fen.select();
+      status.textContent = document.execCommand('copy')
+        ? 'FEN panoya kopyalandı.'
+        : 'FEN satırını seçip kopyalayabilirsin.';
+    }
+  });
+  render();
+  refresh();
 })();
 </script>
 </body></html>
