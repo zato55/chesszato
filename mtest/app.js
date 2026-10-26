@@ -2977,3 +2977,145 @@ $('#tempoModal, #botModal, #settingsModal').on('click', function (e) {
         }, 450);
     }, 8000);
 })();
+
+
+/* MTEST Serbest Tahta: canlı maçtan bağımsız konum düzenleyici. */
+(function initMtestFreeBoard() {
+    const screen = document.getElementById('mtestFreeBoardScreen');
+    const grid = document.getElementById('mtestFreeBoardGrid');
+    const palette = document.getElementById('mtestFreeBoardPalette');
+    const fenField = document.getElementById('mtestFreeBoardFen');
+    const status = document.getElementById('mtestFreeBoardStatus');
+    if (!screen || !grid || !palette || screen.dataset.ready === 'true') return;
+    screen.dataset.ready = 'true';
+
+    const symbols = { K: '♔', Q: '♕', R: '♖', B: '♗', N: '♘', P: '♙', k: '♚', q: '♛', r: '♜', b: '♝', n: '♞', p: '♟' };
+    const initialPosition = [
+        ['r','n','b','q','k','b','n','r'],
+        ['p','p','p','p','p','p','p','p'],
+        [null,null,null,null,null,null,null,null],
+        [null,null,null,null,null,null,null,null],
+        [null,null,null,null,null,null,null,null],
+        [null,null,null,null,null,null,null,null],
+        ['P','P','P','P','P','P','P','P'],
+        ['R','N','B','Q','K','B','N','R']
+    ];
+    let position = initialPosition.map(row => row.slice());
+    let selectedPiece = 'Q';
+
+    function buildFen() {
+        const rows = position.map(row => {
+            let fenRow = '', empty = 0;
+            row.forEach(piece => {
+                if (!piece) empty++;
+                else {
+                    if (empty) fenRow += empty;
+                    empty = 0;
+                    fenRow += piece;
+                }
+            });
+            if (empty) fenRow += empty;
+            return fenRow;
+        });
+        return rows.join('/') + ' ' + document.getElementById('mtestFreeBoardTurn').value + ' - - 0 1';
+    }
+
+    function refreshFen() {
+        const fen = buildFen();
+        fenField.value = fen;
+        const whiteKings = position.flat().filter(p => p === 'K').length;
+        const blackKings = position.flat().filter(p => p === 'k').length;
+        status.textContent = (whiteKings === 1 && blackKings === 1)
+            ? 'Konum hazır. FEN bilgisini kopyalayıp saklayabilirsin.'
+            : 'Tahta düzenleniyor. Analiz için konumda bir beyaz ve bir siyah şah bulunmalı.';
+    }
+
+    function render() {
+        grid.replaceChildren();
+        for (let row = 0; row < 8; row++) {
+            for (let col = 0; col < 8; col++) {
+                const square = document.createElement('button');
+                const piece = position[row][col];
+                square.type = 'button';
+                square.className = 'mtest-freeboard-square ' + ((row + col) % 2 ? 'is-dark' : 'is-light');
+                square.dataset.row = String(row);
+                square.dataset.col = String(col);
+                square.setAttribute('aria-label', String.fromCharCode(97 + col) + (8 - row) + (piece ? ' ' + symbols[piece] : ' boş'));
+                if (piece) {
+                    const glyph = document.createElement('span');
+                    glyph.className = piece === piece.toUpperCase() ? 'is-white-piece' : 'is-black-piece';
+                    glyph.textContent = symbols[piece];
+                    square.appendChild(glyph);
+                }
+                if (row === 7) {
+                    const file = document.createElement('small');
+                    file.className = 'mtest-freeboard-coordinate file';
+                    file.textContent = String.fromCharCode(97 + col);
+                    square.appendChild(file);
+                }
+                if (col === 0) {
+                    const rank = document.createElement('small');
+                    rank.className = 'mtest-freeboard-coordinate rank';
+                    rank.textContent = String(8 - row);
+                    square.appendChild(rank);
+                }
+                square.addEventListener('click', () => {
+                    const r = Number(square.dataset.row), c = Number(square.dataset.col);
+                    position[r][c] = selectedPiece === 'erase' ? null : selectedPiece;
+                    render();
+                    refreshFen();
+                });
+                grid.appendChild(square);
+            }
+        }
+        palette.querySelectorAll('[data-piece]').forEach(button => {
+            button.classList.toggle('is-selected', button.dataset.piece === selectedPiece);
+        });
+    }
+
+    window.mtestOpenFreeBoard = function () {
+        screen.classList.remove('hidden');
+        document.getElementById('mtestHomeScreen').classList.add('mtest-home-hidden');
+        render();
+        refreshFen();
+    };
+    function closeEditor() {
+        screen.classList.add('hidden');
+        document.getElementById('mtestHomeScreen').classList.remove('mtest-home-hidden', 'mtest-home-modal-backdrop');
+    }
+    document.getElementById('mtestFreeBoardClose').addEventListener('click', closeEditor);
+    palette.addEventListener('click', event => {
+        const button = event.target.closest('[data-piece]');
+        if (!button) return;
+        selectedPiece = button.dataset.piece;
+        render();
+    });
+    document.getElementById('mtestFreeBoardTurn').addEventListener('change', refreshFen);
+    document.getElementById('mtestFreeBoardStart').addEventListener('click', () => {
+        position = initialPosition.map(row => row.slice());
+        document.getElementById('mtestFreeBoardTurn').value = 'w';
+        selectedPiece = 'Q';
+        render();
+        refreshFen();
+    });
+    document.getElementById('mtestFreeBoardClear').addEventListener('click', () => {
+        position = Array.from({ length: 8 }, () => Array(8).fill(null));
+        selectedPiece = 'erase';
+        render();
+        refreshFen();
+    });
+    document.getElementById('mtestFreeBoardCopy').addEventListener('click', async () => {
+        const fen = buildFen();
+        try {
+            await navigator.clipboard.writeText(fen);
+            status.textContent = 'FEN konumu panoya kopyalandı.';
+        } catch (error) {
+            fenField.focus();
+            fenField.select();
+            const copied = document.execCommand('copy');
+            status.textContent = copied ? 'FEN konumu panoya kopyalandı.' : 'FEN satırını seçip kopyalayabilirsin.';
+        }
+    });
+    render();
+    refreshFen();
+})();
