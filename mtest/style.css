@@ -1824,3 +1824,12 @@ aside.collapsed #logoToggleBtn {
     justify-self:stretch !important;
   }
 }
+
+/* MTEST: Ana sayfada pasif alt menüleri gösterme. */
+#mtestHomeScreen:not(.mtest-home-hidden) .mtest-home-footer {
+  display: none !important;
+}
+#mtestHomeScreen:not(.mtest-home-hidden) ~ #mobileBottomNav,
+#mtestHomeScreen:not(.mtest-home-hidden) ~ #mobileAnalysisBottomNav {
+  display: none !important;
+}
