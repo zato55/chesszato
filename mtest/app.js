@@ -2940,3 +2940,40 @@ $(document).on('click', '.close-modal-btn', function () {
 $('#tempoModal, #botModal, #settingsModal').on('click', function (e) {
     if (e.target === this) mtestRestoreHomeAfterModal();
 });
+
+
+/* MTEST: ana ekrandaki büyük usta sözlerini yumuşak geçişle sırala. */
+(function initMtestLiveQuotes() {
+    const quotes = [
+        { text: 'Kazandığınız oyundan çok, kaybettiğiniz oyundan öğrenebilirsiniz.', author: 'José Raúl Capablanca' },
+        { text: 'İyi bir hamle gördüğünüzde, daha iyisini arayın.', author: 'Emanuel Lasker’e atfedilir' },
+        { text: 'Satrançta en zor rakip, kendi hatalarımızdır.', author: 'Chesszato seçkisi' },
+        { text: 'Satranç, hayal gücünün ve sabrın buluştuğu bir mücadeledir.', author: 'Chesszato seçkisi' },
+        { text: 'Bir planın güzelliği, her hamlede yeniden düşünmeyi gerektirmesidir.', author: 'Chesszato seçkisi' },
+        { text: 'Satrançta her hamle yeni bir fikir için fırsattır.', author: 'Chesszato seçkisi' }
+    ];
+    const stage = document.getElementById('mtestQuoteStage');
+    const quoteText = document.getElementById('mtestQuoteText');
+    const quoteAuthor = document.getElementById('mtestQuoteAuthor');
+    if (!stage || !quoteText || !quoteAuthor || stage.dataset.ready === 'true') return;
+    stage.dataset.ready = 'true';
+
+    let quoteIndex = Math.floor(Math.random() * quotes.length);
+    const showQuote = (index) => {
+        quoteText.textContent = '“' + quotes[index].text + '”';
+        quoteAuthor.textContent = quotes[index].author;
+        stage.classList.remove('is-running');
+        void stage.offsetWidth;
+        stage.classList.add('is-running');
+    };
+    showQuote(quoteIndex);
+    window.setInterval(() => {
+        if (document.hidden || !stage.isConnected) return;
+        stage.classList.add('is-changing');
+        window.setTimeout(() => {
+            quoteIndex = (quoteIndex + 1) % quotes.length;
+            showQuote(quoteIndex);
+            stage.classList.remove('is-changing');
+        }, 450);
+    }, 8000);
+})();
