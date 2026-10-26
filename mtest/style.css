@@ -1515,3 +1515,15 @@ aside.collapsed #logoToggleBtn {
         font-weight: 700;
     }
 }
+
+
+/* MTEST mobile compact card override */
+@media screen and (max-width: 767px) {
+  #mtestHomeScreen .mtest-mode-grid, #mtestHomeScreen .mtest-tool-grid { display:flex !important; flex-direction:column !important; flex:0 0 auto !important; gap:3px !important; }
+  #mtestHomeScreen .mtest-mode-card, #mtestHomeScreen .mtest-tool-card { box-sizing:border-box !important; display:grid !important; height:30px !important; min-height:30px !important; max-height:30px !important; flex:0 0 30px !important; padding:2px 7px !important; margin:0 !important; gap:5px !important; border-radius:7px !important; overflow:hidden !important; }
+  #mtestHomeScreen .mtest-mode-card { grid-template-columns:20px minmax(0,1fr) auto !important; }
+  #mtestHomeScreen .mtest-tool-card { grid-template-columns:20px minmax(0,1fr) !important; }
+  #mtestHomeScreen .mtest-mode-card .mtest-mode-icon, #mtestHomeScreen .mtest-tool-card > span { font-size:16px !important; line-height:1 !important; }
+  #mtestHomeScreen .mtest-mode-card strong, #mtestHomeScreen .mtest-tool-card strong { font-size:10px !important; line-height:1 !important; }
+  #mtestHomeScreen .mtest-mode-card small, #mtestHomeScreen .mtest-tool-card small { display:none !important; }
+}
