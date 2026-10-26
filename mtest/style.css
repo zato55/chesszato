@@ -1684,3 +1684,47 @@ aside.collapsed #logoToggleBtn {
   #mtestHomeScreen .mtest-mode-card b { font-size:21.25px !important; }
   #mtestHomeScreen .mtest-home-notice { padding:6px 10px !important; font-size:12.5px !important; }
 }
+
+
+/* MTEST v8: başlık ve metin içeriklerini koru; diğer ana menü ölçülerini %25 büyüt */
+@media screen and (max-width: 767px) {
+  #mtestHomeScreen .mtest-home-inner {
+    gap:9.375px !important;
+    padding:7.5px 10px calc(60px + env(safe-area-inset-bottom)) !important;
+  }
+  #mtestHomeScreen .mtest-home-header {
+    height:53.125px !important; min-height:53.125px !important; flex-basis:53.125px !important;
+  }
+  #mtestHomeScreen .mtest-brand-mark { width:45px !important; height:45px !important; }
+  #mtestHomeScreen .mtest-hero {
+    height:109.375px !important; min-height:109.375px !important; flex-basis:109.375px !important;
+    padding:7.5px 13.75px !important; border-radius:18.75px !important;
+  }
+  #mtestHomeScreen .mtest-king-art span { font-size:100px !important; }
+  #mtestHomeScreen .mtest-king-halo { width:86.25px !important; height:86.25px !important; }
+  #mtestHomeScreen .mtest-start {
+    height:59.375px !important; min-height:59.375px !important; flex-basis:59.375px !important;
+    padding:5px 13.75px !important; border-radius:13.75px !important;
+  }
+  #mtestHomeScreen .mtest-play-icon { width:38.75px !important; height:38.75px !important; }
+  #mtestHomeScreen .mtest-section,
+  #mtestHomeScreen .mtest-tools-section { gap:6.25px !important; }
+  #mtestHomeScreen .mtest-section-heading { min-height:16.25px !important; }
+  #mtestHomeScreen .mtest-mode-grid,
+  #mtestHomeScreen .mtest-tool-grid {
+    grid-auto-rows:62.5px !important; gap:7.8125px !important;
+  }
+  #mtestHomeScreen .mtest-mode-card,
+  #mtestHomeScreen .mtest-tool-card {
+    height:62.5px !important; min-height:62.5px !important; max-height:62.5px !important;
+    flex-basis:62.5px !important; padding:5px 12.5px !important; gap:7.5px !important;
+    border-radius:13.75px !important;
+  }
+  #mtestHomeScreen .mtest-mode-card {
+    grid-template-columns:31.25px minmax(0,1fr) 15px !important;
+  }
+  #mtestHomeScreen .mtest-mode-card .mtest-mode-icon,
+  #mtestHomeScreen .mtest-tool-card > span { font-size:29.6875px !important; }
+  #mtestHomeScreen .mtest-mode-card b { font-size:26.5625px !important; }
+  #mtestHomeScreen .mtest-home-notice { padding:7.5px 12.5px !important; }
+}
