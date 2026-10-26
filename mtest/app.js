@@ -17,6 +17,9 @@ let quickMatchBotMoveTimeout = null;
 
 let selectedTimeInSeconds = 300;
 let timeIncrementInSeconds = 0;
+// Hızlı eşleşmenin temposu, eşleşme iptal edilip ana menüye dönülse de korunur.
+let selectedQuickMatchTempo = '300';
+Object.defineProperty(window, 'selectedQuickMatchTempo', { configurable: true, get: () => selectedQuickMatchTempo, set: value => { selectedQuickMatchTempo = String(value || '300'); } });
 let whiteTime = 300, blackTime = 300;
 let clockStarted = false;
 
@@ -2572,8 +2575,13 @@ $(document).on('click', '#mobileMenuQuickMatchBtn', function() {
     beginQuickMatchFlow();
 });
 
+$(document).on('change', '#quickMatchTempoSelect', function() {
+    selectedQuickMatchTempo = String($(this).val() || selectedQuickMatchTempo || '300');
+});
+
 $(document).on('click', '#quickMatchSearchBtn', function() {
-    const timeVal = String($('#quickMatchTempoSelect').val() || '300');
+    const timeVal = String($('#quickMatchTempoSelect').val() || selectedQuickMatchTempo || '300');
+    selectedQuickMatchTempo = timeVal;
     $('#timeSelect').val(timeVal);
     parseTimeControl(timeVal);
     syncTempoSelection(timeVal);
