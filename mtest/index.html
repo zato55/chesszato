@@ -14,7 +14,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
     
     <!-- Özel CSS -->
-    <link rel="stylesheet" href="style.css?v=20261026-mtest-fourth-options-v1">
+    <link rel="stylesheet" href="style.css?v=20261026-mtest-freeboard-v1">
 </head>
 
 <body class="bg-[#09090b] text-zinc-100 font-sans antialiased h-screen h-[100dvh] overflow-hidden flex flex-col md:flex-row select-none">
@@ -34,7 +34,7 @@
           <button class="mtest-mode-card" type="button" onclick="window.mtestReturnHomeAfterModal=true; document.getElementById('mtestHomeScreen').classList.remove('mtest-home-hidden'); document.getElementById('mtestHomeScreen').classList.add('mtest-home-modal-backdrop'); document.getElementById('mobileMenuBotBtn').click();"><span class="mtest-mode-icon">♟</span><strong>Bot ile Oyna</strong><small>Zorluk seviyeni seç ve kendini geliştir.</small><b>›</b></button>
           <button class="mtest-mode-card" type="button" onclick="window.mtestReturnHomeAfterModal=true; document.getElementById('mtestHomeScreen').classList.remove('mtest-home-hidden'); document.getElementById('mtestHomeScreen').classList.add('mtest-home-modal-backdrop'); document.getElementById('quickMatchTempoSelect').value=window.selectedQuickMatchTempo || '300'; document.getElementById('quickMatchSetupModal').classList.remove('hidden');"><span class="mtest-mode-icon">◎</span><strong>Hızlı Eşleşme</strong><small>Rakibini bul, hemen oyna.</small><b>›</b></button>
           <button class="mtest-mode-card" type="button" onclick="document.getElementById('mtestHomeScreen').classList.add('mtest-home-hidden'); document.getElementById('mobileMenuLocalBtn').click();"><span class="mtest-mode-icon">♙♟</span><strong>Arkadaşınla Oyna</strong><small>Aynı cihazda karşılaş.</small><b>›</b></button>
-          <button class="mtest-mode-card" type="button" onclick="window.mtestReturnHomeAfterModal=true; document.getElementById('mtestHomeScreen').classList.remove('mtest-home-hidden'); document.getElementById('mtestHomeScreen').classList.add('mtest-home-modal-backdrop'); document.getElementById('mobileNavTempoBtn').click();"><span class="mtest-mode-icon">◷</span><strong>Süre Seçimi</strong><small>Oyun temposunu belirle.</small><b>›</b></button>
+          <button class="mtest-mode-card" id="mtestFreeBoardBtn" type="button" onclick="window.mtestOpenFreeBoard()"><span class="mtest-mode-icon">♜</span><strong>Serbest Tahta</strong><small>Taşları yerleştir, kendi konumunu kur.</small><b>›</b></button>
         </div></section>
         <section class="mtest-section mtest-tools-section"><div class="mtest-section-heading"><h2>DİĞER SEÇENEKLER</h2><span></span></div><div class="mtest-tool-grid">
           <button id="mtestAnalysisBtn" class="mtest-tool-card" type="button"><span>⌕</span><strong>Analiz</strong><small>Oyununu incele.</small></button>
@@ -758,6 +758,31 @@
             </div>
         </div>
     </div>
+
+
+    <!-- MTEST Serbest Tahta: canlı oyun durumundan bağımsız konum editörü -->
+    <section id="mtestFreeBoardScreen" class="mtest-freeboard-screen hidden" aria-label="Serbest Tahta">
+      <header class="mtest-freeboard-header">
+        <div><span class="mtest-freeboard-eyebrow">CHESSZATO ATÖLYE</span><h2>Serbest Tahta</h2><p>Taş seç, tahtaya dokun ve kendi konumunu oluştur.</p></div>
+        <button type="button" id="mtestFreeBoardClose" aria-label="Ana ekrana dön">✕</button>
+      </header>
+      <div class="mtest-freeboard-layout">
+        <div id="mtestFreeBoardGrid" class="mtest-freeboard-grid" role="grid" aria-label="Düzenlenebilir satranç tahtası"></div>
+        <aside class="mtest-freeboard-tools">
+          <div class="mtest-freeboard-tool-title">TAŞ SEÇ</div>
+          <div class="mtest-freeboard-palette" id="mtestFreeBoardPalette">
+            <button type="button" data-piece="K" aria-label="Beyaz şah">♔</button><button type="button" data-piece="Q" aria-label="Beyaz vezir">♕</button><button type="button" data-piece="R" aria-label="Beyaz kale">♖</button><button type="button" data-piece="B" aria-label="Beyaz fil">♗</button><button type="button" data-piece="N" aria-label="Beyaz at">♘</button><button type="button" data-piece="P" aria-label="Beyaz piyon">♙</button>
+            <button type="button" data-piece="k" aria-label="Siyah şah">♚</button><button type="button" data-piece="q" aria-label="Siyah vezir">♛</button><button type="button" data-piece="r" aria-label="Siyah kale">♜</button><button type="button" data-piece="b" aria-label="Siyah fil">♝</button><button type="button" data-piece="n" aria-label="Siyah at">♞</button><button type="button" data-piece="p" aria-label="Siyah piyon">♟</button>
+            <button type="button" data-piece="erase" class="mtest-freeboard-erase">⌫ Sil</button>
+          </div>
+          <label class="mtest-freeboard-turn-label" for="mtestFreeBoardTurn">Sıra kimde?</label>
+          <select id="mtestFreeBoardTurn"><option value="w">Beyaz</option><option value="b">Siyah</option></select>
+          <div class="mtest-freeboard-actions"><button type="button" id="mtestFreeBoardStart">Başlangıç konumu</button><button type="button" id="mtestFreeBoardClear">Tahtayı temizle</button><button type="button" id="mtestFreeBoardCopy">FEN konumunu kopyala</button></div>
+          <p id="mtestFreeBoardStatus" role="status">Bir taş seçip kareye dokunarak yerleştir. Dolu kareye silme seçeneğiyle dokunarak taşı kaldır.</p>
+          <textarea id="mtestFreeBoardFen" readonly aria-label="FEN konumu"></textarea>
+        </aside>
+      </div>
+    </section>
 
     <!-- ♟️ PIYON TERFİ MODALI -->
     <div id="promotionModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
