@@ -1101,16 +1101,13 @@ aside.collapsed #logoToggleBtn {
     }
 
     #mobileBottomNav {
-        min-height: 64px;
+        min-height: 54px;
         box-sizing: border-box;
-        padding-left: 8px;
-        padding-right: 8px;
-        padding-top: 6px;
-        padding-bottom: max(6px, env(safe-area-inset-bottom));
+        padding: 4px 8px max(4px, env(safe-area-inset-bottom));
         gap: 4px;
-        background: rgba(18, 18, 21, 0.98);
-        border-top: 1px solid #303036;
-        box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.28);
+        background: rgba(8, 10, 14, 0.97);
+        border-top: 1px solid #272b34;
+        box-shadow: none;
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
     }
@@ -1123,10 +1120,10 @@ aside.collapsed #logoToggleBtn {
         justify-content: center;
         gap: 3px;
         min-width: 0;
-        min-height: 50px;
-        padding: 5px 2px 4px;
+        min-height: 44px;
+        padding: 3px 2px;
         border: 1px solid transparent;
-        border-radius: 12px;
+        border-radius: 8px;
         color: #a1a1aa;
         background: transparent;
         font-size: 10px;
@@ -1149,9 +1146,9 @@ aside.collapsed #logoToggleBtn {
     }
 
     #mobileBottomNav .mobile-nav-item.mobile-nav-active {
-        color: #ffffff;
-        background: rgba(37, 99, 235, 0.19);
-        border-color: rgba(59, 130, 246, 0.58);
+        color: #ef233c;
+        background: transparent;
+        border-color: transparent;
     }
 
     #mobileBottomNav .mobile-nav-item.mobile-nav-active::before {
@@ -1467,3 +1464,28 @@ aside.collapsed #logoToggleBtn {
 .mtest-register span{font-size:19px;line-height:12px}
 .mtest-home-notice{margin:0;padding:11px 13px;border:1px solid rgba(239,35,60,.45);border-radius:12px;background:rgba(127,29,29,.18);color:#fecdd3;font-size:12px;line-height:1.45}
 @media(max-width:480px){.mtest-auth-actions{gap:5px}.mtest-login,.mtest-register{padding:8px 8px;gap:5px;font-size:10px}.mtest-login span,.mtest-register span{font-size:16px}}
+
+
+/* MTEST: menü açıldığında yeni ana ekran bulanık arka plan olarak korunur. */
+.mtest-home.mtest-home-modal-backdrop {
+    z-index: 40 !important;
+    pointer-events: none;
+}
+
+/* MTEST: oyun içi alt menüyü ana sayfanın ince, sade gezinme çizgisine yaklaştır. */
+@media (max-width: 767px) {
+    #mobileBottomNav .mobile-nav-item.mobile-nav-active::before {
+        top: -4px;
+        width: 18px;
+        height: 2px;
+        background: #ef233c;
+    }
+    #mobileBottomNav .mobile-nav-icon {
+        height: 21px;
+        font-size: 20px;
+    }
+    #mobileBottomNav .mobile-nav-item {
+        font-size: 10px;
+        font-weight: 700;
+    }
+}
