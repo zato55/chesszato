@@ -1,0 +1,1430 @@
+/* ⚡ TAŞ SÜRÜKLEME VE DİNAMİK GEÇİŞLER */
+.piece {
+    user-select: none;
+    -webkit-user-drag: none;
+    pointer-events: none;
+    width: 88%;
+    height: 88%;
+    object-fit: contain;
+    transition: transform 0.15s ease-in-out, opacity 0.12s ease;
+}
+
+/* ⚡ CHESS.COM TARZI YENİLEN TAŞLAR STİLİ */
+.captured-group {
+    display: flex;
+    align-items: center;
+    position: relative;
+    margin-right: 4px;
+}
+
+.captured-icon {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+    display: inline-block;
+    filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.4));
+}
+
+.captured-stacked {
+    margin-left: -11px;
+}
+
+/* ⚡ TAHTA ANİMASYON HIZI SINIFLARI */
+#board.anim-off .piece { transition: none !important; }
+#board.anim-slow .piece { transition: transform 0.3s ease-in-out, opacity 0.25s ease !important; }
+#board.anim-normal .piece { transition: transform 0.15s ease-in-out, opacity 0.12s ease !important; }
+#board.anim-fast .piece { transition: transform 0.08s ease-in-out, opacity 0.06s ease !important; }
+
+/* 🎨 TAHTA RENK TEMALARI */
+#board.theme-red .square-light { background-color: #ffffff; }
+#board.theme-red .square-dark { background-color: #a81c1c; }
+
+#board.theme-green .square-light { background-color: #eeeee2; }
+#board.theme-green .square-dark { background-color: #769656; }
+
+#board.theme-wood .square-light { background-color: #f0d9b5; }
+#board.theme-wood .square-dark { background-color: #b58863; }
+
+#board.theme-dark .square-light { background-color: #9ca3af; }
+#board.theme-dark .square-dark { background-color: #374151; }
+
+#board-wrapper {
+    position: relative;
+    width: min(92vw, 50vh);
+    height: min(92vw, 50vh);
+    max-width: 680px;
+    max-height: 680px;
+}
+
+/* 💻 MASAÜSTÜ: DİNAMİK MENÜ VE TAM ORTALANAN TAHTA DÜZENİ */
+@media (min-width: 768px) {
+    body {
+        height: 100vh;
+        overflow: hidden !important;
+    }
+
+    /* Sol menü açıldığında genişlik */
+    #mainSidebar {
+        width: 280px !important;
+        min-width: 280px !important;
+        max-width: 280px !important;
+        transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), min-width 0.25s cubic-bezier(0.4, 0, 0.2, 1), max-width 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+
+    /* Sol menü kapatıldığında/daraltıldığında KESİN DARALMA */
+    #mainSidebar.collapsed {
+        width: 4.5rem !important;
+        min-width: 4.5rem !important;
+        max-width: 4.5rem !important;
+    }
+
+    /* Sağ panel genişliği sabit */
+    #desktopPanel {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+        height: 100vh !important;
+        max-height: 100vh !important;
+        width: 280px !important;
+        min-width: 280px !important;
+        max-width: 280px !important;
+        padding: 1rem 0.85rem !important;
+        border-radius: 0 !important;
+        z-index: 10;
+        box-sizing: border-box !important;
+    }
+
+    /* Tahtayı barındıran orta alan: Sol menü kapandığında kendiliğinden genişleyip tahtayı tam ortalar */
+    main {
+        height: 100vh;
+        padding: 0 1rem !important;
+        margin: 0 !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        flex: 1 1 auto !important;
+        min-width: 0 !important;
+        overflow: hidden !important;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    main > div.flex-col {
+        margin: 0 auto !important;
+        flex-shrink: 0 !important;
+    }
+
+    #board-wrapper {
+        width: min(50vw, calc(100vh - 130px)) !important;
+        height: min(50vw, calc(100vh - 130px)) !important;
+        max-width: 600px !important;
+        max-height: 600px !important;
+    }
+
+    .eval-bar-wrapper {
+        width: 16px !important;
+        height: min(50vw, calc(100vh - 130px)) !important;
+        max-height: 600px !important;
+    }
+
+    #pgn {
+        display: block !important;
+        flex: 1 1 auto !important;
+        min-height: 50px !important;
+    }
+
+    #normalControls {
+        display: block !important;
+        visibility: visible !important;
+    }
+
+    #mobileAnalysisPanel {
+        display: none !important;
+    }
+}
+
+#board {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    grid-template-rows: repeat(8, minmax(0, 1fr));
+    width: 100%;
+    height: 100%;
+    border: 3px solid #18181b;
+    box-shadow: 0 0 30px rgba(37, 99, 235, .25);
+}
+
+#board > div {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    min-width: 0;
+    min-height: 0;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Tahta koordinatları: kare ölçüsünü etkilemez ve taşlarla birlikte dönük tahtada da doğru kalır. */
+#board .board-coordinate {
+    position: absolute;
+    z-index: 5;
+    font-size: clamp(8px, 1.4vw, 12px);
+    font-weight: 800;
+    line-height: 1;
+    opacity: 0.9;
+    pointer-events: none;
+    user-select: none;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.18);
+}
+#board .board-coordinate-rank {
+    top: 2px;
+    left: 3px;
+}
+#board .board-coordinate-file {
+    right: 3px;
+    bottom: 2px;
+}
+#board .square-light .board-coordinate {
+    color: #374151;
+}
+#board .square-dark .board-coordinate {
+    color: #f8fafc;
+}
+
+#board > div.selected {
+    box-shadow: inset 0 0 0 3px #2563eb !important;
+    background-color: rgba(37, 99, 235, 0.12) !important;
+}
+
+#board > div.last-move-highlight::before {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    border: 2.5px solid #2563eb;
+    opacity: 0.85;
+    pointer-events: none;
+    border-radius: 4px;
+}
+
+/* 👑 Şah Çekildiğinde Kırmızı Parlama Efekti */
+#board > div.king-check-highlight {
+    background: radial-gradient(circle, rgba(239, 68, 68, 0.95) 0%, rgba(220, 38, 38, 0.65) 55%, transparent 100%) !important;
+    animation: pulseCheck 1.2s infinite ease-in-out;
+}
+
+@keyframes pulseCheck {
+    0%, 100% { filter: drop-shadow(0 0 6px rgba(239, 68, 68, 0.8)); }
+    50% { filter: drop-shadow(0 0 14px rgba(239, 68, 68, 1)); }
+}
+
+.legal-move-dot::after {
+    content: '';
+    position: absolute;
+    width: 28%;
+    height: 28%;
+    background-color: rgba(34, 197, 94, 0.7);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.legal-capture-ring::after {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    border: 3.5px solid rgba(239, 68, 68, 0.8);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 10;
+}
+
+#board > div:hover { filter: brightness(1.04); }
+
+.pgn-move {
+    cursor: pointer;
+    padding: 1px 4px;
+    border-radius: 4px;
+    transition: background-color 0.15s ease, color 0.15s ease;
+    display: inline-block;
+}
+.pgn-move:hover {
+    background-color: rgba(59, 130, 246, 0.25);
+    color: #ffffff;
+}
+.pgn-move-active {
+    background-color: #2563eb !important;
+    color: #ffffff !important;
+    font-weight: 700;
+}
+
+#arrowOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 20;
+}
+
+.eval-bar-wrapper {
+    width: 16px;
+    height: min(92vw, 50vh);
+    max-height: 680px;
+    background-color: #18181b;
+    border: 1px solid #3f3f46;
+    border-radius: 9999px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    flex-shrink: 0;
+    transform: translateZ(0);
+}
+
+.eval-bar-white {
+    width: 100%;
+    background-color: #ffffff;
+    transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+aside {
+    transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-text {
+    transition: opacity 0.2s ease, max-width 0.2s ease;
+    white-space: nowrap;
+}
+
+aside.collapsed .sidebar-text {
+    display: none !important;
+}
+
+aside.collapsed .nav-item {
+    justify-content: center !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+aside.collapsed #logoToggleBtn {
+    justify-content: center !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.piece-style-btn {
+    cursor: pointer !important;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.piece-style-btn * {
+    pointer-events: none !important;
+}
+
+#mobileAnalysisPanel button {
+    min-height: 48px !important;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+#settingsModal .theme-option-btn,
+#settingsModal .piece-style-btn,
+#settingsModal .anim-speed-btn {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Oyuncu kartları: oyuncu bilgisi | yenilen taşlar | sabit saat. */
+.player-card-layout {
+    grid-template-columns: minmax(0, 1fr);
+    column-gap: 0;
+    row-gap: 0;
+    padding: 0 !important;
+    overflow: hidden;
+}
+
+.player-card-main {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 8px;
+    padding: 8px 12px;
+    min-width: 0;
+}
+
+.player-clock-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 3px;
+    min-width: 0;
+}
+
+.player-clock-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 25px;
+    height: 30px;
+    padding: 0;
+    flex: 0 0 25px;
+    border: 1px solid rgba(113, 113, 122, 0.35);
+    border-radius: 6px;
+    background: rgba(9, 9, 11, 0.55);
+    font-size: 13px;
+    line-height: 1;
+}
+
+.player-clock-action:active {
+    transform: scale(0.94);
+}
+
+.player-card-clock {
+    box-sizing: border-box;
+    width: 68px;
+    min-width: 68px;
+    text-align: center;
+}
+
+.player-capture-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    grid-column: 1 / -1;
+    width: 100%;
+    min-height: 24px;
+    padding: 2px 8px;
+    box-sizing: border-box;
+    border: 0;
+    border-top: 1px solid rgba(63, 63, 70, 0.35);
+    border-radius: 0;
+}
+
+
+/* ===== OYUNCU KARTLARI YAZI KONTRASTI VE YÜKSEK OKUNABİLİRLİK ===== */
+#topPlayerCard, #bottomPlayerCard {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+#topPlayerName, #bottomPlayerName {
+    color: #f4f4f5 !important;
+    font-weight: 900 !important;
+    text-shadow: none;
+}
+
+#topOpeningText, #bottomOpeningText {
+    color: #a1a1aa !important;
+    font-weight: 800 !important;
+}
+
+/* Renk değişimi yalnızca eklenen yenilen taşlar satırına uygulanır. */
+
+#topPlayerCard:has(#topAvatar.bg-zinc-900) .player-capture-row,
+#bottomPlayerCard:has(#bottomAvatar.bg-zinc-900) .player-capture-row {
+    background: #09090b;
+    border-top-color: #303036;
+}
+
+#topPlayerCard:has(#topAvatar.bg-zinc-100) .player-capture-row,
+#bottomPlayerCard:has(#bottomAvatar.bg-zinc-100) .player-capture-row {
+    background: #e9e6dc;
+    border-top-color: #d6d3c9;
+}
+
+#topPlayerCard:has(#topAvatar.bg-zinc-900) #topOpeningText,
+#bottomPlayerCard:has(#bottomAvatar.bg-zinc-900) #bottomOpeningText {
+    color: #c4c4cc !important;
+}
+
+/* ELO etiketi: mavi yerine nötr koyu gri. */
+#topPlayerElo, #bottomPlayerElo {
+    color: #ffffff !important;
+    background-color: #27272a !important;
+    border-color: #52525b !important;
+    font-weight: 900 !important;
+}
+
+#topMaterialDiff, #bottomMaterialDiff {
+    color: #065f46 !important;
+    font-weight: 900 !important;
+    font-size: 13px !important;
+}
+
+/* Varsayılan saat görünümü; aşağıdaki oyuncu rengi seçicileri bunu belirler. */
+#topTimerDesktop, #bottomTimerDesktop,
+#topTimerMobile, #bottomTimerMobile {
+    font-weight: 900 !important;
+    box-shadow: none !important;
+}
+
+/* Siyah taşları temsil eden kart: siyah saat, beyaz yazı. */
+#topPlayerCard:has(#topAvatar.bg-zinc-900) #topTimerDesktop,
+#bottomPlayerCard:has(#bottomAvatar.bg-zinc-900) #bottomTimerDesktop {
+    color: #ffffff !important;
+    background-color: #09090b !important;
+    border: 1.5px solid #27272a !important;
+}
+
+/* Beyaz taşları temsil eden kart: beyaz saat, siyah yazı. */
+#topPlayerCard:has(#topAvatar.bg-zinc-100) #topTimerDesktop,
+#bottomPlayerCard:has(#bottomAvatar.bg-zinc-100) #bottomTimerDesktop {
+    color: #111111 !important;
+    background-color: #ffffff !important;
+    border: 1.5px solid #d4d4d8 !important;
+}
+
+/* Mobil yerleşim kuralları tek blokta, dosyanın altındaki tam ekran düzeninde tutulur. */
+
+/* ===== MOBİL TAM EKRAN DÜZENİ: YÜKSEKLİĞE GÖRE ESNEK TABLO ===== */
+@media (max-width: 767px) {
+    body {
+        height: 100dvh !important;
+        min-height: 0 !important;
+        overflow: hidden !important;
+    }
+
+    body > header {
+        flex: 0 0 auto !important;
+    }
+
+    main {
+        flex: 1 1 0% !important;
+        min-height: 0 !important;
+        display: grid !important;
+        grid-template-rows: minmax(0, 1fr) auto auto !important;
+        align-content: stretch !important;
+        justify-items: center !important;
+        gap: clamp(2px, 0.45dvh, 5px) !important;
+        padding: 4px 8px calc(62px + env(safe-area-inset-bottom)) !important;
+        margin: 0 !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Oyuncu kartları + tahta: ekranın kalan alanını paylaşan ana tablo. */
+    main > div.flex-col {
+        width: 100% !important;
+        height: 100% !important;
+        min-height: 0 !important;
+        max-width: 620px !important;
+        margin: 0 !important;
+        display: grid !important;
+        grid-template-rows: auto minmax(0, 1fr) auto !important;
+        align-items: stretch !important;
+        justify-content: stretch !important;
+        gap: clamp(2px, 0.45dvh, 5px) !important;
+    }
+
+    #topPlayerCard,
+    #bottomPlayerCard {
+        min-height: 0 !important;
+        flex-shrink: 1 !important;
+        padding: 0 !important;
+    }
+
+    .player-card-main {
+        min-height: 0 !important;
+        padding: clamp(3px, 0.7dvh, 6px) 7px !important;
+    }
+
+    .player-card-main {
+        grid-template-columns: minmax(0, 1fr) 62px !important;
+        column-gap: 4px !important;
+    }
+
+    .player-card-clock {
+        width: 62px !important;
+        min-width: 62px !important;
+        padding-left: 4px !important;
+        padding-right: 4px !important;
+        font-size: 13px !important;
+    }
+
+    .eval-bar-wrapper {
+        border-radius: 6px !important;
+    }
+
+    .captured-icon {
+        width: 13px !important;
+        height: 13px !important;
+    }
+
+    .captured-stacked {
+        margin-left: -9px !important;
+    }
+
+    #desktopPanel {
+        display: none !important;
+    }
+
+    .player-capture-row {
+        min-height: 18px !important;
+        padding: 0 5px !important;
+        gap: 4px !important;
+    }
+
+    /* Tahta satırı esner; tahta kare kalır ve satırın dışına taşmaz. */
+    main > div.flex-col > .flex.items-center.justify-center.gap-3.w-full {
+        min-width: 0 !important;
+        min-height: 0 !important;
+        width: 100% !important;
+        gap: 5px !important;
+    }
+
+    #board-wrapper {
+        width: min(95vw, calc(100dvh - 300px)) !important;
+        height: min(95vw, calc(100dvh - 300px)) !important;
+        max-width: min(95vw, 100%) !important;
+        max-height: 100% !important;
+        aspect-ratio: 1 / 1 !important;
+        flex: 0 0 auto !important;
+    }
+
+    .eval-bar-wrapper {
+        width: 8px !important;
+        height: min(100%, 95vw) !important;
+        max-height: 100% !important;
+        margin-right: 0 !important;
+        flex: 0 0 8px !important;
+    }
+
+    /* Hamle şeridi ve kontrol alanı sabit, küçük satırlar olarak kalır. */
+    #mobileMoveStrip {
+        width: 100% !important;
+        min-height: 26px !important;
+        height: 26px !important;
+        margin: 0 !important;
+        padding: 2px 5px !important;
+        flex-shrink: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    #mobileMoveStrip {
+        background: #09090b !important;
+        border: 1px solid #3f2720 !important;
+        border-radius: 6px !important;
+        z-index: 3 !important;
+    }
+
+    #mobilePgnList {
+        position: relative !important;
+        z-index: 1 !important;
+        min-height: 0 !important;
+    }
+
+    #mobilePgnList {
+        min-height: 0 !important;
+    }
+
+    #mobileQuickControls {
+        width: 100% !important;
+        margin: 0 !important;
+        min-height: 42px !important;
+        gap: 3px !important;
+        align-self: stretch !important;
+    }
+
+    #mobileQuickControls button {
+        min-width: 0 !important;
+        min-height: 40px !important;
+        padding: 4px 0 !important;
+    }
+
+    #mobileQuickControls button svg {
+        width: 23px !important;
+        height: 23px !important;
+    }
+
+    #mobileAnalysisPanel {
+        width: 100% !important;
+        margin: 0 !important;
+        gap: 3px !important;
+        align-self: stretch !important;
+    }
+
+    #mobileAnalysisPanel > div {
+        min-height: 32px !important;
+        padding: 4px 8px !important;
+    }
+
+    /* Analizde görünür ana içerik, hamle şeridi ve değerlendirme satırı ayrı grid satırlarında kalır. */
+    body.analysis-mode main {
+        grid-template-rows: minmax(0, 1fr) auto auto !important;
+        padding-bottom: calc(88px + env(safe-area-inset-bottom)) !important;
+    }
+
+    /* Analiz ekranında tahta iki eksende aynı ölçüyü kullanır; değerlendirme çubuğu kareyi sıkıştıramaz. */
+    body.analysis-mode #board-wrapper {
+        width: min(95vw, calc(100dvh - 390px)) !important;
+        height: min(95vw, calc(100dvh - 390px)) !important;
+        max-width: 100% !important;
+        max-height: 100% !important;
+        aspect-ratio: 1 / 1 !important;
+        flex: 0 0 auto !important;
+    }
+
+    /* Analizde oyuncu kartları normal oyundaki gibi tam içerikle görünür; tahta kalan alanı alır. */
+    body.analysis-mode main > div.flex-col {
+        grid-template-rows: auto minmax(0, 1fr) auto !important;
+        gap: clamp(2px, 0.35dvh, 4px) !important;
+    }
+
+    body.analysis-mode #topPlayerCard,
+    body.analysis-mode #bottomPlayerCard {
+        overflow: hidden !important;
+    }
+
+    body.analysis-mode #mobileAnalysisPanel {
+        min-height: 0 !important;
+        padding: 0 !important;
+    }
+
+    body.analysis-mode #mobileAnalysisPanel > div {
+        min-height: 30px !important;
+        height: auto !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Normal oyun ekranında analiz değerlendirme kutusu yer kaplamasın. */
+    #mobileAnalysisPanel {
+        display: none !important;
+    }
+
+    body.analysis-mode #mobileAnalysisPanel {
+        display: flex !important;
+    }
+
+    /* Analizde hamle şeridi görünür; yalnızca canlı oyun kontrolleri gizlenir. */
+    body.analysis-mode #mobileMoveStrip {
+        display: flex !important;
+    }
+
+    body.analysis-mode #mobileQuickControls {
+        display: none !important;
+    }
+}
+
+/* Çok kısa telefon ekranlarında gereksiz dikey boşlukları daha da azalt. */
+@media (max-width: 767px) and (max-height: 700px) {
+    main {
+        padding-top: 2px !important;
+        gap: 2px !important;
+    }
+
+    main > div.flex-col {
+        gap: 2px !important;
+    }
+
+    .player-card-main {
+        padding-top: 2px !important;
+        padding-bottom: 2px !important;
+    }
+
+    .player-capture-row {
+        min-height: 15px !important;
+    }
+
+    #mobileQuickControls,
+    #mobileQuickControls button {
+        min-height: 36px !important;
+    }
+
+    #mobileQuickControls button svg {
+        width: 20px !important;
+        height: 20px !important;
+    }
+}
+
+/* PC görünümü: oyuncu kartları yedekteki tek satırlı düzene döner.
+   Mobil kart satırları ve diğer yeni görsel düzenlemeler korunur. */
+@media (min-width: 768px) {
+    #topPlayerCard,
+    #bottomPlayerCard {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        padding: 0.5rem 0.75rem !important;
+        overflow: visible !important;
+    }
+
+    .player-card-main {
+        display: contents !important;
+    }
+
+    .player-card-main > div:first-child {
+        order: 1;
+        min-width: 0;
+    }
+
+    .player-clock-actions {
+        display: contents !important;
+    }
+
+    .player-clock-action,
+    #topTimerDesktop,
+    #bottomTimerDesktop {
+        order: 3;
+    }
+
+    #topPlayerCard .player-capture-row,
+    #bottomPlayerCard .player-capture-row {
+        order: 2;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        gap: 12px !important;
+        width: auto !important;
+        min-height: 0 !important;
+        margin-left: auto !important;
+        padding: 0 !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+    }
+
+    #topTimerDesktop,
+    #bottomTimerDesktop {
+        order: 3;
+        width: auto !important;
+        min-width: 0 !important;
+        text-align: center !important;
+        margin-left: 12px;
+        flex-shrink: 0;
+    }
+}
+
+
+
+/* Analiz öncesi maç raporu: yalnızca yeni rapor bileşenini biçimlendirir. */
+.pre-analysis-card { color: #f4f4f5; }
+.summary-stat {
+    display: flex; flex-direction: column; gap: 5px; padding: 12px;
+    border: 1px solid #27272a; border-radius: 12px; background: #09090b; min-width: 0;
+}
+
+/* GTEST maç özeti: yalnızca Hamle ve Teori kutularını daha kompakt tut. */
+#summaryStats .summary-stat {
+    gap: 3px;
+    padding: 6px !important;
+    border-radius: 8px;
+}
+#summaryStats .summary-stat strong {
+    font-size: 13px;
+    line-height: 1.2;
+}
+.summary-stat span { color: #a1a1aa; font-size: 11px; }
+.summary-stat strong {
+    color: #fafafa; font-size: 16px; line-height: 1.35; overflow-wrap: anywhere;
+}
+/* Maç raporu tablosu: tüm telefon genişliklerine sığar, yatay kaydırma oluşturmaz. */
+#preAnalysisSummary .overflow-x-auto { overflow-x: hidden !important; }
+#preAnalysisSummary table {
+    width: 100%;
+    min-width: 0;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+#preAnalysisSummary th,
+#preAnalysisSummary td {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: normal;
+}
+#preAnalysisSummary th:first-child,
+#preAnalysisSummary td:first-child {
+    width: 56%;
+}
+#preAnalysisSummary th:not(:first-child),
+#preAnalysisSummary td:not(:first-child) {
+    width: 22%;
+}
+#preAnalysisSummary tbody td:first-child {
+    display: table-cell !important;
+}
+@media (max-width: 400px) {
+    #preAnalysisSummary th,
+    #preAnalysisSummary td {
+        padding-left: 4px !important;
+        padding-right: 4px !important;
+        font-size: 10px;
+    }
+}
+
+
+/* Yalnızca GTEST mobil analiz ekranı: kart-tahta aralığını sıkılaştır,
+   kazanılan alanı alt gezinme ve özellikle oyuna dönüş düğmesine ver. */
+@media (max-width: 767px) {
+    body.analysis-mode main > div.flex-col {
+        row-gap: 1px !important;
+    }
+
+    body.analysis-mode #board-wrapper {
+        width: min(95vw, calc(100dvh - 378px)) !important;
+        height: min(95vw, calc(100dvh - 378px)) !important;
+    }
+
+    body.analysis-mode #mobileAnalysisBottomNav > div button {
+        min-height: 44px !important;
+        padding-top: 8px !important;
+        padding-bottom: 8px !important;
+    }
+
+    body.analysis-mode #mobileAnalysisBottomNav > div button svg {
+        width: 27px !important;
+        height: 27px !important;
+    }
+
+    body.analysis-mode #mExitAnalysisBtn {
+        min-height: 48px !important;
+        margin-top: 5px !important;
+        padding: 10px 12px !important;
+        font-size: 14px !important;
+        line-height: 1.25 !important;
+        border-radius: 10px !important;
+    }
+
+}
+
+
+/* Analiz kalite sembolü kareye aittir; pseudo-element akışa katılmaz ve taşı kaydırmaz. */
+#board > div[class*="analysis-quality-"]::after {
+    content: attr(data-quality-symbol);
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    z-index: 25;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 15px;
+    height: 15px;
+    padding: 0 2px;
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    border-radius: 4px;
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    font-weight: 900;
+    line-height: 1;
+    color: #fff;
+    background: #27272a;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.55);
+    pointer-events: none;
+    box-sizing: border-box;
+}
+#board > div.analysis-quality-brilliant::after { background: #0e7490; border-color: #67e8f9; }
+#board > div.analysis-quality-best::after { background: #047857; border-color: #6ee7b7; }
+#board > div.analysis-quality-good::after { background: #15803d; border-color: #86efac; }
+#board > div.analysis-quality-inaccuracy::after { background: #b45309; border-color: #fcd34d; }
+#board > div.analysis-quality-mistakes::after { background: #c2410c; border-color: #fdba74; }
+#board > div.analysis-quality-blunders::after { background: #b91c1c; border-color: #fca5a5; }
+#board > div.analysis-quality-missed::after { background: #7e22ce; border-color: #d8b4fe; }
+@media (max-width: 767px) {
+    #board > div[class*="analysis-quality-"]::after {
+        top: 1px;
+        right: 1px;
+        min-width: 14px;
+        height: 14px;
+        padding: 0 1px;
+        font-size: 9px;
+        border-radius: 3px;
+    }
+}
+
+
+/* GTEST mobil analiz değerlendirmesi: tam ekran tabloyla aynı hizalı, kompakt satır. */
+@media (max-width: 767px) {
+    body.analysis-mode #mobileAnalysisPanel {
+        width: 100% !important;
+        max-width: 620px !important;
+        margin: 0 !important;
+        gap: 0 !important;
+        align-self: stretch !important;
+    }
+
+    body.analysis-mode #mobileAnalysisPanel .mobile-analysis-eval-row {
+        display: grid !important;
+        grid-template-columns: max-content auto minmax(0, 1fr) !important;
+        align-items: center !important;
+        gap: 7px !important;
+        width: 100% !important;
+        min-height: 36px !important;
+        padding: 5px 8px !important;
+        box-sizing: border-box !important;
+        border-radius: 10px !important;
+        background: #121215 !important;
+        border-color: rgba(63, 63, 70, 0.9) !important;
+    }
+
+    body.analysis-mode .mobile-analysis-eval-label {
+        white-space: nowrap !important;
+        font-size: 9px !important;
+        letter-spacing: 0.04em !important;
+    }
+
+    body.analysis-mode #mEvalScoreText {
+        justify-self: start !important;
+        white-space: nowrap !important;
+        font-size: 12px !important;
+        padding: 3px 6px !important;
+    }
+
+    body.analysis-mode #mEvalDescription {
+        min-width: 0 !important;
+        overflow-wrap: anywhere !important;
+        font-size: 11px !important;
+        line-height: 1.2 !important;
+    }
+}
+
+
+/* GTEST mobil analiz değerlendirme alt boşluğu: kutu sabit alt menüden ayrı kalsın. */
+@media (max-width: 767px) {
+    body.analysis-mode #mobileAnalysisPanel {
+        margin-bottom: 8px !important;
+        padding-bottom: 4px !important;
+        position: relative !important;
+        z-index: 2 !important;
+    }
+
+    body.analysis-mode main {
+        padding-bottom: calc(116px + env(safe-area-inset-bottom)) !important;
+    }
+}
+
+
+/* Mobil alt gezinme düğmelerinin kenarı, seçili tahta temasındaki oyuncu kartı rengiyle eşleşir. */
+#mobileQuickControls button,
+#mobileAnalysisBottomNav button {
+    border-color: var(--player-card-theme-bg, #769656) !important;
+}
+
+/* GTEST maç raporu: mobilde daha okunaklı metin ve rahat dokunma alanları. */
+@media (max-width: 767px) {
+    #preAnalysisSummary {
+        padding: 6px !important;
+        align-items: center !important;
+    }
+
+    #preAnalysisSummary > .pre-analysis-card {
+        width: 100% !important;
+        max-width: 620px !important;
+        max-height: 96dvh !important;
+        padding: 12px !important;
+        border-radius: 14px !important;
+    }
+
+    #preAnalysisSummary table {
+        font-size: 13px !important;
+    }
+
+    #preAnalysisSummary thead th {
+        padding-top: 8px !important;
+        padding-bottom: 8px !important;
+        font-size: 11px !important;
+    }
+
+    #preAnalysisSummary tbody td {
+        padding-top: 8px !important;
+        padding-bottom: 8px !important;
+        font-size: 12px !important;
+        line-height: 1.25 !important;
+    }
+
+    #preAnalysisSummary tbody td:first-child {
+        padding-left: 6px !important;
+        padding-right: 3px !important;
+    }
+
+    #preAnalysisSummary .summary-click-cell {
+        min-height: 38px !important;
+        padding-left: 4px !important;
+        padding-right: 4px !important;
+        font-size: 13px !important;
+        font-weight: 800 !important;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    #preAnalysisSummary #summaryFootnote {
+        font-size: 11px !important;
+        line-height: 1.35 !important;
+    }
+
+    #preAnalysisSummary #summaryCloseBackBtn,
+    #preAnalysisSummary #summaryContinueBtn {
+        min-height: 44px !important;
+        padding-top: 9px !important;
+        padding-bottom: 9px !important;
+        font-size: 13px !important;
+        touch-action: manipulation;
+    }
+}
+
+@media (max-width: 400px) {
+    #preAnalysisSummary tbody td {
+        font-size: 11.5px !important;
+    }
+
+    #preAnalysisSummary .summary-click-cell {
+        font-size: 12px !important;
+    }
+}
+
+
+
+/* GTEST mobil menü yenilemesi: daha geniş dokunma alanı, net seçili durum ve güvenli alt boşluk. */
+@media (max-width: 767px) {
+    #mobileTopBar {
+        min-height: 48px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
+    }
+
+    #mobileQuickLogin,
+    #mobileQuickRegister {
+        min-height: 36px;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    #mobileBottomNav {
+        min-height: 64px;
+        box-sizing: border-box;
+        padding-left: 8px;
+        padding-right: 8px;
+        padding-top: 6px;
+        padding-bottom: max(6px, env(safe-area-inset-bottom));
+        gap: 4px;
+        background: rgba(18, 18, 21, 0.98);
+        border-top: 1px solid #303036;
+        box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.28);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
+
+    #mobileBottomNav .mobile-nav-item {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+        min-width: 0;
+        min-height: 50px;
+        padding: 5px 2px 4px;
+        border: 1px solid transparent;
+        border-radius: 12px;
+        color: #a1a1aa;
+        background: transparent;
+        font-size: 10px;
+        font-weight: 650;
+        line-height: 1.15;
+        white-space: nowrap;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+        transition: color 140ms ease, background-color 140ms ease, border-color 140ms ease;
+    }
+
+    #mobileBottomNav .mobile-nav-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 24px;
+        font-size: 22px;
+        line-height: 1;
+        font-weight: 800;
+    }
+
+    #mobileBottomNav .mobile-nav-item.mobile-nav-active {
+        color: #ffffff;
+        background: rgba(37, 99, 235, 0.19);
+        border-color: rgba(59, 130, 246, 0.58);
+    }
+
+    #mobileBottomNav .mobile-nav-item.mobile-nav-active::before {
+        content: "";
+        position: absolute;
+        top: -1px;
+        left: 50%;
+        width: 22px;
+        height: 3px;
+        border-radius: 0 0 4px 4px;
+        background: #dc2626;
+        transform: translateX(-50%);
+    }
+
+    #mobileBottomNav .mobile-nav-item:focus-visible,
+    #mobileQuickLogin:focus-visible,
+    #mobileQuickRegister:focus-visible {
+        outline: 2px solid #60a5fa;
+        outline-offset: 2px;
+    }
+
+    body:not(.analysis-mode) main {
+        padding-bottom: calc(72px + env(safe-area-inset-bottom)) !important;
+    }
+}
+
+@media (max-width: 360px) {
+    #mobileTopBar {
+        padding-left: 9px;
+        padding-right: 9px;
+    }
+
+    #mobileTopBar > div:first-child {
+        gap: 6px;
+    }
+
+    #mobileTopBar > div:last-child {
+        gap: 5px;
+    }
+
+    #mobileQuickLogin,
+    #mobileQuickRegister {
+        padding-left: 8px;
+        padding-right: 8px;
+        font-size: 11px;
+    }
+
+    #mobileBottomNav .mobile-nav-item {
+        font-size: 9px;
+    }
+}
+
+
+/* GTEST: mobil Oyna menüsü; yeni oyun türleri kolayca eklenebilir. */
+@media (max-width: 767px) {
+    #mobilePlayMenu {
+        padding-bottom: calc(12px + env(safe-area-inset-bottom));
+        align-items: flex-end;
+    }
+
+    .mobile-play-menu-card {
+        max-height: min(86dvh, 680px);
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        animation: mobile-play-menu-in 160ms ease-out;
+    }
+
+    .mobile-play-option {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        width: 100%;
+        min-height: 60px;
+        padding: 10px 11px;
+        text-align: left;
+        border: 1px solid #303036;
+        border-radius: 12px;
+        background: #09090b;
+        color: #f4f4f5;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+        transition: border-color 140ms ease, background-color 140ms ease, transform 140ms ease;
+    }
+
+    .mobile-play-option:active {
+        transform: scale(0.99);
+        background: #18181b;
+    }
+
+    .mobile-play-option:focus-visible,
+    #mobilePlayMenuCloseBtn:focus-visible {
+        outline: 2px solid #60a5fa;
+        outline-offset: 2px;
+    }
+
+    .mobile-play-option-primary {
+        border-color: #2563eb;
+        background: linear-gradient(110deg, rgba(37, 99, 235, 0.24), #09090b 75%);
+    }
+
+    .mobile-play-option-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 38px;
+        width: 38px;
+        height: 38px;
+        border: 1px solid #3f3f46;
+        border-radius: 10px;
+        background: #18181b;
+        font-size: 20px;
+    }
+
+    .mobile-play-option-copy {
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+        gap: 3px;
+        min-width: 0;
+    }
+
+    .mobile-play-option-copy strong {
+        font-size: 14px;
+        font-weight: 800;
+        line-height: 1.2;
+    }
+
+    .mobile-play-option-copy small {
+        color: #a1a1aa;
+        font-size: 11px;
+        line-height: 1.25;
+    }
+
+    .mobile-play-option-arrow {
+        color: #a1a1aa;
+        font-size: 24px;
+        line-height: 1;
+    }
+
+    .mobile-play-option-tag {
+        padding: 4px 6px;
+        border: 1px solid #52525b;
+        border-radius: 6px;
+        color: #d4d4d8;
+        font-size: 9px;
+        font-weight: 800;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+}
+
+@keyframes mobile-play-menu-in {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mobile-play-menu-card { animation: none; }
+}
+
+
+/* GTEST: mobil alt menülerde Oyna menüsüyle ortak kart ve dokunma dili. */
+@media (max-width: 767px) {
+    #tempoModal,
+    #botModal,
+    #settingsModal {
+        align-items: flex-end;
+        justify-content: center;
+        padding: 0 12px calc(12px + env(safe-area-inset-bottom));
+    }
+
+    .mobile-menu-sheet {
+        width: 100%;
+        max-width: 520px;
+        max-height: min(86dvh, 720px);
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        border: 1px solid #3f3f46;
+        border-radius: 20px;
+        background: #121215;
+        box-shadow: 0 20px 55px rgba(0, 0, 0, 0.48);
+        animation: mobile-play-menu-in 160ms ease-out;
+    }
+
+    .mobile-menu-sheet > div:first-child {
+        border-color: #303036;
+        padding-bottom: 12px;
+    }
+
+    .mobile-menu-sheet .tempo-option-btn {
+        min-height: 54px;
+        padding: 10px 12px;
+        border-color: #303036;
+        border-radius: 12px;
+        background: #09090b;
+        gap: 10px;
+        text-align: left;
+    }
+
+    .mobile-menu-sheet .tempo-option-btn:active,
+    .mobile-menu-sheet .bot-level-btn:active,
+    .mobile-menu-sheet .side-choice-btn:active,
+    .mobile-menu-sheet .theme-option-btn:active,
+    .mobile-menu-sheet .piece-style-btn:active,
+    .mobile-menu-sheet .anim-speed-btn:active {
+        transform: scale(0.99);
+    }
+
+    .mobile-menu-sheet .bot-level-btn {
+        min-height: 46px;
+        border-color: #303036;
+        border-radius: 12px;
+        background: #09090b;
+    }
+
+    .mobile-menu-sheet .theme-option-btn,
+    .mobile-menu-sheet .piece-style-btn {
+        min-height: 46px;
+        border-color: #303036;
+        border-radius: 12px;
+        background: #09090b;
+    }
+
+    .mobile-menu-sheet .close-modal-btn:focus-visible,
+    .mobile-menu-sheet button:focus-visible,
+    .mobile-menu-sheet select:focus-visible,
+    .mobile-menu-sheet input:focus-visible {
+        outline: 2px solid #60a5fa;
+        outline-offset: 2px;
+    }
+
+    #settingsModal .mobile-menu-sheet {
+        padding: 16px;
+        gap: 16px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mobile-menu-sheet { animation: none; }
+}
+
+
+/* Hızlı eşleşme: arama ve VS geçiş ekranları */
+.quick-match-flow-card { animation: quickMatchCardIn .22s ease-out both; }
+.quick-match-search-icon {
+    width: 76px; height: 76px; border-radius: 22px;
+    display: grid; place-items: center;
+    color: #f87171; background: rgba(185, 28, 28, .12);
+    border: 1px solid rgba(248, 113, 113, .25);
+    font-size: 2.6rem;
+    animation: quickMatchPulse 1.4s ease-in-out infinite;
+}
+.quick-match-dots { display: inline-block; width: 1.2em; text-align: left; animation: quickMatchDotPulse 1.1s steps(4, end) infinite; }
+.quick-match-search-track { width: 100%; height: 5px; overflow: hidden; border-radius: 999px; background: #27272a; }
+.quick-match-search-track span {
+    display: block; width: 38%; height: 100%; border-radius: inherit;
+    background: linear-gradient(90deg, #b91c1c, #f87171);
+    animation: quickMatchSearchSweep 1.25s ease-in-out infinite;
+}
+.quick-match-player-card {
+    min-width: 0; display: flex; flex-direction: column; align-items: center; gap: .45rem;
+    padding: .85rem .45rem; border-radius: .9rem; border: 1px solid #3f3f46; background: #09090b;
+    font-size: .75rem;
+}
+.quick-match-player-avatar {
+    width: 48px; height: 48px; display: grid; place-items: center;
+    border-radius: 14px; background: #27272a; border: 1px solid #52525b;
+    font-size: 1.8rem; color: #f4f4f5;
+}
+@keyframes quickMatchCardIn { from { opacity: 0; transform: translateY(8px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes quickMatchPulse { 0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(248,113,113,0); } 50% { transform: scale(1.04); box-shadow: 0 0 0 9px rgba(248,113,113,.06); } }
+@keyframes quickMatchDotPulse { 0% { width: .2em; } 33% { width: .55em; } 66% { width: .9em; } 100% { width: 1.2em; } }
+@keyframes quickMatchSearchSweep { 0% { transform: translateX(-110%); } 100% { transform: translateX(280%); } }
+@media (prefers-reduced-motion: reduce) {
+    .quick-match-search-icon, .quick-match-dots, .quick-match-search-track span, .quick-match-flow-card { animation: none !important; }
+}
