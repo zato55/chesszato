@@ -11,6 +11,9 @@ let vsBot = true;
 let quickMatchMode = false;
 let quickMatchBot = null;
 let timerInterval = null;
+let quickMatchFirstMoveInterval = null;
+let quickMatchFirstMoveDeadline = 0;
+let quickMatchBotMoveTimeout = null;
 
 let selectedTimeInSeconds = 300;
 let timeIncrementInSeconds = 0;
@@ -344,13 +347,26 @@ function initStockfish() {
 
                 const botTurnColor = actualPlayerColor === 'w' ? 'b' : 'w';
                 if (!isGameOver && moveStr && moveStr !== '(none)' && vsBot && game.turn() === botTurnColor && !game.game_over()) {
+                    const expectedBotFen = game.fen();
                     const applyBotMove = () => {
+                        quickMatchBotMoveTimeout = null;
+                        // Biten maç veya değişmiş konum için kuyruktaki bot hamlesi uygulanamaz.
+                        if (isGameOver || game.game_over() || game.fen() !== expectedBotFen || game.turn() !== botTurnColor) {
+                            isEngineThinking = false;
+                            return;
+                        }
                         const from = moveStr.substring(0, 2);
                         const to = moveStr.substring(2, 4);
                         const promotion = moveStr.length > 4 ? moveStr.substring(4, 5) : 'q';
 
                         const moveObj = game.move({ from: from, to: to, promotion: promotion });
-                        if (moveObj) returnToLivePosition();
+                        if (moveObj) {
+                            returnToLivePosition();
+                            if (quickMatchMode) {
+                                stopQuickMatchFirstMoveTimer();
+                                startQuickMatchFirstMoveTimer();
+                            }
+                        }
                         if (moveObj && botTurnColor === 'w' && !clockStarted) {
                             clockStarted = true;
                             startTimer();
@@ -373,7 +389,8 @@ function initStockfish() {
                         const complexPosition = game.in_check() || game.moves({ verbose: true }).some(move => move.captured);
                         const thinkingDelay = (complexPosition ? 2200 : 1100) + Math.random() * (complexPosition ? 3800 : 2600);
                         isEngineThinking = true;
-                        setTimeout(applyBotMove, thinkingDelay);
+                        clearQuickMatchBotMoveTimeout();
+                        quickMatchBotMoveTimeout = setTimeout(applyBotMove, thinkingDelay);
                         return;
                     }
                     applyBotMove();
@@ -870,7 +887,195 @@ function setPlayerAvatar(selector, color, botProfile) {
         .toggleClass('bg-zinc-900 text-white', color === 'b');
 }
 
+let quickMatchFlowTimer = null;
+let quickMatchFlowToken = 0;
+let quickMatchReturnToGameOver = false;
+
+function clearQuickMatchBotMoveTimeout() {
+    if (quickMatchBotMoveTimeout) {
+        clearTimeout(quickMatchBotMoveTimeout);
+        quickMatchBotMoveTimeout = null;
+    }
+}
+
+function stopQuickMatchFirstMoveTimer() {
+    if (quickMatchFirstMoveInterval) {
+        clearInterval(quickMatchFirstMoveInterval);
+        quickMatchFirstMoveInterval = null;
+    }
+    quickMatchFirstMoveDeadline = 0;
+    $('#topFirstMoveClock, #bottomFirstMoveClock').addClass('hidden');
+    $('#topTimerDesktop, #bottomTimerDesktop').removeClass('hidden');
+}
+
+function getQuickMatchCardForColor(color) {
+    return (isFlipped ? color === 'w' : color === 'b') ? 'top' : 'bottom';
+}
+
+function hasMadeFirstMove(color) {
+    return game.history({ verbose: true }).some(move => move.color === color);
+}
+
+function startQuickMatchFirstMoveTimer() {
+    if (!quickMatchMode || isGameOver || game.game_over()) {
+        stopQuickMatchFirstMoveTimer();
+        return;
+    }
+
+    const sideToMove = game.turn();
+    if (hasMadeFirstMove(sideToMove)) {
+        stopQuickMatchFirstMoveTimer();
+        return;
+    }
+
+    if (quickMatchFirstMoveInterval) clearInterval(quickMatchFirstMoveInterval);
+    quickMatchFirstMoveDeadline = Date.now() + 20000;
+    const card = getQuickMatchCardForColor(sideToMove);
+    const $countdown = $('#' + card + 'FirstMoveClock');
+    const $gameClock = $('#' + card + 'TimerDesktop');
+    $countdown.removeClass('hidden');
+    $gameClock.addClass('hidden');
+    const updateCountdown = () => {
+        const remaining = Math.max(0, Math.ceil((quickMatchFirstMoveDeadline - Date.now()) / 1000));
+        $countdown.text(remaining + 's');
+        if (remaining <= 0) {
+            stopQuickMatchFirstMoveTimer();
+            isGameOver = true;
+            clearQuickMatchBotMoveTimeout();
+            if (stockfishWorker) stockfishWorker.postMessage('stop');
+            isEngineThinking = false;
+            botSearchActive = false;
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+            updateQuickMatchLockUI();
+            $('#quickMatchCancelledModal').removeClass('hidden');
+        }
+    };
+    updateCountdown();
+    quickMatchFirstMoveInterval = setInterval(updateCountdown, 200);
+}
+
+function hideQuickMatchFlow() {
+    quickMatchFlowToken++;
+    if (quickMatchFlowTimer) {
+        clearTimeout(quickMatchFlowTimer);
+        quickMatchFlowTimer = null;
+    }
+    $('#quickMatchFlowModal').addClass('hidden');
+    $('#quickMatchSearchingView').removeClass('hidden').addClass('flex');
+    $('#quickMatchVersusView').addClass('hidden').removeClass('flex');
+}
+
+function beginQuickMatchFlow() {
+    clearQuickMatchBotMoveTimeout();
+    stopQuickMatchFirstMoveTimer();
+    $('#quickMatchCancelledModal').addClass('hidden');
+    quickMatchReturnToGameOver = isGameOver || game.game_over();
+    const chooseBot = window.chooseZatoQuickMatchBot;
+    if (typeof chooseBot !== 'function') {
+        $('#mobilePlayMenuNotice').text('Bot listesi yüklenemedi. Sayfayı yenileyip tekrar dene.').removeClass('hidden');
+        return;
+    }
+
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+    quickMatchFlowToken++;
+    const token = quickMatchFlowToken;
+    if (quickMatchFlowTimer) clearTimeout(quickMatchFlowTimer);
+
+    quickMatchMode = true;
+    quickMatchBot = null;
+    vsBot = true;
+    userColorSelection = 'r';
+    isGameOver = true;
+    $('#gameOverModal, #botModal, #tempoModal, #settingsModal').addClass('hidden');
+    $('#quickMatchSearchingView').removeClass('hidden').addClass('flex');
+    $('#quickMatchVersusView').addClass('hidden').removeClass('flex');
+    $('#quickMatchFlowModal').removeClass('hidden');
+    $('#mobileModeText').text('Hızlı Eşleşme · Sanal Rakip');
+
+    quickMatchFlowTimer = setTimeout(() => {
+        if (token !== quickMatchFlowToken) return;
+        quickMatchBot = chooseBot();
+        $('#botElo').val(String(quickMatchBot.elo));
+        updateBotEloUI(quickMatchBot.elo);
+
+        const userIsWhite = Math.random() < 0.5;
+        userColorSelection = userIsWhite ? 'w' : 'b';
+        $('#quickMatchUserAvatar').text(userIsWhite ? '♙' : '♟');
+        $('#quickMatchUserColor').text(userIsWhite ? 'Beyaz' : 'Siyah');
+        $('#quickMatchOpponentAvatar').html(getBotAvatarMarkup(quickMatchBot));
+        $('#quickMatchOpponentName').text(quickMatchBot.name);
+        $('#quickMatchOpponentElo').text(quickMatchBot.elo + ' Elo');
+        $('#quickMatchSearchingView').addClass('hidden').removeClass('flex');
+        $('#quickMatchVersusView').removeClass('hidden').addClass('flex');
+
+        quickMatchFlowTimer = setTimeout(() => {
+            if (token !== quickMatchFlowToken) return;
+            quickMatchFlowTimer = null;
+            $('#quickMatchFlowModal').addClass('hidden');
+            $('#quickMatchSearchingView').removeClass('hidden').addClass('flex');
+            $('#quickMatchVersusView').addClass('hidden').removeClass('flex');
+            resetGame();
+        }, 1450);
+    }, 1250);
+}
+
+$(document).on('click', '#cancelQuickMatchBtn', function() {
+    stopQuickMatchFirstMoveTimer();
+    hideQuickMatchFlow();
+    quickMatchMode = false;
+    quickMatchBot = null;
+    isGameOver = quickMatchReturnToGameOver;
+    if (quickMatchReturnToGameOver) {
+        $('#gameOverModal').removeClass('hidden');
+    } else {
+        startTimer();
+    }
+    updateQuickMatchLockUI();
+});
+
+function isQuickMatchLocked() {
+    return quickMatchMode && !isGameOver && !game.game_over();
+}
+
+function blockNewMatchDuringQuickMatch() {
+    if (!isQuickMatchLocked()) return false;
+    $('#mobilePlayMenuNotice')
+        .text('Hızlı maç bitmeden başka maç başlatamazsın.')
+        .removeClass('hidden');
+    return true;
+}
+
+function updateQuickMatchLockUI() {
+    const locked = isQuickMatchLocked();
+    const matchStartControls = [
+        '#modePvP', '#mModePvP', '#modeBot', '#mModeBot',
+        '#mobileMenuQuickMatchBtn', '#mobileMenuBotBtn', '#mobileMenuLocalBtn',
+        '#mobileNavBotBtn', '#mobileBotModalBtn', '#mobileBotStartBtn',
+        '#resetBtn', '#modalResetBtn', '#quickResetBtn', '#timeSelect',
+        '.tempo-option-btn', '.side-choice-btn'
+    ].join(', ');
+
+    $(matchStartControls)
+        .prop('disabled', locked)
+        .attr('aria-disabled', String(locked))
+        .toggleClass('opacity-50 cursor-not-allowed', locked);
+}
+
 function updatePlayerCards() {
+    updateQuickMatchLockUI();
+    // Pes/beraberlik bayrakları yalnızca devam eden, hamle yapılmış canlı maçta görünür.
+    const showGameActions = clockStarted && !isGameOver && !game.game_over() && !isAnalysisMode;
+    $('button[onclick^="offerDraw"], button[onclick^="surrenderGame"]')
+        .toggleClass('hidden', !showGameActions);
+    // Her oyuncunun kartındaki kontroller rakibin kartında görünür.
+    // Bot maçında yalnızca kullanıcının kontrolleri gösterilir (üst kartta).
+    $('#bottomPlayerCard .player-clock-action').toggleClass('hidden', !showGameActions || vsBot);
     $('#quickUndoBtn, #undoBtn').toggleClass('hidden', quickMatchMode);
     $('#mobileQuickControls').toggleClass('grid-cols-5', quickMatchMode).toggleClass('grid-cols-6', !quickMatchMode);
     $('#actionButtons').toggleClass('grid-cols-3', quickMatchMode).toggleClass('grid-cols-2', !quickMatchMode);
@@ -966,11 +1171,12 @@ function updateBotEloUI(selectedElo) {
 }
 
 window.surrenderGame = function(position) {
-    if (isGameOver) return;
-    const surrenderingColor = (position === 'bottom' && !isFlipped) || (position === 'top' && isFlipped) ? 'Beyaz' : 'Siyah';
+    if (isGameOver || game.game_over()) return;
+    // Kontrol rakibin kartında bulunduğundan, basan oyuncu kartın karşı tarafındaki oyuncudur.
+    const surrenderingColor = (position === 'top' && !isFlipped) || (position === 'bottom' && isFlipped) ? 'Beyaz' : 'Siyah';
     const winner = surrenderingColor === 'Beyaz' ? 'Siyah' : 'Beyaz';
 
-    if (confirm(`${surrenderingColor} oyuncusu oyunu terk etmek istiyor. Onaylıyor musunuz?`)) {
+    if (confirm('Pes etmek istediğine emin misin?')) {
         if (timerInterval) clearInterval(timerInterval);
         if (stockfishWorker) stockfishWorker.postMessage('stop');
         isEngineThinking = false;
@@ -979,12 +1185,12 @@ window.surrenderGame = function(position) {
 };
 
 window.offerDraw = function(position) {
-    if (isGameOver) return;
+    if (isGameOver || game.game_over()) return;
     
     if (vsBot) {
         alert("Stockfish Bot: Beraberlik teklifinizi reddediyorum!");
     } else {
-        const offeringPlayer = (position === 'bottom' && !isFlipped) || (position === 'top' && isFlipped) ? 'Beyaz' : 'Siyah';
+        const offeringPlayer = (position === 'top' && !isFlipped) || (position === 'bottom' && isFlipped) ? 'Beyaz' : 'Siyah';
         if (confirm(`${offeringPlayer} oyuncusu beraberlik teklif ediyor. Kabul ediyor musunuz?`)) {
             if (timerInterval) clearInterval(timerInterval);
             if (stockfishWorker) stockfishWorker.postMessage('stop');
@@ -1122,7 +1328,7 @@ function handleMove(from, to) {
 
     if (!isAnalysisMode && !isReviewing) {
         const isBotTurn = vsBot && game.turn() !== actualPlayerColor;
-        if (isBotTurn || isEngineThinking) return;
+        if (isBotTurn) return;
     }
 
     const activeGame = isAnalysisMode ? analysisGame : game;
@@ -1201,7 +1407,13 @@ function executeMove(from, to, promoPiece) {
 
     if (moveObj !== null) {
         if (!isAnalysisMode && !isReviewing && movingColor === 'w') clockStarted = true;
-        if (!isAnalysisMode && activeGame === game) returnToLivePosition();
+        if (!isAnalysisMode && activeGame === game) {
+            returnToLivePosition();
+            if (quickMatchMode) {
+                stopQuickMatchFirstMoveTimer();
+                startQuickMatchFirstMoveTimer();
+            }
+        }
         if (!isAnalysisMode && !isReviewing && timeIncrementInSeconds > 0) {
             if (movingColor === 'w') whiteTime += timeIncrementInSeconds;
             else blackTime += timeIncrementInSeconds;
@@ -1375,7 +1587,7 @@ $('#board').on('click', 'div[data-square]', function () {
 
     if (!isAnalysisMode && !isReviewing) {
         const isBotTurn = vsBot && game.turn() !== actualPlayerColor;
-        if (isBotTurn || isEngineThinking) return;
+        if (isBotTurn) return;
     }
 
     const square = $(this).attr('data-square');
@@ -1415,6 +1627,7 @@ function parseTimeControl(valStr) {
 }
 
 $('#timeSelect').on('change', function() {
+    if (blockNewMatchDuringQuickMatch()) return;
     const timeVal = $(this).val();
     parseTimeControl(timeVal);
     syncTempoSelection(timeVal);
@@ -1431,6 +1644,7 @@ $('#toggleAutoFlip').on('change', function() {
 });
 
 $('.side-choice-btn').on('click', function() {
+    if (blockNewMatchDuringQuickMatch()) return;
     $('.side-choice-btn').removeClass('bg-blue-600 text-white font-bold').addClass('text-zinc-400');
     $(this).addClass('bg-blue-600 text-white font-bold').removeClass('text-zinc-400');
     
@@ -1449,6 +1663,7 @@ function startTimer() {
                 whiteTime--;
             } else {
                 isGameOver = true;
+                updateQuickMatchLockUI();
                 showGameOverModal('Siyah Kazandı!', 'Beyaz oyuncunun süresi bitti.', '⏳');
                 clearInterval(timerInterval);
             }
@@ -1457,6 +1672,7 @@ function startTimer() {
                 blackTime--;
             } else {
                 isGameOver = true;
+                updateQuickMatchLockUI();
                 showGameOverModal('Beyaz Kazandı!', 'Siyah oyuncunun süresi bitti.', '⏳');
                 clearInterval(timerInterval);
             }
@@ -1523,6 +1739,9 @@ function updateTimerDisplay() {
 
 function showGameOverModal(title, reason, icon = '🏆') {
     isGameOver = true;
+    clearQuickMatchBotMoveTimeout();
+    stopQuickMatchFirstMoveTimer();
+    updateQuickMatchLockUI();
     if (timerInterval) {
         clearInterval(timerInterval);
         timerInterval = null;
@@ -1552,13 +1771,15 @@ function updateStatus() {
             $('#status').text('🔍 Geçmiş Konum (Şah Mat)');
         } else if (!isReviewing) {
             isGameOver = true;
+            updateQuickMatchLockUI();
             $('#status').text('Şah Mat!');
             if (vsBot) {
                 const userWon = game.turn() !== actualPlayerColor;
                 if (userWon) {
                     showGameOverModal('Tebrikler, Kazandın!', 'Stockfish botunu şah mat ettin!', '🎉');
                 } else {
-                    showGameOverModal('Kaybettin!', 'Stockfish botu seni şah mat etti.', '💀');
+                    const opponentName = quickMatchMode && quickMatchBot ? quickMatchBot.name : 'Stockfish botu';
+                    showGameOverModal('Kaybettin!', `${opponentName} seni şah mat etti.`, '💀');
                 }
             } else {
                 const winner = game.turn() === 'b' ? 'Beyaz' : 'Siyah';
@@ -1574,6 +1795,7 @@ function updateStatus() {
             $('#status').text('🔍 Geçmiş Konum (Berabere)');
         } else if (!isReviewing) {
             isGameOver = true;
+            updateQuickMatchLockUI();
             $('#status').text('Berabere');
             showGameOverModal('Berabere!', 'Oyun beraberlik ile sonuçlandı.', '🤝');
         } else {
@@ -2038,7 +2260,14 @@ function exitAnalysisMode() {
 
     renderBoard();
     updateStatus();
-    if (!isGameOver && !game.game_over()) startTimer();
+
+    // Analizden çıkınca, satranç motoru terminal konum olarak tanımayan
+    // pes etme/süre dolması gibi bitişlerde de sonuç ekranını geri getir.
+    if (isGameOver || game.game_over()) {
+        $('#gameOverModal').removeClass('hidden');
+    } else {
+        startTimer();
+    }
 }
 
 function updateAnalysisNavigationButtons() {
@@ -2128,6 +2357,7 @@ function playBestMove() {
 }
 
 $('#modePvP, #mModePvP').on('click', function() {
+    if (blockNewMatchDuringQuickMatch()) return;
     quickMatchMode = false;
     quickMatchBot = null;
     vsBot = false;
@@ -2140,6 +2370,7 @@ $('#modePvP, #mModePvP').on('click', function() {
 });
 
 $('#modeBot, #mModeBot').on('click', function() {
+    if (blockNewMatchDuringQuickMatch()) return;
     quickMatchMode = false;
     quickMatchBot = null;
     vsBot = true;
@@ -2293,6 +2524,7 @@ $('#mobilePlayMenu').on('click', function(e) {
 });
 
 $(document).on('click', '#mobileMenuBotBtn', function() {
+    if (blockNewMatchDuringQuickMatch()) return;
     closeMobilePlayMenu();
     quickMatchMode = false;
     quickMatchBot = null;
@@ -2308,6 +2540,7 @@ $(document).on('click', '#mobileMenuBotBtn', function() {
 });
 
 $(document).on('click', '#mobileMenuLocalBtn', function() {
+    if (blockNewMatchDuringQuickMatch()) return;
     closeMobilePlayMenu();
     quickMatchMode = false;
     quickMatchBot = null;
@@ -2321,22 +2554,10 @@ $(document).on('click', '#mobileMenuLocalBtn', function() {
 });
 
 $(document).on('click', '#mobileMenuQuickMatchBtn', function() {
-    const chooseBot = window.chooseZatoQuickMatchBot;
-    if (typeof chooseBot !== 'function') {
-        $('#mobilePlayMenuNotice').text('Bot listesi yüklenemedi. Sayfayı yenileyip tekrar dene.').removeClass('hidden');
-        return;
-    }
-
-    quickMatchBot = chooseBot();
-    quickMatchMode = true;
-    vsBot = true;
-    userColorSelection = 'r';
-    $('#botElo').val(String(quickMatchBot.elo));
-    updateBotEloUI(quickMatchBot.elo);
-    $('#mobileModeText').text('Hızlı Eşleşme · Sanal Rakip');
+    if (blockNewMatchDuringQuickMatch()) return;
     $('#botModal, #tempoModal, #settingsModal').addClass('hidden');
     closeMobilePlayMenu();
-    resetGame();
+    beginQuickMatchFlow();
 });
 
 $(document).on('click', '#mobileMenuTournamentsBtn', function() {
@@ -2344,6 +2565,7 @@ $(document).on('click', '#mobileMenuTournamentsBtn', function() {
 });
 
 $(document).on('click', '#mobileNavBotBtn, #mobileBotModalBtn', function(e) {
+    if (blockNewMatchDuringQuickMatch()) { e.preventDefault(); return; }
     e.preventDefault();
     closeMobilePlayMenu();
     quickMatchMode = false;
@@ -2388,6 +2610,7 @@ $('#tempoModal, #botModal, #settingsModal').on('click', function(e) {
 });
 
 $('.tempo-option-btn').on('click', function() {
+    if (blockNewMatchDuringQuickMatch()) return;
     const timeVal = $(this).attr('data-time');
     parseTimeControl(timeVal);
     syncTempoSelection(timeVal);
@@ -2407,6 +2630,7 @@ $('.bot-level-btn').on('click', function() {
 });
 
 $(document).on('click', '#mobileBotStartBtn', function() {
+    if (blockNewMatchDuringQuickMatch()) return;
     $('#botModal').addClass('hidden');
     setMobileNavActive(null);
     resetGame();
@@ -2461,6 +2685,9 @@ $('#botElo').on('change', function() {
 });
 
 function resetGame() {
+    clearQuickMatchBotMoveTimeout();
+    stopQuickMatchFirstMoveTimer();
+    $('#quickMatchCancelledModal').addClass('hidden');
     closePreAnalysisSummary();
     const engineSearchPending = Boolean(stockfishWorker && (isEngineThinking || discardEngineBestMove));
     if (engineSearchPending) {
@@ -2534,6 +2761,7 @@ function resetGame() {
     renderBoard();
     updateStatus();
     startTimer();
+    if (quickMatchMode) startQuickMatchFirstMoveTimer();
 
     if (vsBot && actualPlayerColor === 'b') {
         triggerStockfishMove();
@@ -2542,7 +2770,22 @@ function resetGame() {
 
 $('#resetBtn, #modalResetBtn, #quickResetBtn').on('click', function(e) {
     e.preventDefault();
+    if (quickMatchMode && isGameOver && !isAnalysisMode) {
+        beginQuickMatchFlow();
+        return;
+    }
+    if (blockNewMatchDuringQuickMatch()) return;
     resetGame();
+});
+
+$(document).on('click', '#quickMatchFindAnotherBtn', function() {
+    $('#quickMatchCancelledModal').addClass('hidden');
+    beginQuickMatchFlow();
+});
+
+$(document).on('click', '#quickMatchHomeBtn', function() {
+    stopQuickMatchFirstMoveTimer();
+    window.location.reload();
 });
 
 $('#reviewBoardBtn').on('click', function() {
