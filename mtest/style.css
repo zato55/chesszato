@@ -1618,3 +1618,41 @@ aside.collapsed #logoToggleBtn {
   #mtestHomeScreen .mtest-tool-card small { display:none !important; }
   #mtestHomeScreen .mtest-home-notice { padding:5px 8px !important; font-size:10px !important; }
 }
+
+
+/* MTEST v6: kart ızgarasında simetri ve eşit aralıklar */
+@media screen and (max-width: 767px) {
+  #mtestHomeScreen .mtest-home-inner {
+    gap:6px !important;
+    padding:5px 10px calc(60px + env(safe-area-inset-bottom)) !important;
+  }
+  #mtestHomeScreen .mtest-hero { margin:0 !important; }
+  #mtestHomeScreen .mtest-start { width:100% !important; margin:0 !important; }
+  #mtestHomeScreen .mtest-section,
+  #mtestHomeScreen .mtest-tools-section { width:100% !important; }
+  #mtestHomeScreen .mtest-section-heading {
+    width:100% !important; min-height:13px !important; margin:0 !important;
+  }
+  #mtestHomeScreen .mtest-mode-grid,
+  #mtestHomeScreen .mtest-tool-grid {
+    width:100% !important;
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    grid-auto-rows:40px !important;
+    gap:5px !important;
+  }
+  #mtestHomeScreen .mtest-mode-card,
+  #mtestHomeScreen .mtest-tool-card {
+    width:100% !important; min-width:0 !important;
+    height:40px !important; min-height:40px !important; max-height:40px !important;
+    padding:3px 8px !important; border-radius:9px !important;
+  }
+  /* Üçüncü kartı iki sütunun ortasında tutarak satır dengesini koru. */
+  #mtestHomeScreen .mtest-mode-card:nth-child(3),
+  #mtestHomeScreen .mtest-tool-card:nth-child(3) {
+    grid-column:1 / -1 !important;
+    width:calc(50% - 2.5px) !important;
+    justify-self:center !important;
+  }
+  #mtestHomeScreen .mtest-mode-card strong,
+  #mtestHomeScreen .mtest-tool-card strong { font-size:11px !important; }
+}
