@@ -1739,3 +1739,27 @@ aside.collapsed #logoToggleBtn {
     border: 1px solid #ef233c !important;
   }
 }
+
+
+/* MTEST: dikey ekranda tanıtım bölümünün yatay sıkışmasını azalt */
+@media screen and (max-width: 767px) and (orientation: portrait) {
+  #mtestHomeScreen .mtest-hero {
+    grid-template-columns: minmax(0, 1fr) minmax(92px, 0.52fr) !important;
+    padding-left: 12px !important;
+    padding-right: 8px !important;
+  }
+  #mtestHomeScreen .mtest-hero-copy {
+    min-width: 0 !important;
+  }
+  #mtestHomeScreen .mtest-hero h1 {
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+    font-size: clamp(16px, 4.5vw, 21px) !important;
+  }
+  #mtestHomeScreen .mtest-king-art {
+    min-width: 0 !important;
+  }
+  #mtestHomeScreen .mtest-king-art span {
+    font-size: clamp(76px, 23vw, 100px) !important;
+  }
+}
