@@ -1813,3 +1813,14 @@ aside.collapsed #logoToggleBtn {
   #mtestHomeScreen #mtestQuoteText { font-size:12px; }
   #mtestHomeScreen .mtest-quote-author { margin-top:4px; }
 }
+
+
+/* MTEST: dört kartlı ana menüde üçüncü kartı ortalamak yerine ızgaraya yerleştir. */
+@media screen and (max-width: 767px) {
+  #mtestHomeScreen .mtest-mode-card:nth-child(3):not(:last-child),
+  #mtestHomeScreen .mtest-tool-card:nth-child(3):not(:last-child) {
+    grid-column:auto !important;
+    width:100% !important;
+    justify-self:stretch !important;
+  }
+}
