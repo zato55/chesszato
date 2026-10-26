@@ -14,7 +14,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
     
     <!-- Özel CSS -->
-    <link rel="stylesheet" href="style.css?v=20261026-mtest-menu-backdrop-v3">
+    <link rel="stylesheet" href="style.css?v=20261026-mtest-bot-cancel-v4">
 </head>
 
 <body class="bg-[#09090b] text-zinc-100 font-sans antialiased h-screen h-[100dvh] overflow-hidden flex flex-col md:flex-row select-none">
@@ -31,7 +31,7 @@
         </section>
         <button class="mtest-start" type="button" onclick="document.getElementById('mtestHomeScreen').classList.add('mtest-home-hidden'); document.getElementById('mobileNavPlayBtn').click();"><span class="mtest-play-icon">▶</span><span class="mtest-start-copy"><strong>Oyuna Başla</strong><small>Hemen oyna, ustalaş ve yüksel.</small></span><span class="mtest-chevron">›</span></button>
         <section class="mtest-section"><div class="mtest-section-heading"><h2>OYUN MODLARI</h2><span></span></div><div class="mtest-mode-grid">
-          <button class="mtest-mode-card" type="button" onclick="document.getElementById('mtestHomeScreen').classList.add('mtest-home-hidden'); document.getElementById('mobileMenuBotBtn').click();"><span class="mtest-mode-icon">♟</span><strong>Bot ile Oyna</strong><small>Zorluk seviyeni seç ve kendini geliştir.</small><b>›</b></button>
+          <button class="mtest-mode-card" type="button" onclick="window.mtestReturnHomeAfterModal=true; document.getElementById('mtestHomeScreen').classList.remove('mtest-home-hidden'); document.getElementById('mtestHomeScreen').classList.add('mtest-home-modal-backdrop'); document.getElementById('mobileMenuBotBtn').click();"><span class="mtest-mode-icon">♟</span><strong>Bot ile Oyna</strong><small>Zorluk seviyeni seç ve kendini geliştir.</small><b>›</b></button>
           <button class="mtest-mode-card" type="button" onclick="document.getElementById('mtestHomeScreen').classList.add('mtest-home-hidden'); document.getElementById('mobileMenuQuickMatchBtn').click();"><span class="mtest-mode-icon">◎</span><strong>Hızlı Eşleşme</strong><small>Rakibini bul, hemen oyna.</small><b>›</b></button>
           <button class="mtest-mode-card" type="button" onclick="document.getElementById('mtestHomeScreen').classList.add('mtest-home-hidden'); document.getElementById('mobileMenuLocalBtn').click();"><span class="mtest-mode-icon">♙♟</span><strong>Arkadaşınla Oyna</strong><small>Aynı cihazda karşılaş.</small><b>›</b></button>
         </div></section>
@@ -748,7 +748,7 @@
     <!-- Ana Uygulama Kodu -->
     <script src="openings.js?v=20261020-lichess-openings-3865"></script>
     <script src="bots.js?v=20261025-bot-1000-v1"></script>
-    <script src="app.js?v=20261026-mtest-menu-backdrop-v3"></script>
+    <script src="app.js?v=20261026-mtest-bot-cancel-v4"></script>
 </body>
 
 </html>
