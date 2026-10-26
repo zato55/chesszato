@@ -23,24 +23,24 @@
       <div class="mtest-home-inner">
         <header class="mtest-home-header">
           <div class="mtest-brand"><div class="mtest-brand-mark">♞</div><div><div class="mtest-brand-name">CHESS<span>ZATO</span></div><div class="mtest-tagline">DÜŞÜN <i>•</i> HAMLE YAP <i>•</i> KAZAN</div></div></div>
-          <a class="mtest-login" href="giris.html">Giriş Yap <span>›</span></a>
+          <div class="mtest-auth-actions"><a class="mtest-login" href="giris.html">Giriş Yap <span>›</span></a><a class="mtest-register" href="uye-ol.html">Kayıt Ol <span>+</span></a></div>
         </header>
         <section class="mtest-hero">
           <div class="mtest-hero-copy"><p class="mtest-eyebrow">STRATEJİNİ GÖSTER</p><h1>Satranç sadece bir oyun değil,<br><span>bir düşünce tarzıdır.</span></h1><p class="mtest-hero-sub">Her hamlede kendini geliştir.</p></div>
           <div class="mtest-king-art" aria-hidden="true"><div class="mtest-king-halo"></div><span>♚</span><div class="mtest-king-floor"></div></div>
         </section>
-        <button class="mtest-start" type="button" onclick="document.getElementById('mtestHomeScreen').classList.add('mtest-home-hidden'); document.getElementById('mobileNavPlayBtn').click();"><span class="mtest-play-icon">▶</span><span class="mtest-start-copy"><strong>Oyuna Başla</strong><small>Hemen oyna, ustala, yüksel.</small></span><span class="mtest-chevron">›</span></button>
+        <button class="mtest-start" type="button" onclick="document.getElementById('mtestHomeScreen').classList.add('mtest-home-hidden'); document.getElementById('mobileNavPlayBtn').click();"><span class="mtest-play-icon">▶</span><span class="mtest-start-copy"><strong>Oyuna Başla</strong><small>Hemen oyna, ustalaş ve yüksel.</small></span><span class="mtest-chevron">›</span></button>
         <section class="mtest-section"><div class="mtest-section-heading"><h2>OYUN MODLARI</h2><span></span></div><div class="mtest-mode-grid">
           <button class="mtest-mode-card" type="button" onclick="document.getElementById('mtestHomeScreen').classList.add('mtest-home-hidden'); document.getElementById('mobileMenuBotBtn').click();"><span class="mtest-mode-icon">♟</span><strong>Bot ile Oyna</strong><small>Zorluk seviyeni seç ve kendini geliştir.</small><b>›</b></button>
           <button class="mtest-mode-card" type="button" onclick="document.getElementById('mtestHomeScreen').classList.add('mtest-home-hidden'); document.getElementById('mobileMenuQuickMatchBtn').click();"><span class="mtest-mode-icon">◎</span><strong>Hızlı Eşleşme</strong><small>Rakibini bul, hemen oyna.</small><b>›</b></button>
           <button class="mtest-mode-card" type="button" onclick="document.getElementById('mtestHomeScreen').classList.add('mtest-home-hidden'); document.getElementById('mobileMenuLocalBtn').click();"><span class="mtest-mode-icon">♙♟</span><strong>Arkadaşınla Oyna</strong><small>Aynı cihazda karşılaş.</small><b>›</b></button>
         </div></section>
         <section class="mtest-section mtest-tools-section"><div class="mtest-section-heading"><h2>DİĞER SEÇENEKLER</h2><span></span></div><div class="mtest-tool-grid">
-          <button class="mtest-tool-card" type="button" onclick="document.getElementById('mtestHomeScreen').classList.add('mtest-home-hidden');"><span>⌕</span><strong>Analiz</strong><small>Oyununu incele.</small></button>
-          <button class="mtest-tool-card" type="button" onclick="document.getElementById('mtestHomeScreen').classList.add('mtest-home-hidden'); document.getElementById('mobileMenuTournamentsBtn').click();"><span>♜</span><strong>Turnuvalar</strong><small>Yeni hedefler keşfet.</small></button>
-          <button class="mtest-tool-card" type="button" onclick="document.getElementById('mtestHomeScreen').classList.add('mtest-home-hidden'); document.getElementById('mobileNavSettingsBtn').click();"><span>⚙</span><strong>Ayarlar</strong><small>Oyunu kişiselleştir.</small></button>
+          <button id="mtestAnalysisBtn" class="mtest-tool-card" type="button"><span>⌕</span><strong>Analiz</strong><small>Oyununu incele.</small></button>
+          <button id="mtestTournamentsBtn" class="mtest-tool-card" type="button"><span>♜</span><strong>Turnuvalar</strong><small>Yeni hedefler keşfet.</small></button>
+          <button id="mtestSettingsBtn" class="mtest-tool-card" type="button" onclick="window.mtestReturnHomeAfterModal=true; document.getElementById('mtestHomeScreen').classList.add('mtest-home-hidden'); document.getElementById('mobileNavSettingsBtn').click();"><span>⚙</span><strong>Ayarlar</strong><small>Oyunu kişiselleştir.</small></button>
         </div></section>
-        <footer class="mtest-home-footer"><span class="mtest-footer-active">● Ana Sayfa</span><span>♟ Oyun</span><span>◷ Geçmiş</span><span>☰ Daha Fazla</span></footer>
+        <p id="mtestHomeNotice" class="mtest-home-notice hidden" role="status" aria-live="polite"></p><footer class="mtest-home-footer"><span class="mtest-footer-active">● Ana Sayfa</span><span>♟ Oyun</span><span>◷ Geçmiş</span><span>☰ Daha Fazla</span></footer>
       </div>
     </section>
 
@@ -318,6 +318,7 @@
                 <button id="mobilePlayMenuCloseBtn" class="rounded-lg px-3 py-2 text-zinc-400 hover:text-white hover:bg-zinc-800" aria-label="Menüyü kapat">✕</button>
             </div>
             <div class="grid grid-cols-1 gap-2">
+                <button id="mobileMenuHomeBtn" class="mobile-play-option"><span class="mobile-play-option-icon">⌂</span><span class="mobile-play-option-copy"><strong>Ana Sayfa</strong><small>Ana ekrana dön</small></span></button>
                 <button id="mobileMenuQuickMatchBtn" class="mobile-play-option"><span class="mobile-play-option-icon">⚡</span><span class="mobile-play-option-copy"><strong>Hızlı eşleştirme</strong><small>Rastgele sanal rakiple oyna</small></span></button>
                 <button id="mobileMenuBotBtn" class="mobile-play-option"><span class="mobile-play-option-icon">🤖</span><span class="mobile-play-option-copy"><strong>Bota karşı oyna</strong><small>Stockfish ile karşılaş</small></span><span class="mobile-play-option-arrow">›</span></button>
                 <button id="mobileMenuTournamentsBtn" class="mobile-play-option"><span class="mobile-play-option-icon">🏆</span><span class="mobile-play-option-copy"><strong>Turnuvalar</strong><small>Turnuvalara katıl veya oluştur</small></span><span class="mobile-play-option-tag">Yakında</span></button>
