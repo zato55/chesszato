@@ -1428,6 +1428,9 @@ aside.collapsed #logoToggleBtn {
 
 /* MTEST ANA EKRAN — Chesszato siyah, beyaz ve kırmızı marka paleti */
 .mtest-home{color:#f4f4f5;background:radial-gradient(ellipse at 76% 23%,rgba(185,28,28,.18),transparent 34%),#080a0e;font-family:inherit;-webkit-overflow-scrolling:touch}
+/* Mobil ilk açılışta viewport yüksekliği değişirken ana ekran ve alt menü zıplamasın. */
+#mtestHomeScreen{height:100vh;height:100dvh;min-height:0;box-sizing:border-box;}
+#mtestHomeScreen .mtest-home-inner{min-height:100%;box-sizing:border-box;}
 .mtest-home-hidden{display:none!important}
 .mtest-home-inner{width:min(100%,1050px);min-height:100%;margin:0 auto;padding:22px clamp(13px,4vw,42px) 14px;display:flex;flex-direction:column;gap:20px;box-sizing:border-box}
 .mtest-home-header{display:flex;align-items:center;justify-content:space-between;gap:14px}
