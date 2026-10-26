@@ -1729,3 +1729,13 @@ aside.collapsed #logoToggleBtn {
   #mtestHomeScreen .mtest-mode-card b { font-size:26.5625px !important; }
   #mtestHomeScreen .mtest-home-notice { padding:7.5px 12.5px !important; }
 }
+
+
+/* MTEST: Oyuna Başla butonunu Chesszato marka renklerine eşleştir */
+@media screen and (max-width: 767px) {
+  #mtestHomeScreen .mtest-start {
+    background: linear-gradient(110deg, #d71935, #941126) !important;
+    color: #ffffff !important;
+    border: 1px solid #ef233c !important;
+  }
+}
