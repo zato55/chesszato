@@ -17,9 +17,31 @@ let quickMatchBotMoveTimeout = null;
 
 let selectedTimeInSeconds = 300;
 let timeIncrementInSeconds = 0;
-// Hızlı eşleşmenin temposu, eşleşme iptal edilip ana menüye dönülse de korunur.
-let selectedQuickMatchTempo = '300';
-Object.defineProperty(window, 'selectedQuickMatchTempo', { configurable: true, get: () => selectedQuickMatchTempo, set: value => { selectedQuickMatchTempo = String(value || '300'); } });
+// Hızlı eşleşmenin son temposunu sayfa yenilense de koru.
+const QUICK_MATCH_TEMPO_STORAGE_KEY = 'mtestQuickMatchTempo';
+function readSavedQuickMatchTempo() {
+    try {
+        const saved = localStorage.getItem(QUICK_MATCH_TEMPO_STORAGE_KEY);
+        return saved && /^(60|60-1|120-1|180|180-2|300|300-3|600|900-10|1800)$/.test(saved) ? saved : '300';
+    } catch (error) {
+        return '300';
+    }
+}
+let selectedQuickMatchTempo = readSavedQuickMatchTempo();
+function saveQuickMatchTempo(value) {
+    const tempo = String(value || '300');
+    selectedQuickMatchTempo = tempo;
+    try {
+        localStorage.setItem(QUICK_MATCH_TEMPO_STORAGE_KEY, tempo);
+    } catch (error) {
+        // Depolama kullanılamazsa seçim mevcut sayfa oturumu boyunca korunur.
+    }
+}
+Object.defineProperty(window, 'selectedQuickMatchTempo', {
+    configurable: true,
+    get: () => selectedQuickMatchTempo,
+    set: value => saveQuickMatchTempo(value)
+});
 let whiteTime = 300, blackTime = 300;
 let clockStarted = false;
 
@@ -2582,12 +2604,12 @@ $(document).on('click', '#mobileMenuQuickMatchBtn', function() {
 });
 
 $(document).on('change', '#quickMatchTempoSelect', function() {
-    selectedQuickMatchTempo = String($(this).val() || selectedQuickMatchTempo || '300');
+    saveQuickMatchTempo($(this).val());
 });
 
 $(document).on('click', '#quickMatchSearchBtn', function() {
     const timeVal = String($('#quickMatchTempoSelect').val() || selectedQuickMatchTempo || '300');
-    selectedQuickMatchTempo = timeVal;
+    saveQuickMatchTempo(timeVal);
     $('#timeSelect').val(timeVal);
     parseTimeControl(timeVal);
     syncTempoSelection(timeVal);
