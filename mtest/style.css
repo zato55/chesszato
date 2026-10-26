@@ -1462,7 +1462,7 @@ aside.collapsed #logoToggleBtn {
 /* Mobil: tüm ana ekran tek viewport içinde, bölümler yüzdeyle paylaştırılır. */
 @media(max-width:767px){
 #mtestHomeScreen{height:100vh;height:100dvh;overflow:hidden}
-.mtest-home-inner{height:100%;min-height:0;padding:env(safe-area-inset-top,0px) 12px calc(60px + env(safe-area-inset-bottom));display:grid;grid-template-rows:10% 25% 12% 25% 22%;gap:1.5%;overflow:hidden}
+.mtest-home-inner{height:100%;min-height:0;padding:env(safe-area-inset-top,0px) 12px calc(60px + env(safe-area-inset-bottom));display:grid;grid-template-rows:8fr 19fr 9fr 12fr 11fr;gap:1.5%;overflow:hidden}
 .mtest-home-header{min-height:0;gap:5px}.mtest-brand{gap:7px}.mtest-brand-mark{width:clamp(28px,8vw,38px);height:clamp(28px,8vw,38px);font-size:clamp(22px,6vw,29px);border-radius:9px}
 .mtest-brand-name{font-size:clamp(14px,4.2vw,19px);letter-spacing:.04em}.mtest-tagline{font-size:clamp(5px,1.5vw,7px);letter-spacing:.06em;margin-top:3px}
 .mtest-auth-actions{gap:4px}.mtest-login,.mtest-register{padding:6px 6px;gap:3px;font-size:clamp(8px,2.5vw,10px);border-radius:8px}.mtest-login span,.mtest-register span{font-size:14px}
