@@ -14,7 +14,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
     
     <!-- Özel CSS -->
-    <link rel="stylesheet" href="style.css?v=20261025-normal-sync-v1">
+    <link rel="stylesheet" href="style.css?v=20261026-gtest-transfer-v1">
 </head>
 
 <body class="bg-[#09090b] text-zinc-100 font-sans antialiased h-screen h-[100dvh] overflow-hidden flex flex-col md:flex-row select-none">
@@ -85,7 +85,12 @@
                             <span id="topOpeningText" class="text-[11px] text-zinc-400 font-medium truncate">📖 ...</span>
                         </div>
                     </div>
-                    <div id="topTimerDesktop" class="player-card-clock font-mono font-black text-sm px-2.5 py-1 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-200">05:00</div>
+                    <div class="player-clock-actions">
+                        <button type="button" onclick="offerDraw('top')" class="player-clock-action text-amber-400" aria-label="Üst oyuncu için beraberlik teklif et" title="Beraberlik teklif et">🤝</button>
+                        <button type="button" onclick="surrenderGame('top')" class="player-clock-action text-red-400" aria-label="Üst oyuncu için pes et" title="Pes et">🏳️</button>
+                        <div id="topFirstMoveClock" class="quick-match-first-move-clock hidden player-card-clock font-mono font-black text-sm px-2.5 py-1 rounded-lg bg-amber-500/15 border border-amber-400/70 text-amber-200">20</div>
+                        <div id="topTimerDesktop" class="player-card-clock font-mono font-black text-sm px-2.5 py-1 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-200">05:00</div>
+                    </div>
                 </div>
                 <div class="player-capture-row" aria-label="Üst oyuncunun yediği taşlar">
                     <div id="topCapturedPieces" class="flex items-center gap-1"></div>
@@ -131,7 +136,12 @@
                             <span id="bottomOpeningText" class="text-[11px] text-zinc-400 font-medium truncate">📖 ...</span>
                         </div>
                     </div>
-                    <div id="bottomTimerDesktop" class="player-card-clock font-mono font-black text-sm px-2.5 py-1 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-200">05:00</div>
+                    <div class="player-clock-actions">
+                        <button type="button" onclick="offerDraw('bottom')" class="player-clock-action text-amber-400" aria-label="Alt oyuncu için beraberlik teklif et" title="Beraberlik teklif et">🤝</button>
+                        <button type="button" onclick="surrenderGame('bottom')" class="player-clock-action text-red-400" aria-label="Alt oyuncu için pes et" title="Pes et">🏳️</button>
+                        <div id="bottomFirstMoveClock" class="quick-match-first-move-clock hidden player-card-clock font-mono font-black text-sm px-2.5 py-1 rounded-lg bg-amber-500/15 border border-amber-400/70 text-amber-200">20</div>
+                        <div id="bottomTimerDesktop" class="player-card-clock font-mono font-black text-sm px-2.5 py-1 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-200">05:00</div>
+                    </div>
                 </div>
             </div>
 
@@ -256,10 +266,10 @@
                     <button id="undoBtn" class="py-2 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 font-bold rounded-xl text-xs border border-zinc-800 flex items-center justify-center gap-1.5">
                         ↩️ <span>Geri Al</span>
                     </button>
-                    <button onclick="offerDraw('bottom')" class="py-2 bg-zinc-900 hover:bg-zinc-800 text-amber-400 font-bold rounded-xl text-xs border border-zinc-800 flex items-center justify-center gap-1.5">
+                    <button onclick="offerDraw('top')" class="py-2 bg-zinc-900 hover:bg-zinc-800 text-amber-400 font-bold rounded-xl text-xs border border-zinc-800 flex items-center justify-center gap-1.5">
                         🤝 <span>Berabere</span>
                     </button>
-                    <button onclick="surrenderGame('bottom')" class="py-2 bg-zinc-900 hover:bg-zinc-800 text-red-400 font-bold rounded-xl text-xs border border-zinc-800 flex items-center justify-center gap-1.5">
+                    <button onclick="surrenderGame('top')" class="py-2 bg-zinc-900 hover:bg-zinc-800 text-red-400 font-bold rounded-xl text-xs border border-zinc-800 flex items-center justify-center gap-1.5">
                         🏳️ <span>Terk Et</span>
                     </button>
                 </div>
@@ -421,6 +431,51 @@
                 <button id="summaryContinueBtn" disabled class="flex-1 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white font-bold text-xs">Analizi Aç</button>
             </div>
         </section>
+    </div>
+
+    <!-- ⚡ HIZLI EŞLEŞME AKIŞI (şimdilik arayüz demosu) -->
+    <div id="quickMatchFlowModal" class="hidden fixed inset-0 bg-[#09090b]/95 backdrop-blur-md z-[80] flex items-center justify-center p-5" role="dialog" aria-modal="true" aria-labelledby="quickMatchFlowTitle">
+        <div class="quick-match-flow-card w-full max-w-sm rounded-2xl border border-zinc-700/80 bg-[#121215] p-6 text-center shadow-2xl">
+            <div id="quickMatchSearchingView" class="flex flex-col items-center gap-4">
+                <div class="quick-match-search-icon" aria-hidden="true"><span>♞</span></div>
+                <div class="space-y-1">
+                    <h2 id="quickMatchFlowTitle" class="text-xl font-extrabold text-white">Rakip aranıyor<span class="quick-match-dots">...</span></h2>
+                    <p class="text-sm text-zinc-400">Sana uygun bir sanal rakip buluyoruz.</p>
+                </div>
+                <div class="quick-match-search-track"><span></span></div>
+                <p class="text-xs text-zinc-500">Eşleşme hazırlanıyor</p>
+                <button id="cancelQuickMatchBtn" class="w-full rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-2.5 text-sm font-bold text-zinc-300 transition hover:bg-zinc-800">İptal</button>
+            </div>
+            <div id="quickMatchVersusView" class="hidden flex-col items-center gap-4">
+                <p class="text-xs font-bold uppercase tracking-[0.25em] text-red-400">Eşleşme bulundu</p>
+                <div class="grid w-full grid-cols-[1fr_auto_1fr] items-center gap-2">
+                    <div class="quick-match-player-card">
+                        <div id="quickMatchUserAvatar" class="quick-match-player-avatar">♙</div>
+                        <strong>Siz</strong>
+                        <span id="quickMatchUserColor" class="text-zinc-400">Beyaz</span>
+                    </div>
+                    <span class="text-xl font-black italic text-zinc-500">VS</span>
+                    <div class="quick-match-player-card">
+                        <div id="quickMatchOpponentAvatar" class="quick-match-player-avatar">♟</div>
+                        <strong id="quickMatchOpponentName" class="break-all">Rakip</strong>
+                        <span id="quickMatchOpponentElo" class="text-zinc-400">1200 Elo</span>
+                    </div>
+                </div>
+                <p class="text-xs text-zinc-500">Maç başlamak üzere...</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="quickMatchCancelledModal" class="hidden fixed inset-0 bg-black/85 backdrop-blur-sm z-[90] flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="quickMatchCancelledTitle">
+        <div class="quick-match-flow-card w-full max-w-sm rounded-2xl border border-red-500/30 bg-[#121215] p-6 text-center shadow-2xl">
+            <div class="mb-3 text-5xl" aria-hidden="true">⏱️</div>
+            <h2 id="quickMatchCancelledTitle" class="text-xl font-extrabold text-white">Maç iptal edildi</h2>
+            <p class="mt-2 text-sm leading-relaxed text-zinc-400">İlk hamle 20 saniye içinde yapılmadığı için eşleşme sonlandırıldı.</p>
+            <div class="mt-5 flex flex-col gap-2">
+                <button id="quickMatchFindAnotherBtn" class="w-full rounded-xl bg-red-700 px-4 py-3 text-sm font-extrabold text-white transition hover:bg-red-600">Başka Rakip Ara</button>
+                <button id="quickMatchHomeBtn" class="w-full rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-3 text-sm font-bold text-zinc-200 transition hover:bg-zinc-800">Ana Ekran</button>
+            </div>
+        </div>
     </div>
 
     <!-- 🏆 OYUN BİTTİ MODALI -->
@@ -666,7 +721,7 @@
     <!-- Ana Uygulama Kodu -->
     <script src="openings.js?v=20261020-lichess-openings-3865"></script>
     <script src="bots.js?v=20261025-bot-1000-v1"></script>
-    <script src="app.js?v=20261025-bot-avatars-v1"></script>
+    <script src="app.js?v=20261026-gtest-transfer-v1"></script>
 </body>
 
 </html>
