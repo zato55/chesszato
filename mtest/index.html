@@ -14,7 +14,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
     
     <!-- Özel CSS -->
-    <link rel="stylesheet" href="style.css?v=20261026-mtest-portrait-hero-v1">
+    <link rel="stylesheet" href="style.css?v=20261026-mtest-live-quotes-v1">
 </head>
 
 <body class="bg-[#09090b] text-zinc-100 font-sans antialiased h-screen h-[100dvh] overflow-hidden flex flex-col md:flex-row select-none">
@@ -40,6 +40,15 @@
           <button id="mtestTournamentsBtn" class="mtest-tool-card" type="button"><span>♜</span><strong>Turnuvalar</strong><small>Yeni hedefler keşfet.</small></button>
           <button id="mtestSettingsBtn" class="mtest-tool-card" type="button" onclick="window.mtestReturnHomeAfterModal=true; document.getElementById('mtestHomeScreen').classList.remove('mtest-home-hidden'); document.getElementById('mtestHomeScreen').classList.add('mtest-home-modal-backdrop'); document.getElementById('mobileNavSettingsBtn').click();"><span>⚙</span><strong>Ayarlar</strong><small>Oyunu kişiselleştir.</small></button>
         </div></section>
+        <section id="mtestQuoteStage" class="mtest-quote-stage" aria-label="Satranç ustalarından günün sözü" aria-live="polite">
+          <div class="mtest-quote-chess-mark" aria-hidden="true">♞</div>
+          <div class="mtest-quote-content">
+            <span class="mtest-quote-kicker">USTALARDAN İLHAM</span>
+            <blockquote id="mtestQuoteText">“Kazandığınız oyundan çok, kaybettiğiniz oyundan öğrenebilirsiniz.”</blockquote>
+            <div class="mtest-quote-author"><span></span><strong id="mtestQuoteAuthor">José Raúl Capablanca</strong></div>
+          </div>
+          <div class="mtest-quote-progress" aria-hidden="true"><span id="mtestQuoteProgress"></span></div>
+        </section>
         <p id="mtestHomeNotice" class="mtest-home-notice hidden" role="status" aria-live="polite"></p><footer class="mtest-home-footer"><span class="mtest-footer-active">● Ana Sayfa</span><span>♟ Oyun</span><span>◷ Geçmiş</span><span>☰ Daha Fazla</span></footer>
       </div>
     </section>
@@ -772,7 +781,7 @@
     <!-- Ana Uygulama Kodu -->
     <script src="openings.js?v=20261020-lichess-openings-3865"></script>
     <script src="bots.js?v=20261025-bot-1000-v1"></script>
-    <script src="app.js?v=20261026-mtest-abandon-confirm-v1"></script>
+    <script src="app.js?v=20261026-mtest-live-quotes-v1"></script>
 </body>
 
 </html>
