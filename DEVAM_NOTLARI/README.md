@@ -62,3 +62,8 @@ Her önemli değişiklik ve doğrulama tamamlandığında, kullanıcı ayrıca h
 - Özlü söz kartının altına, siyah zemine karışan kırmızı ışıklı perspektifli tahta animasyonu eklendi.
 - Güvenlik yedeği: `yedek-mtest-hareketli-tahta-oncesi-2026-10-29`.
 - Teknik ayrıntılar ve telefon test durumu `mtest/NOTLAR.md` içinde.
+
+
+## 2026-10-29 — MTEST satranç atmosferi görseli ikinci düzenleme
+
+- İlk mobil görünüm geri bildirimine göre CSS kareleri yerine ayrı `mtest/chess-atmosphere.svg` arka plan varlığı kullanıldı; detaylar `mtest/NOTLAR.md` içinde. Telefon testi bekleniyor.
