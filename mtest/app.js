@@ -2852,6 +2852,32 @@ $('#reviewBoardBtn').on('click', function() {
     openPreAnalysisSummary();
 });
 
+$(document).on('click', '#gameOverHomeBtn', function() {
+    // Oyun bittiğinde ana sayfaya dön; çalışan saat veya bekleyen bot hamlesi bırakma.
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+    clearQuickMatchBotMoveTimeout();
+    stopQuickMatchFirstMoveTimer();
+    if (stockfishWorker) stockfishWorker.postMessage('stop');
+    isEngineThinking = false;
+    botSearchActive = false;
+    isGameOver = true;
+    clockStarted = false;
+    quickMatchMode = false;
+    quickMatchBot = null;
+    window.mtestReturnHomeAfterModal = false;
+
+    closePreAnalysisSummary();
+    closeMobilePlayMenu();
+    $('#gameOverModal, #quickMatchFlowModal, #quickMatchCancelledModal, #botModal, #tempoModal, #settingsModal').addClass('hidden');
+    $('#mtestHomeNotice').addClass('hidden').text('');
+    $('#mtestHomeScreen').removeClass('mtest-home-hidden mtest-home-modal-backdrop');
+    setMobileNavActive(null);
+    updateQuickMatchLockUI();
+});
+
 $('#closeSummaryBtn, #summaryCloseBackBtn').on('click', function() {
     closePreAnalysisSummary();
     if (isGameOver && !isAnalysisMode) {
