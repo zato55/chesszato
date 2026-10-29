@@ -39,3 +39,7 @@ Her önemli değişiklik ve doğrulama tamamlandığında, kullanıcı ayrıca h
 
 ## 2026-10-29
 - [MTEST ana sayfa görsel sadeleştirme planı](../mtest/NOTLAR.md) — tamamlanana kadar takip edilecek sıralı plan; ilk görsel düzenleme yapıldı, telefon testi bekleniyor.
+
+ 
+## 2026-10-29
+- MTEST ana sayfa “Oyuna Başla” artık bağımsız dört seçenekli kartı açıyor; ayrıntı ve telefon test listesi: mtest/NOTLAR.md.
