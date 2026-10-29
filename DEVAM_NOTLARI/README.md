@@ -35,3 +35,7 @@ Her önemli değişiklik ve doğrulama tamamlandığında, kullanıcı ayrıca h
 
 ## 2026-10-29
 - [MTEST ana sayfa ve oyun ekranı ayrımı](../mtest/NOTLAR.md) — ilk ayrı ekran katmanı uygulandı; mobil gerçek testler bekliyor.
+
+
+## 2026-10-29
+- [MTEST ana sayfa görsel sadeleştirme planı](../mtest/NOTLAR.md) — tamamlanana kadar takip edilecek sıralı plan; ilk görsel düzenleme yapıldı, telefon testi bekleniyor.
