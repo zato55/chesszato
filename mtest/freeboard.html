@@ -29,7 +29,7 @@ a{color:#fda4af;text-decoration:none}
 .tool-title{font-size:10px;letter-spacing:.16em;font-weight:900;color:var(--muted);margin-bottom:10px}
 .palette{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
 .palette button{min-width:0;min-height:44px;border:1px solid #3f3f46;border-radius:9px;background:#09090b;color:#fff;font-size:25px;line-height:1}
-.palette button.selected{border-color:#fb7185;background:#4c1723;box-shadow:inset 0 0 0 1px #fb7185}
+.palette button img{display:block;width:34px;height:34px;object-fit:contain;filter:drop-shadow(0 1px 2px #000b);pointer-events:none}.palette button.selected{border-color:#fb7185;background:linear-gradient(145deg,#671426,#250b13);box-shadow:inset 0 0 0 1px #fb7185,0 0 12px #fb718544}.palette button:focus-visible{outline:2px solid #fb7185;outline-offset:2px}
 .palette .erase{grid-column:span 6;font-size:13px;font-weight:800}
 label{display:block;margin:16px 0 6px;color:#d4d4d8;font-size:12px;font-weight:800}
 select,textarea{width:100%;padding:10px;border:1px solid #3f3f46;border-radius:9px;background:#09090b;color:#fff}
@@ -47,7 +47,7 @@ header p{font-size:11px}
 #board{width:100%;height:auto;aspect-ratio:1}
 .tools{padding:12px}
 .palette{gap:5px}
-.palette button{min-height:39px;font-size:23px}
+.palette button{min-height:46px}.palette button img{width:38px;height:38px}
 }
 </style>
 </head>
@@ -62,8 +62,8 @@ header p{font-size:11px}
 <aside class="tools">
 <div class="tool-title">TAŞ SEÇ</div>
 <div class="palette" id="palette">
-<button type="button" data-piece="K" aria-label="Beyaz şah">♔</button><button type="button" data-piece="Q" aria-label="Beyaz vezir">♕</button><button type="button" data-piece="R" aria-label="Beyaz kale">♖</button><button type="button" data-piece="B" aria-label="Beyaz fil">♗</button><button type="button" data-piece="N" aria-label="Beyaz at">♘</button><button type="button" data-piece="P" aria-label="Beyaz piyon">♙</button>
-<button type="button" data-piece="k" aria-label="Siyah şah">♚</button><button type="button" data-piece="q" aria-label="Siyah vezir">♛</button><button type="button" data-piece="r" aria-label="Siyah kale">♜</button><button type="button" data-piece="b" aria-label="Siyah fil">♝</button><button type="button" data-piece="n" aria-label="Siyah at">♞</button><button type="button" data-piece="p" aria-label="Siyah piyon">♟</button>
+<button type="button" data-piece="K" aria-label="Beyaz şah"><img src="https://images.chesscomfiles.com/chess-themes/pieces/neo/300/wk.png" alt=""></button><button type="button" data-piece="Q" aria-label="Beyaz vezir"><img src="https://images.chesscomfiles.com/chess-themes/pieces/neo/300/wq.png" alt=""></button><button type="button" data-piece="R" aria-label="Beyaz kale"><img src="https://images.chesscomfiles.com/chess-themes/pieces/neo/300/wr.png" alt=""></button><button type="button" data-piece="B" aria-label="Beyaz fil"><img src="https://images.chesscomfiles.com/chess-themes/pieces/neo/300/wb.png" alt=""></button><button type="button" data-piece="N" aria-label="Beyaz at"><img src="https://images.chesscomfiles.com/chess-themes/pieces/neo/300/wn.png" alt=""></button><button type="button" data-piece="P" aria-label="Beyaz piyon"><img src="https://images.chesscomfiles.com/chess-themes/pieces/neo/300/wp.png" alt=""></button>
+<button type="button" data-piece="k" aria-label="Siyah şah"><img src="https://images.chesscomfiles.com/chess-themes/pieces/neo/300/bk.png" alt=""></button><button type="button" data-piece="q" aria-label="Siyah vezir"><img src="https://images.chesscomfiles.com/chess-themes/pieces/neo/300/bq.png" alt=""></button><button type="button" data-piece="r" aria-label="Siyah kale"><img src="https://images.chesscomfiles.com/chess-themes/pieces/neo/300/br.png" alt=""></button><button type="button" data-piece="b" aria-label="Siyah fil"><img src="https://images.chesscomfiles.com/chess-themes/pieces/neo/300/bb.png" alt=""></button><button type="button" data-piece="n" aria-label="Siyah at"><img src="https://images.chesscomfiles.com/chess-themes/pieces/neo/300/bn.png" alt=""></button><button type="button" data-piece="p" aria-label="Siyah piyon"><img src="https://images.chesscomfiles.com/chess-themes/pieces/neo/300/bp.png" alt=""></button>
 <button type="button" class="erase" data-piece="erase">⌫ Sil</button>
 </div>
 <label for="turn">Sıra kimde?</label><select id="turn"><option value="w">Beyaz</option><option value="b">Siyah</option></select>
