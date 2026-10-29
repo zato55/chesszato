@@ -79,3 +79,9 @@ Her önemli değişiklik ve doğrulama tamamlandığında, kullanıcı ayrıca h
 
 - Serbest Tahta'da oynanan hamleler artık numaralı Beyaz/Siyah sütunlarıyla gösteriliyor; son hamle vurgulanıyor. Ayrıntılar `mtest/NOTLAR.md` içinde.
 - Yedek: `yedek-serbest-tahta-hamle-kaydi-oncesi-2026-10-29`. Telefon testi bekleniyor.
+
+
+## 2026-10-29 — Serbest Tahta hamle şeridi
+
+- Hamle geçmişi artık tahtanın hemen altında yatay kaydırılabilir şerit şeklinde; son hamle kırmızı vurgulu. Detaylar `mtest/NOTLAR.md` içinde.
+- Yedek: `yedek-serbest-tahta-hamle-seridi-oncesi-2026-10-29`. Telefon testi bekleniyor.
