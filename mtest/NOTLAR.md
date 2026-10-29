@@ -102,3 +102,11 @@
 - Taş seçme paletindeki Unicode semboller kaldırılarak tahtadaki taşlarla aynı Neo taş görselleri kullanıldı. Böylece taş şekilleri site temasına uyuyor ve küçük ekranda daha belirgin görünüyor.
 - Seçili taş için kırmızı tonlu arka plan/ışık ve klavye odağı görünümü eklendi. Tahta yerleşimi ve FEN mantığı değiştirilmedi.
 - Görseller dış kaynaktan geliyor; ağ bağlantısı yoksa yüklenmeleri etkilenebilir. Telefon testi bekleniyor.
+
+
+## 2026-10-29 — Serbest Tahta hamle kaydını netleştirme
+
+- Yedek: `yedek-serbest-tahta-hamle-kaydi-oncesi-2026-10-29`.
+- `mtest/freeboard-play.html`: tek satır hâlindeki hamle metni, numaralı satırlardan oluşan Beyaz/Siyah sütunlu kayda dönüştürüldü. Son hamle hafif kırmızı vurgulu; siyah hamle henüz gelmediyse boşluk çizgiyle gösteriliyor.
+- Hamleler chess.js geçmişinden SAN notasyonuyla okunuyor; hamle oynama/geri alma mantığı değiştirilmedi. Telefon görünümünde liste kaydırılabilir.
+- Statik kontroller sonrası telefon testi bekleniyor.
