@@ -1871,3 +1871,35 @@ aside.collapsed #logoToggleBtn {
   background:#fff !important;
   color:#b5122a !important;
 }
+
+ 
+/* MTEST 2026-10-29: ana sayfadaki Oyuna Başla için bağımsız oyun seçimi kartı. */
+.mtest-game-choices-overlay {
+  position:fixed; inset:0; z-index:110; display:flex; align-items:center; justify-content:center;
+  padding:16px; background:rgba(3,5,9,.78); backdrop-filter:blur(8px);
+}
+.mtest-game-choices-overlay.hidden { display:none !important; }
+.mtest-game-choices-card {
+  width:min(100%,440px); max-height:min(90dvh,620px); overflow-y:auto;
+  padding:18px; border:1px solid #343944; border-radius:20px;
+  background:linear-gradient(150deg,#171b24,#0d0f14);
+  box-shadow:0 24px 70px rgba(0,0,0,.55); color:#f4f4f5;
+}
+.mtest-game-choices-header { display:flex; align-items:center; justify-content:space-between; gap:12px; padding-bottom:15px; margin-bottom:14px; border-bottom:1px solid #2b303a; }
+.mtest-game-choices-header p { margin:0 0 5px; color:#fb7185; font-size:10px; font-weight:800; letter-spacing:.16em; }
+.mtest-game-choices-header h2 { margin:0; font-size:clamp(17px,4.5vw,21px); font-weight:900; line-height:1.2; }
+.mtest-game-choices-header > button { flex:0 0 36px; width:36px; height:36px; border:1px solid #343944; border-radius:10px; background:#11141a; color:#d4d4d8; font-size:17px; }
+.mtest-game-choices-list { display:flex; flex-direction:column; gap:9px; }
+.mtest-game-choice-option {
+  display:grid; grid-template-columns:44px minmax(0,1fr) 16px; align-items:center; gap:12px;
+  width:100%; min-height:68px; padding:10px 12px; text-align:left;
+  border:1px solid #303541; border-radius:13px; background:#11151d; color:#f4f4f5;
+  transition:border-color .15s ease,background .15s ease;
+}
+.mtest-game-choice-option:hover,.mtest-game-choice-option:focus-visible { border-color:rgba(239,35,60,.8); background:#171923; outline:none; }
+.mtest-game-choice-icon { display:flex; align-items:center; justify-content:center; width:42px; height:42px; border-radius:11px; background:#24202a; color:#fda4af; font-size:23px; }
+.mtest-game-choice-option > span:nth-child(2) { display:flex; flex-direction:column; gap:4px; min-width:0; }
+.mtest-game-choice-option strong { font-size:14px; line-height:1.2; font-weight:800; }
+.mtest-game-choice-option small { color:#a1a1aa; font-size:11px; line-height:1.35; }
+.mtest-game-choice-option > b { color:#fb7185; font-size:22px; font-weight:500; text-align:right; }
+@media(max-width:380px) { .mtest-game-choices-card { padding:14px; border-radius:16px; } .mtest-game-choice-option { min-height:62px; grid-template-columns:38px minmax(0,1fr) 14px; gap:9px; padding:9px; } .mtest-game-choice-icon { width:36px; height:36px; font-size:20px; } .mtest-game-choice-option strong { font-size:13px; } }
