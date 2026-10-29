@@ -2852,31 +2852,34 @@ $('#reviewBoardBtn').on('click', function() {
     openPreAnalysisSummary();
 });
 
-$(document).on('click', '#gameOverHomeBtn', function() {
-    // Oyun bittiğinde ana sayfaya dön; çalışan saat veya bekleyen bot hamlesi bırakma.
+$('#gameOverHomeBtn').on('click', function(e) {
+    e.preventDefault();
+
+    // Önce ana sayfayı görünür yap; temizlik adımlarından biri hata verse bile tıklama etkisiz kalmasın.
+    window.mtestReturnHomeAfterModal = false;
+    $('#mtestHomeNotice').addClass('hidden').text('');
+    $('#mtestHomeScreen').removeClass('mtest-home-hidden mtest-home-modal-backdrop');
+    $('#gameOverModal, #quickMatchFlowModal, #quickMatchCancelledModal, #botModal, #tempoModal, #settingsModal, #preAnalysisSummary').addClass('hidden');
+    $('#mobilePlayMenu').addClass('hidden');
+    setMobileNavActive(null);
+
     if (timerInterval) {
         clearInterval(timerInterval);
         timerInterval = null;
     }
     clearQuickMatchBotMoveTimeout();
     stopQuickMatchFirstMoveTimer();
-    if (stockfishWorker) stockfishWorker.postMessage('stop');
+    if (stockfishWorker) {
+        try { stockfishWorker.postMessage('stop'); } catch (error) { /* Worker kapanmışsa ana sayfa dönüşünü engelleme. */ }
+    }
     isEngineThinking = false;
     botSearchActive = false;
     isGameOver = true;
     clockStarted = false;
     quickMatchMode = false;
     quickMatchBot = null;
-    window.mtestReturnHomeAfterModal = false;
-
-    closePreAnalysisSummary();
-    closeMobilePlayMenu();
-    $('#gameOverModal, #quickMatchFlowModal, #quickMatchCancelledModal, #botModal, #tempoModal, #settingsModal').addClass('hidden');
-    $('#mtestHomeNotice').addClass('hidden').text('');
-    $('#mtestHomeScreen').removeClass('mtest-home-hidden mtest-home-modal-backdrop');
-    setMobileNavActive(null);
     updateQuickMatchLockUI();
-});
+});;
 
 $('#closeSummaryBtn, #summaryCloseBackBtn').on('click', function() {
     closePreAnalysisSummary();
