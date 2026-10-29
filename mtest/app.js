@@ -2745,6 +2745,7 @@ $('#botElo').on('change', function() {
 });
 
 function resetGame() {
+    mtestShowGameScreen();
     clearQuickMatchBotMoveTimeout();
     stopQuickMatchFirstMoveTimer();
     $('#quickMatchCancelledModal').addClass('hidden');
@@ -2858,7 +2859,7 @@ $('#gameOverHomeBtn').on('click', function(e) {
     // Önce ana sayfayı görünür yap; temizlik adımlarından biri hata verse bile tıklama etkisiz kalmasın.
     window.mtestReturnHomeAfterModal = false;
     $('#mtestHomeNotice').addClass('hidden').text('');
-    $('#mtestHomeScreen').removeClass('mtest-home-hidden mtest-home-modal-backdrop');
+    mtestShowHomeScreen();
     $('#gameOverModal, #quickMatchFlowModal, #quickMatchCancelledModal, #botModal, #tempoModal, #settingsModal, #preAnalysisSummary').addClass('hidden');
     $('#mobilePlayMenu').addClass('hidden');
     setMobileNavActive(null);
@@ -2921,7 +2922,7 @@ $(document).on('click', '#mtestAnalysisBtn', function () {
         return;
     }
     $('#mtestHomeNotice').addClass('hidden').text('');
-    $('#mtestHomeScreen').addClass('mtest-home-hidden');
+    mtestShowGameScreen();
     openPreAnalysisSummary();
 });
 
@@ -2938,16 +2939,37 @@ $(document).on('click', '#mobileMenuHomeBtn', function () {
 
     window.mtestReturnHomeAfterModal = false;
     closeMobilePlayMenu();
-    $('#tempoModal, #botModal, #settingsModal').addClass('hidden');
+    $('#tempoModal, #botModal, #settingsModal, #quickMatchFlowModal, #quickMatchCancelledModal, #quickMatchSetupModal, #preAnalysisSummary, #gameOverModal').addClass('hidden');
     $('#mtestHomeNotice').addClass('hidden').text('');
-    $('#mtestHomeScreen').removeClass('mtest-home-hidden');
+    if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+    clearQuickMatchBotMoveTimeout();
+    stopQuickMatchFirstMoveTimer();
+    if (stockfishWorker) { try { stockfishWorker.postMessage('stop'); } catch (error) {} }
+    isEngineThinking = false;
+    botSearchActive = false;
+    clockStarted = false;
+    isGameOver = true;
+    quickMatchMode = false;
+    quickMatchBot = null;
+    mtestShowHomeScreen();
+    updateQuickMatchLockUI();
 });
+
+function mtestShowGameScreen() {
+    $('#mtestGameScreen').removeClass('mtest-game-hidden');
+    $('#mtestHomeScreen').addClass('mtest-home-hidden').removeClass('mtest-home-modal-backdrop');
+}
+
+function mtestShowHomeScreen() {
+    $('#mtestGameScreen').addClass('mtest-game-hidden');
+    $('#mtestHomeScreen').removeClass('mtest-home-hidden mtest-home-modal-backdrop');
+}
 
 function mtestRestoreHomeAfterModal() {
     if (!window.mtestReturnHomeAfterModal) return;
     window.mtestReturnHomeAfterModal = false;
     $('#mtestHomeNotice').addClass('hidden').text('');
-    $('#mtestHomeScreen').removeClass('mtest-home-hidden mtest-home-modal-backdrop');
+    mtestShowHomeScreen();
 }
 
 $(document).on('click', '.close-modal-btn', function () {
