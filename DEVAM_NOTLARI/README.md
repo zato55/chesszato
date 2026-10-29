@@ -67,3 +67,9 @@ Her önemli değişiklik ve doğrulama tamamlandığında, kullanıcı ayrıca h
 ## 2026-10-29 — MTEST satranç atmosferi görseli ikinci düzenleme
 
 - İlk mobil görünüm geri bildirimine göre CSS kareleri yerine ayrı `mtest/chess-atmosphere.svg` arka plan varlığı kullanıldı; detaylar `mtest/NOTLAR.md` içinde. Telefon testi bekleniyor.
+
+
+## 2026-10-29 — Serbest Tahta taş paleti görünümü
+
+- Taş seçme butonları Unicode karakterler yerine tahtada kullanılan aynı Neo taş görsellerini kullanıyor; seçili taş kırmızı vurguyla belirginleştirildi.
+- Yedek: `yedek-serbest-tahta-2026-10-29`. Telefon testi `mtest/NOTLAR.md` üzerinden takip edilecek.
