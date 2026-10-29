@@ -86,3 +86,11 @@
 - `mtest/index.html`: yalnızca dekoratif, erişilebilirlik açısından gizli bir arka plan katmanı eklendi; CSS önbellek etiketi yenilendi.
 - `mtest/style.css`: perspektifli kareli tahta, düşük yoğunluklu kırmızı taş silüetleri ve yavaş ışık hareketi eklendi. Hareket azaltma tercihi destekleniyor; katman tıklamaları engellemiyor.
 - Oyun mantığı ve `gtest` değiştirilmedi. Statik kontroller yapılacak; mobil görünüm ve performans kullanıcı testini bekliyor.
+
+
+## 2026-10-29 — Hareketli tahta görseli ikinci düzenleme
+
+- Yedek: `yedek-mtest-hareketli-tahta-oncesi-2026-10-29`.
+- İlk mobil testte tahta kareleri fazla keskin, taşlar fazla silik göründü. CSS ile çizilen ilk tahta katmanı yerine ayrı SVG atmosfer görseli eklendi: perspektifli kırmızı-siyah tahta, kırmızı ışık, taş silüetleri ve siyaha yumuşak geçiş.
+- `mtest/chess-atmosphere.svg` yeni görsel varlığı; `mtest/style.css` bunu arka plan olarak kullanıyor; `mtest/index.html` cache etiketi yenilendi.
+- Statik dosya kontrolleri ve gerçek telefon testi ayrı ayrı doğrulanmalı.
