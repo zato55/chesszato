@@ -73,3 +73,9 @@ Her önemli değişiklik ve doğrulama tamamlandığında, kullanıcı ayrıca h
 
 - Taş seçme butonları Unicode karakterler yerine tahtada kullanılan aynı Neo taş görsellerini kullanıyor; seçili taş kırmızı vurguyla belirginleştirildi.
 - Yedek: `yedek-serbest-tahta-2026-10-29`. Telefon testi `mtest/NOTLAR.md` üzerinden takip edilecek.
+
+
+## 2026-10-29 — Serbest Tahta hamle kaydı
+
+- Serbest Tahta'da oynanan hamleler artık numaralı Beyaz/Siyah sütunlarıyla gösteriliyor; son hamle vurgulanıyor. Ayrıntılar `mtest/NOTLAR.md` içinde.
+- Yedek: `yedek-serbest-tahta-hamle-kaydi-oncesi-2026-10-29`. Telefon testi bekleniyor.
