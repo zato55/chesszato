@@ -55,3 +55,10 @@ Her önemli değişiklik ve doğrulama tamamlandığında, kullanıcı ayrıca h
 - Güvenlik yedeği: `yedek-mtest-usta-sozleri-kontrast-oncesi-2026-10-29`.
 - CSS cache etiketi yenilendi; söz döndürme JavaScript'i değiştirilmedi.
 - Telefon testi kullanıcı onayı bekliyor.
+
+
+## 2026-10-29 — MTEST hareketli satranç tahtası arka planı
+
+- Özlü söz kartının altına, siyah zemine karışan kırmızı ışıklı perspektifli tahta animasyonu eklendi.
+- Güvenlik yedeği: `yedek-mtest-hareketli-tahta-oncesi-2026-10-29`.
+- Teknik ayrıntılar ve telefon test durumu `mtest/NOTLAR.md` içinde.
