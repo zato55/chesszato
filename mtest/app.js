@@ -1021,7 +1021,6 @@ function beginQuickMatchFlow() {
     $('#quickMatchSearchingView').removeClass('hidden').addClass('flex');
     $('#quickMatchVersusView').addClass('hidden').removeClass('flex');
     $('#quickMatchFlowModal').removeClass('hidden');
-    $('#mobileModeText').text('Hızlı Eşleşme · Sanal Rakip');
 
     quickMatchFlowTimer = setTimeout(() => {
         if (token !== quickMatchFlowToken) return;
@@ -1725,9 +1724,6 @@ function updateTimerDisplay() {
     const whiteActive = game.turn() === 'w';
     const blackActive = game.turn() === 'b';
 
-    $('#whiteTimer').text(formattedWhite);
-    $('#blackTimer').text(formattedBlack);
-
     const applyTimerStyle = (selector, isActive, remaining) => {
         const timer = $(selector);
         timer.removeClass('text-emerald-400 bg-emerald-950 border-emerald-600 shadow-[0_0_10px_rgba(52,211,153,0.35)] text-red-100 bg-red-950 border-red-500 shadow-[0_0_14px_rgba(248,113,113,0.65)] animate-pulse');
@@ -1753,9 +1749,6 @@ function updateTimerDisplay() {
             }
         }
     };
-
-    applyTimerStyle('#whiteTimer', whiteActive, whiteTime);
-    applyTimerStyle('#blackTimer', blackActive, blackTime);
 
     if (!isFlipped) {
         $('#topTimerMobile, #topTimerDesktop').text(formattedBlack);
@@ -2401,7 +2394,6 @@ $('#modePvP, #mModePvP').on('click', function() {
     $('#botEloWrapper, #mBotLevelWrapper').addClass('hidden');
     $('#modePvP, #mModePvP').addClass('bg-blue-600 text-white').removeClass('text-zinc-400');
     $('#modeBot, #mModeBot').removeClass('bg-blue-600 text-white').addClass('text-zinc-400');
-    $('#mobileModeText').text('2 Kişilik');
     updatePlayerCards();
     $('#botModal').addClass('hidden');
 });
@@ -2414,7 +2406,6 @@ $('#modeBot, #mModeBot').on('click', function() {
     $('#botEloWrapper, #mBotLevelWrapper').removeClass('hidden');
     $('#modeBot, #mModeBot').addClass('bg-blue-600 text-white').removeClass('text-zinc-400');
     $('#modePvP, #mModePvP').removeClass('bg-blue-600 text-white').addClass('text-zinc-400');
-    $('#mobileModeText').text('Stockfish');
     updatePlayerCards();
     if (game.turn() !== actualPlayerColor && !game.game_over() && !isReviewing && !isAnalysisMode) {
         triggerStockfishMove();
@@ -2573,7 +2564,6 @@ $(document).on('click', '#mobileMenuBotBtn', function() {
     $('#botEloWrapper, #mBotLevelWrapper').removeClass('hidden');
     $('#modeBot, #mModeBot').addClass('bg-blue-600 text-white').removeClass('text-zinc-400');
     $('#modePvP, #mModePvP').removeClass('bg-blue-600 text-white').addClass('text-zinc-400');
-    $('#mobileModeText').text('Stockfish');
     updatePlayerCards();
     $('#tempoModal, #settingsModal').addClass('hidden');
     setMobileNavActive('#mobileNavBotBtn');
@@ -2591,7 +2581,6 @@ $(document).on('click', '#mobileMenuLocalBtn', function() {
     $('#botEloWrapper, #mBotLevelWrapper').addClass('hidden');
     $('#modePvP, #mModePvP').addClass('bg-blue-600 text-white').removeClass('text-zinc-400');
     $('#modeBot, #mModeBot').removeClass('bg-blue-600 text-white').addClass('text-zinc-400');
-    $('#mobileModeText').text('2 Kişilik');
     updatePlayerCards();
     resetGame();
 });
@@ -2639,7 +2628,6 @@ $(document).on('click', '#mobileNavBotBtn, #mobileBotModalBtn', function(e) {
     closeMobilePlayMenu();
     quickMatchMode = false;
     quickMatchBot = null;
-    $('#mobileModeText').text('Stockfish');
     setMobileNavActive('#mobileNavBotBtn');
     $('#tempoModal, #settingsModal').addClass('hidden');
     $('#botModal').removeClass('hidden');
