@@ -43,3 +43,7 @@ Her önemli değişiklik ve doğrulama tamamlandığında, kullanıcı ayrıca h
  
 ## 2026-10-29
 - MTEST ana sayfa “Oyuna Başla” artık bağımsız dört seçenekli kartı açıyor; ayrıntı ve telefon test listesi: mtest/NOTLAR.md.
+
+
+## 2026-10-29 — MTEST oyun seçimi kartı
+- Ana sayfadaki “Oyuna Başla” artık dört seçenekli bağımsız kart açıyor: Hızlı Eşleşme, Bilgisayara Karşı, Arkadaşınla Oyna, Serbest Tahta. Telefon testi ve ayrıntılar `mtest/NOTLAR.md` içinde.
