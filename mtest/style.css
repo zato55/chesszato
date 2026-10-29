@@ -1832,3 +1832,42 @@ aside.collapsed #logoToggleBtn {
 #mtestHomeScreen:not(.mtest-home-hidden) ~ #mobileAnalysisBottomNav {
   display: none !important;
 }
+
+
+/* MTEST 2026-10-29 homepage visual pass 1: reduce duplicate copy and unify card/auth styling. */
+#mtestHomeScreen .mtest-hero-sub { display:none !important; }
+#mtestHomeScreen .mtest-login,
+#mtestHomeScreen .mtest-register {
+  color:#e4e4e7 !important;
+  background:#11141a !important;
+  border:1px solid #343944 !important;
+  box-shadow:none !important;
+  font-weight:700 !important;
+}
+#mtestHomeScreen .mtest-login span,
+#mtestHomeScreen .mtest-register span { color:#fda4af !important; }
+#mtestHomeScreen .mtest-mode-card,
+#mtestHomeScreen .mtest-tool-card {
+  background:linear-gradient(145deg,#151922,#101217) !important;
+  border:1px solid #303541 !important;
+  box-shadow:inset 0 1px rgba(255,255,255,.025) !important;
+}
+#mtestHomeScreen .mtest-mode-card .mtest-mode-icon,
+#mtestHomeScreen .mtest-tool-card > span {
+  color:#fda4af !important;
+  text-shadow:none !important;
+}
+#mtestHomeScreen .mtest-mode-card:hover,
+#mtestHomeScreen .mtest-tool-card:hover {
+  border-color:rgba(239,35,60,.7) !important;
+}
+#mtestHomeScreen .mtest-start {
+  background:linear-gradient(110deg,#d71935,#941126) !important;
+  color:#fff !important;
+  border:1px solid #ef233c !important;
+  box-shadow:0 8px 20px rgba(185,28,28,.16),inset 0 1px rgba(255,255,255,.14) !important;
+}
+#mtestHomeScreen .mtest-play-icon {
+  background:#fff !important;
+  color:#b5122a !important;
+}
