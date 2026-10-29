@@ -31,3 +31,7 @@ Her önemli değişiklik ve doğrulama tamamlandığında, kullanıcı ayrıca h
 
 ## 2026-10-25
 - [GTEST hızlı eşleşme arama ve VS ekranı](2026-10-25-gtest-hizli-eslesme-arama-vs-ekrani.md) — arama/VS UI demo akışı; gerçek çoklu ziyaretçi eşleştirmesi ve sunucu kilidi daha sonra.
+
+
+## 2026-10-29
+- [MTEST ana sayfa ve oyun ekranı ayrımı](../mtest/NOTLAR.md) — ilk ayrı ekran katmanı uygulandı; mobil gerçek testler bekliyor.
