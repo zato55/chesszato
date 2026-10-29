@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 254" preserveAspectRatio="xMidYMid slice">
+<defs>
+ <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#07090e" stop-opacity="0"/><stop offset=".25" stop-color="#07090e" stop-opacity=".15"/><stop offset="1" stop-color="#05070b" stop-opacity=".96"/></linearGradient>
+ <radialGradient id="redGlow"><stop stop-color="#ff173f" stop-opacity=".52"/><stop offset="1" stop-color="#ff173f" stop-opacity="0"/></radialGradient>
+ <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#220711"/><stop offset=".5" stop-color="#090b12"/><stop offset="1" stop-color="#030508"/></linearGradient>
+ <pattern id="checks" width="112" height="56" patternUnits="userSpaceOnUse"><rect width="112" height="56" fill="#05070b"/><rect width="56" height="28" fill="#65101f" opacity=".7"/><rect x="56" y="28" width="56" height="28" fill="#65101f" opacity=".7"/></pattern>
+ <filter id="glow"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+ <linearGradient id="piece" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#07080c"/><stop offset=".7" stop-color="#151018"/><stop offset="1" stop-color="#ff294b"/></linearGradient>
+</defs>
+<rect width="720" height="254" fill="url(#floor)"/><ellipse cx="365" cy="142" rx="370" ry="150" fill="url(#redGlow)" opacity=".7"/>
+<g transform="translate(-80 82) skewX(-18) scale(1 .8)"><rect width="900" height="270" fill="url(#checks)"/><path d="M0 0H900M0 56H900M0 112H900M0 168H900M0 224H900M56 0V270M112 0V270M168 0V270M224 0V270M280 0V270M336 0V270M392 0V270M448 0V270M504 0V270M560 0V270M616 0V270M672 0V270M728 0V270M784 0V270M840 0V270" stroke="#ff2c4e" stroke-opacity=".16" stroke-width="1.4" fill="none"/></g>
+<g filter="url(#glow)" fill="url(#piece)" stroke="#ff2548" stroke-opacity=".8" stroke-width="1.5" font-family="serif" text-anchor="middle"><text x="72" y="185" font-size="100" opacity=".68">♞</text><text x="214" y="164" font-size="83" opacity=".65">♟</text><text x="355" y="152" font-size="125" opacity=".9">♚</text><text x="504" y="178" font-size="93" opacity=".72">♝</text><text x="650" y="165" font-size="102" opacity=".7">♜</text></g>
+<path d="M0 152 Q160 126 300 166T720 145" fill="none" stroke="#ff294b" stroke-opacity=".42" stroke-width="2" filter="url(#glow)"/><rect width="720" height="254" fill="url(#fade)"/>
+</svg>
