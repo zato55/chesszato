@@ -77,3 +77,12 @@
 - `mtest/style.css` içinde yalnızca söz kartının kontrastı ve mobil okunabilirliği güçlendirildi: söz beyaz, yazar adı açık pembe, üst etiket daha görünür; kartın minimum yüksekliği ve metin boyutu hafif artırıldı.
 - `mtest/index.html` CSS önbellek etiketi yenilendi. Sözlerin dönme mantığına ve oyun akışına dokunulmadı.
 - Statik kontroller sonrası telefon testi bekleniyor; gerçek mobil görünüm kullanıcı onayı olmadan tamamlanmış sayılmayacak.
+
+
+## 2026-10-29 — Ana sayfa altına gömülü hareketli satranç tahtası
+
+- Güvenlik yedeği: `yedek-mtest-hareketli-tahta-oncesi-2026-10-29`.
+- Kullanıcı referans görselindeki kırmızı ışıklı, derinlikli satranç tahtası fikri ana sayfanın özlü söz kartının altındaki boş alana uyarlandı.
+- `mtest/index.html`: yalnızca dekoratif, erişilebilirlik açısından gizli bir arka plan katmanı eklendi; CSS önbellek etiketi yenilendi.
+- `mtest/style.css`: perspektifli kareli tahta, düşük yoğunluklu kırmızı taş silüetleri ve yavaş ışık hareketi eklendi. Hareket azaltma tercihi destekleniyor; katman tıklamaları engellemiyor.
+- Oyun mantığı ve `gtest` değiştirilmedi. Statik kontroller yapılacak; mobil görünüm ve performans kullanıcı testini bekliyor.
