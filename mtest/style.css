@@ -1903,3 +1903,43 @@ aside.collapsed #logoToggleBtn {
 .mtest-game-choice-option small { color:#a1a1aa; font-size:11px; line-height:1.35; }
 .mtest-game-choice-option > b { color:#fb7185; font-size:22px; font-weight:500; text-align:right; }
 @media(max-width:380px) { .mtest-game-choices-card { padding:14px; border-radius:16px; } .mtest-game-choice-option { min-height:62px; grid-template-columns:38px minmax(0,1fr) 14px; gap:9px; padding:9px; } .mtest-game-choice-icon { width:36px; height:36px; font-size:20px; } .mtest-game-choice-option strong { font-size:13px; } }
+
+ 
+/* MTEST 2026-10-29: Oyuna Başla ana eylemi için kontrollü neon parlaklık. */
+#mtestHomeScreen .mtest-start {
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  background:linear-gradient(110deg,#ff2948 0%,#e71939 48%,#b20f2b 100%) !important;
+  border:1px solid rgba(255,153,169,.95) !important;
+  box-shadow:0 0 0 1px rgba(255,60,91,.28),0 0 15px rgba(255,35,69,.45),0 0 34px rgba(239,35,60,.28),0 10px 26px rgba(185,28,45,.3),inset 0 1px 0 rgba(255,255,255,.48) !important;
+  animation:mtestStartGlow 3.2s ease-in-out infinite;
+}
+#mtestHomeScreen .mtest-start::after {
+  content:"";
+  position:absolute;
+  top:-40%;
+  left:-65%;
+  width:42%;
+  height:180%;
+  pointer-events:none;
+  transform:rotate(18deg);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.23),transparent);
+  animation:mtestStartShimmer 5.8s ease-in-out infinite;
+}
+#mtestHomeScreen .mtest-start .mtest-play-icon {
+  box-shadow:0 0 14px rgba(255,255,255,.24);
+}
+@keyframes mtestStartGlow {
+  0%,100% { box-shadow:0 0 0 1px rgba(255,60,91,.24),0 0 12px rgba(255,35,69,.34),0 0 25px rgba(239,35,60,.2),0 10px 26px rgba(185,28,45,.28),inset 0 1px 0 rgba(255,255,255,.42); }
+  50% { box-shadow:0 0 0 1px rgba(255,115,137,.46),0 0 20px rgba(255,35,69,.58),0 0 42px rgba(239,35,60,.36),0 10px 30px rgba(185,28,45,.34),inset 0 1px 0 rgba(255,255,255,.55); }
+}
+@keyframes mtestStartShimmer {
+  0%,30% { left:-65%; opacity:0; }
+  38% { opacity:1; }
+  56%,100% { left:130%; opacity:0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #mtestHomeScreen .mtest-start,
+  #mtestHomeScreen .mtest-start::after { animation:none !important; }
+}
