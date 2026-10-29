@@ -56,3 +56,15 @@
 - mtest/index.html içinde yalnızca CSS önbellek etiketi 20261029-home-visual-v1 olarak değiştirildi. JavaScript/oyun akışı değiştirilmedi.
 - Doğrulama sınırı: dosya ve sözdizimi kontrolleri yapılacak; gerçek telefon görünümü henüz kullanıcı tarafından yeniden onaylanmadı. Bu aşama telefon testi olumlu dönmeden tamamlanmış sayılmaz.
 - Sonraki adım: telefonda ana sayfanın düzenini kontrol etmek; sorun varsa yalnızca bu görsel aşamayı düzeltmek. Onaydan sonra alt gezinme menüsü aşamasına geçmek.
+
+ 
+## 2026-10-29 — “Oyuna Başla” için bağımsız oyun seçim kartı
+
+- Önceki durumdan güvenlik yedeği: yedek-mtest-oyuna-basla-kart-oncesi-2026-10-29.
+- mtest/index.html: ana sayfadaki “Oyuna Başla” artık oyun içindeki “Oyna” menüsünü açmak yerine bağımsız mtestGameChoicesModal kartını açıyor.
+- Kartta dört seçenek bulunuyor: Hızlı Eşleşme, Bilgisayara Karşı, Arkadaşınla Oyna, Serbest Tahta.
+- Ana sayfadaki ayrı “OYUN MODLARI” kart grubu kaldırıldı; bu dört seçenek artık yalnızca “Oyuna Başla” kartında sunuluyor. Analiz, Turnuvalar, Ayarlar ve Bulmacalar ayrı bölümde kaldı.
+- Oyun içindeki mevcut “Oyna” menüsü değiştirilmedi; bu karttan ayrı tutuldu.
+- Hızlı Eşleşme ve bot seçenekleri mevcut akışları çağırıyor; yerel oyun mevcut yerel oyun menüsünü çağırıyor; Serbest Tahta freeboard.html sayfasını açıyor.
+- Kod kontrolü yapılacak; telefonda gerçek davranış henüz kullanıcı tarafından doğrulanmadı. Bu adım telefon testi olumlu dönene kadar tamamlandı sayılmayacak.
+- Test listesi: Oyuna Başla kartı aç/kapat; dört seçeneğin doğru akışa gitmesi; oyun içindeki Oyna menüsünde Ana Sayfa seçeneğinin ve diğer mevcut davranışların değişmeden kalması; ana sayfa/oyun ekranı geçişleri.
