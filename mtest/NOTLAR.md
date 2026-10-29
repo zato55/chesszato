@@ -68,3 +68,12 @@
 - Hızlı Eşleşme ve bot seçenekleri mevcut akışları çağırıyor; yerel oyun mevcut yerel oyun menüsünü çağırıyor; Serbest Tahta freeboard.html sayfasını açıyor.
 - Kod kontrolü yapılacak; telefonda gerçek davranış henüz kullanıcı tarafından doğrulanmadı. Bu adım telefon testi olumlu dönene kadar tamamlandı sayılmayacak.
 - Test listesi: Oyuna Başla kartı aç/kapat; dört seçeneğin doğru akışa gitmesi; oyun içindeki Oyna menüsünde Ana Sayfa seçeneğinin ve diğer mevcut davranışların değişmeden kalması; ana sayfa/oyun ekranı geçişleri.
+
+
+## 2026-10-29 — Canlı usta sözleri okunabilirlik düzeltmesi
+
+- Güvenlik yedeği: `yedek-mtest-usta-sozleri-kontrast-oncesi-2026-10-29`.
+- Kullanıcının telefon ekranında söz kartındaki metin ve yazar adının çok silik göründüğü gözlendi.
+- `mtest/style.css` içinde yalnızca söz kartının kontrastı ve mobil okunabilirliği güçlendirildi: söz beyaz, yazar adı açık pembe, üst etiket daha görünür; kartın minimum yüksekliği ve metin boyutu hafif artırıldı.
+- `mtest/index.html` CSS önbellek etiketi yenilendi. Sözlerin dönme mantığına ve oyun akışına dokunulmadı.
+- Statik kontroller sonrası telefon testi bekleniyor; gerçek mobil görünüm kullanıcı onayı olmadan tamamlanmış sayılmayacak.
