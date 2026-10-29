@@ -2001,3 +2001,8 @@ aside.collapsed #logoToggleBtn {
   #mtestHomeScreen .mtest-ambient-chess::before { left:-38%; right:-38%; background-size:48px 48px,auto; }
   #mtestHomeScreen .mtest-ambient-chess::after { left:-45%; right:-45%; bottom:8%; font-size:48px; }
 }
+
+/* Referans görseline daha yakın, ayrı vektör atmosfer katmanı. */
+#mtestHomeScreen .mtest-ambient-chess { background-image:linear-gradient(to bottom,rgba(5,7,11,.08),rgba(5,7,11,.08)),url("chess-atmosphere.svg"); background-position:center top; background-size:cover; background-repeat:no-repeat; }
+#mtestHomeScreen .mtest-ambient-chess::before,
+#mtestHomeScreen .mtest-ambient-chess::after { content:none; }
