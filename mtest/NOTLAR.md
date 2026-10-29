@@ -30,3 +30,11 @@
   - CSS katmanı: `279c2389bcfa94d475f0d0b9331e9190a69170dc`
   - JS geçişleri: `ae92089a2d24d39e3d52b30c1fc33bdbf753ef0b`
   - JS önbellek etiketi: `1d97c19209d3b66f81d051103b1be496faa96307`
+
+
+## 2026-10-29 — Kullanıcı test sonucu
+
+- Kullanıcı, ana sayfa/oyun ekranı ayrımından sonra belirtilen altı telefon testinin tamamının gayet iyi çalıştığını bildirdi.
+- Kabul ölçütleri kullanıcı testiyle olumlu görünüyor: ana sayfa, bot başlatma/iptal, hızlı eşleşme, oyun sonu/analiz ve ana sayfaya dönüş akışları çalışıyor.
+- Bu turda yeni kod değişikliği yapılmadı. `gtest` değişmeden korundu.
+- Sonraki adım: kullanıcı yeni bir geliştirme istediğinde mevcut ekran ayrımını temel al; aynı ayrımı yeniden yapma.
