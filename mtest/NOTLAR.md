@@ -94,3 +94,11 @@
 - İlk mobil testte tahta kareleri fazla keskin, taşlar fazla silik göründü. CSS ile çizilen ilk tahta katmanı yerine ayrı SVG atmosfer görseli eklendi: perspektifli kırmızı-siyah tahta, kırmızı ışık, taş silüetleri ve siyaha yumuşak geçiş.
 - `mtest/chess-atmosphere.svg` yeni görsel varlığı; `mtest/style.css` bunu arka plan olarak kullanıyor; `mtest/index.html` cache etiketi yenilendi.
 - Statik dosya kontrolleri ve gerçek telefon testi ayrı ayrı doğrulanmalı.
+
+
+## 2026-10-29 — Serbest Tahta taş seçme paleti
+
+- Yedek: `yedek-serbest-tahta-2026-10-29`.
+- Taş seçme paletindeki Unicode semboller kaldırılarak tahtadaki taşlarla aynı Neo taş görselleri kullanıldı. Böylece taş şekilleri site temasına uyuyor ve küçük ekranda daha belirgin görünüyor.
+- Seçili taş için kırmızı tonlu arka plan/ışık ve klavye odağı görünümü eklendi. Tahta yerleşimi ve FEN mantığı değiştirilmedi.
+- Görseller dış kaynaktan geliyor; ağ bağlantısı yoksa yüklenmeleri etkilenebilir. Telefon testi bekleniyor.
