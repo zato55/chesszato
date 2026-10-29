@@ -47,3 +47,11 @@ Her önemli değişiklik ve doğrulama tamamlandığında, kullanıcı ayrıca h
 
 ## 2026-10-29 — MTEST oyun seçimi kartı
 - Ana sayfadaki “Oyuna Başla” artık dört seçenekli bağımsız kart açıyor: Hızlı Eşleşme, Bilgisayara Karşı, Arkadaşınla Oyna, Serbest Tahta. Telefon testi ve ayrıntılar `mtest/NOTLAR.md` içinde.
+
+
+## 2026-10-29 — Canlı usta sözleri okunabilirlik düzeltmesi
+
+- MTEST söz kartındaki silik metin için yalnızca CSS kontrastı/mobil okunabilirliği iyileştirildi.
+- Güvenlik yedeği: `yedek-mtest-usta-sozleri-kontrast-oncesi-2026-10-29`.
+- CSS cache etiketi yenilendi; söz döndürme JavaScript'i değiştirilmedi.
+- Telefon testi kullanıcı onayı bekliyor.
