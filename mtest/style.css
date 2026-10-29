@@ -1430,7 +1430,7 @@ aside.collapsed #logoToggleBtn {
 .mtest-home{color:#f4f4f5;background:radial-gradient(ellipse at 76% 23%,rgba(185,28,28,.18),transparent 34%),#080a0e;font-family:inherit}
 #mtestHomeScreen{position:fixed;inset:0;width:100%;height:100vh;height:100dvh;min-height:0;z-index:100;display:block;overflow:hidden;box-sizing:border-box}
 .mtest-home-hidden{display:none!important}
-.mtest-home-inner{width:min(100%,1050px);height:100%;min-height:0;margin:0 auto;padding:22px clamp(13px,4vw,42px) 78px;display:flex;flex-direction:column;gap:20px;box-sizing:border-box;overflow:hidden}
+.mtest-home-inner{width:min(100%,1050px);height:100%;min-height:0;margin:0 auto;padding:22px clamp(13px,4vw,42px) 8px;display:flex;flex-direction:column;gap:20px;box-sizing:border-box;overflow:hidden}
 .mtest-home-header{display:flex;align-items:center;justify-content:space-between;gap:14px;flex:0 0 auto}
 .mtest-brand{display:flex;align-items:center;gap:11px;min-width:0}
 .mtest-brand-mark{width:45px;height:45px;display:grid;place-items:center;border-radius:12px;color:#ef233c;font-size:35px;background:linear-gradient(145deg,#171a21,#090a0d);border:1px solid rgba(239,35,60,.5);text-shadow:0 0 22px rgba(239,35,60,.35)}
@@ -1456,13 +1456,11 @@ aside.collapsed #logoToggleBtn {
 .mtest-mode-icon{height:40px;display:grid;place-items:center;color:#ef233c;font-size:35px;line-height:1;text-shadow:0 0 18px rgba(239,35,60,.2)}
 .mtest-mode-card strong{font-size:clamp(12px,1.8vw,16px);font-weight:800}.mtest-mode-card small,.mtest-tool-card small{color:#b8bec9;font-size:11px;line-height:1.45}.mtest-mode-card b{margin-top:auto;color:#ef233c;font-size:25px;font-weight:400;line-height:1}
 .mtest-tool-card{padding:13px 8px;min-height:0;gap:6px}.mtest-tool-card>span{color:#ef233c;font-size:29px;line-height:1.15}.mtest-tool-card strong{font-size:13px;font-weight:800}
-.mtest-home-footer{position:fixed;z-index:120;left:0;right:0;bottom:0;height:calc(60px + env(safe-area-inset-bottom));padding:0 8px env(safe-area-inset-bottom);margin:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));align-items:stretch;gap:0;box-sizing:border-box;border-top:1px solid #272b34;background:#080a0e;color:#818998;font-size:11px;line-height:1;transform:none;transition:none;animation:none}
-.mtest-home-footer span{display:flex;align-items:center;justify-content:center;min-width:0;min-height:0;margin:0;padding:0;white-space:nowrap;line-height:1;transform:none;transition:none;animation:none}.mtest-home-footer .mtest-footer-active{color:#ef233c;font-weight:800}
 @media(min-width:768px){.mtest-home-inner{padding-top:30px;padding-bottom:78px;gap:23px}.mtest-hero{min-height:210px}.mtest-mode-card{min-height:170px}.mtest-tool-card{min-height:118px}}
 /* Mobil: tüm ana ekran tek viewport içinde, bölümler yüzdeyle paylaştırılır. */
 @media(max-width:767px){
 #mtestHomeScreen{height:100vh;height:100dvh;overflow:hidden}
-.mtest-home-inner{height:100%;min-height:0;padding:2px 10px calc(60px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:2px;overflow:hidden}
+.mtest-home-inner{height:100%;min-height:0;padding:2px 10px 4px;display:flex;flex-direction:column;gap:2px;overflow:hidden}
 .mtest-home-header{height:32px;min-height:32px;flex:0 0 32px;gap:5px}.mtest-brand{gap:7px}.mtest-brand-mark{width:clamp(28px,8vw,38px);height:clamp(28px,8vw,38px);font-size:clamp(22px,6vw,29px);border-radius:9px}
 .mtest-brand-name{font-size:clamp(14px,4.2vw,19px);letter-spacing:.04em}.mtest-tagline{font-size:clamp(5px,1.5vw,7px);letter-spacing:.06em;margin-top:3px}
 .mtest-auth-actions{gap:4px}.mtest-login,.mtest-register{padding:6px 6px;gap:3px;font-size:clamp(8px,2.5vw,10px);border-radius:8px}.mtest-login span,.mtest-register span{font-size:14px}
@@ -1473,7 +1471,6 @@ aside.collapsed #logoToggleBtn {
 .mtest-mode-grid,.mtest-tool-grid{height:auto;min-height:0;flex:0 0 auto;display:flex;flex-direction:column;gap:2px}
 .mtest-mode-card{height:34px;flex:0 0 34px;min-height:34px;display:grid;grid-template-columns:22px minmax(0,1fr) auto;grid-template-rows:1fr;align-items:center;text-align:left;padding:2px 7px;gap:5px;border-radius:7px;overflow:hidden}.mtest-mode-icon{height:auto;font-size:17px;grid-column:1;grid-row:1}.mtest-mode-card strong{font-size:10px;line-height:1.05;grid-column:2;grid-row:1}.mtest-mode-card small,.mtest-tool-card small{display:none;font-size:7px;line-height:1.1}.mtest-mode-card b{font-size:15px;grid-column:3;grid-row:1}
 .mtest-tool-card{height:34px;flex:0 0 34px;min-height:34px;display:grid;grid-template-columns:22px minmax(0,1fr);grid-template-rows:1fr;align-items:center;text-align:left;padding:2px 7px;gap:5px;border-radius:7px;overflow:hidden}.mtest-tool-card>span{font-size:17px;grid-column:1;grid-row:1}.mtest-tool-card strong{font-size:10px;grid-column:2;grid-row:1}
-.mtest-home-footer{height:calc(60px + env(safe-area-inset-bottom));font-size:11px}
 }
 @media(max-height:650px) and (max-width:767px){
 .mtest-home-inner{gap:2px;padding-top:1px}
@@ -1826,9 +1823,6 @@ aside.collapsed #logoToggleBtn {
 }
 
 /* MTEST: Ana sayfada pasif alt menüleri gösterme. */
-#mtestHomeScreen:not(.mtest-home-hidden) .mtest-home-footer {
-  display: none !important;
-}
 #mtestHomeScreen:not(.mtest-home-hidden) ~ #mobileBottomNav,
 #mtestHomeScreen:not(.mtest-home-hidden) ~ #mobileAnalysisBottomNav {
   display: none !important;
