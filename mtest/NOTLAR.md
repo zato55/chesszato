@@ -110,3 +110,11 @@
 - `mtest/freeboard-play.html`: tek satır hâlindeki hamle metni, numaralı satırlardan oluşan Beyaz/Siyah sütunlu kayda dönüştürüldü. Son hamle hafif kırmızı vurgulu; siyah hamle henüz gelmediyse boşluk çizgiyle gösteriliyor.
 - Hamleler chess.js geçmişinden SAN notasyonuyla okunuyor; hamle oynama/geri alma mantığı değiştirilmedi. Telefon görünümünde liste kaydırılabilir.
 - Statik kontroller sonrası telefon testi bekleniyor.
+
+
+## 2026-10-29 — Serbest Tahta hamle şeridi
+
+- Yedek: `yedek-serbest-tahta-hamle-seridi-oncesi-2026-10-29`.
+- Kullanıcı önceki hamle kayıt panelini beğenmedi; hamleler artık tahtanın hemen altında yatay, kaydırılabilir bir şerit olarak gösteriliyor. Her hamle küçük bir etiket, hamle numarası ve SAN notasyonuyla gösteriliyor; son hamle kırmızı vurgulu.
+- `mtest/freeboard-play.html` değişti. Yan paneldeki geniş hamle tablosu kaldırıldı; taş/hamle mantığı korunuyor.
+- Statik kontroller tamamlandı; telefon testi bekleniyor.
