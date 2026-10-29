@@ -38,3 +38,21 @@
 - Kabul ölçütleri kullanıcı testiyle olumlu görünüyor: ana sayfa, bot başlatma/iptal, hızlı eşleşme, oyun sonu/analiz ve ana sayfaya dönüş akışları çalışıyor.
 - Bu turda yeni kod değişikliği yapılmadı. `gtest` değişmeden korundu.
 - Sonraki adım: kullanıcı yeni bir geliştirme istediğinde mevcut ekran ayrımını temel al; aynı ayrımı yeniden yapma.
+
+
+## 2026-10-29 — Ana sayfa görsel sadeleştirme planı ve 1. aşama
+
+- Çalışma alanı: mtest, main; gtest ve eski V93 projesi kapsam dışı.
+- Güvenlik yedeği: yedek-mtest-ana-sayfa-gorsel-duzenleme-oncesi-2026-10-29 dalı, düzenleme öncesindeki main durumundan oluşturuldu.
+- Kullanıcı talebi: aşağıdaki sırayı tüm aşamalar eksiksiz tamamlanana kadar sürdürmek ve her önemli adımda notları güncellemek.
+- Tamamlama sırası:
+  1. Ana sayfayı sadeleştirmek: yinelenen kısa tanıtım metnini azaltmak ve “Oyuna Başla” eylemini görsel olarak öne çıkarmak.
+  2. Kartlar ve butonlarda ortak koyu tema, tutarlı kenarlık/ikon rengi ve yalnızca ana eylemde kırmızı vurgu kullanmak.
+  3. Telefon üzerinde görünüm, taşma/kaydırma ve buton akışlarını kullanıcıyla test etmek.
+  4. Alt gezinme menüsünü yalnızca çalışan bölümlere göre değerlendirmek; var olmayan sayfaları varmış gibi göstermemek.
+  5. Giriş sonrası kullanıcı alanı, profil, ELO ve istatistikleri mevcut gerçek özelliklere göre tasarlamak.
+  6. Bulmacalar, çevrim içi oyuncu bilgisi ve son oyunlar için gerçek veri/işlev akışlarını değerlendirmek; hazır olmayanları tamamlanmadan çalışıyor göstermemek.
+- Aşama 1-2 için yapılan küçük görsel değişiklik: mtest/style.css içinde hero alt cümlesi gizlendi; Giriş Yap/Kayıt Ol ikincil/çerçeveli stile alındı; oyun modu ve diğer seçenek kartları ortak koyu arka plan ve tutarlı kenarlık/ikon rengine getirildi; “Oyuna Başla” kırmızı ana eylem olarak bırakıldı.
+- mtest/index.html içinde yalnızca CSS önbellek etiketi 20261029-home-visual-v1 olarak değiştirildi. JavaScript/oyun akışı değiştirilmedi.
+- Doğrulama sınırı: dosya ve sözdizimi kontrolleri yapılacak; gerçek telefon görünümü henüz kullanıcı tarafından yeniden onaylanmadı. Bu aşama telefon testi olumlu dönmeden tamamlanmış sayılmaz.
+- Sonraki adım: telefonda ana sayfanın düzenini kontrol etmek; sorun varsa yalnızca bu görsel aşamayı düzeltmek. Onaydan sonra alt gezinme menüsü aşamasına geçmek.
