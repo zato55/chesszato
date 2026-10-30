@@ -126,3 +126,11 @@
 - Kullanıcı isteğiyle `mtest/index.html` içinde “Oyuna Başla” butonu hero alanının altından alınarak “Diğer Seçenekler” (Analiz, Turnuvalar, Ayarlar, Bulmacalar) bölümünün altına taşındı.
 - Butonun mevcut modal açma davranışı ve oyun seçim akışı değiştirilmedi; yalnızca DOM sırası değişti.
 - Statik konum/kimlik kontrolleri yapıldı; telefon görünümü kullanıcı testini bekliyor.
+
+
+## 2026-10-30 — Büyük usta sözleri kartının yeri ve boyutu
+
+- Yedek: `yedek-mtest-usta-sozleri-kart-duzeni-oncesi-2026-10-30`.
+- Canlı büyük usta sözleri kartı, ana sayfada “Diğer Seçenekler” bölümünün üstüne taşındı. Kartın yüksekliği, iç boşlukları, söz metni ve yazar adı özellikle mobilde daha okunaklı olacak şekilde büyütüldü.
+- “Oyuna Başla” butonu diğer seçeneklerin altında kalmaya devam ediyor. Söz döndürme JavaScript/işleyişine dokunulmadı.
+- Statik DOM sırası ve CSS dengesi kontrol edildi; telefon testi bekleniyor.
