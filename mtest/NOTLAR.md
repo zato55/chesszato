@@ -211,3 +211,11 @@
 - Yalnızca ana sayfadaki `.mtest-start` butonunun kırmızı paleti parlak kırmızı/pembeden koyu bordo-kırmızı tonlarına alındı. Parlama animasyonu korundu ancak ışık yoğunluğu da yeni tona uygun biçimde azaltıldı.
 - Buton boyutu, konumu, yazısı, tıklama davranışı ve diğer butonlar değiştirilmedi.
 - Kod kontrolü ve GitHub dosya doğrulaması yapılacak; gerçek telefon görünümü kullanıcı testi bekliyor.
+
+
+## 2026-10-30 — Ana sayfa buton sembolleri canlandırıldı
+
+- Güvenlik yedeği: `yedek-mtest-buton-sembolleri-canlandirma-oncesi-2026-10-30`.
+- `mtest/style.css`: Analiz/Ayarlar gibi ana sayfa seçeneklerinin sembollerine daha parlak kırmızı ton, ışık halesi ve netlik eklendi. Oyun seçimi kartlarındaki semboller, yön okları, “Oyuna Başla” simgesi ve giriş/kayıt işaretleri de aynı canlı görsel dile yaklaştırıldı.
+- Buton ölçüleri, yerleşim, metinler ve tıklama davranışları değiştirilmedi; yalnızca CSS görsel etkileri eklendi.
+- `mtest/index.html` CSS önbellek etiketi yenilendi. Telefon görünümü kullanıcı testi bekliyor.
