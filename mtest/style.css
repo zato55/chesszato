@@ -2090,3 +2090,29 @@ aside.collapsed #logoToggleBtn {
 }
 #mtestHomeScreen .mtest-ambient-chess::after { content:none; }
 #mtestHomeScreen .mtest-ambient-chess span { display:none; }
+
+
+/* MTEST 2026-10-30: savaşan satranç figürleri; alt alanı kenar çerçevesine kadar doldur. */
+#mtestHomeScreen .mtest-home-inner { padding-bottom:0 !important; }
+#mtestHomeScreen .mtest-ambient-chess {
+  flex:1 1 0 !important; min-height:112px !important; width:calc(100% + 20px) !important;
+  margin:0 -10px 0 !important; align-self:stretch !important;
+  border-radius:0 !important; -webkit-mask-image:none !important; mask-image:none !important;
+  background:#080a10 !important;
+}
+#mtestHomeScreen .mtest-ambient-chess img {
+  object-fit:cover !important; object-position:center 48% !important;
+  width:100% !important; height:100% !important;
+  filter:saturate(1.16) contrast(1.08) !important;
+}
+#mtestHomeScreen .mtest-ambient-chess::before {
+  background:linear-gradient(to bottom,rgba(5,7,11,.04),rgba(5,7,11,0) 30%,rgba(5,7,11,.12)) !important;
+}
+@media(max-width:767px) {
+  #mtestHomeScreen .mtest-home-inner { padding-bottom:0 !important; }
+  #mtestHomeScreen .mtest-ambient-chess {
+    min-height:100px !important; margin-left:-10px !important; margin-right:-10px !important;
+    width:calc(100% + 20px) !important;
+  }
+  #mtestHomeScreen .mtest-ambient-chess img { object-position:center 50% !important; }
+}
