@@ -134,3 +134,10 @@ Her önemli değişiklik ve doğrulama tamamlandığında, kullanıcı ayrıca h
 
 - Ana sayfa çevresindeki hareketli ışık eflatundan su mavisi/camgöbeği tonlarına alındı; animasyon ve yerleşim korundu.
 - Yedek: `yedek-mtest-su-mavisi-kenar-isigi-oncesi-2026-10-30`. Ayrıntı `mtest/NOTLAR.md` içinde.
+
+
+## 2026-10-30 — MTEST sinematik alt görsel
+
+- Alt bölümdeki savaşan satranç figürleri SVG koduyla daha gerçekçi ve sinematik hale getirildi; metalik zırh, yansımalı kılıç, ışık huzmeleri, sis ve kıvılcım detayları eklendi.
+- Güvenlik yedeği: `yedek-mtest-gercekci-sinematik-alt-gorsel-oncesi-2026-10-30`.
+- Yalnızca `mtest/chess-atmosphere.svg` ve görsel cache etiketi değişti. Telefon testi kullanıcı onayı bekliyor; ayrıntılar `mtest/NOTLAR.md` içinde.
