@@ -2116,3 +2116,31 @@ aside.collapsed #logoToggleBtn {
   }
   #mtestHomeScreen .mtest-ambient-chess img { object-position:center 50% !important; }
 }
+
+
+/* 2026-10-30: Ana sayfa buton sembollerine daha canlı ışık ve derinlik. */
+#mtestHomeScreen .mtest-tool-card > span {
+  color: #ff536f;
+  filter: drop-shadow(0 0 5px rgba(255, 55, 91, .72)) drop-shadow(0 0 12px rgba(255, 35, 75, .38));
+  text-shadow: 0 0 7px rgba(255, 74, 105, .75), 0 0 18px rgba(239, 35, 60, .48);
+}
+#mtestHomeScreen .mtest-game-choice-icon {
+  color: #fff1f3;
+  background: linear-gradient(145deg, #57202d, #25151d);
+  border: 1px solid rgba(255, 91, 119, .58);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.16), 0 0 12px rgba(239,35,60,.2);
+  text-shadow: 0 0 8px rgba(255, 117, 140, .9), 0 0 16px rgba(239,35,60,.65);
+}
+#mtestHomeScreen .mtest-game-choice-option > b,
+#mtestHomeScreen .mtest-chevron {
+  color: #ff7188;
+  text-shadow: 0 0 8px rgba(255, 65, 99, .8), 0 0 16px rgba(239, 35, 60, .45);
+}
+#mtestHomeScreen .mtest-play-icon {
+  box-shadow: 0 0 10px rgba(255,255,255,.55), 0 0 22px rgba(255,75,105,.48);
+  text-shadow: 0 0 8px rgba(201,20,43,.35);
+}
+#mtestHomeScreen .mtest-auth-actions span {
+  filter: drop-shadow(0 0 5px rgba(255, 65, 99, .8));
+  text-shadow: 0 0 9px rgba(255, 65, 99, .75);
+}
