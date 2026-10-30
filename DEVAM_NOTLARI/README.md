@@ -91,3 +91,9 @@ Her önemli değişiklik ve doğrulama tamamlandığında, kullanıcı ayrıca h
 
 - “Oyuna Başla” butonu, “Diğer Seçenekler” kartlarının altına taşındı. Tıklama davranışı değişmedi; ayrıntılar `mtest/NOTLAR.md` içinde.
 - Yedek: `yedek-mtest-oyuna-basla-sira-degisikligi-oncesi-2026-10-30`. Telefon testi bekleniyor.
+
+
+## 2026-10-30 — MTEST büyük usta sözleri kartı
+
+- Canlı usta sözleri kartı “Diğer Seçenekler” bölümünün üzerine taşındı ve özellikle mobilde daha geniş/okunaklı yapıldı. Dönen sözlerin işleyişi korunmuştur; ayrıntılar `mtest/NOTLAR.md` içinde.
+- Yedek: `yedek-mtest-usta-sozleri-kart-duzeni-oncesi-2026-10-30`. Telefon testi bekleniyor.
