@@ -141,3 +141,9 @@ Her önemli değişiklik ve doğrulama tamamlandığında, kullanıcı ayrıca h
 - Alt bölümdeki savaşan satranç figürleri SVG koduyla daha gerçekçi ve sinematik hale getirildi; metalik zırh, yansımalı kılıç, ışık huzmeleri, sis ve kıvılcım detayları eklendi.
 - Güvenlik yedeği: `yedek-mtest-gercekci-sinematik-alt-gorsel-oncesi-2026-10-30`.
 - Yalnızca `mtest/chess-atmosphere.svg` ve görsel cache etiketi değişti. Telefon testi kullanıcı onayı bekliyor; ayrıntılar `mtest/NOTLAR.md` içinde.
+
+
+## 2026-10-30 — MTEST Oyuna Başla koyu kırmızı
+
+- Ana sayfadaki “Oyuna Başla” butonunun zemini koyu bordo/kırmızı paletine alındı; mevcut parlama animasyonu daha sakin tona uyarlandı. Boyut, konum ve davranış değişmedi.
+- Yedek: `yedek-mtest-oyuna-basla-koyu-kirmizi-oncesi-2026-10-30`. Ayrıntılar `mtest/NOTLAR.md` içinde; telefon testi bekleniyor.
