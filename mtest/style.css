@@ -2054,20 +2054,19 @@ aside.collapsed #logoToggleBtn {
 }
 
 
-/* MTEST: Ana sayfanın dış kenarında dolaşan ince ışık çerçevesi. */
+/* MTEST: Sabit çerçeve üzerinde, kenarı takip eden hareketli ışık şeridi. */
+@property --mtest-edge-angle { syntax:"<angle>"; inherits:false; initial-value:0deg; }
 #mtestHomeScreen::after {
-  content:""; position:absolute; z-index:120; inset:5px; border-radius:20px;
-  padding:1.5px; pointer-events:none;
-  background:conic-gradient(from 0deg,transparent 0deg,transparent 285deg,rgba(239,35,60,.12) 310deg,#fb7185 333deg,#fff1f2 342deg,#ef233c 350deg,transparent 360deg);
+  content:""; position:absolute; z-index:120; inset:2px; border-radius:18px;
+  padding:2px; pointer-events:none;
+  background:conic-gradient(from var(--mtest-edge-angle),transparent 0deg 300deg,rgba(239,35,60,.12) 318deg,#ef233c 335deg,#fff1f2 343deg,#fb7185 350deg,transparent 360deg);
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
   -webkit-mask-composite:xor; mask-composite:exclude;
-  filter:drop-shadow(0 0 4px rgba(239,35,60,.45));
-  animation:mtestHomeEdgeLight 7s linear infinite;
+  filter:drop-shadow(0 0 5px rgba(239,35,60,.5));
+  animation:mtestEdgeAngleTravel 6s linear infinite;
 }
-@keyframes mtestHomeEdgeLight { to { transform:rotate(360deg); } }
+@keyframes mtestEdgeAngleTravel { to { --mtest-edge-angle:360deg; } }
 @media(max-width:767px) {
-  #mtestHomeScreen::after { inset:4px; border-radius:15px; padding:1.25px; filter:drop-shadow(0 0 3px rgba(239,35,60,.4)); }
+  #mtestHomeScreen::after { inset:2px; border-radius:14px; padding:1.7px; filter:drop-shadow(0 0 4px rgba(239,35,60,.45)); }
 }
-@media(prefers-reduced-motion:reduce) {
-  #mtestHomeScreen::after { animation:none; }
-}
+@media(prefers-reduced-motion:reduce) { #mtestHomeScreen::after { animation:none; } }
