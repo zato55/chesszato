@@ -121,3 +121,10 @@ Her önemli değişiklik ve doğrulama tamamlandığında, kullanıcı ayrıca h
 
 - Ana sayfa çevresinde dolaşan sabit çerçeve hattındaki ışık eflatun/lavanta tonlarına alındı; animasyon ve mobil yerleşim korundu.
 - Yedek: `yedek-mtest-eflatun-kenar-isigi-oncesi-2026-10-30`. Telefon testi bekleniyor.
+
+
+## 2026-10-30 — MTEST savaşan satranç figürleri
+
+- Ana sayfanın alt görseli, çapraz kılıçlarla karşılaşan iki zırhlı satranç figürünün yer aldığı özgün vektör sanatla değiştirildi.
+- Görsel alanı kenar çerçevesine kadar boşluksuz genişleyecek şekilde ayarlandı. Yedek: `yedek-mtest-savasan-satranc-figurlu-alt-gorsel-oncesi-2026-10-30`.
+- Teknik ayrıntı ve telefon testi durumu `mtest/NOTLAR.md` içinde.
