@@ -2003,7 +2003,7 @@ aside.collapsed #logoToggleBtn {
 }
 
 /* Referans görseline daha yakın, ayrı vektör atmosfer katmanı. */
-#mtestHomeScreen .mtest-ambient-chess { background-image:linear-gradient(to bottom,rgba(5,7,11,.08),rgba(5,7,11,.08)),url("chess-atmosphere.svg"); background-position:center top; background-size:cover; background-repeat:no-repeat; }
+#mtestHomeScreen .mtest-ambient-chess { background-image:linear-gradient(to bottom,rgba(5,7,11,.08),rgba(5,7,11,.08)),url("chess-atmosphere.svg?v=20261030-art-v2"); background-position:center top; background-size:cover; background-repeat:no-repeat; }
 #mtestHomeScreen .mtest-ambient-chess::before,
 #mtestHomeScreen .mtest-ambient-chess::after { content:none; }
 
