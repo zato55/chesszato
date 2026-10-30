@@ -186,3 +186,11 @@
 - `mtest/chess-atmosphere.svg` özgün vektör kompozisyonuyla yenilendi: zırhlı atlı satranç savaşçısı ve taçlı rakip figür, çapraz kılıçlar, kıvılcım ışığı ve perspektif satranç zemini.
 - Alt görsel alanı esneyerek kalan boşluğu dolduracak, sağ/sol kenarlara ve alt kenara kadar uzanacak şekilde ayarlandı; önceki solma maskesi kaldırıldı. Eflatun kenar ışığı korunuyor.
 - Yalnızca ana sayfa alt görseli ve yerleşimi etkilendi; oyun mantığına dokunulmadı. Telefon görünümü kullanıcı testi bekliyor.
+
+
+## 2026-10-30 — MTEST kenar ışığı su mavisi
+
+- Yedek: `yedek-mtest-su-mavisi-kenar-isigi-oncesi-2026-10-30`.
+- Ana sayfanın hareketli kenar ışığı eflatundan su mavisine çevrildi: camgöbeği/turkuaz ton, açık buz mavisi parlak vurgu ve uyumlu dış parlama.
+- Işığın animasyon hızı, çerçeve geometrisi ve alt görsel yerleşimi değiştirilmedi.
+- Telefon görünümü kullanıcı testi bekliyor.
