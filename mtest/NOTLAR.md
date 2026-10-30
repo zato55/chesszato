@@ -150,3 +150,10 @@
 - `mtest/style.css`: ana sayfanın dış kenarında dört kenarı takip eden ince kırmızı/beyaz ışık efekti eklendi. Efekt yalnızca ana sayfa katmanında; kart içeriklerine ve tıklamalara engel olmuyor. Mobil ölçü ve hareket azaltma tercihi destekleniyor.
 - `mtest/index.html`: CSS önbellek etiketi yenilendi. Oyun ekranı ve oyun mantığı değiştirilmedi.
 - Statik CSS/DOM kontrolü yapılacak; gerçek telefon görünümü kullanıcı testi bekliyor.
+
+
+## 2026-10-30 — Kenar ışığı düzeltmesi
+
+- Önceki dönen efekt kaldırıldı; çerçeve sabit kalıyor ve parlak kırmızı-beyaz ışık şeridi kenar boyunca ilerliyor.
+- Işık dört kenarı ve yuvarlatılmış köşeleri takip eden ince çerçeve hattında tutuldu. Mobil ölçü, tıklama engellememe ve hareket azaltma desteği korundu.
+- Yedek: `yedek-mtest-kenar-isigi-duzeltme-oncesi-2026-10-30`. Telefon testi bekleniyor.
