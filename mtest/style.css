@@ -1438,7 +1438,7 @@ aside.collapsed #logoToggleBtn {
 .mtest-home-inner{width:min(100%,1050px);height:100%;min-height:0;margin:0 auto;padding:22px clamp(13px,4vw,42px) 8px;display:flex;flex-direction:column;gap:20px;box-sizing:border-box;overflow:hidden}
 .mtest-home-header{display:flex;align-items:center;justify-content:space-between;gap:14px;flex:0 0 auto}
 .mtest-brand{display:flex;align-items:center;gap:11px;min-width:0}
-.mtest-brand-mark{width:45px;height:45px;display:grid;place-items:center;border-radius:12px;color:#ef233c;font-size:35px;background:linear-gradient(145deg,#171a21,#090a0d);border:1px solid rgba(239,35,60,.5);text-shadow:0 0 22px rgba(239,35,60,.35)}
+.mtest-brand-mark{width:45px;height:45px;display:grid;place-items:center;border-radius:12px;color:#ef233c;font-size:35px;background:linear-gradient(145deg,#171a21,#090a0d);border:1px solid rgba(168,85,247,.58);text-shadow:0 0 22px rgba(239,35,60,.35)}
 .mtest-brand-name{font-size:clamp(19px,3.2vw,30px);font-weight:900;letter-spacing:.08em;line-height:1.05;white-space:nowrap}.mtest-brand-name span{color:#ef233c}
 .mtest-tagline{margin-top:6px;color:#a1a1aa;font-size:9px;letter-spacing:.15em;white-space:nowrap}.mtest-tagline i{color:#ef233c;font-style:normal}
 .mtest-auth-actions{display:flex;align-items:center;gap:8px}
@@ -1490,7 +1490,7 @@ aside.collapsed #logoToggleBtn {
 .mtest-auth-actions{display:flex;align-items:center;gap:8px}
 .mtest-register{flex-shrink:0;display:flex;align-items:center;gap:8px;padding:9px 11px;color:#fff;border:1px solid #ef233c;border-radius:11px;background:linear-gradient(110deg,#d71935,#941126);font-size:12px;font-weight:800;text-decoration:none}
 .mtest-register span{font-size:19px;line-height:12px}
-.mtest-home-notice{margin:0;padding:11px 13px;border:1px solid rgba(239,35,60,.45);border-radius:12px;background:rgba(127,29,29,.18);color:#fecdd3;font-size:12px;line-height:1.45}
+.mtest-home-notice{margin:0;padding:11px 13px;border:1px solid rgba(168,85,247,.52);border-radius:12px;background:rgba(127,29,29,.18);color:#fecdd3;font-size:12px;line-height:1.45}
 @media(max-width:480px){.mtest-auth-actions{gap:5px}.mtest-login,.mtest-register{padding:8px 8px;gap:5px;font-size:10px}.mtest-login span,.mtest-register span{font-size:16px}}
 
 
@@ -2059,7 +2059,7 @@ aside.collapsed #logoToggleBtn {
 #mtestHomeScreen::after {
   content:""; position:absolute; z-index:120; inset:2px; border-radius:18px;
   padding:2px; pointer-events:none;
-  background:conic-gradient(from var(--mtest-edge-angle),transparent 0deg 300deg,rgba(239,35,60,.12) 318deg,#ef233c 335deg,#fff1f2 343deg,#fb7185 350deg,transparent 360deg);
+  background:conic-gradient(from var(--mtest-edge-angle),transparent 0deg 300deg,rgba(168,85,247,.14) 318deg,#a855f7 335deg,#f5e8ff 343deg,#d8b4fe 350deg,transparent 360deg);
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
   -webkit-mask-composite:xor; mask-composite:exclude;
   filter:drop-shadow(0 0 5px rgba(239,35,60,.5));
