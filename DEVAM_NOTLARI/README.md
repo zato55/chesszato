@@ -97,3 +97,9 @@ Her önemli değişiklik ve doğrulama tamamlandığında, kullanıcı ayrıca h
 
 - Canlı usta sözleri kartı “Diğer Seçenekler” bölümünün üzerine taşındı ve özellikle mobilde daha geniş/okunaklı yapıldı. Dönen sözlerin işleyişi korunmuştur; ayrıntılar `mtest/NOTLAR.md` içinde.
 - Yedek: `yedek-mtest-usta-sozleri-kart-duzeni-oncesi-2026-10-30`. Telefon testi bekleniyor.
+
+
+## 2026-10-30 — MTEST “Stratejini Göster” kartı
+
+- Hero alanı canlı usta sözleri kartıyla aynı koyu geçişli, kırmızı çerçeveli ve yumuşak ışıklı görsel stile uyarlandı; şah figürü ve metin korundu.
+- Yedek: `yedek-mtest-stratejini-goster-karti-oncesi-2026-10-30`. Ayrıntılar `mtest/NOTLAR.md` içinde; telefon testi bekleniyor.
