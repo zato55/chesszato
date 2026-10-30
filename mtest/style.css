@@ -2220,3 +2220,21 @@ aside.collapsed #logoToggleBtn {
   #mtestHomeScreen .mtest-tool-card > span,
   #mtestHomeScreen .mtest-game-choice-icon { animation:none !important; transition:none !important; }
 }
+
+
+/* 2026-10-30: Mobil ikon rozetlerini metin sütunundan taşırma. */
+@media (max-width: 767px) {
+  #mtestHomeScreen .mtest-tool-card > span {
+    width: 22px;
+    height: 22px;
+    min-width: 0;
+    min-height: 0;
+    max-width: 22px;
+    max-height: 22px;
+    box-sizing: border-box;
+    font-size: 17px;
+    line-height: 1;
+    justify-self: center;
+    align-self: center;
+  }
+}
