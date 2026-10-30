@@ -142,3 +142,11 @@
 - Ana sayfadaki hero alanı, canlı usta sözleri kartının koyu kırmızı/mavi geçişli zemini, ince kırmızı çerçevesi, yuvarlatılmış köşeleri ve yumuşak ışık efektiyle aynı görsel dile getirildi.
 - Başlık, açıklama ve şah figürü korunarak mobil boyutlar ayrıca düzenlendi. Metin ve oyun akışına dokunulmadı.
 - CSS önbellek etiketi yenilendi. Statik CSS/DOM kontrolü yapılacak; telefon görünümü kullanıcı testi bekliyor.
+
+
+## 2026-10-30 — Ana sayfa çevresinde dolaşan ışık
+
+- Güvenlik yedeği: `yedek-mtest-ana-sayfa-cevre-isigi-oncesi-2026-10-30`.
+- `mtest/style.css`: ana sayfanın dış kenarında dört kenarı takip eden ince kırmızı/beyaz ışık efekti eklendi. Efekt yalnızca ana sayfa katmanında; kart içeriklerine ve tıklamalara engel olmuyor. Mobil ölçü ve hareket azaltma tercihi destekleniyor.
+- `mtest/index.html`: CSS önbellek etiketi yenilendi. Oyun ekranı ve oyun mantığı değiştirilmedi.
+- Statik CSS/DOM kontrolü yapılacak; gerçek telefon görünümü kullanıcı testi bekliyor.
