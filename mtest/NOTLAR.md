@@ -219,3 +219,12 @@
 - `mtest/style.css`: Analiz/Ayarlar gibi ana sayfa seçeneklerinin sembollerine daha parlak kırmızı ton, ışık halesi ve netlik eklendi. Oyun seçimi kartlarındaki semboller, yön okları, “Oyuna Başla” simgesi ve giriş/kayıt işaretleri de aynı canlı görsel dile yaklaştırıldı.
 - Buton ölçüleri, yerleşim, metinler ve tıklama davranışları değiştirilmedi; yalnızca CSS görsel etkileri eklendi.
 - `mtest/index.html` CSS önbellek etiketi yenilendi. Telefon görünümü kullanıcı testi bekliyor.
+
+
+## 2026-10-30 — Ana sayfadaki tüm semboller modernleştirildi
+
+- Güvenlik yedeği: `yedek-mtest-tum-ana-sayfa-sembolleri-oncesi-2026-10-30`.
+- `mtest/style.css`: marka atı, usta sözleri atı, hero şahı, Analiz/Ayarlar/Turnuvalar/Bulmacalar sembolleri, oyun modu simgeleri, yön okları ve giriş/kayıt işaretleri ortak modern mobil görsel dile alındı.
+- Sembollere kontrollü parlaklık, katmanlı ışık, derinlik ve uygun rozet yüzeyleri eklendi. Hareket azaltma tercihi destekleniyor.
+- Sembol karakterleri, butonların ölçüleri, yerleşimleri ve işlevleri değiştirilmedi. `mtest/index.html` CSS önbellek etiketi yenilendi.
+- Gerçek telefon görünümü kullanıcı testini bekliyor.
