@@ -171,3 +171,10 @@
 - Önceki SVG arka plan olarak uygulanmıştı; eski pseudo-element/ışık katmanları ve arka plan katmanlaması nedeniyle görsel değişikliği yeterince görünür değildi.
 - `mtest/index.html` içinde alt görsel doğrudan `img` öğesi olarak yerleştirildi; `mtest/style.css` içinde eski dekor katmanları kapatılıp yeni görselin tam görünmesi sağlandı.
 - CSS ve SVG önbellek sürümleri yenilendi. Telefon görünümü kullanıcı testi bekliyor.
+
+
+## 2026-10-30 — Ana sayfa kenar ışığı eflatun
+
+- Ana sayfanın dış çerçevesi boyunca ilerleyen ışık şeridi kırmızı tonlarından eflatun/mor ve açık lavanta tonlarına geçirildi.
+- Animasyon yönü, hızı, sabit çerçeve yapısı ve mobil ölçüler korundu.
+- Yedek: `yedek-mtest-eflatun-kenar-isigi-oncesi-2026-10-30`. Telefon testi bekleniyor.
