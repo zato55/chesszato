@@ -85,3 +85,9 @@ Her önemli değişiklik ve doğrulama tamamlandığında, kullanıcı ayrıca h
 
 - Hamle geçmişi artık tahtanın hemen altında yatay kaydırılabilir şerit şeklinde; son hamle kırmızı vurgulu. Detaylar `mtest/NOTLAR.md` içinde.
 - Yedek: `yedek-serbest-tahta-hamle-seridi-oncesi-2026-10-29`. Telefon testi bekleniyor.
+
+
+## 2026-10-30 — MTEST ana sayfa buton sırası
+
+- “Oyuna Başla” butonu, “Diğer Seçenekler” kartlarının altına taşındı. Tıklama davranışı değişmedi; ayrıntılar `mtest/NOTLAR.md` içinde.
+- Yedek: `yedek-mtest-oyuna-basla-sira-degisikligi-oncesi-2026-10-30`. Telefon testi bekleniyor.
