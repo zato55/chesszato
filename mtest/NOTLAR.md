@@ -178,3 +178,11 @@
 - Ana sayfanın dış çerçevesi boyunca ilerleyen ışık şeridi kırmızı tonlarından eflatun/mor ve açık lavanta tonlarına geçirildi.
 - Animasyon yönü, hızı, sabit çerçeve yapısı ve mobil ölçüler korundu.
 - Yedek: `yedek-mtest-eflatun-kenar-isigi-oncesi-2026-10-30`. Telefon testi bekleniyor.
+
+
+## 2026-10-30 — MTEST alt bölüm: savaşan satranç figürleri
+
+- Güvenlik yedeği: `yedek-mtest-savasan-satranc-figurlu-alt-gorsel-oncesi-2026-10-30`.
+- `mtest/chess-atmosphere.svg` özgün vektör kompozisyonuyla yenilendi: zırhlı atlı satranç savaşçısı ve taçlı rakip figür, çapraz kılıçlar, kıvılcım ışığı ve perspektif satranç zemini.
+- Alt görsel alanı esneyerek kalan boşluğu dolduracak, sağ/sol kenarlara ve alt kenara kadar uzanacak şekilde ayarlandı; önceki solma maskesi kaldırıldı. Eflatun kenar ışığı korunuyor.
+- Yalnızca ana sayfa alt görseli ve yerleşimi etkilendi; oyun mantığına dokunulmadı. Telefon görünümü kullanıcı testi bekliyor.
