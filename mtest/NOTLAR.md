@@ -194,3 +194,12 @@
 - Ana sayfanın hareketli kenar ışığı eflatundan su mavisine çevrildi: camgöbeği/turkuaz ton, açık buz mavisi parlak vurgu ve uyumlu dış parlama.
 - Işığın animasyon hızı, çerçeve geometrisi ve alt görsel yerleşimi değiştirilmedi.
 - Telefon görünümü kullanıcı testi bekliyor.
+
+
+## 2026-10-30 — MTEST alt görsel: gerçekçi sinematik sürüm
+
+- Güvenlik yedeği: `yedek-mtest-gercekci-sinematik-alt-gorsel-oncesi-2026-10-30`.
+- `mtest/chess-atmosphere.svg` içindeki savaşan satranç figürleri daha gerçekçi metalik zırh ve taç yüzeyleri, yansımalı kılıçlar, hacimli ışık huzmeleri, atmosfer sisi, kıvılcımlar ve derinlikli satranç zeminiyle yeniden çizildi.
+- Yalnızca SVG görseli ve `mtest/index.html` içindeki SVG önbellek sürümü değiştirildi. CSS yerleşimi, su mavisi kenar ışığı ve oyun işleyişi korunuyor.
+- Kod düzeyinde SVG/XML yapısı ve önbellek etiketi kontrol edilecek. Gerçek telefon görünümü henüz kullanıcı tarafından doğrulanmadı.
+- Sonraki adım: telefonda alt görselin gerçekçiliğini, kırpılmasını ve kenar ışığıyla uyumunu kontrol etmek.
