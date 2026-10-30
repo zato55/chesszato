@@ -2070,3 +2070,23 @@ aside.collapsed #logoToggleBtn {
   #mtestHomeScreen::after { inset:2px; border-radius:14px; padding:1.7px; filter:drop-shadow(0 0 4px rgba(239,35,60,.45)); }
 }
 @media(prefers-reduced-motion:reduce) { #mtestHomeScreen::after { animation:none; } }
+
+
+/* MTEST: Alt atmosfer görselini doğrudan img olarak göster; eski dekor katmanlarını devreden çıkar. */
+#mtestHomeScreen .mtest-ambient-chess {
+  position:relative; isolation:isolate; background:#080a10 !important;
+  overflow:hidden; -webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 12%,#000 82%,transparent 100%);
+  mask-image:linear-gradient(to bottom,transparent 0%,#000 12%,#000 82%,transparent 100%);
+}
+#mtestHomeScreen .mtest-ambient-chess img {
+  position:absolute; inset:0; z-index:0; display:block; width:100%; height:100%;
+  object-fit:cover; object-position:center 54%; opacity:1;
+  filter:saturate(1.12) contrast(1.06);
+}
+#mtestHomeScreen .mtest-ambient-chess::before {
+  content:""; position:absolute; z-index:1; inset:0; left:0; right:0; top:0; height:auto;
+  transform:none; background:linear-gradient(to bottom,rgba(5,7,11,.06),rgba(5,7,11,.02) 42%,rgba(5,7,11,.42));
+  border:0; box-shadow:none; animation:none;
+}
+#mtestHomeScreen .mtest-ambient-chess::after { content:none; }
+#mtestHomeScreen .mtest-ambient-chess span { display:none; }
