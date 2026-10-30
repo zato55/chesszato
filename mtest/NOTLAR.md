@@ -203,3 +203,11 @@
 - Yalnızca SVG görseli ve `mtest/index.html` içindeki SVG önbellek sürümü değiştirildi. CSS yerleşimi, su mavisi kenar ışığı ve oyun işleyişi korunuyor.
 - Kod düzeyinde SVG/XML yapısı ve önbellek etiketi kontrol edilecek. Gerçek telefon görünümü henüz kullanıcı tarafından doğrulanmadı.
 - Sonraki adım: telefonda alt görselin gerçekçiliğini, kırpılmasını ve kenar ışığıyla uyumunu kontrol etmek.
+
+
+## 2026-10-30 — MTEST Oyuna Başla butonu koyu kırmızı
+
+- Güvenlik yedeği: `yedek-mtest-oyuna-basla-koyu-kirmizi-oncesi-2026-10-30`.
+- Yalnızca ana sayfadaki `.mtest-start` butonunun kırmızı paleti parlak kırmızı/pembeden koyu bordo-kırmızı tonlarına alındı. Parlama animasyonu korundu ancak ışık yoğunluğu da yeni tona uygun biçimde azaltıldı.
+- Buton boyutu, konumu, yazısı, tıklama davranışı ve diğer butonlar değiştirilmedi.
+- Kod kontrolü ve GitHub dosya doğrulaması yapılacak; gerçek telefon görünümü kullanıcı testi bekliyor.
