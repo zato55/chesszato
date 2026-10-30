@@ -228,3 +228,10 @@
 - Sembollere kontrollü parlaklık, katmanlı ışık, derinlik ve uygun rozet yüzeyleri eklendi. Hareket azaltma tercihi destekleniyor.
 - Sembol karakterleri, butonların ölçüleri, yerleşimleri ve işlevleri değiştirilmedi. `mtest/index.html` CSS önbellek etiketi yenilendi.
 - Gerçek telefon görünümü kullanıcı testini bekliyor.
+
+
+## 2026-10-30 — Mobil ikon/metin çakışması düzeltmesi
+
+- Sorunun nedeni: ikon rozetlerine eklenen 36 px minimum ölçü, mobil kartlardaki 22 px ikon sütununu aşıyordu.
+- `mtest/style.css`: mobilde seçenek ikonları 22×22 px alana sınırlandı; metin sütununa taşmaları engellendi.
+- Kart yerleşimi ve masaüstü görünümü korunuyor. Telefon testi bekleniyor.
