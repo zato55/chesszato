@@ -2006,3 +2006,16 @@ aside.collapsed #logoToggleBtn {
 #mtestHomeScreen .mtest-ambient-chess { background-image:linear-gradient(to bottom,rgba(5,7,11,.08),rgba(5,7,11,.08)),url("chess-atmosphere.svg"); background-position:center top; background-size:cover; background-repeat:no-repeat; }
 #mtestHomeScreen .mtest-ambient-chess::before,
 #mtestHomeScreen .mtest-ambient-chess::after { content:none; }
+
+
+/* MTEST: büyük usta sözleri ana seçeneklerin üzerinde, daha geniş ve okunaklı. */
+#mtestHomeScreen .mtest-quote-stage{min-height:clamp(118px,16vh,158px);padding:20px 22px;gap:16px;border-radius:18px;}
+#mtestHomeScreen .mtest-quote-content blockquote{font-size:clamp(17px,2.2vw,22px);line-height:1.38;}
+#mtestHomeScreen .mtest-quote-kicker{font-size:10px;letter-spacing:.17em;}
+#mtestHomeScreen .mtest-quote-author{margin-top:12px;font-size:13px;}
+@media(max-width:767px){
+ #mtestHomeScreen .mtest-quote-stage{min-height:clamp(108px,15vh,132px);padding:13px 14px;gap:9px;border-radius:13px;}
+ #mtestHomeScreen .mtest-quote-content blockquote{font-size:clamp(14px,4vw,17px);line-height:1.35;}
+ #mtestHomeScreen .mtest-quote-kicker{font-size:8px;}
+ #mtestHomeScreen .mtest-quote-author{margin-top:7px;font-size:11px;}
+}
