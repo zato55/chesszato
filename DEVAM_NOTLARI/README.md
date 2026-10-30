@@ -147,3 +147,8 @@ Her önemli değişiklik ve doğrulama tamamlandığında, kullanıcı ayrıca h
 
 - Ana sayfadaki “Oyuna Başla” butonunun zemini koyu bordo/kırmızı paletine alındı; mevcut parlama animasyonu daha sakin tona uyarlandı. Boyut, konum ve davranış değişmedi.
 - Yedek: `yedek-mtest-oyuna-basla-koyu-kirmizi-oncesi-2026-10-30`. Ayrıntılar `mtest/NOTLAR.md` içinde; telefon testi bekleniyor.
+
+
+## 2026-10-30 — MTEST buton sembolleri
+- Ana sayfa buton sembollerinin parlaklığı ve görünürlüğü CSS ile artırıldı; seçenek kartları, oyun seçimi simgeleri, yön okları ve giriş/kayıt işaretleri aynı görsel dile alındı.
+- Yerleşim ve işlev değişmedi. Yedek: `yedek-mtest-buton-sembolleri-canlandirma-oncesi-2026-10-30`.
