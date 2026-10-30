@@ -134,3 +134,11 @@
 - Canlı büyük usta sözleri kartı, ana sayfada “Diğer Seçenekler” bölümünün üstüne taşındı. Kartın yüksekliği, iç boşlukları, söz metni ve yazar adı özellikle mobilde daha okunaklı olacak şekilde büyütüldü.
 - “Oyuna Başla” butonu diğer seçeneklerin altında kalmaya devam ediyor. Söz döndürme JavaScript/işleyişine dokunulmadı.
 - Statik DOM sırası ve CSS dengesi kontrol edildi; telefon testi bekleniyor.
+
+
+## 2026-10-30 — “Stratejini Göster” kartının görsel uyumu
+
+- Güvenlik yedeği: `yedek-mtest-stratejini-goster-karti-oncesi-2026-10-30`.
+- Ana sayfadaki hero alanı, canlı usta sözleri kartının koyu kırmızı/mavi geçişli zemini, ince kırmızı çerçevesi, yuvarlatılmış köşeleri ve yumuşak ışık efektiyle aynı görsel dile getirildi.
+- Başlık, açıklama ve şah figürü korunarak mobil boyutlar ayrıca düzenlendi. Metin ve oyun akışına dokunulmadı.
+- CSS önbellek etiketi yenilendi. Statik CSS/DOM kontrolü yapılacak; telefon görünümü kullanıcı testi bekliyor.
