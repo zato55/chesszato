@@ -103,3 +103,9 @@ Her önemli değişiklik ve doğrulama tamamlandığında, kullanıcı ayrıca h
 
 - Hero alanı canlı usta sözleri kartıyla aynı koyu geçişli, kırmızı çerçeveli ve yumuşak ışıklı görsel stile uyarlandı; şah figürü ve metin korundu.
 - Yedek: `yedek-mtest-stratejini-goster-karti-oncesi-2026-10-30`. Ayrıntılar `mtest/NOTLAR.md` içinde; telefon testi bekleniyor.
+
+
+## 2026-10-30 — MTEST ana sayfa dış çerçeve ışığı
+
+- Ana sayfanın dış kenarları boyunca dolaşan ince kırmızı/beyaz ışık eklendi; yalnızca ana sayfa görünümünü etkiler.
+- Yedek: `yedek-mtest-ana-sayfa-cevre-isigi-oncesi-2026-10-30`. Ayrıntılar `mtest/NOTLAR.md` içinde; telefon testi bekleniyor.
