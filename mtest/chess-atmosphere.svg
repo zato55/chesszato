@@ -1,45 +1,86 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 254" preserveAspectRatio="xMidYMid slice">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 360" preserveAspectRatio="xMidYMid slice">
 <defs>
- <linearGradient id="bg" x2="0" y2="1"><stop stop-color="#090d18"/><stop offset=".58" stop-color="#15101a"/><stop offset="1" stop-color="#030509"/></linearGradient>
- <radialGradient id="halo"><stop stop-color="#ff526d" stop-opacity=".34"/><stop offset=".48" stop-color="#a80f31" stop-opacity=".13"/><stop offset="1" stop-color="#080a12" stop-opacity="0"/></radialGradient>
- <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff0c2"/><stop offset=".28" stop-color="#d8a85e"/><stop offset=".62" stop-color="#75421f"/><stop offset="1" stop-color="#f8d995"/></linearGradient>
- <linearGradient id="ivory" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff7e8"/><stop offset=".4" stop-color="#c8b9a7"/><stop offset="1" stop-color="#5e4b4c"/></linearGradient>
- <linearGradient id="board" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#49202b"/><stop offset="1" stop-color="#080b13"/></linearGradient>
- <pattern id="tiles" width="88" height="44" patternUnits="userSpaceOnUse"><rect width="88" height="44" fill="#10131d"/><path d="M0 0h44v22H0zM44 22h44v22H44z" fill="#8f253c" opacity=".55"/></pattern>
- <filter id="softGlow" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="9"/></filter>
- <filter id="pieceGlow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="2.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
- <linearGradient id="vignette" x2="0" y2="1"><stop stop-color="#03050a" stop-opacity=".06"/><stop offset=".72" stop-color="#03050a" stop-opacity=".12"/><stop offset="1" stop-color="#03050a" stop-opacity=".92"/></linearGradient>
+ <linearGradient id="bg" x2="0" y2="1"><stop stop-color="#090b16"/><stop offset=".52" stop-color="#1b1020"/><stop offset="1" stop-color="#05060c"/></linearGradient>
+ <radialGradient id="glow"><stop stop-color="#a855f7" stop-opacity=".36"/><stop offset=".58" stop-color="#8b1c43" stop-opacity=".16"/><stop offset="1" stop-color="#090b16" stop-opacity="0"/></radialGradient>
+ <linearGradient id="silver" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff8e9"/><stop offset=".28" stop-color="#d7c8bd"/><stop offset=".62" stop-color="#786777"/><stop offset="1" stop-color="#f0d7bd"/></linearGradient>
+ <linearGradient id="onyx" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f4c4a1"/><stop offset=".24" stop-color="#9b5965"/><stop offset=".6" stop-color="#3a2035"/><stop offset="1" stop-color="#d99a80"/></linearGradient>
+ <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff0c8"/><stop offset=".45" stop-color="#d9a65f"/><stop offset="1" stop-color="#704124"/></linearGradient>
+ <linearGradient id="floor" x2="0" y2="1"><stop stop-color="#512033"/><stop offset="1" stop-color="#090b13"/></linearGradient>
+ <pattern id="checks" width="100" height="58" patternUnits="userSpaceOnUse"><rect width="100" height="58" fill="#111522"/><path d="M0 0H50V29H0ZM50 29H100V58H50Z" fill="#8c2948" opacity=".58"/></pattern>
+ <filter id="glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="8"/></filter>
+ <filter id="shine" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 </defs>
-<!-- Cinematic chess hall -->
-<rect width="720" height="254" fill="url(#bg)"/>
-<ellipse cx="360" cy="110" rx="310" ry="165" fill="url(#halo)"/>
-<path d="M360 -35L80 190M360 -35L180 190M360 -35L270 190M360 -35L450 190M360 -35L540 190M360 -35L650 190" stroke="#f5c987" stroke-opacity=".12" stroke-width="1"/>
-<path d="M0 54Q170 4 360 48T720 54M0 82Q170 32 360 76T720 82" fill="none" stroke="#f2c78b" stroke-opacity=".09"/>
-<g opacity=".45" fill="#ffb4bf"><circle cx="80" cy="42" r="1.4"/><circle cx="142" cy="75" r="1"/><circle cx="220" cy="30" r="1.2"/><circle cx="510" cy="40" r="1.3"/><circle cx="605" cy="76" r="1"/><circle cx="666" cy="30" r="1.4"/></g>
-<ellipse cx="360" cy="204" rx="340" ry="45" fill="#ed2348" opacity=".18" filter="url(#softGlow)"/>
-<!-- Perspective board -->
-<path d="M-45 143L365 93L765 143L720 254H0Z" fill="url(#board)" stroke="#c78d62" stroke-opacity=".42" stroke-width="2"/>
-<path d="M-25 151L365 105L745 151L708 254H12Z" fill="url(#tiles)" opacity=".72"/>
-<path d="M-25 151L365 105L745 151M12 254L708 254M68 145L76 254M155 135L168 254M250 124L260 254M365 105L360 254M480 124L462 254M575 135L555 254M660 145L636 254" fill="none" stroke="#d7a56f" stroke-opacity=".25" stroke-width="1"/>
-<path d="M0 248L720 248" stroke="#ff3456" stroke-opacity=".5" stroke-width="2" filter="url(#pieceGlow)"/>
-<!-- Distant pieces -->
-<g font-family="Georgia,serif" text-anchor="middle" filter="url(#pieceGlow)" fill="url(#ivory)" stroke="#f5d9b4" stroke-opacity=".52">
- <text x="106" y="164" font-size="56" opacity=".7">♞</text>
- <text x="590" y="166" font-size="58" opacity=".68">♜</text>
- <text x="205" y="151" font-size="43" opacity=".48">♟</text>
- <text x="512" y="151" font-size="44" opacity=".5">♝</text>
+<rect width="900" height="360" fill="url(#bg)"/>
+<ellipse cx="450" cy="164" rx="430" ry="230" fill="url(#glow)"/>
+<path d="M450 -35L40 300M450 -35L190 300M450 -35L320 300M450 -35L580 300M450 -35L710 300M450 -35L860 300" stroke="#d6b3ff" stroke-opacity=".13"/>
+<path d="M0 76Q220 8 450 65T900 76M0 112Q220 44 450 101T900 112" fill="none" stroke="#f5d6b7" stroke-opacity=".1"/>
+<path d="M-50 220L450 145L950 220L900 360H0Z" fill="url(#floor)" stroke="#b47b76" stroke-opacity=".42" stroke-width="2"/>
+<path d="M-30 229L450 160L930 229L888 360H12Z" fill="url(#checks)" opacity=".72"/>
+<path d="M-30 229L450 160L930 229M12 360L888 360M110 218L120 360M230 201L245 360M340 184L350 360M450 160L450 360M560 184L550 360M670 201L655 360M790 218L780 360" fill="none" stroke="#d9b18c" stroke-opacity=".28"/>
+<!-- violet clash light -->
+<path d="M345 118L555 92" stroke="#d8b4fe" stroke-width="12" opacity=".16" filter="url(#glow)"/>
+<path d="M360 123L540 100" stroke="#f5e8ff" stroke-width="2" opacity=".75" filter="url(#shine)"/>
+<!-- White-side chess knight warrior -->
+<g transform="translate(260 22)" filter="url(#shine)">
+ <ellipse cx="0" cy="292" rx="112" ry="18" fill="#d8b4fe" opacity=".3" filter="url(#glow)"/>
+ <!-- legs and chess-pedestal armor -->
+ <path d="M-56 220L-47 176L-23 164L-7 203L-18 258L-52 267L-66 251ZM12 204L29 166L54 179L66 233L48 266L15 257Z" fill="url(#silver)" stroke="#fff0dc" stroke-width="2"/>
+ <path d="M-58 267Q0 250 61 267L77 294Q0 319 -78 294Z" fill="url(#silver)" stroke="#f5d9bc" stroke-width="3"/>
+ <path d="M-77 294Q0 313 78 294L84 312Q0 337 -84 312Z" fill="#6d4052" stroke="#e6c7b3" stroke-width="2"/>
+ <!-- torso -->
+ <path d="M-48 126L-72 148L-58 219L-34 239L34 239L59 216L72 148L47 126L0 113Z" fill="url(#silver)" stroke="#fff0dc" stroke-width="2.5"/>
+ <path d="M-44 151L0 169L44 151L34 222L0 235L-34 222Z" fill="#756071" opacity=".8"/>
+ <path d="M-48 132L-85 160L-69 181L-35 163M48 132L78 151L67 174L38 160" fill="none" stroke="#e8d4c6" stroke-width="17" stroke-linecap="round"/>
+ <!-- horse head helm -->
+ <path d="M-39 119Q-54 89 -31 64L-7 43L-14 14L9 30L26 8L30 45Q58 73 37 116L16 139L-22 137Z" fill="url(#silver)" stroke="#fff0dc" stroke-width="3"/>
+ <path d="M-27 81Q-5 58 23 69L35 91L15 105L-16 101Z" fill="#292133"/>
+ <path d="M-12 80L12 82" stroke="#f7dba7" stroke-width="5" stroke-linecap="round"/>
+ <path d="M-22 116L20 119" stroke="#9a7180" stroke-width="5"/>
+ <path d="M-32 55L-53 30L-22 40M23 47L48 22L43 60" fill="url(#silver)" stroke="#fff0dc" stroke-width="2"/>
+ <!-- sword arm -->
+ <path d="M52 153L92 124L119 81" stroke="#e8d8c8" stroke-width="15" stroke-linecap="round"/>
+ <path d="M116 90L179 22" stroke="url(#gold)" stroke-width="7" stroke-linecap="round"/>
+ <path d="M104 101L130 116" stroke="#f8dcae" stroke-width="8" stroke-linecap="round"/>
+ <path d="M179 22L193 6" stroke="#fff5d9" stroke-width="3"/>
+ <path d="M-49 150L-82 177L-66 193" fill="none" stroke="#b5a1b1" stroke-width="13" stroke-linecap="round"/>
+ <path d="M-65 192L-85 220L-47 231L-28 205Z" fill="url(#silver)" stroke="#fff0dc" stroke-width="2"/>
+ <path d="M-50 240L-15 248M18 248L51 240" stroke="#fff1d9" stroke-opacity=".65" stroke-width="3"/>
 </g>
-<!-- Hero king silhouette -->
-<g transform="translate(360 0)" filter="url(#pieceGlow)">
- <ellipse cx="0" cy="206" rx="83" ry="13" fill="#ff3155" opacity=".36" filter="url(#softGlow)"/>
- <path d="M-48 194L-39 176L-28 170L-21 133L-31 121L-25 111L-12 116L-5 99L-13 89L-7 80L0 87L7 80L13 89L5 99L12 116L25 111L31 121L21 133L28 170L39 176L48 194Z" fill="url(#gold)" stroke="#ffe3b1" stroke-width="1.6"/>
- <path d="M-28 169Q0 179 28 169L34 185Q0 195 -34 185Z" fill="#6d2633" opacity=".88"/>
- <path d="M-20 133Q0 141 20 133M-12 116L0 121L12 116" fill="none" stroke="#fff0c7" stroke-opacity=".75" stroke-width="1.5"/>
- <path d="M-8 83H8M0 75V91" stroke="#fff4d8" stroke-width="4" stroke-linecap="round"/>
- <path d="M-42 195H42" stroke="#fbe3b7" stroke-width="2"/>
+<!-- Dark-side king / rook warrior -->
+<g transform="translate(655 20)" filter="url(#shine)">
+ <ellipse cx="0" cy="294" rx="118" ry="18" fill="#ef476f" opacity=".28" filter="url(#glow)"/>
+ <path d="M-57 222L-48 177L-24 163L-7 205L-18 260L-52 270L-68 250ZM13 205L30 166L55 179L68 235L49 269L16 259Z" fill="url(#onyx)" stroke="#f3c2a6" stroke-width="2"/>
+ <path d="M-58 268Q0 251 62 268L79 296Q0 320 -80 296Z" fill="url(#onyx)" stroke="#f4c5a4" stroke-width="3"/>
+ <path d="M-80 296Q0 315 81 296L87 315Q0 339 -87 315Z" fill="#351d34" stroke="#e7a98d" stroke-width="2"/>
+ <!-- armored body -->
+ <path d="M-49 126L-76 149L-59 220L-34 240L35 240L60 219L76 148L48 126L0 112Z" fill="url(#onyx)" stroke="#f2c1a5" stroke-width="2.5"/>
+ <path d="M-44 149L0 168L44 149L33 224L0 237L-33 224Z" fill="#261b30" stroke="#d79b91" stroke-opacity=".7" stroke-width="2"/>
+ <path d="M-48 132L-88 155L-69 181L-36 162M48 132L82 151L69 176L38 161" fill="none" stroke="#b8757d" stroke-width="17" stroke-linecap="round"/>
+ <!-- crown helm -->
+ <path d="M-39 120L-32 68L-54 37L-22 49L0 15L21 49L54 37L32 69L39 120L19 139L-19 139Z" fill="url(#gold)" stroke="#ffe0ad" stroke-width="3"/>
+ <path d="M-29 91L0 73L29 91L22 112L-22 112Z" fill="#2a172a"/>
+ <path d="M-17 96L-7 96M7 96L17 96" stroke="#ffe7c3" stroke-width="4" stroke-linecap="round"/>
+ <path d="M-24 122L24 122" stroke="#6d3142" stroke-width="6"/>
+ <!-- shield arm -->
+ <path d="M-51 154L-91 177L-108 211" stroke="#d49a8b" stroke-width="16" stroke-linecap="round"/>
+ <path d="M-143 190L-111 166L-80 192L-91 244L-130 252L-151 222Z" fill="url(#gold)" stroke="#ffe4b5" stroke-width="3"/>
+ <path d="M-133 204L-113 190L-97 207L-104 231L-126 235Z" fill="#6d3045" stroke="#f4c7a4" stroke-width="2"/>
+ <!-- raised sword -->
+ <path d="M51 153L92 124L115 83" stroke="#d99b8c" stroke-width="16" stroke-linecap="round"/>
+ <path d="M112 92L48 23" stroke="url(#silver)" stroke-width="8" stroke-linecap="round"/>
+ <path d="M99 105L125 81" stroke="#f8d6b1" stroke-width="9" stroke-linecap="round"/>
+ <path d="M48 23L35 7" stroke="#fff4de" stroke-width="3"/>
 </g>
-<!-- Dramatic rim lights -->
-<path d="M330 88Q360 66 390 88" fill="none" stroke="#fff0ce" stroke-opacity=".8" stroke-width="1.5" filter="url(#pieceGlow)"/>
-<path d="M285 195Q360 215 435 195" fill="none" stroke="#ff3557" stroke-opacity=".72" stroke-width="2" filter="url(#pieceGlow)"/>
-<rect width="720" height="254" fill="url(#vignette)"/>
+<!-- crossed blades and sparks -->
+<g filter="url(#shine)">
+ <path d="M439 75L478 112L515 151" stroke="#fff1d3" stroke-width="7" stroke-linecap="round"/>
+ <path d="M470 76L445 111L414 150" stroke="#e8c8ff" stroke-width="6" stroke-linecap="round"/>
+ <path d="M464 104L486 126M447 105L427 128" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+ <path d="M450 117L450 83M450 117L482 105M450 117L420 104M450 117L470 143M450 117L431 145" stroke="#f5d7ff" stroke-width="2" stroke-linecap="round"/>
+ <circle cx="450" cy="117" r="8" fill="#fff5db"/><circle cx="450" cy="117" r="22" fill="#d8b4fe" opacity=".22" filter="url(#glow)"/>
+</g>
+<!-- atmosphere -->
+<path d="M0 330Q220 290 450 329T900 330" fill="none" stroke="#c084fc" stroke-opacity=".48" stroke-width="2" filter="url(#shine)"/>
+<g fill="#f4d5ff" opacity=".6"><circle cx="108" cy="116" r="2"/><circle cx="160" cy="82" r="1.5"/><circle cx="750" cy="92" r="2"/><circle cx="805" cy="144" r="1.5"/><circle cx="370" cy="52" r="1.5"/><circle cx="540" cy="43" r="1.7"/></g>
+<rect width="900" height="360" fill="none" stroke="#a855f7" stroke-opacity=".16" stroke-width="2"/>
 </svg>
