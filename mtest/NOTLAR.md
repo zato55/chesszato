@@ -164,3 +164,10 @@
 - `mtest/chess-atmosphere.svg` daha sanatsal/sinematik bir kompozisyonla yenilendi: altın tonlu şah, perspektif satranç zemini, çevresel taş siluetleri, yumuşak ışık huzmeleri ve bordo-kırmızı atmosfer.
 - Görsel SVG olarak kaldı; yeni harici görsel servisi veya bağımlılık eklenmedi. CSS görsel önbellek sürümü yenilendi.
 - Yedek: `yedek-mtest-alt-satranç-gorseli-oncesi-2026-10-30`. Telefon görünümü kullanıcı testi bekliyor.
+
+
+## 2026-10-30 — Alt görselin görünürlük sorunu düzeltildi
+
+- Önceki SVG arka plan olarak uygulanmıştı; eski pseudo-element/ışık katmanları ve arka plan katmanlaması nedeniyle görsel değişikliği yeterince görünür değildi.
+- `mtest/index.html` içinde alt görsel doğrudan `img` öğesi olarak yerleştirildi; `mtest/style.css` içinde eski dekor katmanları kapatılıp yeni görselin tam görünmesi sağlandı.
+- CSS ve SVG önbellek sürümleri yenilendi. Telefon görünümü kullanıcı testi bekliyor.
