@@ -115,3 +115,9 @@ Her önemli değişiklik ve doğrulama tamamlandığında, kullanıcı ayrıca h
 
 - Ana sayfa çerçevesi sabit; kırmızı-beyaz parlak ışık şeridi çerçeve kenarı boyunca ilerliyor. Önceki tüm-öğe dönüş animasyonu kaldırıldı.
 - Yedek: `yedek-mtest-kenar-isigi-duzeltme-oncesi-2026-10-30`. Telefon testi bekleniyor.
+
+
+## 2026-10-30 — MTEST kenar ışığı eflatun
+
+- Ana sayfa çevresinde dolaşan sabit çerçeve hattındaki ışık eflatun/lavanta tonlarına alındı; animasyon ve mobil yerleşim korundu.
+- Yedek: `yedek-mtest-eflatun-kenar-isigi-oncesi-2026-10-30`. Telefon testi bekleniyor.
