@@ -2059,15 +2059,15 @@ aside.collapsed #logoToggleBtn {
 #mtestHomeScreen::after {
   content:""; position:absolute; z-index:120; inset:2px; border-radius:18px;
   padding:2px; pointer-events:none;
-  background:conic-gradient(from var(--mtest-edge-angle),transparent 0deg 300deg,rgba(168,85,247,.14) 318deg,#a855f7 335deg,#f5e8ff 343deg,#d8b4fe 350deg,transparent 360deg);
+  background:conic-gradient(from var(--mtest-edge-angle),transparent 0deg 300deg,rgba(34,211,238,.16) 318deg,#22d3ee 335deg,#e0fbff 343deg,#67e8f9 350deg,transparent 360deg);
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
   -webkit-mask-composite:xor; mask-composite:exclude;
-  filter:drop-shadow(0 0 5px rgba(239,35,60,.5));
+  filter:drop-shadow(0 0 5px rgba(34,211,238,.58));
   animation:mtestEdgeAngleTravel 6s linear infinite;
 }
 @keyframes mtestEdgeAngleTravel { to { --mtest-edge-angle:360deg; } }
 @media(max-width:767px) {
-  #mtestHomeScreen::after { inset:2px; border-radius:14px; padding:1.7px; filter:drop-shadow(0 0 4px rgba(239,35,60,.45)); }
+  #mtestHomeScreen::after { inset:2px; border-radius:14px; padding:1.7px; filter:drop-shadow(0 0 4px rgba(34,211,238,.52)); }
 }
 @media(prefers-reduced-motion:reduce) { #mtestHomeScreen::after { animation:none; } }
 
