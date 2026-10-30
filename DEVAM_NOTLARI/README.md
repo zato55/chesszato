@@ -128,3 +128,9 @@ Her önemli değişiklik ve doğrulama tamamlandığında, kullanıcı ayrıca h
 - Ana sayfanın alt görseli, çapraz kılıçlarla karşılaşan iki zırhlı satranç figürünün yer aldığı özgün vektör sanatla değiştirildi.
 - Görsel alanı kenar çerçevesine kadar boşluksuz genişleyecek şekilde ayarlandı. Yedek: `yedek-mtest-savasan-satranc-figurlu-alt-gorsel-oncesi-2026-10-30`.
 - Teknik ayrıntı ve telefon testi durumu `mtest/NOTLAR.md` içinde.
+
+
+## 2026-10-30 — MTEST kenar ışığı su mavisi
+
+- Ana sayfa çevresindeki hareketli ışık eflatundan su mavisi/camgöbeği tonlarına alındı; animasyon ve yerleşim korundu.
+- Yedek: `yedek-mtest-su-mavisi-kenar-isigi-oncesi-2026-10-30`. Ayrıntı `mtest/NOTLAR.md` içinde.
