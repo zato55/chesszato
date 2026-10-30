@@ -158,3 +158,8 @@ Her önemli değişiklik ve doğrulama tamamlandığında, kullanıcı ayrıca h
 - Marka/usta sözleri atı, hero şahı, seçenek kartı ikonları, oyun seçimi sembolleri ve küçük yön/üyelik işaretleri modern mobil stile göre canlandırıldı.
 - Kontrollü ışık, kontrast ve derinlik eklendi; düzen ve işlev korunarak yalnızca CSS görünümü değiştirildi.
 - Yedek: `yedek-mtest-tum-ana-sayfa-sembolleri-oncesi-2026-10-30`. Telefon testi bekleniyor.
+
+
+## 2026-10-30 — MTEST mobil ikon/metin hizası
+- Seçenek kartlarındaki parlak ikon rozetlerinin mobilde metin alanına taşması düzeltildi; rozetler 22 px ikon sütununa sığdırıldı.
+- Yedek: `yedek-mtest-ikon-metin-cakismasi-oncesi-2026-10-30`.
