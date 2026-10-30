@@ -109,3 +109,9 @@ Her önemli değişiklik ve doğrulama tamamlandığında, kullanıcı ayrıca h
 
 - Ana sayfanın dış kenarları boyunca dolaşan ince kırmızı/beyaz ışık eklendi; yalnızca ana sayfa görünümünü etkiler.
 - Yedek: `yedek-mtest-ana-sayfa-cevre-isigi-oncesi-2026-10-30`. Ayrıntılar `mtest/NOTLAR.md` içinde; telefon testi bekleniyor.
+
+
+## 2026-10-30 — MTEST kenar ışığı düzeltmesi
+
+- Ana sayfa çerçevesi sabit; kırmızı-beyaz parlak ışık şeridi çerçeve kenarı boyunca ilerliyor. Önceki tüm-öğe dönüş animasyonu kaldırıldı.
+- Yedek: `yedek-mtest-kenar-isigi-duzeltme-oncesi-2026-10-30`. Telefon testi bekleniyor.
