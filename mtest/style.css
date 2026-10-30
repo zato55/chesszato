@@ -1736,9 +1736,9 @@ aside.collapsed #logoToggleBtn {
 /* MTEST: Oyuna Başla butonunu Chesszato marka renklerine eşleştir */
 @media screen and (max-width: 767px) {
   #mtestHomeScreen .mtest-start {
-    background: linear-gradient(110deg, #d71935, #941126) !important;
+    background: linear-gradient(110deg, #861329, #520b1b) !important;
     color: #ffffff !important;
-    border: 1px solid #ef233c !important;
+    border: 1px solid #9b4054 !important;
   }
 }
 
@@ -1910,9 +1910,9 @@ aside.collapsed #logoToggleBtn {
   position:relative;
   isolation:isolate;
   overflow:hidden;
-  background:linear-gradient(110deg,#ff2948 0%,#e71939 48%,#b20f2b 100%) !important;
-  border:1px solid rgba(255,153,169,.95) !important;
-  box-shadow:0 0 0 1px rgba(255,60,91,.28),0 0 15px rgba(255,35,69,.45),0 0 34px rgba(239,35,60,.28),0 10px 26px rgba(185,28,45,.3),inset 0 1px 0 rgba(255,255,255,.48) !important;
+  background:linear-gradient(110deg,#861329 0%,#690d22 48%,#430817 100%) !important;
+  border:1px solid rgba(174,76,96,.82) !important;
+  box-shadow:0 0 0 1px rgba(112,19,43,.24),0 0 12px rgba(125,18,43,.3),0 0 26px rgba(94,12,34,.2),0 10px 24px rgba(50,5,18,.38),inset 0 1px 0 rgba(255,225,230,.2) !important;
   animation:mtestStartGlow 3.2s ease-in-out infinite;
 }
 #mtestHomeScreen .mtest-start::after {
@@ -1931,8 +1931,8 @@ aside.collapsed #logoToggleBtn {
   box-shadow:0 0 14px rgba(255,255,255,.24);
 }
 @keyframes mtestStartGlow {
-  0%,100% { box-shadow:0 0 0 1px rgba(255,60,91,.24),0 0 12px rgba(255,35,69,.34),0 0 25px rgba(239,35,60,.2),0 10px 26px rgba(185,28,45,.28),inset 0 1px 0 rgba(255,255,255,.42); }
-  50% { box-shadow:0 0 0 1px rgba(255,115,137,.46),0 0 20px rgba(255,35,69,.58),0 0 42px rgba(239,35,60,.36),0 10px 30px rgba(185,28,45,.34),inset 0 1px 0 rgba(255,255,255,.55); }
+  0%,100% { box-shadow:0 0 0 1px rgba(112,19,43,.2),0 0 10px rgba(125,18,43,.24),0 0 22px rgba(94,12,34,.16),0 10px 24px rgba(50,5,18,.34),inset 0 1px 0 rgba(255,225,230,.16); }
+  50% { box-shadow:0 0 0 1px rgba(158,55,79,.34),0 0 15px rgba(125,18,43,.38),0 0 30px rgba(94,12,34,.24),0 10px 27px rgba(50,5,18,.4),inset 0 1px 0 rgba(255,225,230,.24); }
 }
 @keyframes mtestStartShimmer {
   0%,30% { left:-65%; opacity:0; }
