@@ -157,3 +157,10 @@
 - Önceki dönen efekt kaldırıldı; çerçeve sabit kalıyor ve parlak kırmızı-beyaz ışık şeridi kenar boyunca ilerliyor.
 - Işık dört kenarı ve yuvarlatılmış köşeleri takip eden ince çerçeve hattında tutuldu. Mobil ölçü, tıklama engellememe ve hareket azaltma desteği korundu.
 - Yedek: `yedek-mtest-kenar-isigi-duzeltme-oncesi-2026-10-30`. Telefon testi bekleniyor.
+
+
+## 2026-10-30 — Alt satranç atmosfer görseli yenilendi
+
+- `mtest/chess-atmosphere.svg` daha sanatsal/sinematik bir kompozisyonla yenilendi: altın tonlu şah, perspektif satranç zemini, çevresel taş siluetleri, yumuşak ışık huzmeleri ve bordo-kırmızı atmosfer.
+- Görsel SVG olarak kaldı; yeni harici görsel servisi veya bağımlılık eklenmedi. CSS görsel önbellek sürümü yenilendi.
+- Yedek: `yedek-mtest-alt-satranç-gorseli-oncesi-2026-10-30`. Telefon görünümü kullanıcı testi bekliyor.
