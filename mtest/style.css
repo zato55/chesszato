@@ -2052,3 +2052,22 @@ aside.collapsed #logoToggleBtn {
 @media(prefers-reduced-motion:reduce) {
   #mtestHomeScreen .mtest-hero::before { animation:none; }
 }
+
+
+/* MTEST: Ana sayfanın dış kenarında dolaşan ince ışık çerçevesi. */
+#mtestHomeScreen::after {
+  content:""; position:absolute; z-index:120; inset:5px; border-radius:20px;
+  padding:1.5px; pointer-events:none;
+  background:conic-gradient(from 0deg,transparent 0deg,transparent 285deg,rgba(239,35,60,.12) 310deg,#fb7185 333deg,#fff1f2 342deg,#ef233c 350deg,transparent 360deg);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor; mask-composite:exclude;
+  filter:drop-shadow(0 0 4px rgba(239,35,60,.45));
+  animation:mtestHomeEdgeLight 7s linear infinite;
+}
+@keyframes mtestHomeEdgeLight { to { transform:rotate(360deg); } }
+@media(max-width:767px) {
+  #mtestHomeScreen::after { inset:4px; border-radius:15px; padding:1.25px; filter:drop-shadow(0 0 3px rgba(239,35,60,.4)); }
+}
+@media(prefers-reduced-motion:reduce) {
+  #mtestHomeScreen::after { animation:none; }
+}
