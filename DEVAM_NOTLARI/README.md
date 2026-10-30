@@ -152,3 +152,9 @@ Her önemli değişiklik ve doğrulama tamamlandığında, kullanıcı ayrıca h
 ## 2026-10-30 — MTEST buton sembolleri
 - Ana sayfa buton sembollerinin parlaklığı ve görünürlüğü CSS ile artırıldı; seçenek kartları, oyun seçimi simgeleri, yön okları ve giriş/kayıt işaretleri aynı görsel dile alındı.
 - Yerleşim ve işlev değişmedi. Yedek: `yedek-mtest-buton-sembolleri-canlandirma-oncesi-2026-10-30`.
+
+
+## 2026-10-30 — MTEST ana sayfa sembollerinin tamamı
+- Marka/usta sözleri atı, hero şahı, seçenek kartı ikonları, oyun seçimi sembolleri ve küçük yön/üyelik işaretleri modern mobil stile göre canlandırıldı.
+- Kontrollü ışık, kontrast ve derinlik eklendi; düzen ve işlev korunarak yalnızca CSS görünümü değiştirildi.
+- Yedek: `yedek-mtest-tum-ana-sayfa-sembolleri-oncesi-2026-10-30`. Telefon testi bekleniyor.
