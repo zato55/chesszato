@@ -118,3 +118,11 @@
 - Kullanıcı önceki hamle kayıt panelini beğenmedi; hamleler artık tahtanın hemen altında yatay, kaydırılabilir bir şerit olarak gösteriliyor. Her hamle küçük bir etiket, hamle numarası ve SAN notasyonuyla gösteriliyor; son hamle kırmızı vurgulu.
 - `mtest/freeboard-play.html` değişti. Yan paneldeki geniş hamle tablosu kaldırıldı; taş/hamle mantığı korunuyor.
 - Statik kontroller tamamlandı; telefon testi bekleniyor.
+
+
+## 2026-10-30 — Ana sayfada Oyuna Başla butonunun sırası
+
+- Yedek: `yedek-mtest-oyuna-basla-sira-degisikligi-oncesi-2026-10-30`.
+- Kullanıcı isteğiyle `mtest/index.html` içinde “Oyuna Başla” butonu hero alanının altından alınarak “Diğer Seçenekler” (Analiz, Turnuvalar, Ayarlar, Bulmacalar) bölümünün altına taşındı.
+- Butonun mevcut modal açma davranışı ve oyun seçim akışı değiştirilmedi; yalnızca DOM sırası değişti.
+- Statik konum/kimlik kontrolleri yapıldı; telefon görünümü kullanıcı testini bekliyor.
