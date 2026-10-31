@@ -4,7 +4,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Chesszato — Web Satranç</title>
+    <meta name="theme-color" content="#09090b">
+    <title>Chesszato | Ücretsiz Online Satranç Oyna ve Satranç Analizi</title>
+    <meta name="description" content="Chesszato ile ücretsiz online satranç oyna. Bilgisayara karşı mücadele et, arkadaşınla satranç oyna, hamlelerini analiz et ve serbest tahtada konumlar oluştur.">
+    <link rel="canonical" href="https://zato55.github.io/chesszato/">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="tr_TR">
+    <meta property="og:site_name" content="Chesszato">
+    <meta property="og:title" content="Chesszato | Ücretsiz Online Satranç">
+    <meta property="og:description" content="Ücretsiz online satranç oyna, bilgisayara veya arkadaşına karşı mücadele et, hamlelerini analiz et.">
+    <meta property="og:url" content="https://zato55.github.io/chesszato/">
+    <meta property="og:image" content="https://zato55.github.io/chesszato/logo.png">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Chesszato | Ücretsiz Online Satranç">
+    <meta name="twitter:description" content="Ücretsiz online satranç oyna, hamlelerini analiz et ve satranç becerilerini geliştir.">
+    <meta name="twitter:image" content="https://zato55.github.io/chesszato/logo.png">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "name": "Chesszato",
+          "url": "https://zato55.github.io/chesszato/",
+          "inLanguage": "tr-TR"
+        },
+        {
+          "@type": "SoftwareApplication",
+          "name": "Chesszato",
+          "applicationCategory": "GameApplication",
+          "operatingSystem": "Web",
+          "isAccessibleForFree": true,
+          "inLanguage": "tr-TR",
+          "url": "https://zato55.github.io/chesszato/",
+          "description": "Ücretsiz online satranç oyunu; bilgisayara karşı oyun, arkadaşla oyun, hamle analizi ve serbest satranç tahtası özellikleri sunar."
+        }
+      ]
+    }
+    </script>
     
     <!-- Tailwind CSS (CDN) -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -14,7 +52,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
     
     <!-- Özel CSS -->
-    <link rel="stylesheet" href="style.css?v=20261030-icon-text-spacing-v1">
+    <link rel="stylesheet" href="style.css?v=20261031-about-link-v1">
 </head>
 
 <body class="bg-[#09090b] text-zinc-100 font-sans antialiased h-screen h-[100dvh] overflow-hidden flex flex-col md:flex-row select-none">
@@ -22,8 +60,8 @@
     <section id="mtestHomeScreen" class="mtest-home fixed inset-0 z-[100] overflow-y-auto" aria-label="Chesszato ana ekran">
       <div class="mtest-home-inner">
         <header class="mtest-home-header">
-          <div class="mtest-brand"><div class="mtest-brand-mark">♞</div><div><div class="mtest-brand-name">CHESS<span>ZATO</span></div><div class="mtest-tagline">DÜŞÜN <i>•</i> HAMLE YAP <i>•</i> KAZAN</div></div></div>
-          <div class="mtest-auth-actions"><a class="mtest-login" href="giris.html">Giriş Yap <span>›</span></a><a class="mtest-register" href="uye-ol.html">Kayıt Ol <span>+</span></a></div>
+          <div class="mtest-brand"><div class="mtest-brand-mark"><img src="../logo.png?v=20261031-home-logo" alt="Chesszato" style="width:100%;height:100%;object-fit:contain;border-radius:inherit"></div><div><div class="mtest-brand-name">CHESS<span>ZATO</span></div><div class="mtest-tagline">DÜŞÜN <i>•</i> HAMLE YAP <i>•</i> KAZAN</div></div></div>
+          <div class="mtest-auth-actions"><a class="mtest-login" href="giris.html">Giriş Yap <span>›</span></a><a class="mtest-register" href="uye-ol.html">Kayıt Ol <span>+</span></a><a class="mtest-about-link" href="../satranc.html" aria-label="Hakkımızda ve satranç rehberi" title="Hakkımızda">ⓘ</a></div>
         </header>
         <section class="mtest-hero">
           <div class="mtest-hero-copy"><p class="mtest-eyebrow">STRATEJİNİ GÖSTER</p><h1>Satranç sadece bir oyun değil,<br><span>bir düşünce tarzıdır.</span></h1><p class="mtest-hero-sub">Her hamlede kendini geliştir.</p></div>
@@ -37,7 +75,6 @@
             <blockquote id="mtestQuoteText">“Kazandığınız oyundan çok, kaybettiğiniz oyundan öğrenebilirsiniz.”</blockquote>
             <div class="mtest-quote-author"><span></span><strong id="mtestQuoteAuthor">José Raúl Capablanca</strong></div>
           </div>
-          <div class="mtest-quote-progress" aria-hidden="true"><span id="mtestQuoteProgress"></span></div>
         </section>
         <section class="mtest-section mtest-tools-section"><div class="mtest-section-heading"><h2>DİĞER SEÇENEKLER</h2><span></span></div><div class="mtest-tool-grid">
           <button id="mtestAnalysisBtn" class="mtest-tool-card" type="button"><span>⌕</span><strong>Analiz</strong><small>Oyununu incele.</small></button>
@@ -83,7 +120,7 @@
     <!-- 📱 MOBİL ÜST BAR -->
     <header id="mobileTopBar" class="md:hidden bg-[#121215] border-b border-zinc-800/80 px-3.5 flex items-center justify-between gap-2 z-30 shrink-0 h-12">
         <div class="flex items-center gap-2 min-w-0">
-            <div id="mobileLogoFallback" class="w-7 h-7 shrink-0 bg-red-700 rounded-lg flex items-center justify-center font-black text-sm text-white" aria-label="ZATOI">Z</div>
+            <img id="mobileLogoFallback" src="../logo.png?v=20261031-old-logo" class="w-7 h-7 shrink-0 object-contain" alt="Chesszato" />
             <span class="font-extrabold text-sm text-red-600 tracking-wider whitespace-nowrap">ZATO<span class="text-white">CHESS</span></span>
         </div>
         <div class="flex items-center gap-1.5 shrink-0">
@@ -96,7 +133,7 @@
     <aside id="mainSidebar" class="hidden md:flex flex-col bg-[#121215] border-r border-zinc-800 p-4 justify-between h-screen shrink-0 z-30">
         <div class="flex flex-col gap-6">
             <button id="logoToggleBtn" class="flex items-center gap-2.5 w-full hover:opacity-80 transition-opacity text-left outline-none cursor-pointer">
-                <div id="desktopLogoFallback" class="w-8 h-8 bg-red-700 rounded-lg flex items-center justify-center font-black text-sm text-white" aria-label="ZATOI">Z</div>
+                <img id="desktopLogoFallback" src="../logo.png?v=20261031-old-logo" class="w-8 h-8 object-contain" alt="Chesszato" />
                 <div class="sidebar-text flex items-center">
                     <span class="font-extrabold text-xl tracking-wider text-red-600">ZATO<span class="text-white">CHESS</span></span>
                 </div>
@@ -813,7 +850,7 @@
     <!-- Ana Uygulama Kodu -->
     <script src="openings.js?v=20261020-lichess-openings-3865"></script>
     <script src="bots.js?v=20261025-bot-1000-v1"></script>
-    <script src="app.js?v=20261029-screen-separation-v1"></script>
+    <script src="app.js?v=20261031-normal-mtest-sync-v1"></script>
 </body>
 
 </html>
