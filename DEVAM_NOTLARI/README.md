@@ -182,3 +182,9 @@ Her önemli değişiklik ve doğrulama tamamlandığında, kullanıcı ayrıca h
 - Normal oyun ekranının mobil üst çubuğu ve masaüstü sol menüsündeki geçici kırmızı “Z” kutuları, kökteki mevcut `logo.png` dosyasına bağlandı.
 - Yalnızca `index.html` içindeki bu iki logo alanı değiştirildi; MTEST ve GTEST dosyalarına dokunulmadı.
 - Yedek: `yedek-normal-eski-logo-ekleme-oncesi-2026-10-31`.
+
+
+## 2026-10-31 — Ana sayfa başlığında eski Chesszato logosu
+- Ana sayfa üst başlığındaki MTEST at simgesi, kökteki mevcut `logo.png` dosyasıyla değiştirildi; Chesszato yazısı ve sloganı korundu.
+- Yalnızca kök `index.html` içindeki ana sayfa marka işareti değiştirildi. `mtest` ve `gtest` klasörlerine dokunulmadı.
+- Yedek: `yedek-ana-sayfa-eski-logo-uygulama-oncesi-2026-10-31`.
