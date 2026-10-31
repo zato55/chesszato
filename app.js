@@ -2993,7 +2993,7 @@ $('#tempoModal, #botModal, #settingsModal').on('click', function (e) {
         { text: 'Capablanca’ya karşı kazanmak imkânsızdı; Alekhine’e karşı oynamak.', author: 'Paul Keres’e atfedilir' },
         { text: 'Lasker’in tarzı berrak suya, içine karışmış bir damla zehre benzer.', author: 'Jacques Mieses — Lasker’in oyun tarzı üzerine' },
         { text: 'Satrançta psikoloji en önemli etkenlerden biridir.', author: 'Alexander Alekhine — 1929 röportajı' },
-        { text: 'Satranç kitapları görmek için gözlük gibidir; görmeyi öğretmez.', author: 'Capablanca’ya yanlış atfedilir; kaynak daha eski' },
+        { text: 'Lasker’in kötü hamlelerine doğru cevap vermek hiç de kolay değildir.', author: 'W.H.K. Pollock' },
         { text: 'Satrançta en zor rakip, kendi hatalarımızdır.', author: 'Chesszato seçkisi' },
         { text: 'Satranç, hayal gücünün ve sabrın buluştuğu bir mücadeledir.', author: 'Chesszato seçkisi' },
         { text: 'Bir planın güzelliği, her hamlede yeniden düşünmeyi gerektirmesidir.', author: 'Chesszato seçkisi' },
