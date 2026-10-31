@@ -168,3 +168,11 @@ Her önemli değişiklik ve doğrulama tamamlandığında, kullanıcı ayrıca h
 ## 2026-10-31 — MTEST alt görseli yenilendi
 - Ana sayfanın en altındaki satranç görseli `mtest/chess-home-bottom.webp` ile değiştirildi. Görsel alanının yerleşimi korundu.
 - Yedek: `yedek-mtest-alt-gorsel-degisimi-oncesi-2026-10-31`.
+
+
+## 2026-10-31 — Normal oyun MTEST ile eşitlendi
+- Normal kök `index.html`, `style.css` ve `app.js` dosyaları MTEST sürümünden eşitlendi; böylece ana sayfa, oyun arayüzü, menüler, ayarlar ve uygulama davranışları aynı kaynak sürüme alındı.
+- Ana sayfanın alt görseli `mtest/chess-home-bottom.webp` yolundan kullanılıyor. Giriş/kayıt ve serbest tahta sayfaları MTEST klasöründeki mevcut sayfalara yönlendiriliyor.
+- Ortak `openings.js`, `bots.js` ve ses klasörlerine kökten erişim korunuyor.
+- `mtest` ve `gtest` kaynaklarına dokunulmadı.
+- Yedek: `yedek-normal-mtest-tam-esitleme-oncesi-2026-10-31`.
