@@ -1,4 +1,10 @@
-
+\n## 2026-10-31 — Ana sayfa teknik SEO başlangıcı
+- Kök `index.html` sayfasına özgün title/description, canonical, robots, Open Graph/Twitter etiketleri ve WebSite + SoftwareApplication yapılandırılmış verisi eklendi.
+- Kök dizine `robots.txt` ve yalnızca ana sayfayı içeren `sitemap.xml` eklendi; proje sitesi URL tabanı `https://zato55.github.io/chesszato/` olarak kullanıldı.
+- Görsel tasarım, oyun JavaScript'i ve `gtest`/`mtest` klasörleri değiştirilmedi.
+- Yedek: `yedek-seo-teknik-hazirlik-oncesi-2026-10-31`.
+- Google Search Console sahiplik doğrulaması ve sitemap gönderimi hesap erişimi gerektirdiğinden kullanıcı adımında bekliyor.
+\n
 ## 2026-10-31 — Büyük usta sözleri kartındaki kırmızı yükleme çizgisi kaldırıldı
 - Ana sayfa söz kartının altındaki ilerleme/yükleme çizgisi HTML, CSS ve JavaScript bağlantısıyla birlikte kaldırıldı.
 - 15 sözün otomatik dönmesi ve söz geçiş animasyonu korundu; yalnızca kullanılmayan ilerleme göstergesi temizlendi.
