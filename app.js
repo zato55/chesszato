@@ -3010,9 +3010,6 @@ $('#tempoModal, #botModal, #settingsModal').on('click', function (e) {
     const showQuote = (index) => {
         quoteText.textContent = '“' + quotes[index].text + '”';
         quoteAuthor.textContent = quotes[index].author;
-        stage.classList.remove('is-running');
-        void stage.offsetWidth;
-        stage.classList.add('is-running');
     };
     showQuote(quoteIndex);
     window.setInterval(() => {
