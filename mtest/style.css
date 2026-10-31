@@ -1442,6 +1442,8 @@ aside.collapsed #logoToggleBtn {
 .mtest-brand-name{font-size:clamp(19px,3.2vw,30px);font-weight:900;letter-spacing:.08em;line-height:1.05;white-space:nowrap}.mtest-brand-name span{color:#ef233c}
 .mtest-tagline{margin-top:6px;color:#a1a1aa;font-size:9px;letter-spacing:.15em;white-space:nowrap}.mtest-tagline i{color:#ef233c;font-style:normal}
 .mtest-auth-actions{display:flex;align-items:center;gap:8px}
+.mtest-about-link{width:34px;height:34px;flex:0 0 34px;display:inline-flex;align-items:center;justify-content:center;border:1px solid #30343d;border-radius:11px;background:#11141a;color:#d4d4d8;font-size:19px;font-weight:700;text-decoration:none;transition:border-color .2s,color .2s,background .2s}
+.mtest-about-link:hover,.mtest-about-link:focus-visible{border-color:#ef233c;color:#fff;background:#241116;outline:none}
 .mtest-login,.mtest-register{flex-shrink:0;display:flex;align-items:center;gap:8px;padding:9px 11px;color:#f4f4f5;border:1px solid #30343d;border-radius:11px;background:#11141a;font-size:12px;font-weight:700;text-decoration:none}
 .mtest-login span{color:#ef233c;font-size:24px;line-height:12px}.mtest-register{color:#fff;border-color:#ef233c;background:linear-gradient(110deg,#d71935,#941126);font-weight:800}.mtest-register span{font-size:19px;line-height:12px}
 .mtest-hero{min-height:175px;display:grid;grid-template-columns:1fr .8fr;align-items:center;position:relative;overflow:hidden;flex:1 1 auto}
@@ -1792,15 +1794,10 @@ aside.collapsed #logoToggleBtn {
 #mtestHomeScreen .mtest-quote-author { display:flex; align-items:center; gap:7px; margin-top:9px; color:#a1a1aa; font-size:10px; }
 #mtestHomeScreen .mtest-quote-author span { width:18px; height:1px; flex:0 0 18px; background:#ef233c; }
 #mtestHomeScreen .mtest-quote-author strong { color:#fda4af; font-weight:800; letter-spacing:.03em; }
-#mtestHomeScreen .mtest-quote-progress { position:absolute; left:0; right:0; bottom:0; height:2px; background:rgba(255,255,255,.06); }
-#mtestHomeScreen .mtest-quote-progress span { display:block; width:0; height:100%; background:linear-gradient(90deg,#ef233c,#fda4af); }
-#mtestHomeScreen .mtest-quote-stage.is-running .mtest-quote-progress span { animation:mtestQuoteProgress 8s linear forwards; }
 @keyframes mtestQuoteShimmer { 0%,15% { transform:translateX(-45%); } 75%,100% { transform:translateX(45%); } }
-@keyframes mtestQuoteProgress { from { width:0; } to { width:100%; } }
 @media (prefers-reduced-motion: reduce) {
   #mtestHomeScreen .mtest-quote-stage::before { animation:none; }
   #mtestHomeScreen .mtest-quote-content { transition:none; }
-  #mtestHomeScreen .mtest-quote-stage.is-running .mtest-quote-progress span { animation:none; width:100%; }
 }
 @media screen and (max-width:767px) {
   #mtestHomeScreen .mtest-quote-stage { min-height:78px; padding:10px 12px; border-radius:13px; }
@@ -2054,20 +2051,20 @@ aside.collapsed #logoToggleBtn {
 }
 
 
-/* MTEST: Sabit çerçeve üzerinde, kenarı takip eden hareketli ışık şeridi. */
+/* MTEST: Sabit çerçeve üzerinde, marka kırmızısıyla kenarı takip eden hareketli ışık şeridi. */
 @property --mtest-edge-angle { syntax:"<angle>"; inherits:false; initial-value:0deg; }
 #mtestHomeScreen::after {
   content:""; position:absolute; z-index:120; inset:2px; border-radius:18px;
   padding:2px; pointer-events:none;
-  background:conic-gradient(from var(--mtest-edge-angle),transparent 0deg 300deg,rgba(34,211,238,.16) 318deg,#22d3ee 335deg,#e0fbff 343deg,#67e8f9 350deg,transparent 360deg);
+  background:conic-gradient(from var(--mtest-edge-angle),transparent 0deg 300deg,rgba(239,35,60,.16) 318deg,#ef233c 335deg,#ffd9df 343deg,#ff526b 350deg,transparent 360deg);
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
   -webkit-mask-composite:xor; mask-composite:exclude;
-  filter:drop-shadow(0 0 5px rgba(34,211,238,.58));
+  filter:drop-shadow(0 0 5px rgba(239,35,60,.62));
   animation:mtestEdgeAngleTravel 6s linear infinite;
 }
 @keyframes mtestEdgeAngleTravel { to { --mtest-edge-angle:360deg; } }
 @media(max-width:767px) {
-  #mtestHomeScreen::after { inset:2px; border-radius:14px; padding:1.7px; filter:drop-shadow(0 0 4px rgba(34,211,238,.52)); }
+  #mtestHomeScreen::after { inset:2px; border-radius:14px; padding:1.7px; filter:drop-shadow(0 0 4px rgba(239,35,60,.56)); }
 }
 @media(prefers-reduced-motion:reduce) { #mtestHomeScreen::after { animation:none; } }
 
