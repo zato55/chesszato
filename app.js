@@ -2986,10 +2986,19 @@ $('#tempoModal, #botModal, #settingsModal').on('click', function (e) {
     const quotes = [
         { text: 'Kazandığınız oyundan çok, kaybettiğiniz oyundan öğrenebilirsiniz.', author: 'José Raúl Capablanca' },
         { text: 'İyi bir hamle gördüğünüzde, daha iyisini arayın.', author: 'Emanuel Lasker’e atfedilir' },
+        { text: 'Yüzlerce oyun kaybetmeden iyi bir oyuncu olamazsınız.', author: 'José Raúl Capablanca — A Primer of Chess' },
+        { text: 'Gelişiminiz tamamlanmadan piyon kazanmaya çalışmayın.', author: 'Aron Nimzowitsch — My System' },
+        { text: 'Hatalar tahtada yapılmayı bekler.', author: 'Savielly Tartakower — atfedilen söz' },
+        { text: 'Bir satranç kitabını, usta olduktan önce okumadım.', author: 'Reuben Fine — Irving Chernev derlemesi' },
+        { text: 'Capablanca’ya karşı kazanmak imkânsızdı; Alekhine’e karşı oynamak.', author: 'Paul Keres’e atfedilir' },
+        { text: 'Lasker’in tarzı berrak suya, içine karışmış bir damla zehre benzer.', author: 'Jacques Mieses — Lasker’in oyun tarzı üzerine' },
+        { text: 'Satrançta psikoloji en önemli etkenlerden biridir.', author: 'Alexander Alekhine — 1929 röportajı' },
+        { text: 'Satranç kitapları görmek için gözlük gibidir; görmeyi öğretmez.', author: 'Capablanca’ya yanlış atfedilir; kaynak daha eski' },
         { text: 'Satrançta en zor rakip, kendi hatalarımızdır.', author: 'Chesszato seçkisi' },
         { text: 'Satranç, hayal gücünün ve sabrın buluştuğu bir mücadeledir.', author: 'Chesszato seçkisi' },
         { text: 'Bir planın güzelliği, her hamlede yeniden düşünmeyi gerektirmesidir.', author: 'Chesszato seçkisi' },
-        { text: 'Satrançta her hamle yeni bir fikir için fırsattır.', author: 'Chesszato seçkisi' }
+        { text: 'Satrançta her hamle yeni bir fikir için fırsattır.', author: 'Chesszato seçkisi' },
+        { text: 'İyi bir oyuncu, hem tahtayı hem rakibini okumayı öğrenir.', author: 'Chesszato seçkisi' }
     ];
     const stage = document.getElementById('mtestQuoteStage');
     const quoteText = document.getElementById('mtestQuoteText');
