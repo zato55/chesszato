@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Zato Chess — Web Satranç</title>
+    <title>Chesszato — Web Satranç</title>
     
     <!-- Tailwind CSS (CDN) -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -14,16 +14,76 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
     
     <!-- Özel CSS -->
-    <link rel="stylesheet" href="style.css?v=20261026-gtest-transfer-v1">
+    <link rel="stylesheet" href="style.css?v=20261031-normal-mtest-sync-v1">
 </head>
 
 <body class="bg-[#09090b] text-zinc-100 font-sans antialiased h-screen h-[100dvh] overflow-hidden flex flex-col md:flex-row select-none">
+    <!-- MTEST: Marka renklerine uyarlanmış yeni ana ekran taslağı -->
+    <section id="mtestHomeScreen" class="mtest-home fixed inset-0 z-[100] overflow-y-auto" aria-label="Chesszato ana ekran">
+      <div class="mtest-home-inner">
+        <header class="mtest-home-header">
+          <div class="mtest-brand"><div class="mtest-brand-mark">♞</div><div><div class="mtest-brand-name">CHESS<span>ZATO</span></div><div class="mtest-tagline">DÜŞÜN <i>•</i> HAMLE YAP <i>•</i> KAZAN</div></div></div>
+          <div class="mtest-auth-actions"><a class="mtest-login" href="mtest/giris.html">Giriş Yap <span>›</span></a><a class="mtest-register" href="mtest/uye-ol.html">Kayıt Ol <span>+</span></a></div>
+        </header>
+        <section class="mtest-hero">
+          <div class="mtest-hero-copy"><p class="mtest-eyebrow">STRATEJİNİ GÖSTER</p><h1>Satranç sadece bir oyun değil,<br><span>bir düşünce tarzıdır.</span></h1><p class="mtest-hero-sub">Her hamlede kendini geliştir.</p></div>
+          <div class="mtest-king-art" aria-hidden="true"><div class="mtest-king-halo"></div><span>♚</span><div class="mtest-king-floor"></div></div>
+        </section>
+        
+        <section id="mtestQuoteStage" class="mtest-quote-stage" aria-label="Satranç ustalarından günün sözü" aria-live="polite">
+          <div class="mtest-quote-chess-mark" aria-hidden="true">♞</div>
+          <div class="mtest-quote-content">
+            <span class="mtest-quote-kicker">USTALARDAN İLHAM</span>
+            <blockquote id="mtestQuoteText">“Kazandığınız oyundan çok, kaybettiğiniz oyundan öğrenebilirsiniz.”</blockquote>
+            <div class="mtest-quote-author"><span></span><strong id="mtestQuoteAuthor">José Raúl Capablanca</strong></div>
+          </div>
+          <div class="mtest-quote-progress" aria-hidden="true"><span id="mtestQuoteProgress"></span></div>
+        </section>
+        <section class="mtest-section mtest-tools-section"><div class="mtest-section-heading"><h2>DİĞER SEÇENEKLER</h2><span></span></div><div class="mtest-tool-grid">
+          <button id="mtestAnalysisBtn" class="mtest-tool-card" type="button"><span>⌕</span><strong>Analiz</strong><small>Oyununu incele.</small></button>
+          <button id="mtestTournamentsBtn" class="mtest-tool-card" type="button"><span>♜</span><strong>Turnuvalar</strong><small>Yeni hedefler keşfet.</small></button>
+          <button id="mtestSettingsBtn" class="mtest-tool-card" type="button" onclick="window.mtestReturnHomeAfterModal=true; document.getElementById('mtestHomeScreen').classList.remove('mtest-home-hidden'); document.getElementById('mtestHomeScreen').classList.add('mtest-home-modal-backdrop'); document.getElementById('mobileNavSettingsBtn').click();"><span>⚙</span><strong>Ayarlar</strong><small>Oyunu kişiselleştir.</small></button>
+          <button id="mtestPuzzlesBtn" class="mtest-tool-card" type="button" onclick="$('#mtestHomeNotice').text('Satranç bulmacaları bölümü hazırlanıyor.').removeClass('hidden');"><span>♞</span><strong>Bulmacalar</strong><small>Taktiklerini geliştir.</small></button>
+        </div></section>
+        <button class="mtest-start" type="button" onclick="document.getElementById('mtestGameChoicesModal').classList.remove('hidden'); document.getElementById('mtestHomeScreen').classList.add('mtest-home-modal-backdrop');"><span class="mtest-play-icon">▶</span><span class="mtest-start-copy"><strong>Oyuna Başla</strong><small>Hemen oyna, ustalaş ve yüksel.</small></span><span class="mtest-chevron">›</span></button>
+        
+        <div class="mtest-ambient-chess" aria-hidden="true"><img src="mtest/chess-home-bottom.webp?v=20261031-home-bottom-v1" alt=""></div>
+        <p id="mtestHomeNotice" class="mtest-home-notice hidden" role="status" aria-live="polite"></p>
+      </div>
+    </section>
 
+
+
+    <!-- MTEST: ana sayfa için bağımsız oyun seçimi kartı; oyun içindeki Oyna menüsünden ayrıdır. -->
+    <div id="mtestGameChoicesModal" class="mtest-game-choices-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="mtestGameChoicesTitle">
+      <section class="mtest-game-choices-card">
+        <header class="mtest-game-choices-header">
+          <div><p>YENİ MAÇ</p><h2 id="mtestGameChoicesTitle">Nasıl oynamak istersin?</h2></div>
+          <button type="button" aria-label="Oyun seçimini kapat" onclick="document.getElementById('mtestGameChoicesModal').classList.add('hidden'); document.getElementById('mtestHomeScreen').classList.remove('mtest-home-modal-backdrop');">✕</button>
+        </header>
+        <div class="mtest-game-choices-list">
+          <button type="button" class="mtest-game-choice-option" onclick="document.getElementById('mtestGameChoicesModal').classList.add('hidden'); window.mtestReturnHomeAfterModal=true; document.getElementById('mtestHomeScreen').classList.remove('mtest-home-hidden'); document.getElementById('mtestHomeScreen').classList.add('mtest-home-modal-backdrop'); document.getElementById('quickMatchTempoSelect').value=window.selectedQuickMatchTempo || '300'; document.getElementById('quickMatchSetupModal').classList.remove('hidden');">
+            <span class="mtest-game-choice-icon">⚡</span><span><strong>Hızlı Eşleşme</strong><small>Rakip ara ve maça başla.</small></span><b>›</b>
+          </button>
+          <button type="button" class="mtest-game-choice-option" onclick="document.getElementById('mtestGameChoicesModal').classList.add('hidden'); window.mtestReturnHomeAfterModal=true; document.getElementById('mtestHomeScreen').classList.remove('mtest-home-hidden'); document.getElementById('mtestHomeScreen').classList.add('mtest-home-modal-backdrop'); document.getElementById('mobileMenuBotBtn').click();">
+            <span class="mtest-game-choice-icon">♟</span><span><strong>Bilgisayara Karşı</strong><small>Zorluk ve oyun süresini seç.</small></span><b>›</b>
+          </button>
+          <button type="button" class="mtest-game-choice-option" onclick="document.getElementById('mtestGameChoicesModal').classList.add('hidden'); document.getElementById('mtestHomeScreen').classList.add('mtest-home-hidden'); document.getElementById('mtestHomeScreen').classList.remove('mtest-home-modal-backdrop'); document.getElementById('mobileMenuLocalBtn').click();">
+            <span class="mtest-game-choice-icon">♙♟</span><span><strong>Arkadaşınla Oyna</strong><small>Aynı cihazda iki kişi karşılaş.</small></span><b>›</b>
+          </button>
+          <button type="button" class="mtest-game-choice-option" onclick="window.location.href='mtest/freeboard.html'">
+            <span class="mtest-game-choice-icon">♜</span><span><strong>Serbest Tahta</strong><small>Taşları yerleştir, kendi konumunu kur.</small></span><b>›</b>
+          </button>
+        </div>
+      </section>
+    </div>
+
+    <!-- MTEST oyun ekranı: ana sayfadan bağımsız katman -->
+    <div id="mtestGameScreen" class="mtest-game-screen mtest-game-hidden">
     <!-- 📱 MOBİL ÜST BAR -->
     <header id="mobileTopBar" class="md:hidden bg-[#121215] border-b border-zinc-800/80 px-3.5 flex items-center justify-between gap-2 z-30 shrink-0 h-12">
         <div class="flex items-center gap-2 min-w-0">
-            <img src="logo.png" alt="ZATOI" class="w-7 h-7 shrink-0 object-contain rounded-lg border border-red-900/50" onerror="this.style.display='none'; $('#mobileLogoFallback').removeClass('hidden');">
-            <div id="mobileLogoFallback" class="hidden w-7 h-7 shrink-0 bg-red-700 rounded-lg flex items-center justify-center font-black text-sm text-white">Z</div>
+            <div id="mobileLogoFallback" class="w-7 h-7 shrink-0 bg-red-700 rounded-lg flex items-center justify-center font-black text-sm text-white" aria-label="ZATOI">Z</div>
             <span class="font-extrabold text-sm text-red-600 tracking-wider whitespace-nowrap">ZATO<span class="text-white">CHESS</span></span>
         </div>
         <div class="flex items-center gap-1.5 shrink-0">
@@ -36,8 +96,7 @@
     <aside id="mainSidebar" class="hidden md:flex flex-col bg-[#121215] border-r border-zinc-800 p-4 justify-between h-screen shrink-0 z-30">
         <div class="flex flex-col gap-6">
             <button id="logoToggleBtn" class="flex items-center gap-2.5 w-full hover:opacity-80 transition-opacity text-left outline-none cursor-pointer">
-                <img src="logo.png" alt="ZATOI" class="w-8 h-8 object-contain rounded-lg border border-red-900/50" onerror="this.style.display='none'; $('#desktopLogoFallback').removeClass('hidden');">
-                <div id="desktopLogoFallback" class="hidden w-8 h-8 bg-red-700 rounded-lg flex items-center justify-center font-black text-sm text-white">Z</div>
+                <div id="desktopLogoFallback" class="w-8 h-8 bg-red-700 rounded-lg flex items-center justify-center font-black text-sm text-white" aria-label="ZATOI">Z</div>
                 <div class="sidebar-text flex items-center">
                     <span class="font-extrabold text-xl tracking-wider text-red-600">ZATO<span class="text-white">CHESS</span></span>
                 </div>
@@ -281,26 +340,6 @@
         </div>
     </aside>
 
-    <!-- 📱 MOBİL OYNA MENÜSÜ -->
-    <div id="mobilePlayMenu" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-end justify-center p-3 md:hidden" role="dialog" aria-modal="true" aria-labelledby="mobilePlayMenuTitle">
-        <div class="mobile-play-menu-card w-full max-w-md rounded-2xl border border-zinc-700 bg-[#121215] p-4 shadow-2xl">
-            <div class="flex items-center justify-between gap-3 border-b border-zinc-800 pb-3 mb-3">
-                <div>
-                    <h2 id="mobilePlayMenuTitle" class="text-lg font-extrabold text-white">♟ Oyna</h2>
-                    <p class="text-xs text-zinc-400 mt-1">Nasıl oynamak istersin?</p>
-                </div>
-                <button id="mobilePlayMenuCloseBtn" class="rounded-lg px-3 py-2 text-zinc-400 hover:text-white hover:bg-zinc-800" aria-label="Menüyü kapat">✕</button>
-            </div>
-            <div class="grid grid-cols-1 gap-2">
-                <button id="mobileMenuQuickMatchBtn" class="mobile-play-option"><span class="mobile-play-option-icon">⚡</span><span class="mobile-play-option-copy"><strong>Hızlı eşleştirme</strong><small>Rastgele sanal rakiple oyna</small></span></button>
-                <button id="mobileMenuBotBtn" class="mobile-play-option"><span class="mobile-play-option-icon">🤖</span><span class="mobile-play-option-copy"><strong>Bota karşı oyna</strong><small>Stockfish ile karşılaş</small></span><span class="mobile-play-option-arrow">›</span></button>
-                <button id="mobileMenuTournamentsBtn" class="mobile-play-option"><span class="mobile-play-option-icon">🏆</span><span class="mobile-play-option-copy"><strong>Turnuvalar</strong><small>Turnuvalara katıl veya oluştur</small></span><span class="mobile-play-option-tag">Yakında</span></button>
-                <button id="mobileMenuLocalBtn" class="mobile-play-option"><span class="mobile-play-option-icon">♙</span><span class="mobile-play-option-copy"><strong>Yerel oyun</strong><small>Aynı cihazda iki kişi oyna</small></span><span class="mobile-play-option-arrow">›</span></button>
-            </div>
-            <p id="mobilePlayMenuNotice" class="hidden mt-3 rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-zinc-300" role="status" aria-live="polite"></p>
-        </div>
-    </div>
-
     <!-- 📱 MOBİL ALT NAVİGASYON BAR -->
     <nav id="mobileBottomNav" aria-label="Mobil oyun menüsü" class="md:hidden fixed bottom-0 left-0 right-0 bg-[#121215] border-t border-zinc-800 grid grid-cols-4 items-center gap-1 px-2 pt-1.5 pb-[max(0.375rem,env(safe-area-inset-bottom))] z-30">
         <button id="mobileNavPlayBtn" aria-label="Oyna menüsünü aç" class="mobile-nav-item">
@@ -327,6 +366,29 @@
         </div>
         <button id="mExitAnalysisBtn" class="w-full max-w-[500px] mx-auto mt-1 block py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold">🎮 Oynamaya Dön</button>
     </nav>
+
+    </div>
+
+    <!-- 📱 MOBİL OYNA MENÜSÜ -->
+    <div id="mobilePlayMenu" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-end justify-center p-3 md:hidden" role="dialog" aria-modal="true" aria-labelledby="mobilePlayMenuTitle">
+        <div class="mobile-play-menu-card w-full max-w-md rounded-2xl border border-zinc-700 bg-[#121215] p-4 shadow-2xl">
+            <div class="flex items-center justify-between gap-3 border-b border-zinc-800 pb-3 mb-3">
+                <div>
+                    <h2 id="mobilePlayMenuTitle" class="text-lg font-extrabold text-white">♟ Oyna</h2>
+                    <p class="text-xs text-zinc-400 mt-1">Nasıl oynamak istersin?</p>
+                </div>
+                <button id="mobilePlayMenuCloseBtn" class="rounded-lg px-3 py-2 text-zinc-400 hover:text-white hover:bg-zinc-800" aria-label="Menüyü kapat">✕</button>
+            </div>
+            <div class="grid grid-cols-1 gap-2">
+                <button id="mobileMenuHomeBtn" class="mobile-play-option"><span class="mobile-play-option-icon">⌂</span><span class="mobile-play-option-copy"><strong>Ana Sayfa</strong><small>Ana ekrana dön</small></span></button>
+                <button id="mobileMenuQuickMatchBtn" class="mobile-play-option"><span class="mobile-play-option-icon">⚡</span><span class="mobile-play-option-copy"><strong>Hızlı eşleştirme</strong><small>Rastgele sanal rakiple oyna</small></span></button>
+                <button id="mobileMenuBotBtn" class="mobile-play-option"><span class="mobile-play-option-icon">🤖</span><span class="mobile-play-option-copy"><strong>Bota karşı oyna</strong><small>Stockfish ile karşılaş</small></span><span class="mobile-play-option-arrow">›</span></button>
+                <button id="mobileMenuTournamentsBtn" class="mobile-play-option"><span class="mobile-play-option-icon">🏆</span><span class="mobile-play-option-copy"><strong>Turnuvalar</strong><small>Turnuvalara katıl veya oluştur</small></span><span class="mobile-play-option-tag">Yakında</span></button>
+                <button id="mobileMenuLocalBtn" class="mobile-play-option"><span class="mobile-play-option-icon">♙</span><span class="mobile-play-option-copy"><strong>Yerel oyun</strong><small>Aynı cihazda iki kişi oyna</small></span><span class="mobile-play-option-arrow">›</span></button>
+            </div>
+            <p id="mobilePlayMenuNotice" class="hidden mt-3 rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-zinc-300" role="status" aria-live="polite"></p>
+        </div>
+    </div>
 
     <!-- ♟️ MAÇ RAPORU MODALI -->
     <div id="preAnalysisSummary" class="hidden fixed inset-0 bg-black/85 backdrop-blur-sm z-[60] flex items-center justify-center p-2 md:p-4">
@@ -433,6 +495,30 @@
         </section>
     </div>
 
+    <!-- ⚡ HIZLI EŞLEŞME ÖNCESİ TEMPO SEÇİMİ -->
+    <div id="quickMatchSetupModal" class="hidden fixed inset-0 bg-[#09090b]/85 backdrop-blur-md z-[110] flex items-center justify-center p-5" role="dialog" aria-modal="true" aria-labelledby="quickMatchSetupTitle">
+        <div class="w-full max-w-sm rounded-2xl border border-zinc-700/80 bg-[#121215] p-5 shadow-2xl">
+            <div class="flex items-center justify-between gap-3 mb-5">
+                <h2 id="quickMatchSetupTitle" class="text-lg font-extrabold text-white">Hızlı Eşleşme</h2>
+                <button id="closeQuickMatchSetupBtn" type="button" class="text-zinc-400 hover:text-white text-xl font-bold p-1" aria-label="Kapat">✕</button>
+            </div>
+            <label for="quickMatchTempoSelect" class="block text-xs font-bold uppercase tracking-wider text-zinc-400 mb-2">Süre</label>
+            <select id="quickMatchTempoSelect" class="w-full rounded-xl border border-zinc-700 bg-[#09090b] px-3 py-3 text-sm font-bold text-emerald-400 outline-none focus:border-emerald-500">
+                <option value="60">1+0 Bullet</option>
+                <option value="60-1">1+1 Bullet</option>
+                <option value="120-1">2+1 Bullet</option>
+                <option value="180">3+0 Blitz</option>
+                <option value="180-2">3+2 Blitz</option>
+                <option value="300" selected>5+0 Blitz</option>
+                <option value="300-3">5+3 Blitz</option>
+                <option value="600">10+0 Rapid</option>
+                <option value="900-10">15+10 Rapid</option>
+                <option value="1800">30+0 Rapid</option>
+            </select>
+            <button id="quickMatchSearchBtn" type="button" class="mt-4 w-full rounded-xl bg-red-700 hover:bg-red-600 px-4 py-3 text-sm font-extrabold text-white transition">Rakip Ara</button>
+        </div>
+    </div>
+
     <!-- ⚡ HIZLI EŞLEŞME AKIŞI (şimdilik arayüz demosu) -->
     <div id="quickMatchFlowModal" class="hidden fixed inset-0 bg-[#09090b]/95 backdrop-blur-md z-[80] flex items-center justify-center p-5" role="dialog" aria-modal="true" aria-labelledby="quickMatchFlowTitle">
         <div class="quick-match-flow-card w-full max-w-sm rounded-2xl border border-zinc-700/80 bg-[#121215] p-6 text-center shadow-2xl">
@@ -492,6 +578,9 @@
                 </button>
                 <button id="modalResetBtn" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs transition-all">
                     🎮 Yeni Oyun Başlat
+                </button>
+                <button id="gameOverHomeBtn" type="button" class="w-full py-2.5 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-white font-bold rounded-xl text-xs transition-all">
+                    🏠 Ana Sayfaya Dön
                 </button>
             </div>
         </div>
@@ -697,6 +786,9 @@
         </div>
     </div>
 
+
+    <!-- MTEST Serbest Tahta: canlı oyun durumundan bağımsız konum editörü -->
+
     <!-- ♟️ PIYON TERFİ MODALI -->
     <div id="promotionModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-[#121215] border border-zinc-800 rounded-2xl p-5 max-w-xs w-full flex flex-col items-center gap-3 shadow-2xl">
@@ -721,7 +813,7 @@
     <!-- Ana Uygulama Kodu -->
     <script src="openings.js?v=20261020-lichess-openings-3865"></script>
     <script src="bots.js?v=20261025-bot-1000-v1"></script>
-    <script src="app.js?v=20261026-gtest-transfer-v1"></script>
+    <script src="app.js?v=20261031-normal-mtest-sync-v1"></script>
 </body>
 
 </html>
