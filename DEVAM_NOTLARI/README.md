@@ -236,3 +236,11 @@ Her önemli değişiklik ve doğrulama tamamlandığında, kullanıcı ayrıca h
 - Bağlantı `satranc.html` bağımsız SEO içerik sayfasını açar; ana sayfanın mevcut yerleşimi ve oyun dosyaları değiştirilmedi.
 - CSS önbellek sürümü yenilendi. `gtest` ve `mtest` klasörlerine dokunulmadı.
 - Yedek: `yedek-hakkimizda-baglantisi-oncesi-2026-10-31`.
+
+
+## 2026-10-31 — MTEST normal oyun sürümüyle eşitlendi
+- Kök `index.html`, `app.js` ve `style.css` dosyalarının güncel normal oyun sürümü `mtest/` içine aktarıldı.
+- MTEST içindeki göreli yollar klasör yapısına göre düzenlendi: giriş/kayıt, serbest tahta, logo, ana sayfa görseli ve üst dizindeki SEO sayfası bağlantısı.
+- `bots.js` ve `openings.js` zaten normal sürümle aynı olduğundan değiştirilmedi.
+- `gtest` ve kök normal oyun dosyalarına dokunulmadı.
+- Yedek: `yedek-mtest-normal-oyun-esitleme-oncesi-2026-10-31`.
