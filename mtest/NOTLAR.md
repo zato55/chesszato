@@ -235,3 +235,11 @@
 - Sorunun nedeni: ikon rozetlerine eklenen 36 px minimum ölçü, mobil kartlardaki 22 px ikon sütununu aşıyordu.
 - `mtest/style.css`: mobilde seçenek ikonları 22×22 px alana sınırlandı; metin sütununa taşmaları engellendi.
 - Kart yerleşimi ve masaüstü görünümü korunuyor. Telefon testi bekleniyor.
+
+
+## 2026-10-31 — Ana sayfa alt görseli değiştirildi
+
+- Yeni görsel: `mtest/chess-home-bottom.webp` (kullanıcı tarafından GitHub'a yüklendi; 29.560 bayt).
+- `mtest/index.html` içindeki alt atmosfer görseli yeni WebP dosyasına bağlandı.
+- Görsel alanının HTML yapısı ve CSS yerleşimi değiştirilmedi.
+- Yedek: `yedek-mtest-alt-gorsel-degisimi-oncesi-2026-10-31`.
