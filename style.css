@@ -1792,15 +1792,10 @@ aside.collapsed #logoToggleBtn {
 #mtestHomeScreen .mtest-quote-author { display:flex; align-items:center; gap:7px; margin-top:9px; color:#a1a1aa; font-size:10px; }
 #mtestHomeScreen .mtest-quote-author span { width:18px; height:1px; flex:0 0 18px; background:#ef233c; }
 #mtestHomeScreen .mtest-quote-author strong { color:#fda4af; font-weight:800; letter-spacing:.03em; }
-#mtestHomeScreen .mtest-quote-progress { position:absolute; left:0; right:0; bottom:0; height:2px; background:rgba(255,255,255,.06); }
-#mtestHomeScreen .mtest-quote-progress span { display:block; width:0; height:100%; background:linear-gradient(90deg,#ef233c,#fda4af); }
-#mtestHomeScreen .mtest-quote-stage.is-running .mtest-quote-progress span { animation:mtestQuoteProgress 8s linear forwards; }
 @keyframes mtestQuoteShimmer { 0%,15% { transform:translateX(-45%); } 75%,100% { transform:translateX(45%); } }
-@keyframes mtestQuoteProgress { from { width:0; } to { width:100%; } }
 @media (prefers-reduced-motion: reduce) {
   #mtestHomeScreen .mtest-quote-stage::before { animation:none; }
   #mtestHomeScreen .mtest-quote-content { transition:none; }
-  #mtestHomeScreen .mtest-quote-stage.is-running .mtest-quote-progress span { animation:none; width:100%; }
 }
 @media screen and (max-width:767px) {
   #mtestHomeScreen .mtest-quote-stage { min-height:78px; padding:10px 12px; border-radius:13px; }
