@@ -1442,6 +1442,8 @@ aside.collapsed #logoToggleBtn {
 .mtest-brand-name{font-size:clamp(19px,3.2vw,30px);font-weight:900;letter-spacing:.08em;line-height:1.05;white-space:nowrap}.mtest-brand-name span{color:#ef233c}
 .mtest-tagline{margin-top:6px;color:#a1a1aa;font-size:9px;letter-spacing:.15em;white-space:nowrap}.mtest-tagline i{color:#ef233c;font-style:normal}
 .mtest-auth-actions{display:flex;align-items:center;gap:8px}
+.mtest-about-link{width:34px;height:34px;flex:0 0 34px;display:inline-flex;align-items:center;justify-content:center;border:1px solid #30343d;border-radius:11px;background:#11141a;color:#d4d4d8;font-size:19px;font-weight:700;text-decoration:none;transition:border-color .2s,color .2s,background .2s}
+.mtest-about-link:hover,.mtest-about-link:focus-visible{border-color:#ef233c;color:#fff;background:#241116;outline:none}
 .mtest-login,.mtest-register{flex-shrink:0;display:flex;align-items:center;gap:8px;padding:9px 11px;color:#f4f4f5;border:1px solid #30343d;border-radius:11px;background:#11141a;font-size:12px;font-weight:700;text-decoration:none}
 .mtest-login span{color:#ef233c;font-size:24px;line-height:12px}.mtest-register{color:#fff;border-color:#ef233c;background:linear-gradient(110deg,#d71935,#941126);font-weight:800}.mtest-register span{font-size:19px;line-height:12px}
 .mtest-hero{min-height:175px;display:grid;grid-template-columns:1fr .8fr;align-items:center;position:relative;overflow:hidden;flex:1 1 auto}
