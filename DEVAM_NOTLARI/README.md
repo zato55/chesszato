@@ -163,3 +163,8 @@ Her önemli değişiklik ve doğrulama tamamlandığında, kullanıcı ayrıca h
 ## 2026-10-30 — MTEST mobil ikon/metin hizası
 - Seçenek kartlarındaki parlak ikon rozetlerinin mobilde metin alanına taşması düzeltildi; rozetler 22 px ikon sütununa sığdırıldı.
 - Yedek: `yedek-mtest-ikon-metin-cakismasi-oncesi-2026-10-30`.
+
+
+## 2026-10-31 — MTEST alt görseli yenilendi
+- Ana sayfanın en altındaki satranç görseli `mtest/chess-home-bottom.webp` ile değiştirildi. Görsel alanının yerleşimi korundu.
+- Yedek: `yedek-mtest-alt-gorsel-degisimi-oncesi-2026-10-31`.
