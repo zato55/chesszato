@@ -1,4 +1,5 @@
-\n## 2026-10-31 — Ana sayfa teknik SEO başlangıcı
+
+## 2026-10-31 — Ana sayfa teknik SEO başlangıcı
 - Kök `index.html` sayfasına özgün title/description, canonical, robots, Open Graph/Twitter etiketleri ve WebSite + SoftwareApplication yapılandırılmış verisi eklendi.
 - Kök dizine `robots.txt` ve yalnızca ana sayfayı içeren `sitemap.xml` eklendi; proje sitesi URL tabanı `https://zato55.github.io/chesszato/` olarak kullanıldı.
 - Görsel tasarım, oyun JavaScript'i ve `gtest`/`mtest` klasörleri değiştirilmedi.
