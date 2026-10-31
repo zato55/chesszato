@@ -188,3 +188,10 @@ Her önemli değişiklik ve doğrulama tamamlandığında, kullanıcı ayrıca h
 - Ana sayfa üst başlığındaki MTEST at simgesi, kökteki mevcut `logo.png` dosyasıyla değiştirildi; Chesszato yazısı ve sloganı korundu.
 - Yalnızca kök `index.html` içindeki ana sayfa marka işareti değiştirildi. `mtest` ve `gtest` klasörlerine dokunulmadı.
 - Yedek: `yedek-ana-sayfa-eski-logo-uygulama-oncesi-2026-10-31`.
+
+
+## 2026-10-31 — Ana sayfada dönen satranç sözleri 15'e çıkarıldı
+- Ana sayfadaki canlı söz listesi 6'dan 15 söze çıkarıldı; mevcut dört Chesszato seçkisi sözü korundu.
+- Yeni sözler satranç ustalarından ve satranç tarihindeki kaynaklı aktarımlardan eklendi. Şüpheli/yanlış atıflar kesin gerçekmiş gibi sunulmadı.
+- Yalnızca kök `app.js` içindeki söz listesi değiştirildi; döngü aralığı, animasyon ve kutu tasarımı aynı bırakıldı.
+- Yedek: `yedek-ana-sayfa-sozler-15e-cikarma-oncesi-2026-10-31`.
