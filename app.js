@@ -17,6 +17,31 @@ let quickMatchBotMoveTimeout = null;
 
 let selectedTimeInSeconds = 300;
 let timeIncrementInSeconds = 0;
+// Hızlı eşleşmenin son temposunu sayfa yenilense de koru.
+const QUICK_MATCH_TEMPO_STORAGE_KEY = 'mtestQuickMatchTempo';
+function readSavedQuickMatchTempo() {
+    try {
+        const saved = localStorage.getItem(QUICK_MATCH_TEMPO_STORAGE_KEY);
+        return saved && /^(60|60-1|120-1|180|180-2|300|300-3|600|900-10|1800)$/.test(saved) ? saved : '300';
+    } catch (error) {
+        return '300';
+    }
+}
+let selectedQuickMatchTempo = readSavedQuickMatchTempo();
+function saveQuickMatchTempo(value) {
+    const tempo = String(value || '300');
+    selectedQuickMatchTempo = tempo;
+    try {
+        localStorage.setItem(QUICK_MATCH_TEMPO_STORAGE_KEY, tempo);
+    } catch (error) {
+        // Depolama kullanılamazsa seçim mevcut sayfa oturumu boyunca korunur.
+    }
+}
+Object.defineProperty(window, 'selectedQuickMatchTempo', {
+    configurable: true,
+    get: () => selectedQuickMatchTempo,
+    set: value => saveQuickMatchTempo(value)
+});
 let whiteTime = 300, blackTime = 300;
 let clockStarted = false;
 
@@ -996,7 +1021,6 @@ function beginQuickMatchFlow() {
     $('#quickMatchSearchingView').removeClass('hidden').addClass('flex');
     $('#quickMatchVersusView').addClass('hidden').removeClass('flex');
     $('#quickMatchFlowModal').removeClass('hidden');
-    $('#mobileModeText').text('Hızlı Eşleşme · Sanal Rakip');
 
     quickMatchFlowTimer = setTimeout(() => {
         if (token !== quickMatchFlowToken) return;
@@ -1017,6 +1041,9 @@ function beginQuickMatchFlow() {
         quickMatchFlowTimer = setTimeout(() => {
             if (token !== quickMatchFlowToken) return;
             quickMatchFlowTimer = null;
+            // Eşleşme tamamlandı: ana sayfa geri dönüş bayrağını kapat ve aktif oyun ekranını göster.
+            window.mtestReturnHomeAfterModal = false;
+            $('#mtestHomeScreen').addClass('mtest-home-hidden').removeClass('mtest-home-modal-backdrop');
             $('#quickMatchFlowModal').addClass('hidden');
             $('#quickMatchSearchingView').removeClass('hidden').addClass('flex');
             $('#quickMatchVersusView').addClass('hidden').removeClass('flex');
@@ -1031,7 +1058,16 @@ $(document).on('click', '#cancelQuickMatchBtn', function() {
     quickMatchMode = false;
     quickMatchBot = null;
     isGameOver = quickMatchReturnToGameOver;
-    if (quickMatchReturnToGameOver) {
+
+    if (window.mtestReturnHomeAfterModal) {
+        // Ana sayfadan açılan hızlı eşleşme iptal edilince eski tahta/oyun ekranına dönme.
+        if (timerInterval) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+        $('#gameOverModal, #botModal, #tempoModal, #settingsModal').addClass('hidden');
+        mtestRestoreHomeAfterModal();
+    } else if (quickMatchReturnToGameOver) {
         $('#gameOverModal').removeClass('hidden');
     } else {
         startTimer();
@@ -1688,9 +1724,6 @@ function updateTimerDisplay() {
     const whiteActive = game.turn() === 'w';
     const blackActive = game.turn() === 'b';
 
-    $('#whiteTimer').text(formattedWhite);
-    $('#blackTimer').text(formattedBlack);
-
     const applyTimerStyle = (selector, isActive, remaining) => {
         const timer = $(selector);
         timer.removeClass('text-emerald-400 bg-emerald-950 border-emerald-600 shadow-[0_0_10px_rgba(52,211,153,0.35)] text-red-100 bg-red-950 border-red-500 shadow-[0_0_14px_rgba(248,113,113,0.65)] animate-pulse');
@@ -1716,9 +1749,6 @@ function updateTimerDisplay() {
             }
         }
     };
-
-    applyTimerStyle('#whiteTimer', whiteActive, whiteTime);
-    applyTimerStyle('#blackTimer', blackActive, blackTime);
 
     if (!isFlipped) {
         $('#topTimerMobile, #topTimerDesktop').text(formattedBlack);
@@ -2364,7 +2394,6 @@ $('#modePvP, #mModePvP').on('click', function() {
     $('#botEloWrapper, #mBotLevelWrapper').addClass('hidden');
     $('#modePvP, #mModePvP').addClass('bg-blue-600 text-white').removeClass('text-zinc-400');
     $('#modeBot, #mModeBot').removeClass('bg-blue-600 text-white').addClass('text-zinc-400');
-    $('#mobileModeText').text('2 Kişilik');
     updatePlayerCards();
     $('#botModal').addClass('hidden');
 });
@@ -2377,7 +2406,6 @@ $('#modeBot, #mModeBot').on('click', function() {
     $('#botEloWrapper, #mBotLevelWrapper').removeClass('hidden');
     $('#modeBot, #mModeBot').addClass('bg-blue-600 text-white').removeClass('text-zinc-400');
     $('#modePvP, #mModePvP').removeClass('bg-blue-600 text-white').addClass('text-zinc-400');
-    $('#mobileModeText').text('Stockfish');
     updatePlayerCards();
     if (game.turn() !== actualPlayerColor && !game.game_over() && !isReviewing && !isAnalysisMode) {
         triggerStockfishMove();
@@ -2517,10 +2545,14 @@ $(document).on('click', '#mobileNavPlayBtn', function(e) {
 
 $(document).on('click', '#mobilePlayMenuCloseBtn', function() {
     closeMobilePlayMenu();
+    mtestRestoreHomeAfterModal();
 });
 
 $('#mobilePlayMenu').on('click', function(e) {
-    if (e.target === this) closeMobilePlayMenu();
+    if (e.target === this) {
+        closeMobilePlayMenu();
+        mtestRestoreHomeAfterModal();
+    }
 });
 
 $(document).on('click', '#mobileMenuBotBtn', function() {
@@ -2532,7 +2564,6 @@ $(document).on('click', '#mobileMenuBotBtn', function() {
     $('#botEloWrapper, #mBotLevelWrapper').removeClass('hidden');
     $('#modeBot, #mModeBot').addClass('bg-blue-600 text-white').removeClass('text-zinc-400');
     $('#modePvP, #mModePvP').removeClass('bg-blue-600 text-white').addClass('text-zinc-400');
-    $('#mobileModeText').text('Stockfish');
     updatePlayerCards();
     $('#tempoModal, #settingsModal').addClass('hidden');
     setMobileNavActive('#mobileNavBotBtn');
@@ -2541,6 +2572,8 @@ $(document).on('click', '#mobileMenuBotBtn', function() {
 
 $(document).on('click', '#mobileMenuLocalBtn', function() {
     if (blockNewMatchDuringQuickMatch()) return;
+    window.mtestReturnHomeAfterModal = false;
+    $('#mtestHomeScreen').addClass('mtest-home-hidden').removeClass('mtest-home-modal-backdrop');
     closeMobilePlayMenu();
     quickMatchMode = false;
     quickMatchBot = null;
@@ -2548,16 +2581,41 @@ $(document).on('click', '#mobileMenuLocalBtn', function() {
     $('#botEloWrapper, #mBotLevelWrapper').addClass('hidden');
     $('#modePvP, #mModePvP').addClass('bg-blue-600 text-white').removeClass('text-zinc-400');
     $('#modeBot, #mModeBot').removeClass('bg-blue-600 text-white').addClass('text-zinc-400');
-    $('#mobileModeText').text('2 Kişilik');
     updatePlayerCards();
     resetGame();
 });
 
 $(document).on('click', '#mobileMenuQuickMatchBtn', function() {
     if (blockNewMatchDuringQuickMatch()) return;
-    $('#botModal, #tempoModal, #settingsModal').addClass('hidden');
+    $('#botModal, #tempoModal, #settingsModal, #quickMatchSetupModal').addClass('hidden');
     closeMobilePlayMenu();
     beginQuickMatchFlow();
+});
+
+$(document).on('change', '#quickMatchTempoSelect', function() {
+    saveQuickMatchTempo($(this).val());
+});
+
+$(document).on('click', '#quickMatchSearchBtn', function() {
+    const timeVal = String($('#quickMatchTempoSelect').val() || selectedQuickMatchTempo || '300');
+    saveQuickMatchTempo(timeVal);
+    $('#timeSelect').val(timeVal);
+    parseTimeControl(timeVal);
+    syncTempoSelection(timeVal);
+    $('#quickMatchSetupModal').addClass('hidden');
+    beginQuickMatchFlow();
+});
+
+$(document).on('click', '#closeQuickMatchSetupBtn', function() {
+    $('#quickMatchSetupModal').addClass('hidden');
+    mtestRestoreHomeAfterModal();
+});
+
+$('#quickMatchSetupModal').on('click', function(e) {
+    if (e.target === this) {
+        $(this).addClass('hidden');
+        mtestRestoreHomeAfterModal();
+    }
 });
 
 $(document).on('click', '#mobileMenuTournamentsBtn', function() {
@@ -2570,7 +2628,6 @@ $(document).on('click', '#mobileNavBotBtn, #mobileBotModalBtn', function(e) {
     closeMobilePlayMenu();
     quickMatchMode = false;
     quickMatchBot = null;
-    $('#mobileModeText').text('Stockfish');
     setMobileNavActive('#mobileNavBotBtn');
     $('#tempoModal, #settingsModal').addClass('hidden');
     $('#botModal').removeClass('hidden');
@@ -2631,6 +2688,9 @@ $('.bot-level-btn').on('click', function() {
 
 $(document).on('click', '#mobileBotStartBtn', function() {
     if (blockNewMatchDuringQuickMatch()) return;
+    // Oyuncu başlatmayı onayladı; artık ana sayfaya geri dönüş değil, oyun ekranı gösterilmeli.
+    window.mtestReturnHomeAfterModal = false;
+    $('#mtestHomeScreen').addClass('mtest-home-hidden').removeClass('mtest-home-modal-backdrop');
     $('#botModal').addClass('hidden');
     setMobileNavActive(null);
     resetGame();
@@ -2685,6 +2745,7 @@ $('#botElo').on('change', function() {
 });
 
 function resetGame() {
+    mtestShowGameScreen();
     clearQuickMatchBotMoveTimeout();
     stopQuickMatchFirstMoveTimer();
     $('#quickMatchCancelledModal').addClass('hidden');
@@ -2792,6 +2853,35 @@ $('#reviewBoardBtn').on('click', function() {
     openPreAnalysisSummary();
 });
 
+$('#gameOverHomeBtn').on('click', function(e) {
+    e.preventDefault();
+
+    // Önce ana sayfayı görünür yap; temizlik adımlarından biri hata verse bile tıklama etkisiz kalmasın.
+    window.mtestReturnHomeAfterModal = false;
+    $('#mtestHomeNotice').addClass('hidden').text('');
+    mtestShowHomeScreen();
+    $('#gameOverModal, #quickMatchFlowModal, #quickMatchCancelledModal, #botModal, #tempoModal, #settingsModal, #preAnalysisSummary').addClass('hidden');
+    $('#mobilePlayMenu').addClass('hidden');
+    setMobileNavActive(null);
+
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+    clearQuickMatchBotMoveTimeout();
+    stopQuickMatchFirstMoveTimer();
+    if (stockfishWorker) {
+        try { stockfishWorker.postMessage('stop'); } catch (error) { /* Worker kapanmışsa ana sayfa dönüşünü engelleme. */ }
+    }
+    isEngineThinking = false;
+    botSearchActive = false;
+    isGameOver = true;
+    clockStarted = false;
+    quickMatchMode = false;
+    quickMatchBot = null;
+    updateQuickMatchLockUI();
+});;
+
 $('#closeSummaryBtn, #summaryCloseBackBtn').on('click', function() {
     closePreAnalysisSummary();
     if (isGameOver && !isAnalysisMode) {
@@ -2820,3 +2910,109 @@ updateTimerDisplay();
 renderBoard();
 updateStatus();
 startTimer();
+
+
+// MTEST ana ekranı: sekmelerin doğru hedefe gitmesi ve modal kapanışında geri dönüş.
+window.mtestReturnHomeAfterModal = false;
+
+$(document).on('click', '#mtestAnalysisBtn', function () {
+    const playedMoves = game.history({ verbose: true }).length;
+    if (!playedMoves || !(isGameOver || game.game_over())) {
+        $('#mtestHomeNotice').text('Analiz için önce bir maçı tamamlamalısın.').removeClass('hidden');
+        return;
+    }
+    $('#mtestHomeNotice').addClass('hidden').text('');
+    mtestShowGameScreen();
+    openPreAnalysisSummary();
+});
+
+$(document).on('click', '#mtestTournamentsBtn', function () {
+    $('#mtestHomeNotice').text('Turnuvalar bölümü henüz kullanıma açık değil.').removeClass('hidden');
+});
+
+$(document).on('click', '#mobileMenuHomeBtn', function () {
+    const activeMoves = game.history({ verbose: true }).length;
+    if (activeMoves > 0 && !isGameOver && !game.game_over()) {
+        const abandonMatch = window.confirm('Maçı terk etmek istiyor musun?');
+        if (!abandonMatch) return;
+    }
+
+    window.mtestReturnHomeAfterModal = false;
+    closeMobilePlayMenu();
+    $('#tempoModal, #botModal, #settingsModal, #quickMatchFlowModal, #quickMatchCancelledModal, #quickMatchSetupModal, #preAnalysisSummary, #gameOverModal').addClass('hidden');
+    $('#mtestHomeNotice').addClass('hidden').text('');
+    if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+    clearQuickMatchBotMoveTimeout();
+    stopQuickMatchFirstMoveTimer();
+    if (stockfishWorker) { try { stockfishWorker.postMessage('stop'); } catch (error) {} }
+    isEngineThinking = false;
+    botSearchActive = false;
+    clockStarted = false;
+    isGameOver = true;
+    quickMatchMode = false;
+    quickMatchBot = null;
+    mtestShowHomeScreen();
+    updateQuickMatchLockUI();
+});
+
+function mtestShowGameScreen() {
+    $('#mtestGameScreen').removeClass('mtest-game-hidden');
+    $('#mtestHomeScreen').addClass('mtest-home-hidden').removeClass('mtest-home-modal-backdrop');
+}
+
+function mtestShowHomeScreen() {
+    $('#mtestGameScreen').addClass('mtest-game-hidden');
+    $('#mtestHomeScreen').removeClass('mtest-home-hidden mtest-home-modal-backdrop');
+}
+
+function mtestRestoreHomeAfterModal() {
+    if (!window.mtestReturnHomeAfterModal) return;
+    window.mtestReturnHomeAfterModal = false;
+    $('#mtestHomeNotice').addClass('hidden').text('');
+    mtestShowHomeScreen();
+}
+
+$(document).on('click', '.close-modal-btn', function () {
+    mtestRestoreHomeAfterModal();
+});
+
+$('#tempoModal, #botModal, #settingsModal').on('click', function (e) {
+    if (e.target === this) mtestRestoreHomeAfterModal();
+});
+
+
+/* MTEST: ana ekrandaki büyük usta sözlerini yumuşak geçişle sırala. */
+(function initMtestLiveQuotes() {
+    const quotes = [
+        { text: 'Kazandığınız oyundan çok, kaybettiğiniz oyundan öğrenebilirsiniz.', author: 'José Raúl Capablanca' },
+        { text: 'İyi bir hamle gördüğünüzde, daha iyisini arayın.', author: 'Emanuel Lasker’e atfedilir' },
+        { text: 'Satrançta en zor rakip, kendi hatalarımızdır.', author: 'Chesszato seçkisi' },
+        { text: 'Satranç, hayal gücünün ve sabrın buluştuğu bir mücadeledir.', author: 'Chesszato seçkisi' },
+        { text: 'Bir planın güzelliği, her hamlede yeniden düşünmeyi gerektirmesidir.', author: 'Chesszato seçkisi' },
+        { text: 'Satrançta her hamle yeni bir fikir için fırsattır.', author: 'Chesszato seçkisi' }
+    ];
+    const stage = document.getElementById('mtestQuoteStage');
+    const quoteText = document.getElementById('mtestQuoteText');
+    const quoteAuthor = document.getElementById('mtestQuoteAuthor');
+    if (!stage || !quoteText || !quoteAuthor || stage.dataset.ready === 'true') return;
+    stage.dataset.ready = 'true';
+
+    let quoteIndex = Math.floor(Math.random() * quotes.length);
+    const showQuote = (index) => {
+        quoteText.textContent = '“' + quotes[index].text + '”';
+        quoteAuthor.textContent = quotes[index].author;
+        stage.classList.remove('is-running');
+        void stage.offsetWidth;
+        stage.classList.add('is-running');
+    };
+    showQuote(quoteIndex);
+    window.setInterval(() => {
+        if (document.hidden || !stage.isConnected) return;
+        stage.classList.add('is-changing');
+        window.setTimeout(() => {
+            quoteIndex = (quoteIndex + 1) % quotes.length;
+            showQuote(quoteIndex);
+            stage.classList.remove('is-changing');
+        }, 450);
+    }, 8000);
+})();
