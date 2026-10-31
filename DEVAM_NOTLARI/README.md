@@ -229,3 +229,10 @@ Her önemli değişiklik ve doğrulama tamamlandığında, kullanıcı ayrıca h
 - Sayfa canonical adresi, FAQ yapılandırılmış verisi ve sitemap kaydı eklendi. Ana sayfaya geri dönüş bağlantıları sayfa içinde bulunuyor.
 - Yedek: `yedek-ana-sayfa-icerik-seo-oncesi-2026-10-31`.
 - Ana sayfanın görsel düzeni değiştirilmedi; `gtest` ve `mtest` klasörlerine dokunulmadı.
+
+
+## 2026-10-31 — Ana sayfaya Hakkımızda bağlantısı eklendi
+- Ana sayfanın üst bölümünde Giriş Yap ve Kayıt Ol bağlantılarının yanına küçük bilgi simgeli Hakkımızda bağlantısı eklendi.
+- Bağlantı `satranc.html` bağımsız SEO içerik sayfasını açar; ana sayfanın mevcut yerleşimi ve oyun dosyaları değiştirilmedi.
+- CSS önbellek sürümü yenilendi. `gtest` ve `mtest` klasörlerine dokunulmadı.
+- Yedek: `yedek-hakkimizda-baglantisi-oncesi-2026-10-31`.
