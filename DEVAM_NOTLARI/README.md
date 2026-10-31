@@ -221,3 +221,11 @@ Her önemli değişiklik ve doğrulama tamamlandığında, kullanıcı ayrıca h
 - Kök `index.html` içindeki `style.css` sorgu sürümü `20261031-brand-red-edge-v2` olarak değiştirildi; tarayıcının eski mavi CSS dosyasını kullanma ihtimali giderildi.
 - Kök `style.css` içinde ana sayfa kenar ışığının konik gradyanı ve gölgesi marka kırmızısı olarak doğrulandı.
 - Yedek: `yedek-kenar-isigi-cache-yenileme-oncesi-2026-10-31`.
+
+## 2026-10-31 — Ayrı satranç SEO içerik sayfası
+
+- Ana sayfanın tam ekran tasarımına ve oyun arayüzüne dokunmadan `satranc.html` adlı bağımsız, mobil uyumlu bilgilendirme sayfası eklendi.
+- Sayfada ücretsiz online satranç, bilgisayara karşı oyun, aynı cihazda arkadaşla oyun, serbest tahta ve oynanmış maç analizi hakkında mevcut özelliklerle sınırlı açıklamalar ve SSS yer alıyor.
+- Sayfa canonical adresi, FAQ yapılandırılmış verisi ve sitemap kaydı eklendi. Ana sayfaya geri dönüş bağlantıları sayfa içinde bulunuyor.
+- Yedek: `yedek-ana-sayfa-icerik-seo-oncesi-2026-10-31`.
+- Ana sayfanın görsel düzeni değiştirilmedi; `gtest` ve `mtest` klasörlerine dokunulmadı.
