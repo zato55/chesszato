@@ -176,3 +176,9 @@ Her önemli değişiklik ve doğrulama tamamlandığında, kullanıcı ayrıca h
 - Ortak `openings.js`, `bots.js` ve ses klasörlerine kökten erişim korunuyor.
 - `mtest` ve `gtest` kaynaklarına dokunulmadı.
 - Yedek: `yedek-normal-mtest-tam-esitleme-oncesi-2026-10-31`.
+
+
+## 2026-10-31 — Normal oyunda eski Chesszato logosu
+- Normal oyun ekranının mobil üst çubuğu ve masaüstü sol menüsündeki geçici kırmızı “Z” kutuları, kökteki mevcut `logo.png` dosyasına bağlandı.
+- Yalnızca `index.html` içindeki bu iki logo alanı değiştirildi; MTEST ve GTEST dosyalarına dokunulmadı.
+- Yedek: `yedek-normal-eski-logo-ekleme-oncesi-2026-10-31`.
