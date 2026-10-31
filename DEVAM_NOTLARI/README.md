@@ -1,3 +1,10 @@
+
+## 2026-10-31 — Büyük usta sözleri kartındaki kırmızı yükleme çizgisi kaldırıldı
+- Ana sayfa söz kartının altındaki ilerleme/yükleme çizgisi HTML, CSS ve JavaScript bağlantısıyla birlikte kaldırıldı.
+- 15 sözün otomatik dönmesi ve söz geçiş animasyonu korundu; yalnızca kullanılmayan ilerleme göstergesi temizlendi.
+- CSS önbellek etiketi yenilendi.
+- Yedek: `yedek-usta-sozleri-kirmizi-loading-kaldirma-oncesi-2026-10-31`.
+
 # Devam Notları
 
 Bu klasör, yeni sohbetlerde projeye hızlı ve doğru şekilde devam edebilmek için kalıcı çalışma kayıtlarıdır.
