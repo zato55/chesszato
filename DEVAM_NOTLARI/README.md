@@ -201,3 +201,9 @@ Her önemli değişiklik ve doğrulama tamamlandığında, kullanıcı ayrıca h
 - Kök `style.css` içindeki ana sayfa çerçevesini dolaşan mavi/camgöbeği ışık şeridi Chesszato marka kırmızısına (`#ef233c`) çevrildi.
 - Işığın hareket hızı, animasyonu, çerçeve ölçüleri ve mobil görünümü korundu; yalnızca renk ve parlama tonları değiştirildi.
 - Yedek: `yedek-kenar-isigi-kirmizi-oncesi-2026-10-31`.
+
+
+## 2026-10-31 — Kenar ışığı CSS önbellek sürümü yenilendi
+- Kök `index.html` içindeki `style.css` sorgu sürümü `20261031-brand-red-edge-v2` olarak değiştirildi; tarayıcının eski mavi CSS dosyasını kullanma ihtimali giderildi.
+- Kök `style.css` içinde ana sayfa kenar ışığının konik gradyanı ve gölgesi marka kırmızısı olarak doğrulandı.
+- Yedek: `yedek-kenar-isigi-cache-yenileme-oncesi-2026-10-31`.
