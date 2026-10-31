@@ -195,3 +195,9 @@ Her önemli değişiklik ve doğrulama tamamlandığında, kullanıcı ayrıca h
 - Yeni sözler satranç ustalarından ve satranç tarihindeki kaynaklı aktarımlardan eklendi. Şüpheli/yanlış atıflar kesin gerçekmiş gibi sunulmadı.
 - Yalnızca kök `app.js` içindeki söz listesi değiştirildi; döngü aralığı, animasyon ve kutu tasarımı aynı bırakıldı.
 - Yedek: `yedek-ana-sayfa-sozler-15e-cikarma-oncesi-2026-10-31`.
+
+
+## 2026-10-31 — Ana sayfa hareketli kenar ışığı marka kırmızısı yapıldı
+- Kök `style.css` içindeki ana sayfa çerçevesini dolaşan mavi/camgöbeği ışık şeridi Chesszato marka kırmızısına (`#ef233c`) çevrildi.
+- Işığın hareket hızı, animasyonu, çerçeve ölçüleri ve mobil görünümü korundu; yalnızca renk ve parlama tonları değiştirildi.
+- Yedek: `yedek-kenar-isigi-kirmizi-oncesi-2026-10-31`.
